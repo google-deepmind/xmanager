@@ -101,6 +101,7 @@ def run_in_asyncio_loop(
   @functools.wraps(f)
   def decorated(*args, **kwargs) -> ReturnType:
     loop = asyncio.new_event_loop()
+    asyncio.get_child_watcher().attach_loop(loop)
     return loop.run_until_complete(f(*args, **kwargs))
 
   return decorated
