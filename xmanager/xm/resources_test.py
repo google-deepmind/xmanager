@@ -17,6 +17,7 @@ import unittest
 
 from xmanager import xm
 from xmanager.xm import resources
+from xmanager.xm.resources import JobRequirements
 from xmanager.xm.resources import ResourceType
 
 
@@ -30,6 +31,17 @@ class ResourceDictTest(unittest.TestCase):
 
     self.assertEqual(
         str(resource_dict), 'CPU: 4.2, MEMORY: 17716740096.0, V100: 8')
+
+  def test_resource_dict_from_job_requirements(self):
+    requirements = JobRequirements(cpu=0.5 * xm.vCPU, memory=2 * xm.MiB, v100=8)
+    resource_dict = requirements.task_requirements
+    self.assertEqual(resource_dict[ResourceType.CPU], 0.5)
+    self.assertEqual(resource_dict[ResourceType.MEMORY], 2097152)
+    self.assertEqual(resource_dict[ResourceType.V100], 8)
+
+  def test_job_requirements_unknown_key(self):
+    with self.assertRaises(KeyError):
+      JobRequirements(cpu=0.5 * xm.vCPU, upc=2)
 
 
 if __name__ == '__main__':

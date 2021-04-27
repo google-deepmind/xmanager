@@ -17,7 +17,7 @@ Various classes defined to support resources specification for jobs.
 """
 
 import enum
-from typing import Dict
+from typing import Dict, MutableMapping
 
 
 class ResourceType(enum.Enum):
@@ -54,7 +54,7 @@ class ResourceType(enum.Enum):
     return self._name_
 
 
-class ResourceDict(Dict[ResourceType, float]):
+class ResourceDict(MutableMapping):
   """Internal class to represent amount of countable resources.
 
   A mapping from ResourceType to amount of the resource combined with
@@ -66,14 +66,32 @@ class ResourceDict(Dict[ResourceType, float]):
   explicitly.
 
   Usage:
-    # Construct from code:
-    # TODO: update with JobRequirements example.
-    resources = ResourceDict(cpu=0.5 * xm.GCU, memory=2 * xm.GiB, v100=8)
+    # Construct (implicitly) from user code using JobRequirements:
+    requirements = JobRequirements(cpu=0.5 * xm.vCPU, memory=2 * xm.GiB, v100=8)
+    resources = requirements.task_requirements
     # Resources are available by their canonical names.
     assert(resources[ResourceType.V100], 8)
     # Print user-friendly representation:
     print(f'The task needs {resources}')
   """
+
+  def __init__(self) -> None:
+    self.__dict: Dict[ResourceType, float] = {}
+
+  def __setitem__(self, key: ResourceType, value: float) -> None:
+    self.__dict.__setitem__(key, value)
+
+  def __getitem__(self, key: ResourceType) -> float:
+    return self.__dict.__getitem__(key)
+
+  def __delitem__(self, key: ResourceType) -> None:
+    self.__dict.__delitem__(key)
+
+  def __iter__(self):
+    return self.__dict.__iter__()
+
+  def __len__(self) -> int:
+    return self.__dict.__len__()
 
   def __str__(self) -> str:
     """Returns user-readable text representation.
@@ -100,11 +118,11 @@ _GPU_RESOURCES = (
 )
 
 
-def is_gpu(resource_type: ResourceType):
+def is_gpu(resource_type: ResourceType) -> bool:
   return resource_type in _GPU_RESOURCES
 
 
-def is_tpu(resource_type: ResourceType):
+def is_tpu(resource_type: ResourceType) -> bool:
   return resource_type in _TPU_RESOURCES
 
 
@@ -119,13 +137,13 @@ class JobRequirements:
     """
     self.is_tpu_job = False
     self.is_gpu_job = False
-    self.task_requirements = {}
+    self.task_requirements = ResourceDict()
 
     for resource_name, value in resources.items():
       resource = ResourceType[resource_name.upper()]
-      if resource in _TPU_RESOURCES:
+      if is_tpu(resource):
         self.is_tpu_job = True
-      if resource in _GPU_RESOURCES:
+      if is_gpu(resource):
         self.is_gpu_job = True
 
       self.task_requirements[resource] = value
