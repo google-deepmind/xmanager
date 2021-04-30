@@ -410,6 +410,7 @@ class Experiment(abc.ABC):
                          '`async with` syntax')
 
     self._event_loop = asyncio.new_event_loop()
+    asyncio.get_child_watcher().attach_loop(self._event_loop)
     self._event_loop_thread = threading.Thread(
         target=self._event_loop.run_forever, daemon=True)
     self._event_loop_thread.start()
