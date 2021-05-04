@@ -18,10 +18,18 @@ import unittest
 from xmanager import xm
 from xmanager.xm import resources
 from xmanager.xm.resources import JobRequirements
+from xmanager.xm.resources import resource_type_by_name
 from xmanager.xm.resources import ResourceType
 
 
 class ResourceDictTest(unittest.TestCase):
+
+  def test_resource_type_by_name(self):
+    self.assertEqual(resource_type_by_name('cpu'), ResourceType.CPU)
+    self.assertEqual(resource_type_by_name('Cpu'), ResourceType.CPU)
+    self.assertEqual(resource_type_by_name('CPU'), ResourceType.CPU)
+    with self.assertRaises(KeyError):
+      resource_type_by_name('UPC')
 
   def test_resource_dict_to_string(self):
     resource_dict = resources.ResourceDict()

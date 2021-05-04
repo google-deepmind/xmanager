@@ -126,6 +126,20 @@ def is_tpu(resource_type: ResourceType) -> bool:
   return resource_type in _TPU_RESOURCES
 
 
+def resource_type_by_name(resource_name: str) -> ResourceType:
+  """Returns a ResourceType corresponding to the given name.
+
+  ResourceType keys are upper case, but we allow other case for the input.
+
+  Args:
+    resource_name: name of the resource type, arbitrary case.
+
+  Returns:
+    a ResourceType value corresponding to the given name.
+  """
+  return ResourceType[resource_name.upper()]
+
+
 class JobRequirements:
   """Describes the resource requirements of a Job."""
 
@@ -140,7 +154,7 @@ class JobRequirements:
     self.task_requirements = ResourceDict()
 
     for resource_name, value in resources.items():
-      resource = ResourceType[resource_name.upper()]
+      resource = resource_type_by_name(resource_name)
       if is_tpu(resource):
         self.is_tpu_job = True
       if is_gpu(resource):
