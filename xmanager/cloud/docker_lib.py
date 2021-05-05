@@ -14,8 +14,8 @@
 """Utility functions for building Docker images."""
 
 import os
+import shutil
 import subprocess
-import tarfile
 import tempfile
 
 from absl import logging
@@ -23,31 +23,26 @@ import docker
 import termcolor
 
 
-def build_tar(project_path: str, arcname: str, entrypoint_file: str,
-              dockerfile: str) -> str:
-  """Creates a tar.gz with all the project contents and Dockerfile."""
-  folder = tempfile.mkdtemp()
-  tar_name = os.path.join(folder, 'tmp.tar.gz')
-  with tarfile.open(tar_name, 'w:gz') as tar:
-    tar.add(project_path, arcname=arcname)
-    tar.add(dockerfile, arcname='Dockerfile')
-    tar.add(entrypoint_file, arcname='entrypoint.sh')
-  return tar_name
+def prepare_directory(project_path: str, project_name: str,
+                      entrypoint_file: str, dockerfile: str) -> str:
+  """Stage all inputs into a new temporary directory."""
+  directory = tempfile.mkdtemp()
+  shutil.copytree(project_path, os.path.join(directory, project_name))
+  shutil.copyfile(dockerfile, os.path.join(directory, 'Dockerfile'))
+  shutil.copyfile(entrypoint_file, os.path.join(directory, 'entrypoint.sh'))
+  return directory
 
 
 def build_docker_image(image: str,
-                       tar: str,
+                       directory: str,
                        docker_subprocess: bool = True) -> str:
   """Builds a Docker image locally."""
   logging.info('Building Docker image locally')
-  extracted = tempfile.mkdtemp()
-  with tarfile.open(tar) as t:
-    t.extractall(path=extracted)
   docker_client = docker.from_env()
   if docker_subprocess:
-    _run_docker_in_subprocess(docker_client, extracted, image)
+    _run_docker_in_subprocess(docker_client, directory, image)
   else:
-    _run_docker_build(docker_client, extracted, image)
+    _run_docker_build(docker_client, directory, image)
   logging.info('Building docker image locally: Done')
   return image
 

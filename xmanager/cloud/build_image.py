@@ -72,7 +72,8 @@ def build(py_executable: xm.PythonContainer,
   path = py_executable.path
   if FLAGS.wrap_late_bindings:
     path, dockerfile = _wrap_late_bindings(path, dockerfile)
-  tar = docker_lib.build_tar(path, arcname, entrypoint, dockerfile)
+  docker_directory = docker_lib.prepare_directory(path, arcname, entrypoint,
+                                                  dockerfile)
   print('Building Docker image, please wait...')
   try:
     docker_client = docker.from_env()
@@ -91,7 +92,7 @@ def build(py_executable: xm.PythonContainer,
     print('Falling back to CloudBuild. See INFO log for details.')
   else:
     # TODO: Improve out-of-disk space handling.
-    return docker_lib.build_docker_image(image_name, tar)
+    return docker_lib.build_docker_image(image_name, docker_directory)
   # TODO: Also add the CloudBuild case.
   # This method assumes that the image will be available locally.
   # So, the implementation should also do a pull after building.
