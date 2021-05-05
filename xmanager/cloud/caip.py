@@ -16,11 +16,13 @@
 https://cloud.google.com/ai-platform-unified/docs/reference/rest
 """
 
+import asyncio
 import functools
 import logging
 import math
-from typing import Any, Dict, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Union
 
+import attr
 from googleapiclient import discovery
 import immutabledict
 
@@ -29,6 +31,7 @@ from xmanager.cloud import auth
 from xmanager.xm import resources as xm_resources
 from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
+from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
 
 _DEFAULT_LOCATION = 'us-central1'
@@ -88,7 +91,7 @@ class Client:
     self.client._baseUrl = f'https://{location}-aiplatform.googleapis.com'  # pylint: disable=protected-access
 
   def launch(self, experiment_name: str, experiment_id: int, work_unit_id: int,
-             jobs: Sequence[xm.Job]):
+             jobs: Sequence[xm.Job]) -> str:
     """Launch jobs on AI Platform (Unified)."""
     parent = f'projects/{auth.get_project_name()}/locations/{self.location}'
     pools = []
@@ -112,7 +115,7 @@ class Client:
           'replica_count': 1,
       }
       if job.executor.resources.is_tpu_job:
-        tpu_runtime_version = 'nightly'
+        tpu_runtime_version = 'nightly'  # pylint: disable=unused-variable
         if job.executor.tpu_capability:
           tpu_runtime_version = job.executor.tpu_capability.tpu_runtime_version
         # TODO: The `tpuTfVersion` field doesn't exist yet in
@@ -147,6 +150,16 @@ class Client:
       print('Job launched at: ' +
             'https://console.cloud.google.com/ai/platform/locations/' +
             f'{self.location}/training/{job_id}/cpu')
+    return name
+
+  async def wait_for_job(self, job_name: str) -> None:
+    backoff = 5  # seconds
+    while True:
+      await asyncio.sleep(backoff)
+      job = self.client.projects().locations().customJobs().get(
+          name=job_name).execute()
+      if job.get('endTime', None):
+        return
 
 
 _CLOUD_TPU_ACCELERATOR_TYPES = immutabledict.immutabledict({
@@ -173,18 +186,32 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   return spec
 
 
+@attr.s(auto_attribs=True)
+class CaipHandle(local_execution.ExecutionHandle):
+  """A handle for referring to the launched container."""
+
+  job_name: str
+
+  async def wait(self) -> None:
+    await client().wait_for_job(self.job_name)
+
+
 # Must act on all jobs with `local_executors.Caip` executor.
 def launch(experiment_name: str, experiment_id: int, work_unit_id: int,
-           job_group: xm.JobGroup):
+           job_group: xm.JobGroup) -> List[CaipHandle]:
+  """Launch CAIP jobs in the job_group and return a handler."""
   jobs = utils.collect_jobs_by_filter(job_group, _caip_job_predicate)
   # As client creation may throw, do not initiate it if there are no jobs.
-  if jobs:
-    client().launch(
-        experiment_name=experiment_name,
-        experiment_id=experiment_id,
-        work_unit_id=work_unit_id,
-        jobs=jobs,
-    )
+  if not jobs:
+    return []
+
+  job_name = client().launch(
+      experiment_name=experiment_name,
+      experiment_id=experiment_id,
+      work_unit_id=work_unit_id,
+      jobs=jobs,
+  )
+  return [CaipHandle(job_name=job_name)]
 
 
 def cpu_ram_to_machine_type(cpu: Optional[int],

@@ -65,9 +65,12 @@ class LocalWorkUnit(xm.WorkUnit):
     # modularity, but sacrifices the ability to make cross-executor decisions.
     async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
       # TODO: Using 0 because experiment_id is NotImplementedError.
-      caip.launch(self._experiment_name, 0, self.work_unit_id, job_group)
+      self._execution_handles.extend(
+          caip.launch(self._experiment_name, 0, self.work_unit_id, job_group))
       # TODO: Using 0 because experiment_id is NotImplementedError.
-      kubernetes.launch(self._experiment_name, 0, self.work_unit_id, job_group)
+      self._execution_handles.extend(
+          kubernetes.launch(self._experiment_name, 0, self.work_unit_id,
+                            job_group))
       self._execution_handles.extend(await local_execution.launch(job_group))
 
   async def _wait_until_complete(self) -> None:

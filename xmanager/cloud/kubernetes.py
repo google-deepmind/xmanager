@@ -13,9 +13,11 @@
 # limitations under the License.
 """Client for interacting with Kubernetes."""
 
+import asyncio
 import functools
-from typing import Dict, Optional, Sequence
+from typing import Dict, List, Optional, Sequence
 
+import attr
 from kubernetes import client as k8s_client
 from kubernetes import config as k8s_config
 
@@ -24,6 +26,7 @@ from xmanager.cloud import utils as cloud_utils
 from xmanager.xm import resources as xm_resources
 from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
+from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
 
 
@@ -48,7 +51,7 @@ class Client:
     self.api_client = api_client
 
   def launch(self, experiment_name: str, experiment_id: int, work_unit_id: int,
-             jobs: Sequence[xm.Job]):
+             jobs: Sequence[xm.Job]) -> List[k8s_client.V1Job]:
     """Launches jobs on Kubernetes."""
     batch_jobs = []
     service = f'{experiment_name}-{experiment_id}'
@@ -100,6 +103,7 @@ class Client:
     batch_api = k8s_client.BatchV1Api(self.api_client)
     for k8s_job in batch_jobs:
       batch_api.create_namespaced_job(namespace='default', body=k8s_job)
+    return batch_jobs
 
   def _create_service(self, service: str) -> None:
     """Creates a K8s service with an `experiment: service` selector."""
@@ -113,19 +117,42 @@ class Client:
     core_api = k8s_client.CoreV1Api(self.api_client)
     core_api.create_namespaced_service(namespace='default', body=body)
 
+  async def wait_for_job(self, job: k8s_client.V1Job) -> None:
+    batch_api = k8s_client.BatchV1Api(self.api_client)
+    backoff = 5  # seconds
+    while True:
+      await asyncio.sleep(backoff)
+      response = batch_api.read_namespaced_job_status(
+          namespace='default', name=job.metadata.name)
+      if response.status.completion_time:
+        return
+
+
+@attr.s(auto_attribs=True)
+class KubernetesHandle(local_execution.ExecutionHandle):
+  """A handle for referring to the launched container."""
+
+  jobs: List[k8s_client.V1Job]
+
+  async def wait(self) -> None:
+    await asyncio.gather(*[client().wait_for_job(job) for job in self.jobs])
+
 
 # Must act on all jobs with `local_executors.Kubernetes` executor.
 def launch(experiment_name: str, experiment_id: int, work_unit_id: int,
-           job_group: xm.JobGroup):
+           job_group: xm.JobGroup) -> List[KubernetesHandle]:
+  """Launch K8s jobs in the job_group and return a handler."""
   jobs = utils.collect_jobs_by_filter(job_group, _kubernetes_job_predicate)
   # As client creation may throw, do not initiate it if there are no jobs.
-  if jobs:
-    client().launch(
-        experiment_name=experiment_name,
-        experiment_id=experiment_id,
-        work_unit_id=work_unit_id,
-        jobs=jobs,
-    )
+  if not jobs:
+    return []
+  k8_jobs = client().launch(
+      experiment_name=experiment_name,
+      experiment_id=experiment_id,
+      work_unit_id=work_unit_id,
+      jobs=jobs,
+  )
+  return [KubernetesHandle(jobs=k8_jobs)]
 
 
 def resources_from_executor(

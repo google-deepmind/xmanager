@@ -35,8 +35,10 @@ flags.DEFINE_integer('nodes', 1, 'Number of nodes.')
 flags.DEFINE_integer('gpus_per_node', 2, 'Number of GPUs per node.')
 
 
-def main(_):
-  with xm_local.create_experiment(experiment_name='cifar10') as experiment:
+@xm.run_in_asyncio_loop
+async def main(_):
+  async with xm_local.create_experiment(
+      experiment_name='cifar10') as experiment:
     if FLAGS.image_path:
       spec = xm.Container(image_path=FLAGS.image_path)
     else:
@@ -67,6 +69,7 @@ def main(_):
         dict([('batch_size', bs), ('learning_rate', lr)])
         for (bs, lr) in itertools.product(batch_sizes, learning_rates))
 
+    work_units = []
     for hyperparameters in trials:
       jobs = {}
       for i in range(FLAGS.nodes):
@@ -75,12 +78,14 @@ def main(_):
         hyperparameters['rank'] = i
         jobs[str(i)] = xm.Job(
             executable=executable,
-            executor=xm_local.Caip(xm.JobRequirements(t4=FLAGS.gpus_per_node)),
+            executor=xm_local.Caip(xm.JobRequirements()),
             args=hyperparameters,
         )
-      experiment.add(xm.JobGroup(**jobs))
+      work_units.append(await experiment.add(xm.JobGroup(**jobs)))
     print('Waiting for async launches to return values...')
-  print('Launch completed and successful.')
+  for work_unit in work_units:
+    await work_unit.wait_until_complete()
+  print('Experiment completed.')
 
 
 if __name__ == '__main__':
