@@ -14,18 +14,30 @@
 """Utility functions for building Docker images."""
 
 import os
+import pathlib
 import shutil
 import subprocess
 import tempfile
 
 from absl import logging
 import docker
+import humanize
 import termcolor
 
 
 def prepare_directory(project_path: str, project_name: str,
                       entrypoint_file: str, dockerfile: str) -> str:
   """Stage all inputs into a new temporary directory."""
+  project_directory = pathlib.Path(project_path)
+  size = sum(
+      f.stat().st_size for f in project_directory.glob('**/*') if f.is_file())
+  print(f'Size of Docker input: {humanize.naturalsize(size)}')
+  if size > 200 * 10**6:
+    print(
+        termcolor.colored(
+            'Your trying to pack over 200MB into the Docker image. '
+            'Large images negatively impact build times.',
+            color='magenta'))
   directory = tempfile.mkdtemp()
   shutil.copytree(project_path, os.path.join(directory, project_name))
   shutil.copyfile(dockerfile, os.path.join(directory, 'Dockerfile'))

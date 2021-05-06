@@ -35,6 +35,7 @@ setup(
         'google-api-python-client',
         'google-auth',
         'google-cloud-storage',
+        'humanize',
         'kubernetes',
         'termcolor',
     ],
