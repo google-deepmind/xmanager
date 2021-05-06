@@ -43,8 +43,10 @@ def _package_binary(packageable: xm.Packageable, binary: executables.Binary):
 
 def _package_python_container(packageable: xm.Packageable,
                               py_executable: executables.PythonContainer):
+  # Use the directory as the image name.
+  image_name = os.path.basename(py_executable.path)
   image_id = build_image.build(py_executable, packageable.args,
-                               packageable.env_vars)
+                               packageable.env_vars, image_name)
   return local_executables.LoadedContainerImage(image_id=image_id)
 
 
