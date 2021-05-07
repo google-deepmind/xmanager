@@ -18,8 +18,6 @@ import os
 import sys
 
 from absl import app
-import caliban.platform.gke.cli as caliban_gke
-import caliban.platform.gke.types as caliban_gke_types
 
 _DEFAULT_ZONE = 'us-west1-b'
 _DEFAULT_CLUSTER_NAME = 'xmanager-via-caliban'
@@ -40,6 +38,8 @@ def main(argv):
     sys.path.pop(0)
     app.run(m.main, argv=argv)
   elif cmd == 'cluster':
+    caliban_gke = importlib.import_module('caliban.platform.gke.cli')
+    caliban_gke_types = importlib.import_module('caliban.platform.gke.types')
     subcmd = argv[2]
     args = {
         'dry_run': False,
