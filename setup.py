@@ -29,7 +29,6 @@ setup(
         'absl-py',
         'async_generator',
         'attrs',
-        'caliban==0.4.1',
         'docker',
         'immutabledict',
         'google-api-python-client',

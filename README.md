@@ -302,6 +302,7 @@ The Kubernetes executor pulls from your local `kubeconfig`. The XManager
 command-line has helpers to set up a Google Kubernetes Engine (GKE) cluster.
 
 ```bash
+pip install caliban==0.4.1
 xmanager cluster create
 
 # cleanup
