@@ -165,8 +165,8 @@ class JobGroup:
 def merge_args(left: ArgsType, right: ArgsType) -> ArgsType:
 
   def raise_mismatching_types_error(l: Any, r: Any):
-    raise ValueError(f'Args types do not match. Must both be dicts or lists,'
-                     f'but got: {l!r} and {r!r}')
+    raise ValueError(f'Args types do not match. Must both be dicts or lists, '
+                     f'but got {l!r} and {r!r}')
 
   # pyformat: disable
   return pattern_matching.match(
