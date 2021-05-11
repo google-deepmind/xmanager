@@ -77,7 +77,7 @@ async def main(_):
         hyperparameters['rank'] = i
         jobs[str(i)] = xm.Job(
             executable=executable,
-            executor=xm_local.Caip(xm.JobRequirements()),
+            executor=xm_local.Caip(xm.JobRequirements(t4=FLAGS.gpus_per_node)),
             args=hyperparameters,
         )
       work_units.append(await experiment.add(xm.JobGroup(**jobs)))
