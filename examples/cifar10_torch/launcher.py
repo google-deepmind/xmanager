@@ -20,7 +20,6 @@ xmanager launch examples/cifar10_torch/launcher.py -- \
 """
 
 import itertools
-import os
 
 from absl import app
 from absl import flags
@@ -42,9 +41,9 @@ async def main(_):
     if FLAGS.image_path:
       spec = xm.Container(image_path=FLAGS.image_path)
     else:
-      # TODO: path should be '.'
       spec = xm.PythonContainer(
-          path=os.path.dirname(__file__),
+          # Package the current directory that this script is in.
+          path='.',
           base_image='gcr.io/deeplearning-platform-release/pytorch-gpu.1-6',
           entrypoint=xm.ModuleName('cifar10'),
       )

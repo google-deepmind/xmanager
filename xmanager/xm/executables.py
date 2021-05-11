@@ -17,6 +17,7 @@ from typing import List, NamedTuple, Optional, Union
 
 import attr
 from xmanager.xm import core
+from xmanager.xm import utils
 
 
 class ModuleName(NamedTuple):
@@ -67,7 +68,7 @@ class PythonContainer(core.ExecutableSpec):
         layer-caching.
     """
     self.entrypoint = entrypoint
-    self.path = path
+    self.path = utils.get_absolute_path(path)
     self.base_image = base_image
     self.docker_instructions = docker_instructions
 

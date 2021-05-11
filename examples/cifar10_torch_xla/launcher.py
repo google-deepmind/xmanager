@@ -19,7 +19,6 @@ xmanager launch examples/cifar10_torch/launcher.py -- \
   [--image_path=gcr.io/path/to/image/tag] [--platform=gpu]
 """
 import itertools
-import os
 
 from absl import app
 from absl import flags
@@ -37,9 +36,9 @@ def main(_):
     if FLAGS.image_path:
       spec = xm.Container(image_path=FLAGS.image_path)
     else:
-      # TODO: path should be '.'
+      # Package the current directory that this script is in.
       spec = xm.PythonContainer(
-          path=os.path.dirname(__file__),
+          path='.',
           # This base_image is experimental and works with cpu/gpu/tpu.
           # https://cloud.google.com/ai-platform/deep-learning-containers/docs/choosing-container
           base_image='gcr.io/deeplearning-platform-release/pytorch-xla.1-8',

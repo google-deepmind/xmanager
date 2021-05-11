@@ -18,7 +18,9 @@ This module is private and can only be used by the API itself, but not by users.
 
 import asyncio
 import functools
+import inspect
 import itertools
+import os
 import shlex
 from typing import Any, Callable, Dict, List, Mapping, TypeVar
 
@@ -144,3 +146,27 @@ def collect_jobs_by_filter_with_names(
   job_collector = pattern_matching.match(match_job_group,
                                          match_job_group_with_name, match_job)
   return job_collector(job_group)
+
+
+def get_absolute_path(path: str) -> str:
+  """Gets the abspath when relative paths are used in the launcher script.
+
+  A launcher script can refer to its own directory or parent directory via
+  `.` and `..`.
+
+  Args:
+    path: Path that may contain relative paths relative to the launcher script.
+
+  Returns:
+    Absolute path.
+  """
+  if os.path.isabs(path):
+    return path
+
+  # WARNING: This line assumes that the call stack looks like:
+  # [0] utils.py
+  # [1] executables.py
+  # [2] launcher.py
+  caller_filename = os.path.realpath(inspect.stack()[2].filename)
+  caller_dir = os.path.dirname(caller_filename)
+  return os.path.realpath(os.path.join(caller_dir, path))
