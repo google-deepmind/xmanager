@@ -25,10 +25,16 @@ import requests
 
 from xmanager import xm
 from xmanager.cloud import auth
+from xmanager.cloud import cloud_build
 from xmanager.cloud import docker_lib
+from xmanager.docker import docker_adapter
 from xmanager.xm import utils
 
 FLAGS = flags.FLAGS
+flags.DEFINE_boolean(
+    'build_image_locally', True,
+    'Use local docker to build images instead of remote Google Cloud Build. '
+    'This is usually a lot faster but requires docker to be installed.')
 flags.DEFINE_boolean(
     'use_docker_build_subprocess', True,
     'Call "docker build" in a subprocess rather than using Python docker '
@@ -68,35 +74,37 @@ def build(py_executable: xm.PythonContainer,
     image_name = _get_image_name(py_executable)
   dockerfile = _create_dockerfile(py_executable, args, env_vars)
   entrypoint = _create_entrypoint(py_executable)
-  arcname = os.path.basename(py_executable.path)
+  dirname = os.path.basename(py_executable.path)
   path = py_executable.path
   if FLAGS.wrap_late_bindings:
     path, dockerfile = _wrap_late_bindings(path, dockerfile)
-  docker_directory = docker_lib.prepare_directory(path, arcname, entrypoint,
+  docker_directory = docker_lib.prepare_directory(path, dirname, entrypoint,
                                                   dockerfile)
   print('Building Docker image, please wait...')
-  try:
-    docker_client = docker.from_env()
-    logging.info('Local docker: %s', docker_client.version())
-  except docker.errors.DockerException as e:
-    logging.info(e)
-    print('Failed to initialize local docker.')
-    print('Falling back to CloudBuild. See INFO log for details.')
-  except requests.exceptions.ConnectionError as e:
-    logging.info(e)
-    if 'Permission denied' in str(e):
-      print('Looks like there is a permission problem with docker. '
-            'Did you install sudoless docker?')
+  if FLAGS.build_image_locally:
+    try:
+      docker_client = docker.from_env()
+      logging.info('Local docker: %s', docker_client.version())
+    except docker.errors.DockerException as e:
+      logging.info(e)
+      print('Failed to initialize local docker.')
+      print('Falling back to CloudBuild. See INFO log for details.')
+    except requests.exceptions.ConnectionError as e:
+      logging.info(e)
+      if 'Permission denied' in str(e):
+        print('Looks like there is a permission problem with docker. '
+              'Did you install sudoless docker?')
+      else:
+        print('Failed to connect to local docker instance.')
+      print('Falling back to CloudBuild. See INFO log for details.')
     else:
-      print('Failed to connect to local docker instance.')
-    print('Falling back to CloudBuild. See INFO log for details.')
-  else:
-    # TODO: Improve out-of-disk space handling.
-    return docker_lib.build_docker_image(image_name, docker_directory)
-  # TODO: Also add the CloudBuild case.
-  # This method assumes that the image will be available locally.
-  # So, the implementation should also do a pull after building.
-  raise Exception('CloudBuild not implemented.')
+      # TODO: Improve out-of-disk space handling.
+      return docker_lib.build_docker_image(image_name, docker_directory,
+                                           FLAGS.use_docker_build_subprocess)
+  cloud_build_client = cloud_build.Client()
+  cloud_build_client.build_docker_image(dirname, docker_directory, image_name)
+  docker_adapter.instance().get_client().images.pull(image_name)
+  return image_name
 
 
 def push(image: str) -> str:
