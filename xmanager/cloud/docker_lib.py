@@ -21,6 +21,7 @@ import tempfile
 
 from absl import logging
 import docker
+from docker.utils import utils as docker_utils
 import humanize
 import termcolor
 
@@ -83,8 +84,13 @@ def _run_docker_in_subprocess(client: docker.DockerClient, path: str,
       if 'FROM' in line:
         line = line.strip()
         raw_image_name = line.split(' ', 1)[1]
-        print('Pulling image', raw_image_name)
-        client.images.pull(repository=raw_image_name)
+        repository, tag = docker_utils.parse_repository_tag(raw_image_name)
+        if tag is None:
+          tag = 'latest'
+        print(f'Pulling image {repository}:{tag}')
+        # Without a tag, docker will try to pull every image instead of latest.
+        # From docker>=4.4.0, use client.image.pull(*args, all_tags=False)
+        client.images.pull(repository=repository, tag=tag)
         break
 
   subprocess.run(['docker', 'build', '-t', image, path],
