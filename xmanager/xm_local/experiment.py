@@ -55,7 +55,10 @@ class LocalWorkUnit(xm.WorkUnit):
                create_task: Callable[[Awaitable[Any]], futures.Future]) -> None:
     super().__init__(experiment, work_unit_id_predictor, create_task)
     self._experiment_name = experiment_name
-    self._execution_handles: List[local_execution.ExecutionHandle] = []
+    self._local_execution_handles: List[
+        local_execution.LocalExecutionHandle] = []
+    self._non_local_execution_handles: List[
+        local_execution.ExecutionHandle] = []
 
   async def _launch_job_group(self, job_group: xm.JobGroup,
                               args: Mapping[str, Any]) -> None:
@@ -65,28 +68,40 @@ class LocalWorkUnit(xm.WorkUnit):
     # modularity, but sacrifices the ability to make cross-executor decisions.
     async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
       # TODO: Using 0 because experiment_id is NotImplementedError.
-      self._execution_handles.extend(
+      self._non_local_execution_handles.extend(
           caip.launch(self._experiment_name, 0, self.work_unit_id, job_group))
       # TODO: Using 0 because experiment_id is NotImplementedError.
-      self._execution_handles.extend(
+      self._non_local_execution_handles.extend(
           kubernetes.launch(self._experiment_name, 0, self.work_unit_id,
                             job_group))
-      self._execution_handles.extend(await local_execution.launch(job_group))
+      self._local_execution_handles.extend(await
+                                           local_execution.launch(job_group))
 
   async def _wait_until_complete(self) -> None:
     try:
-      await asyncio.gather(
-          *[handle.wait() for handle in self._execution_handles])
+      await asyncio.gather(*[
+          handle.wait() for handle in self._local_execution_handles +
+          self._non_local_execution_handles
+      ])
     except RuntimeError as error:
       raise xm.WorkUnitFailedError(error)
+
+  async def wait_for_local_jobs(self, is_exit_abrupt: bool):
+    if not is_exit_abrupt:
+      await asyncio.gather(
+          *[handle.wait() for handle in self._local_execution_handles])
 
 
 class LocalExperiment(xm.Experiment):
   """Experiment contains a family of jobs that run with the local scheduler."""
 
+  _experiment_name: str
+  _work_units: List[LocalWorkUnit]
+
   def __init__(self, experiment_name: str) -> None:
     super().__init__()
     self._experiment_name = experiment_name
+    self._work_units = []
 
   def package(
       self, packageables: Iterable[xm.Packageable]) -> Iterable[xm.Executable]:
@@ -96,8 +111,25 @@ class LocalExperiment(xm.Experiment):
     ]
 
   def _create_work_unit(self) -> LocalWorkUnit:
-    return LocalWorkUnit(self, self._experiment_name,
-                         self._work_unit_id_predictor, self._create_task)
+    work_unit = LocalWorkUnit(self, self._experiment_name,
+                              self._work_unit_id_predictor, self._create_task)
+    self._work_units.append(work_unit)
+    return work_unit
+
+  def _wait_for_local_jobs(self, is_exit_abrupt: bool):
+    if self._work_units:
+      print('Waiting for local jobs to complete.'
+            ' Press Ctrl+C to terminate them and exit')
+    for work_unit in self._work_units:
+      self._create_task(work_unit.wait_for_local_jobs(is_exit_abrupt))
+
+  def __exit__(self, exc_type, exc_value, traceback):
+    self._wait_for_local_jobs(exc_value is not None)
+    return super().__exit__(exc_type, exc_value, traceback)
+
+  async def __aexit__(self, exc_type, exc_value, traceback):
+    self._wait_for_local_jobs(exc_value is not None)
+    return await super().__aexit__(exc_type, exc_value, traceback)
 
 
 def create_experiment(experiment_name: str) -> xm.Experiment:
