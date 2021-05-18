@@ -38,19 +38,28 @@ class PythonContainer(core.ExecutableSpec):
       entrypoint: The Python module or list of shell commands to run when
         entering this Python project.
       path: Relative or absolute path to the Python project. By default, the
-        current directory `.` is used.
+        current directory (`'.'`) is used.
       base_image: Name of the image to initialize a new Docker build stage using
         the instruction `FROM`.
       docker_instructions: List of Docker instructions to apply when building
-        the image.  When you use docker_instructions, you are responsible for
-        copying the
+        the image.
+
+        When you use `docker_instructions`, you are responsible for copying the
         project directory. For example, if you are running with:
+
           path='/path/to/cifar10'
-        You should include these steps in your docker_instructions:  [ 'COPY
-          cifar10/ cifar10', 'WORKDIR cifar10', ]  If your source code rarely
-          changes, you can make this your first step. If you are frequently
-          iterating on the source code, it is best practice to place these steps
-          as late as possible in the list to maximize Docker layer-caching.
+
+        You should include these steps in your `docker_instructions`:
+
+          [
+            'COPY cifar10/ cifar10',
+            'WORKDIR cifar10',
+          ]
+
+        If your source code rarely changes, you can make this your first step.
+        If you are frequently iterating on the source code, it is best practice
+        to place these steps as late as possible in the list to maximize Docker
+        layer-caching.
   """
 
   entrypoint: Union[ModuleName, CommandList]
