@@ -103,8 +103,10 @@ class Client:
                          'type GoogleContainerRegistryImage'.format(
                              executable, type(executable)))
 
-      args = utils.to_command_line_args(job.args)
-      env = [{'name': k, 'value': v} for k, v in job.env_vars.items()]
+      args = utils.to_command_line_args(
+          xm.merge_args(executable.args, job.args))
+      env_vars = {**executable.env_vars, **job.env_vars}
+      env = [{'name': k, 'value': v} for k, v in env_vars.items()]
       pool = {
           'machineSpec': get_machine_spec(job),
           'containerSpec': {

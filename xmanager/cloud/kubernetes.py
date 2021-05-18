@@ -68,14 +68,20 @@ class Client:
         raise ValueError('Executable {} has type {}. Executable must be of '
                          'type GoogleContainerRegistryImage.'.format(
                              executable, type(executable)))
-      env = [k8s_client.V1EnvVar(k, v) for k, v in job.env_vars.items()]
+      env = [
+          k8s_client.V1EnvVar(k, v) for k, v in {
+              **executable.env_vars,
+              **job.env_vars
+          }.items()
+      ]
       env.append(k8s_client.V1EnvVar('CLUSTER_SPEC', specs[i]))
       container = k8s_client.V1Container(
           # TODO: Replace with xm.Job identity.
           name='container',
           image=executable.image_path,
           resources=resources_from_executor(executor),
-          args=utils.to_command_line_args(job.args),
+          args=utils.to_command_line_args(
+              xm.merge_args(executable.args, job.args)),
           env=env)
       k8s_job = k8s_client.V1Job()
       # TODO: Replace with xm.Job identity.

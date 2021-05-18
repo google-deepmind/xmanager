@@ -70,7 +70,11 @@ def _package_container(packageable: xm.Packageable,
   """
   gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
   if container.image_path.startswith(gcr_project_prefix):
-    return local_executables.GoogleContainerRegistryImage(container.image_path)
+    return local_executables.GoogleContainerRegistryImage(
+        container.image_path,
+        args=packageable.args,
+        env_vars=packageable.env_vars,
+    )
 
   repository, tag = docker_utils.parse_repository_tag(container.image_path)
   if tag is None:
@@ -92,8 +96,11 @@ def _package_container(packageable: xm.Packageable,
   image.tag(push_image_tag)
   print(f'Pushing {push_image_tag}...')
   client.images.push(push_image_tag)
-  # TODO: Handle `args` and `env_vars`.
-  return local_executables.GoogleContainerRegistryImage(push_image_tag)
+  return local_executables.GoogleContainerRegistryImage(
+      image_path=push_image_tag,
+      args=packageable.args,
+      env_vars=packageable.env_vars,
+  )
 
 
 def _package_python_container(
@@ -104,7 +111,11 @@ def _package_python_container(
   image = build_image.push(
       build_image.build(python_container, packageable.args,
                         packageable.env_vars, push_image_tag))
-  return local_executables.GoogleContainerRegistryImage(image)
+  return local_executables.GoogleContainerRegistryImage(
+      image,
+      args=[],
+      env_vars={},
+  )
 
 
 def _throw_on_unknown_executable(packageable: xm.Packageable,

@@ -42,3 +42,5 @@ class GoogleContainerRegistryImage(xm.Executable):
   """An image inside Google Container Registry."""
 
   image_path: str
+  args: xm.ArgsType = attr.Factory(list)
+  env_vars: Dict[str, str] = attr.Factory(dict)
