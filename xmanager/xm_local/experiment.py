@@ -15,6 +15,7 @@
 
 import asyncio
 from concurrent import futures
+import time
 from typing import Any, Awaitable, Callable, Iterable, List, Mapping
 
 from xmanager import xm
@@ -67,13 +68,12 @@ class LocalWorkUnit(xm.WorkUnit):
     # We are delegating the traversal of the job group to modules. That improves
     # modularity, but sacrifices the ability to make cross-executor decisions.
     async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
-      # TODO: Using 0 because experiment_id is NotImplementedError.
       self._non_local_execution_handles.extend(
-          caip.launch(self._experiment_name, 0, self.work_unit_id, job_group))
-      # TODO: Using 0 because experiment_id is NotImplementedError.
+          caip.launch(self._experiment_name, self.experiment_id,
+                      self.work_unit_id, job_group))
       self._non_local_execution_handles.extend(
-          kubernetes.launch(self._experiment_name, 0, self.work_unit_id,
-                            job_group))
+          kubernetes.launch(self._experiment_name, self.experiment_id,
+                            self.work_unit_id, job_group))
       self._local_execution_handles.extend(await
                                            local_execution.launch(job_group))
 
@@ -95,11 +95,14 @@ class LocalWorkUnit(xm.WorkUnit):
 class LocalExperiment(xm.Experiment):
   """Experiment contains a family of jobs that run with the local scheduler."""
 
+  _id: int
   _experiment_name: str
   _work_units: List[LocalWorkUnit]
 
   def __init__(self, experiment_name: str) -> None:
     super().__init__()
+    # To distinguish local job names until we have a local database.
+    self._id = int(time.time() * 10**3)
     self._experiment_name = experiment_name
     self._work_units = []
 
@@ -130,6 +133,10 @@ class LocalExperiment(xm.Experiment):
   async def __aexit__(self, exc_type, exc_value, traceback):
     self._wait_for_local_jobs(exc_value is not None)
     return await super().__aexit__(exc_type, exc_value, traceback)
+
+  @property
+  def experiment_id(self) -> int:
+    return self._id
 
 
 def create_experiment(experiment_name: str) -> xm.Experiment:
