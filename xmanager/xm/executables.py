@@ -30,17 +30,11 @@ class CommandList(NamedTuple):
   commands: List[str]
 
 
+@attr.s(auto_attribs=True)
 class PythonContainer(core.ExecutableSpec):
-  """PythonContainer describes a directory containing Python code."""
+  """PythonContainer describes a directory containing Python code.
 
-  def __init__(self,
-               entrypoint: Union[ModuleName, CommandList],
-               path: str = '.',
-               base_image: Optional[str] = None,
-               docker_instructions: Optional[List[str]] = None):
-    """PythonContainer Constructor.
-
-    Args:
+  Attributes:
       entrypoint: The Python module or list of shell commands to run when
         entering this Python project.
       path: Relative or absolute path to the Python project. By default, the
@@ -48,29 +42,21 @@ class PythonContainer(core.ExecutableSpec):
       base_image: Name of the image to initialize a new Docker build stage using
         the instruction `FROM`.
       docker_instructions: List of Docker instructions to apply when building
-        the image.
-
-        When you use docker_instructions, you are responsible for copying the
+        the image.  When you use docker_instructions, you are responsible for
+        copying the
         project directory. For example, if you are running with:
-
           path='/path/to/cifar10'
+        You should include these steps in your docker_instructions:  [ 'COPY
+          cifar10/ cifar10', 'WORKDIR cifar10', ]  If your source code rarely
+          changes, you can make this your first step. If you are frequently
+          iterating on the source code, it is best practice to place these steps
+          as late as possible in the list to maximize Docker layer-caching.
+  """
 
-        You should include these steps in your docker_instructions:
-
-          [
-            'COPY cifar10/ cifar10',
-            'WORKDIR cifar10',
-          ]
-
-        If your source code rarely changes, you can make this your first step.
-        If you are frequently iterating on the source code, it is best practice
-        to place these steps as late as possible in the list to maximize Docker
-        layer-caching.
-    """
-    self.entrypoint = entrypoint
-    self.path = utils.get_absolute_path(path)
-    self.base_image = base_image
-    self.docker_instructions = docker_instructions
+  entrypoint: Union[ModuleName, CommandList]
+  path: str = attr.ib(converter=utils.get_absolute_path, default='.')
+  base_image: Optional[str] = None
+  docker_instructions: Optional[List[str]] = None
 
 
 @attr.s(auto_attribs=True)

@@ -72,8 +72,8 @@ class Packageable:
 
   executable_spec: ExecutableSpec
   executor_spec: ExecutorSpec
-  env_vars: Dict[str, str] = attr.Factory(dict)
   args: ArgsType = attr.Factory(list)
+  env_vars: Dict[str, str] = attr.Factory(dict)
 
 
 class Constraint(abc.ABC):
@@ -91,6 +91,7 @@ JobGeneratorType = Callable[['WorkUnit'], Awaitable]
 JobType = Union['Job', 'JobGroup', JobGeneratorType]
 
 
+@attr.s(auto_attribs=True)
 class Job:
   """Job describes a unique unit of computation that is run only once.
 
@@ -99,19 +100,10 @@ class Job:
   arguments.
   """
 
-  def __init__(self,
-               executable: Executable,
-               executor: Executor,
-               args: Optional[ArgsType] = None,
-               env_vars: Optional[Dict[str, str]] = None) -> None:
-    self.executable = executable
-    self.executor = executor
-    if args is None:
-      args = []
-    self.args = args
-    if env_vars is None:
-      env_vars = {}
-    self.env_vars = env_vars
+  executable: Executable
+  executor: Executor
+  args: ArgsType = attr.Factory(list)
+  env_vars: Dict[str, str] = attr.Factory(dict)
 
 
 class JobGroup:
@@ -156,7 +148,7 @@ class JobGroup:
 
     Args:
       constraints: List of additional scheduling constraints. Keyword only arg.
-      **jobs: Jobs/job groups that constitute the group passed as kwargs.
+      **jobs: Jobs / job groups that constitute the group passed as kwargs.
     """
     self.jobs = jobs
     self.constraints = list(constraints) if constraints else []

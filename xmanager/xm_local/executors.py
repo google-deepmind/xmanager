@@ -34,13 +34,13 @@ class Local(xm.Executor):
     return LocalSpec()
 
 
-class TpuCapability():
+@attr.s(auto_attribs=True)
+class TpuCapability:
   """TPU capability configures the TPU software requested by an executor."""
 
-  def __init__(self, tpu_runtime_version: str):
-    # Read about TPU versions:
-    # https://cloud.google.com/tpu/docs/version-switching
-    self.tpu_runtime_version = tpu_runtime_version
+  # Read about TPU versions:
+  # https://cloud.google.com/tpu/docs/version-switching
+  tpu_runtime_version: str
 
 
 @attr.s(auto_attribs=True)
@@ -52,14 +52,12 @@ class CaipSpec(xm.ExecutorSpec):
   push_image_tag: Optional[str] = None
 
 
+@attr.s(auto_attribs=True)
 class Caip(xm.Executor):
   """Caip Executor describes the runtime environment of GCP."""
 
-  def __init__(self,
-               resources: xm.JobRequirements,
-               tpu_capability: Optional[TpuCapability] = None) -> None:
-    self.resources = resources
-    self.tpu_capability = tpu_capability
+  resources: xm.JobRequirements
+  tpu_capability: Optional[TpuCapability] = None
 
   @classmethod
   def Spec(cls, *args, **kwargs):
@@ -75,18 +73,13 @@ class KubernetesSpec(xm.ExecutorSpec):
   push_image_tag: Optional[str] = None
 
 
+@attr.s(auto_attribs=True)
 class Kubernetes(xm.Executor):
   """K8s Executor describes the runtime environment of Kubernetes."""
 
-  def __init__(
-      self,
-      resources: xm.JobRequirements,
-      cloud_provider: Optional[str] = GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER,
-      tpu_capability: Optional[TpuCapability] = None,
-  ) -> None:
-    self.resources = resources
-    self.cloud_provider = cloud_provider
-    self.tpu_capability = tpu_capability
+  resources: xm.JobRequirements
+  cloud_provider: str = GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER
+  tpu_capability: Optional[TpuCapability] = None
 
   @classmethod
   def Spec(cls, *args, **kwargs):
