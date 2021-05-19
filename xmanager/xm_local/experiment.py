@@ -138,6 +138,10 @@ class LocalExperiment(xm.Experiment):
   def experiment_id(self) -> int:
     return self._id
 
+  @property
+  def work_unit_count(self) -> int:
+    return len(self._work_units)
+
 
 def create_experiment(experiment_name: str) -> xm.Experiment:
   """Create Experiment."""

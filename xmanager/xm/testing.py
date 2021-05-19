@@ -59,6 +59,10 @@ class TestExperiment(core.Experiment):
     self.work_units.append(work_unit)
     return work_unit
 
+  @property
+  def work_unit_count(self) -> int:
+    return len(self.work_units)
+
 
 class TestExecutor(core.Executor):
   """A test version of Executor with abstract methods implemented."""

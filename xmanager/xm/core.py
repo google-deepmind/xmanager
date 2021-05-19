@@ -393,8 +393,8 @@ class Experiment(abc.ABC):
   def _enter(self) -> None:
     """Initializes internal state on context manager enter."""
     self._running_tasks = []
-    self._work_unit_id_predictor = id_predictor.Predictor(
-        1 + self._work_unit_count())
+    self._work_unit_id_predictor = id_predictor.Predictor(1 +
+                                                          self.work_unit_count)
 
   def __enter__(self):
     if asyncio.get_event_loop().is_running():
@@ -469,11 +469,10 @@ class Experiment(abc.ABC):
     self._running_tasks.append(future)
     return future
 
-  def _work_unit_count(self) -> int:
+  @property
+  def work_unit_count(self) -> int:
     """Returns how many work units the experiment has."""
-    # This is a convenient default suitable for implementations that don't track
-    # work units.
-    return 0
+    raise NotImplementedError
 
 
 # FIXME: Determine base Experiment properties.
