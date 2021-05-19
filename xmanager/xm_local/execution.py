@@ -108,10 +108,7 @@ async def _launch_local_binary(
     executable: executables.LocalBinary,
 ) -> LocalExecutionHandle:
   """Launches a local binary as a detached process."""
-  args = [
-      *utils.to_command_line_args(executable.args),
-      *utils.to_command_line_args(job.args)
-  ]
+  args = utils.to_command_line_args(xm.merge_args(executable.args, job.args))
   env_vars = {**executable.env_vars, **job.env_vars}
   process = await asyncio.create_subprocess_exec(
       executable.path, *args, env=env_vars, start_new_session=True)

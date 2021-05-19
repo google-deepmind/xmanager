@@ -155,6 +155,11 @@ class JobGroup:
 
 
 def merge_args(left: ArgsType, right: ArgsType) -> ArgsType:
+  """Merges two argument sets."""
+  if not left:
+    return right
+  if not right:
+    return left
 
   def raise_mismatching_types_error(l: Any, r: Any):
     raise ValueError(f'Args types do not match. Must both be dicts or lists, '
