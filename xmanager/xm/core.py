@@ -369,6 +369,10 @@ class WorkUnit(abc.ABC):
     """
     raise NotImplementedError
 
+  @property
+  def job_count(self) -> int:
+    raise NotImplementedError
+
 
 class Experiment(abc.ABC):
   """Experiment contains a family of jobs run on the same snapshot of code.

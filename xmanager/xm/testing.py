@@ -35,6 +35,10 @@ class TestWorkUnit(core.WorkUnit):
     del args  # Unused.
     self._launched_jobs.extend(job_group.jobs.values())
 
+  @property
+  def job_count(self) -> int:
+    return len(self._launched_jobs)
+
 
 class TestExperiment(core.Experiment):
   """A test version of an Experiment with abstract methods implemented."""
