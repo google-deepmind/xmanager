@@ -110,30 +110,43 @@ class JobGroup:
   """JobGroup describes a set of jobs that run under shared constraints.
 
   Use named arguments to give jobs meaningful names:
-    JobGroup(
-      learner=Job(learner_executable, executor)
-      actor=Job(actor_executable, executor))
+
+  ```
+  JobGroup(
+      learner=Job(learner_executable, executor),
+      actor=Job(actor_executable, executor),
+  )
+  ```
 
   JobGroups provide the gang scheduling concept: Jobs inside them would be
-  scheduled/descheduled simultaneously. Note that scheduler may not always be
+  scheduled / descheduled simultaneously. Note that schedulers may not always be
   able to enforce that.
 
   JobGroups may include more fine grained constraints:
-    JobGroup(
-      learner=Job(tpu_learner_executable, executor)
+
+  ```
+  JobGroup(
+      learner=Job(tpu_learner_executable, executor),
       preprocessor=Job(preprocessor_executable, executor),
-      constraints=[xm.SameMachine()])
+      constraints=[xm.SameMachine()],
+  )
+  ```
 
   To express sophisticated requirements JobGroups can be nested:
-    JobGroup(
-      eval=Job(eval_executable, executor)
+
+  ```
+  JobGroup(
+      eval=Job(eval_executable, executor),
       colocated_learner_and_actor=JobGroup(
-        learner=Job(tpu_learner_executable, executor)
-        actor=Job(actor_executable, executor),
-        constraints=[xm.SameMachine()]))
+          learner=Job(tpu_learner_executable, executor),
+          actor=Job(actor_executable, executor),
+          constraints=[xm.SameMachine()],
+      ),
+  )
+  ```
 
   Attributes:
-    jobs: Job name to job mapping.
+    jobs: A mapping of names to jobs.
     constraints: A list of additional scheduling constraints.
   """
 
@@ -221,18 +234,25 @@ def _work_unit_arguments(
     job: JobType,
     args: Mapping[str, Any],
 ) -> Mapping[str, Any]:
-  """Returns work unit arguments.
+  """Constructs work unit arguments to display them in various UIs.
 
-  Users may choose not to pass `args` to .add method and instead configure
-  command line arguments in the xm.Job directly. In this case we deduce work
-  unit arguments from the job.
+  If users pass `args` to the `.add` method explicitly, we assume `args` to be
+  the sought work unit arguments. If `args` are not passed to `.add`, we deduce
+  work unit arguments implicitly from the `job`s' `args` and `env_vars`.
 
   Args:
-    job: The job to run inside a work unit.
-    args: Explicetly specified arguments (could be empty).
+    job: A job to run inside a work unit.
+    args: Explicitly specified arguments (could be empty).
 
   Returns:
-    Work unit arguments.
+    Depending on the type of the `job` given, can be one of the following:
+
+      - if it's an instance of `Job`, we return `{'args': job.args, 'env_vars':
+        job.env_vars}` with empty values omitted;
+      - if it's an instance of `JobGroup`, we recursively unwind the group while
+        populating corresponding nested dictionaries until we reach standalone
+        `Job`s;
+      - if it's a job generator, we return `{}`.
   """
   if args:
     # In order to give users control on what is shown as work unit arguments we
@@ -254,12 +274,12 @@ def _work_unit_arguments(
 
 
 class WorkUnit(abc.ABC):
-  """WorkUnit is a run of experiment Jobs with specific hyperparameters."""
+  """WorkUnit is a collection of semantically associated `Job`s."""
 
   def __init__(self, experiment: 'Experiment',
                work_unit_id_predictor: id_predictor.Predictor,
                create_task: Callable[[Awaitable[Any]], futures.Future]) -> None:
-    """Initializes Worknit instance.
+    """Initializes a `WorkUnit` instance.
 
     Args:
       experiment: An experiment this work unit belongs to.
@@ -293,22 +313,30 @@ class WorkUnit(abc.ABC):
       job: JobType,
       args: Mapping[str, Any] = immutabledict.immutabledict()
   ) -> Awaitable[None]:
-    """Adds a Job/JobGroup to the work unit.
+    # pyformat: disable
+    """Adds a Job / JobGroup to the work unit.
 
     Only one JobGroup can be added to a WorkUnit. This limitation may be lifted
-    in the future versions.
+    in future versions.
 
     Args:
-      job: Job to add.
-      args: Keyword arguments to be passed to the job. For Job and JobGroup
-        args are recursively expanded. For example:
-          wu.add(JobGroup(agent=Job(...)),
-                 args={'agent': {'args': {'learning_rate': 0.1}}})
+      job: A job or job group to add.
+      args: Keyword arguments to be passed to the job. For Job and JobGroup args
+        are recursively expanded. For example,
+
+        ```
+        wu.add(
+            JobGroup(agent=Job(...)),
+            args={'agent': {'args': {'learning_rate': 0.1}}},
+        )
+        ```
+
         would update `args` field of a job `agent` in the group.
 
     Returns:
       An awaitable that would be fulfilled when the job is launched.
     """
+    # pyformat: enable
     job = _apply_args(job, args)
 
     def launch_job(job: Job) -> Awaitable[None]:
@@ -348,10 +376,10 @@ class WorkUnit(abc.ABC):
     return asyncio.wrap_future(self._create_task(launch()))
 
   async def wait_until_complete(self):
-    """Waits until work unit is in a final state: completed/failed/stopped.
+    """Waits until the work unit is in a final state: completed/failed/stopped.
 
     Raises:
-      WorkUnitError: exception if work unit couldn't complete.
+      WorkUnitError: Exception if the work unit couldn't complete.
     """
     await self._launched_event.wait()
     if self._launched_error:
@@ -364,7 +392,7 @@ class WorkUnit(abc.ABC):
     raise NotImplementedError
 
   async def _wait_until_complete(self) -> None:
-    """Waits until work unit is in a final state: completed/failed/stopped.
+    """Waits until the work unit is in a final state: completed/failed/stopped.
 
     Child classes need to implement this method to support awaiting work units.
 
@@ -446,21 +474,29 @@ class Experiment(abc.ABC):
       job: JobType,
       args: Mapping[str, Any] = immutabledict.immutabledict()
   ) -> Awaitable[WorkUnit]:
-    """Adds a Job/JobGroup to the experiment.
+    # pyformat: disable
+    """Adds a Job / JobGroup to the experiment.
 
     A new WorkUnit is created to run the job.
 
     Args:
-      job: Job to add.
-      args: Keyword arguments to be passed to the job. For Job and JobGroup
-        args are recursively expanded. For example:
-          wu.add(JobGroup(agent=Job(...)),
-                 args={'agent': {'args': {'learning_rate': 0.1}}})
+      job: A Job or JobGroup to add.
+      args: Keyword arguments to be passed to the job. For Job and JobGroup args
+        are recursively expanded. For example,
+
+        ```
+        wu.add(
+            JobGroup(agent=Job(...)),
+            args={'agent': {'args': {'learning_rate': 0.1}}},
+        )
+        ```
+
         would update `args` field of a job `agent` in the group.
 
     Returns:
       An awaitable that would be fulfilled when the job is launched.
     """
+    # pyformat: enable
     work_unit = self._create_work_unit()
 
     async def launch():
