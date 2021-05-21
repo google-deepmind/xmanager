@@ -32,7 +32,7 @@ flags.DEFINE_integer('cores', 1, 'Number of cores. Use 8 if platform==tpu.')
 
 
 def main(_):
-  with xm_local.create_experiment(experiment_name='cifar10') as experiment:
+  with xm_local.create_experiment(experiment_title='cifar10') as experiment:
     if FLAGS.image_path:
       spec = xm.Container(image_path=FLAGS.image_path)
     else:

@@ -51,11 +51,11 @@ def _validate_job_group(job_group: xm.JobGroup) -> None:
 class LocalWorkUnit(xm.WorkUnit):
   """WorkUnit operated by the local backend."""
 
-  def __init__(self, experiment: 'LocalExperiment', experiment_name: str,
+  def __init__(self, experiment: 'LocalExperiment', experiment_title: str,
                work_unit_id_predictor: id_predictor.Predictor,
                create_task: Callable[[Awaitable[Any]], futures.Future]) -> None:
     super().__init__(experiment, work_unit_id_predictor, create_task)
-    self._experiment_name = experiment_name
+    self._experiment_title = experiment_title
     self._local_execution_handles: List[
         local_execution.LocalExecutionHandle] = []
     self._non_local_execution_handles: List[
@@ -69,10 +69,10 @@ class LocalWorkUnit(xm.WorkUnit):
     # modularity, but sacrifices the ability to make cross-executor decisions.
     async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
       self._non_local_execution_handles.extend(
-          caip.launch(self._experiment_name, self.experiment_id,
+          caip.launch(self._experiment_title, self.experiment_id,
                       self.work_unit_id, job_group))
       self._non_local_execution_handles.extend(
-          kubernetes.launch(self._experiment_name, self.experiment_id,
+          kubernetes.launch(self._experiment_title, self.experiment_id,
                             self.work_unit_id, job_group))
       self._local_execution_handles.extend(await
                                            local_execution.launch(job_group))
@@ -101,14 +101,14 @@ class LocalExperiment(xm.Experiment):
   """Experiment contains a family of jobs that run with the local scheduler."""
 
   _id: int
-  _experiment_name: str
+  _experiment_title: str
   _work_units: List[LocalWorkUnit]
 
-  def __init__(self, experiment_name: str) -> None:
+  def __init__(self, experiment_title: str) -> None:
     super().__init__()
     # To distinguish local job names until we have a local database.
     self._id = int(time.time() * 10**3)
-    self._experiment_name = experiment_name
+    self._experiment_title = experiment_title
     self._work_units = []
 
   def package(
@@ -119,7 +119,7 @@ class LocalExperiment(xm.Experiment):
     ]
 
   def _create_work_unit(self) -> LocalWorkUnit:
-    work_unit = LocalWorkUnit(self, self._experiment_name,
+    work_unit = LocalWorkUnit(self, self._experiment_title,
                               self._work_unit_id_predictor, self._create_task)
     self._work_units.append(work_unit)
     return work_unit
@@ -148,6 +148,6 @@ class LocalExperiment(xm.Experiment):
     return len(self._work_units)
 
 
-def create_experiment(experiment_name: str) -> xm.Experiment:
+def create_experiment(experiment_title: str) -> xm.Experiment:
   """Create Experiment."""
-  return LocalExperiment(experiment_name)
+  return LocalExperiment(experiment_title)

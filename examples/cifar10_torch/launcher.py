@@ -37,7 +37,7 @@ flags.DEFINE_integer('gpus_per_node', 2, 'Number of GPUs per node.')
 @xm.run_in_asyncio_loop
 async def main(_):
   async with xm_local.create_experiment(
-      experiment_name='cifar10') as experiment:
+      experiment_title='cifar10') as experiment:
     if FLAGS.image_path:
       spec = xm.Container(image_path=FLAGS.image_path)
     else:

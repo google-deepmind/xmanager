@@ -79,7 +79,7 @@ steps:
     from xmanager import xm
     from xmanager import xm_local
 
-    with xm_local.create_experiment(experiment_name='cifar10') as experiment:
+    with xm_local.create_experiment(experiment_title='cifar10') as experiment:
     ```
 
 2. Define specifications of executables you want to run.

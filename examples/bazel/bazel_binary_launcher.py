@@ -26,7 +26,8 @@ from xmanager import xm_local
 
 def main(argv: Sequence[str]) -> None:
   del argv
-  with xm_local.create_experiment(experiment_name='bazel_binary') as experiment:
+  with xm_local.create_experiment(
+      experiment_title='bazel_binary') as experiment:
     [executable] = experiment.package([
         xm.Packageable(
             executable_spec=xm.BazelBinary(

@@ -50,11 +50,11 @@ class Client:
       api_client = k8s_client.ApiClient()
     self.api_client = api_client
 
-  def launch(self, experiment_name: str, experiment_id: int, work_unit_id: int,
+  def launch(self, experiment_title: str, experiment_id: int, work_unit_id: int,
              jobs: Sequence[xm.Job]) -> List[k8s_client.V1Job]:
     """Launches jobs on Kubernetes."""
     batch_jobs = []
-    service = f'{experiment_name}-{experiment_id}'
+    service = f'{experiment_title}-{experiment_id}'
     domains = [
         f'workerpool{i}.{service}.default.svc.cluster.local:2222'
         for i in range(len(jobs))
@@ -86,7 +86,7 @@ class Client:
       k8s_job = k8s_client.V1Job()
       # TODO: Replace with xm.Job identity.
       k8s_job.metadata = k8s_client.V1ObjectMeta(
-          name=f'{experiment_name}.{experiment_id}.{work_unit_id}.{i}')
+          name=f'{experiment_title}.{experiment_id}.{work_unit_id}.{i}')
       k8s_job.spec = k8s_client.V1JobSpec(
           template=k8s_client.V1PodTemplateSpec(
               metadata=k8s_client.V1ObjectMeta(
@@ -145,7 +145,7 @@ class KubernetesHandle(local_execution.ExecutionHandle):
 
 
 # Must act on all jobs with `local_executors.Kubernetes` executor.
-def launch(experiment_name: str, experiment_id: int, work_unit_id: int,
+def launch(experiment_title: str, experiment_id: int, work_unit_id: int,
            job_group: xm.JobGroup) -> List[KubernetesHandle]:
   """Launch K8s jobs in the job_group and return a handler."""
   jobs = utils.collect_jobs_by_filter(job_group, _kubernetes_job_predicate)
@@ -153,7 +153,7 @@ def launch(experiment_name: str, experiment_id: int, work_unit_id: int,
   if not jobs:
     return []
   k8_jobs = client().launch(
-      experiment_name=experiment_name,
+      experiment_title=experiment_title,
       experiment_id=experiment_id,
       work_unit_id=work_unit_id,
       jobs=jobs,
