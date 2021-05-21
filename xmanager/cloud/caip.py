@@ -181,10 +181,10 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   for resource, value in resources.task_requirements.items():
     if xm_resources.is_gpu(resource):
       spec['acceleratorType'] = 'nvidia_tesla_' + str(resource).lower()
-      spec['acceleratorCount'] = str(value)
+      spec['acceleratorCount'] = f'{value:g}'
     elif xm_resources.is_tpu(resource):
       spec['acceleratorType'] = _CLOUD_TPU_ACCELERATOR_TYPES[resource]
-      spec['acceleratorCount'] = str(value)
+      spec['acceleratorCount'] = f'{value:g}'
   return spec
 
 

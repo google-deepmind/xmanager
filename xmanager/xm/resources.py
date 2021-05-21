@@ -17,7 +17,12 @@ Various classes defined to support resources specification for jobs.
 """
 
 import enum
-from typing import Dict, MutableMapping
+import functools
+import operator
+import re
+from typing import Any, Dict, MutableMapping, Optional, Tuple, Union
+
+from xmanager.xm import pattern_matching
 
 
 class ResourceType(enum.Enum):
@@ -118,14 +123,6 @@ _GPU_RESOURCES = (
 )
 
 
-def is_gpu(resource_type: ResourceType) -> bool:
-  return resource_type in _GPU_RESOURCES
-
-
-def is_tpu(resource_type: ResourceType) -> bool:
-  return resource_type in _TPU_RESOURCES
-
-
 def resource_type_by_name(resource_name: str) -> ResourceType:
   """Returns a ResourceType corresponding to the given name.
 
@@ -140,24 +137,122 @@ def resource_type_by_name(resource_name: str) -> ResourceType:
   return ResourceType[resource_name.upper()]
 
 
-class JobRequirements:
-  """Describes the resource requirements of a Job."""
+def is_gpu(resource_type: ResourceType) -> bool:
+  return resource_type in _GPU_RESOURCES
 
-  def __init__(self, **resources: float) -> None:
+
+def is_tpu(resource_type: ResourceType) -> bool:
+  return resource_type in _TPU_RESOURCES
+
+
+class InvalidTpuTopologyError(Exception):
+  """An unrecognized TPU topology has been provided."""
+
+
+class Topology:
+  """Accelerator topology configuration.
+
+  Describes accelerator interconnection. For example could be a TPU topology or
+  several GPUs connected with NVLink. Topologies have a form of 'NxM_suffix'
+  where N & M are the number of accelerators across the dimension and suffix
+  corresponds to a specific interconnect type. Number of dimensions may vary.
+
+  Examples of valid topologies:
+    '1' - a single device.
+    '4' - 4 GPUs on one host.
+    '4x4' - A 4x4 TPU grid.
+  """
+
+  def __init__(self, name: str) -> None:
+    if not re.fullmatch('([\\d]+x?)+(_(un)?twisted)?', name):
+      raise InvalidTpuTopologyError(f'Invalid TPU topology: {name}.')
+
+    self._name = name
+
+    dimensions_str = name.split('_')[0]
+    self._dimensions = list(map(int, dimensions_str.split('x')))
+
+  @property
+  def chip_count(self) -> int:
+    """Returns the number of chips of the TPU topology."""
+    return functools.reduce(operator.mul, self._dimensions)
+
+  @property
+  def name(self) -> str:
+    """Returns the topology as a string."""
+    return self._name
+
+
+ResourceQuantity = Union[int, float, str, Topology]
+
+
+def _parse_resource_quantity(
+    value: ResourceQuantity) -> Tuple[float, Optional[Topology]]:
+  """Parses a string representation of a resource quantity."""
+
+  def parse_string(value: str):
+    if 'x' in value:
+      topology = Topology(value)
+      return topology.chip_count, topology
+    else:
+      # TODO(b/182137853) Parse SI suffixes, like GiB.
+      return float(value), None
+
+  def parse_topology(topology: Topology):
+    return topology.chip_count, topology
+
+  def parse_number(value: Any):
+    return float(value), None
+
+  return pattern_matching.match(parse_string, parse_topology, parse_number)(
+      value)
+
+
+class JobRequirements:
+  """Describes the resource requirements of a Job.
+
+  Attribures:
+    task_requirements: Amount of resources needed for a single task within a
+      job.
+    accelerator: The accelearator the jobs uses, if there is one. Jobs using
+      multiple accelerators are not supported because different kinds of
+      accelerators are usually not installed on the same host.
+    topology: Accelerator topology, if an accelerator is used.
+  """
+
+  task_requirements: ResourceDict
+  accelerator: Optional[ResourceType]
+  topology: Optional[Topology]
+
+  def __init__(self, **resources: ResourceQuantity) -> None:
     """Define a set of resources.
 
     Args:
       **resources: resource amounts, for example v100=2 or ram=1 * xm.GiB.
     """
+    self.task_requirements = ResourceDict()
+    self.accelerator = None
+    self.topology = None
+    # TODO(b/182137853) Consider checking .accelerator type instead.
     self.is_tpu_job = False
     self.is_gpu_job = False
-    self.task_requirements = ResourceDict()
 
     for resource_name, value in resources.items():
+      scalar, topology = _parse_resource_quantity(value)
       resource = resource_type_by_name(resource_name)
+
+      if is_tpu(resource) or is_gpu(resource):
+        if self.accelerator is not None:
+          raise ValueError('Accelerator already set.')
+        self.accelerator = resource
+        self.topology = topology or Topology(f'{scalar:g}')
+      elif topology is not None:
+        raise ValueError(
+            f'A topology specified for non accelerator resource {resource}.')
+
       if is_tpu(resource):
         self.is_tpu_job = True
-      if is_gpu(resource):
+      elif is_gpu(resource):
         self.is_gpu_job = True
 
-      self.task_requirements[resource] = value
+      self.task_requirements[resource] = scalar

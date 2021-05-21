@@ -169,14 +169,14 @@ def resources_from_executor(
     if xm_resources.is_gpu(resource):
       # TODO: Implement detection of whether an accelerator is an Nvidia
       # GPU. amd.com/gpu is another type of GPU that is not present in GCP.
-      limits['nvidia.com/gpu'] = str(value)
+      limits['nvidia.com/gpu'] = f'{value:g}'
     elif xm_resources.is_tpu(resource):
       pass
     else:
       # Converts resource amount to a string accepted by Kubernetes:
       # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
       # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
-      limits[str(resource).lower()] = str(value)
+      limits[str(resource).lower()] = f'{value:.15g}'
 
   return k8s_client.V1ResourceRequirements(limits=limits)
 

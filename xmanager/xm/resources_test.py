@@ -14,6 +14,7 @@
 """Tests for xmanager.xm.resources."""
 
 import unittest
+from absl.testing import parameterized
 
 from xmanager import xm
 from xmanager.xm import resources
@@ -50,6 +51,35 @@ class ResourceDictTest(unittest.TestCase):
   def test_job_requirements_unknown_key(self):
     with self.assertRaises(KeyError):
       JobRequirements(cpu=0.5 * xm.vCPU, upc=2)
+
+
+class TopologyTest(parameterized.TestCase):
+
+  @parameterized.parameters(('2', 2), ('4x4', 16), ('2x3x5', 30),
+                            ('4x4_twisted', 16))
+  def test_resource_type_by_name(self, topology, chip_count):
+    self.assertEqual(resources.Topology(topology).chip_count, chip_count)
+
+  def test_invalid_topology(self):
+    with self.assertRaises(resources.InvalidTpuTopologyError):
+      resources.Topology('euclidian')
+
+
+class JobRequirementsTest(parameterized.TestCase):
+
+  def test_cpu_job(self):
+    requirements = resources.JobRequirements(cpu=1.2, RAM=1 * xm.GiB)
+    self.assertEqual(requirements.task_requirements[resources.ResourceType.CPU],
+                     1.2)
+    self.assertEqual(requirements.task_requirements[resources.ResourceType.RAM],
+                     1 * xm.GiB)
+    self.assertIsNone(requirements.accelerator)
+    self.assertIsNone(requirements.topology)
+
+  def test_tpu_job(self):
+    requirements = resources.JobRequirements(v3='4x4')
+    self.assertEqual(requirements.accelerator, resources.ResourceType.V3)
+    self.assertEqual(requirements.topology.name, '4x4')
 
 
 if __name__ == '__main__':
