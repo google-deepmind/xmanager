@@ -24,6 +24,7 @@ from concurrent import futures
 import copy
 import functools
 import inspect
+import queue
 import threading
 from typing import Any, Awaitable, Callable, Dict, Iterable, List, Mapping, Optional, Union
 
@@ -449,8 +450,8 @@ class Experiment(abc.ABC):
 
   # An event loop in which job generators would be run.
   _event_loop: asyncio.AbstractEventLoop
-  # A list of background tasks that launch work units.
-  _running_tasks: List[futures.Future]
+  # A queue of background tasks that launch work units.
+  _running_tasks: queue.Queue
   # Work unit ID predictor.
   _work_unit_id_predictor: id_predictor.Predictor
 
@@ -461,7 +462,7 @@ class Experiment(abc.ABC):
 
   def _enter(self) -> None:
     """Initializes internal state on context manager enter."""
-    self._running_tasks = []
+    self._running_tasks = queue.Queue()
     self._work_unit_id_predictor = id_predictor.Predictor(1 +
                                                           self.work_unit_count)
 
@@ -479,10 +480,12 @@ class Experiment(abc.ABC):
     self._enter()
     return self
 
-  def __exit__(self, exc_type, exc_value, traceback):
-    for task in self._running_tasks:
-      task.result()
+  def _wait_for_tasks(self):
+    while not self._running_tasks.empty():
+      self._running_tasks.get_nowait().result()
 
+  def __exit__(self, exc_type, exc_value, traceback):
+    self._wait_for_tasks()
     self._event_loop.call_soon_threadsafe(self._event_loop.stop)
     self._event_loop_thread.join()
 
@@ -491,9 +494,12 @@ class Experiment(abc.ABC):
     self._enter()
     return self
 
+  async def _await_for_tasks(self):
+    while not self._running_tasks.empty():
+      await asyncio.wrap_future(self._running_tasks.get_nowait())
+
   async def __aexit__(self, exc_type, exc_value, traceback):
-    for task in self._running_tasks:
-      await asyncio.wrap_future(task)
+    await self._await_for_tasks()
 
   @abc.abstractmethod
   def package(self,
@@ -543,7 +549,7 @@ class Experiment(abc.ABC):
 
   def _create_task(self, task: Awaitable[Any]) -> futures.Future:
     future = asyncio.run_coroutine_threadsafe(task, loop=self._event_loop)
-    self._running_tasks.append(future)
+    self._running_tasks.put_nowait(future)
     return future
 
   @property

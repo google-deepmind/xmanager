@@ -182,10 +182,14 @@ class LocalExperiment(xm.Experiment):
       self._create_task(work_unit.wait_for_local_jobs(is_exit_abrupt))
 
   def __exit__(self, exc_type, exc_value, traceback):
+    # Flush `.add` calls.
+    self._wait_for_tasks()
     self._wait_for_local_jobs(exc_value is not None)
     return super().__exit__(exc_type, exc_value, traceback)
 
   async def __aexit__(self, exc_type, exc_value, traceback):
+    # Flush `.add` calls.
+    await self._await_for_tasks()
     self._wait_for_local_jobs(exc_value is not None)
     return await super().__aexit__(exc_type, exc_value, traceback)
 
