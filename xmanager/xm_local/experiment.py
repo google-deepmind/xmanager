@@ -125,11 +125,6 @@ class LocalWorkUnit(xm.WorkUnit):
       await asyncio.gather(
           *[handle.wait() for handle in self._local_execution_handles])
 
-  @property
-  def job_count(self) -> int:
-    return len(self._local_execution_handles) + len(
-        self._non_local_execution_handles)
-
   def stop(self) -> None:
     """Initiate the process to stop the work unit from running.
 

@@ -19,7 +19,7 @@ from xmanager.xm import core
 
 
 class TestWorkUnit(core.WorkUnit):
-  """A test version of a WorkUnit with abstract methods implemented."""
+  """A test version of WorkUnit with abstract methods implemented."""
 
   def __init__(self, experiment, work_unit_id_predictor, create_task,
                launched_jobs) -> None:
@@ -35,13 +35,9 @@ class TestWorkUnit(core.WorkUnit):
     del args  # Unused.
     self._launched_jobs.extend(job_group.jobs.values())
 
-  @property
-  def job_count(self) -> int:
-    return len(self._launched_jobs)
-
 
 class TestExperiment(core.Experiment):
-  """A test version of an Experiment with abstract methods implemented."""
+  """A test version of Experiment with abstract methods implemented."""
 
   constraints: List[core.JobType]
 
@@ -70,6 +66,19 @@ class TestExperiment(core.Experiment):
   @property
   def work_units(self):
     return self._work_units
+
+  @property
+  def experiment_id(self) -> int:
+    return 1
+
+
+class TestExecutable(core.Executable):
+  """A test version of Executable with abstract methods implemented."""
+  counter = 0
+
+  def __init__(self):
+    super().__init__(name=f'{TestExecutable.counter}')
+    TestExecutable.counter += 1
 
 
 class TestExecutor(core.Executor):

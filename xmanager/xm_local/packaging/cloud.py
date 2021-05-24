@@ -71,7 +71,8 @@ def _package_container(packageable: xm.Packageable,
   gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
   if container.image_path.startswith(gcr_project_prefix):
     return local_executables.GoogleContainerRegistryImage(
-        container.image_path,
+        name=packageable.executable_spec.name,
+        image_path=container.image_path,
         args=packageable.args,
         env_vars=packageable.env_vars,
     )
@@ -97,6 +98,7 @@ def _package_container(packageable: xm.Packageable,
   print(f'Pushing {push_image_tag}...')
   client.images.push(push_image_tag)
   return local_executables.GoogleContainerRegistryImage(
+      name=packageable.executable_spec.name,
       image_path=push_image_tag,
       args=packageable.args,
       env_vars=packageable.env_vars,
@@ -112,7 +114,8 @@ def _package_python_container(
       build_image.build(python_container, packageable.args,
                         packageable.env_vars, push_image_tag))
   return local_executables.GoogleContainerRegistryImage(
-      image,
+      name=packageable.executable_spec.name,
+      image_path=image,
       args=[],
       env_vars={},
   )

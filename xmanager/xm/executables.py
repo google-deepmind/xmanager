@@ -13,11 +13,17 @@
 # limitations under the License.
 """Definition of shared executable specifications."""
 
+import os
+import re
 from typing import List, NamedTuple, Optional, Union
 
 import attr
 from xmanager.xm import core
 from xmanager.xm import utils
+
+
+def _name_from_path(path: str) -> str:
+  return re.sub('\\W', '_', os.path.basename(path.rstrip(os.sep)))
 
 
 class ModuleName(NamedTuple):
@@ -67,6 +73,10 @@ class PythonContainer(core.ExecutableSpec):
   base_image: Optional[str] = None
   docker_instructions: Optional[List[str]] = None
 
+  @property
+  def name(self) -> str:
+    return _name_from_path(self.path)
+
 
 @attr.s(auto_attribs=True)
 class Container(core.ExecutableSpec):
@@ -77,12 +87,20 @@ class Container(core.ExecutableSpec):
 
   image_path: str
 
+  @property
+  def name(self) -> str:
+    return _name_from_path(self.image_path)
+
 
 @attr.s(auto_attribs=True)
 class Binary(core.ExecutableSpec):
   """A prebuilt executable program."""
 
   path: str
+
+  @property
+  def name(self) -> str:
+    return _name_from_path(self.path)
 
 
 @attr.s(auto_attribs=True)
@@ -95,6 +113,10 @@ class BazelContainer(core.ExecutableSpec):
 
   label: str
 
+  @property
+  def name(self) -> str:
+    return _name_from_path(self.label)
+
 
 @attr.s(auto_attribs=True)
 class BazelBinary(core.ExecutableSpec):
@@ -105,3 +127,7 @@ class BazelBinary(core.ExecutableSpec):
   """
 
   label: str
+
+  @property
+  def name(self) -> str:
+    return _name_from_path(self.label)

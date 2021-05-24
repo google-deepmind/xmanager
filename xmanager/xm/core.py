@@ -44,14 +44,26 @@ class ExecutableSpec(abc.ABC):
   to be used in a Job.
   """
 
+  @property
+  @abc.abstractmethod
+  def name(self) -> str:
+    raise NotImplementedError
 
+
+@attr.s(auto_attribs=True)
 class Executable(abc.ABC):
   """Executable describes the final location of a packaged executable spec.
 
   An executable depends on the executable specification and the executor
   specification. Experiment's implementation knows how to handle each type of
   executable.
+
+  Attributes:
+      name: An automatically populated name for the executable. Used for
+          assigning default names to `Job`s.
   """
+
+  name: str
 
 
 class ExecutorSpec(abc.ABC):
@@ -100,8 +112,8 @@ class Job:
     executable: What to run -- one of `xm.Experiment.package` results.
     executor: Where to run -- one of `xm.Executor` subclasses.
     name: Name of the job. Must be unique within the context (work unit). By
-      default '_{job_index}' is assigned. Used for naming related entities such
-      as newly created containers or hostnames.
+      default it is constructed from the executable. Used for naming related
+      entities such as newly created containers.
     args: Command line arguments to pass.
     env_vars: Environment variables to apply.
   """
@@ -210,8 +222,8 @@ def _apply_args_to_job_group(job_group: JobGroup, args: Mapping[str, Any]):
     job_group = copy.copy(job_group)
 
     job_group.jobs = {
-        job_name: _apply_args(job, args.get(job_name, {}))
-        for job_name, job in job_group.jobs.items()
+        key: _apply_args(job, args.get(key, {}))
+        for key, job in job_group.jobs.items()
     }
 
   return job_group
@@ -305,6 +317,38 @@ def _work_unit_arguments(
   return deduce_args(job)
 
 
+def _populate_job_names(job: JobType) -> JobType:
+  """Assigns default names to the given job(s).
+
+  Args:
+      job: A `Job` / `JobGroup` to populate names for.
+
+  Returns:
+      Job(s) with `name`(s) populated (if they were absent).
+  """
+
+  def apply_to_job(target: Job):
+    if target.name is None:
+      target = copy.copy(target)
+      target.name = target.executable.name
+    return target
+
+  def apply_to_job_group(target: JobGroup):
+    target = copy.copy(target)
+    target.jobs = {key: matcher(job) for key, job in target.jobs.items()}
+    return target
+
+  def ignore_unknown(target: Any):
+    return target
+
+  matcher = pattern_matching.match(
+      apply_to_job,
+      apply_to_job_group,
+      ignore_unknown,
+  )
+  return matcher(job)
+
+
 class WorkUnit(abc.ABC):
   """WorkUnit is a collection of semantically associated `Job`s."""
 
@@ -370,7 +414,7 @@ class WorkUnit(abc.ABC):
     """
     # pyformat: enable
     job = _apply_args(job, args)
-    # TODO: Populate job names.
+    job = _populate_job_names(job)
 
     def launch_job(job: Job) -> Awaitable[None]:
       return self._launch_job_group(
@@ -435,10 +479,6 @@ class WorkUnit(abc.ABC):
     """
     raise NotImplementedError
 
-  @property
-  def job_count(self) -> int:
-    raise NotImplementedError
-
   def stop(self) -> None:
     """Initiate the process to stop the work unit from running.
 
@@ -454,6 +494,20 @@ class WorkUnit(abc.ABC):
   def get_status(self) -> WorkUnitStatus:
     """Gets the status of this work unit."""
     raise NotImplementedError
+
+  def get_full_job_name(self, job_name: str) -> str:
+    """Given `Job.name` constructs its full name.
+
+    The primary use case is addressing containers -- full names serve as
+    hostnames.
+
+    Args:
+        job_name: Short name of a job.
+
+    Returns:
+        Full name of the job.
+    """
+    return f'{self.experiment_id}_{self.work_unit_id}_{job_name}'
 
 
 class Experiment(abc.ABC):

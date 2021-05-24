@@ -31,14 +31,22 @@ def _package_container(packageable: xm.Packageable,
     raise ValueError(f'{container.image_path} does not exist on this machine')
   image_id = docker_adapter.instance().load_image(container.image_path)
   return local_executables.LoadedContainerImage(
-      image_id=image_id, args=packageable.args, env_vars=packageable.env_vars)
+      name=packageable.executable_spec.name,
+      image_id=image_id,
+      args=packageable.args,
+      env_vars=packageable.env_vars,
+  )
 
 
 def _package_binary(packageable: xm.Packageable, binary: executables.Binary):
   if not os.path.exists(binary.path):
     raise ValueError(f'{binary.path} does not exist on this machine')
   return local_executables.LocalBinary(
-      path=binary.path, args=packageable.args, env_vars=packageable.env_vars)
+      name=packageable.executable_spec.name,
+      path=binary.path,
+      args=packageable.args,
+      env_vars=packageable.env_vars,
+  )
 
 
 def _package_python_container(packageable: xm.Packageable,
@@ -47,7 +55,8 @@ def _package_python_container(packageable: xm.Packageable,
   image_name = os.path.basename(py_executable.path)
   image_id = build_image.build(py_executable, packageable.args,
                                packageable.env_vars, image_name)
-  return local_executables.LoadedContainerImage(image_id=image_id)
+  return local_executables.LoadedContainerImage(
+      name=packageable.executable_spec.name, image_id=image_id)
 
 
 def _package_bazel_container(
@@ -57,7 +66,10 @@ def _package_bazel_container(
   assert len(paths) == 1
   image_id = docker_adapter.instance().load_image(paths[0])
   return local_executables.LoadedContainerImage(
-      image_id=image_id, args=packageable.args, env_vars=packageable.env_vars)
+      name=packageable.executable_spec.name,
+      image_id=image_id,
+      args=packageable.args,
+      env_vars=packageable.env_vars)
 
 
 def _package_bazel_binary(packageable: xm.Packageable,
@@ -65,7 +77,11 @@ def _package_bazel_binary(packageable: xm.Packageable,
   paths = bazel_client.build_single_target(binary.label)
   assert len(paths) == 1
   return local_executables.LocalBinary(
-      path=paths[0], args=packageable.args, env_vars=packageable.env_vars)
+      name=packageable.executable_spec.name,
+      path=paths[0],
+      args=packageable.args,
+      env_vars=packageable.env_vars,
+  )
 
 
 def _throw_on_unknown_executable(packageable: xm.Packageable, executable: Any):

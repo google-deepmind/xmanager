@@ -25,7 +25,9 @@ async def make_me_a_sandwich() -> str:
 
 def construct_job(args):
   return core.Job(
-      executable=core.Executable(), executor=testing.TestExecutor(), args=args)
+      executable=testing.TestExecutable(),
+      executor=testing.TestExecutor(),
+      args=args)
 
 
 class UtilsTest(unittest.TestCase):

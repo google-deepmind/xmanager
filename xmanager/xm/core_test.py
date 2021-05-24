@@ -34,7 +34,11 @@ class ExperimentTest(unittest.TestCase):
   def test_single_job_launch(self):
     experiment = testing.TestExperiment()
     with experiment:
-      job = core.Job(core.Executable(), testing.TestExecutor(), args={})
+      job = core.Job(
+          testing.TestExecutable(),
+          testing.TestExecutor(),
+          args={},
+          name='name')
       experiment.add(job)
 
     self.assertEqual(experiment._launched_jobs, [job])
@@ -43,9 +47,15 @@ class ExperimentTest(unittest.TestCase):
     experiment = testing.TestExperiment()
     with experiment:
       foo_job = core.Job(
-          core.Executable(), testing.TestExecutor(), args={'foo': 1})
+          testing.TestExecutable(),
+          testing.TestExecutor(),
+          args={'foo': 1},
+          name='1')
       bar_job = core.Job(
-          core.Executable(), testing.TestExecutor(), args={'bar': 2})
+          testing.TestExecutable(),
+          testing.TestExecutor(),
+          args={'bar': 2},
+          name='2')
       experiment.add(core.JobGroup(foo=foo_job, bar=bar_job))
 
     self.assertEqual(experiment._launched_jobs, [foo_job, bar_job])
@@ -53,7 +63,11 @@ class ExperimentTest(unittest.TestCase):
   def test_job_generator_launch(self):
     experiment = testing.TestExperiment()
     with experiment:
-      job = core.Job(core.Executable(), testing.TestExecutor(), args={})
+      job = core.Job(
+          testing.TestExecutable(),
+          testing.TestExecutor(),
+          args={},
+          name='name')
 
       async def job_generator(work_unit: core.WorkUnit):
         work_unit.add(job)
@@ -83,7 +97,7 @@ class ExperimentTest(unittest.TestCase):
       experiment.add(
           core.JobGroup(
               foo=core.Job(
-                  core.Executable(),
+                  testing.TestExecutable(),
                   testing.TestExecutor(),
                   args={
                       'x': 1,
@@ -91,7 +105,9 @@ class ExperimentTest(unittest.TestCase):
                   },
                   env_vars={'EDITOR': 'vi'}),
               bar=core.Job(
-                  core.Executable(), testing.TestExecutor(), args=['--bar=1'])),
+                  testing.TestExecutable(),
+                  testing.TestExecutor(),
+                  args=['--bar=1'])),
           args={
               'foo': {
                   'args': {
@@ -161,7 +177,7 @@ class ExperimentTest(unittest.TestCase):
     experiment = testing.TestExperiment()
     async with experiment:
       experiment.add(
-          core.Job(core.Executable(), testing.TestExecutor(), args={}))
+          core.Job(testing.TestExecutable(), testing.TestExecutor(), args={}))
       await experiment.work_units[0].wait_until_complete()
 
   @utils.run_in_asyncio_loop
@@ -172,6 +188,15 @@ class ExperimentTest(unittest.TestCase):
         experiment.add(failing_job_generator)
         with self.assertRaises(core.WorkUnitError):
           await experiment.work_units[0].wait_until_complete()
+
+  @utils.run_in_asyncio_loop
+  async def test_get_full_job_name(self):
+
+    async def generator(work_unit):
+      self.assertEqual(work_unit.get_full_job_name('name'), '1_1_name')
+
+    async with testing.TestExperiment() as experiment:
+      experiment.add(generator)
 
 
 if __name__ == '__main__':

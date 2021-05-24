@@ -26,7 +26,7 @@ class CaipTest(unittest.TestCase):
 
   def test_get_machine_spec_default(self):
     job = xm.Job(
-        executable=local_executables.GoogleContainerRegistryImage(''),
+        executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Caip(resources=xm.JobRequirements()),
         args={})
     machine_spec = caip.get_machine_spec(job)
@@ -34,7 +34,7 @@ class CaipTest(unittest.TestCase):
 
   def test_get_machine_spec_cpu(self):
     job = xm.Job(
-        executable=local_executables.GoogleContainerRegistryImage(''),
+        executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Caip(
             resources=xm.JobRequirements(cpu=20, ram=40)),
         args={})
@@ -43,7 +43,7 @@ class CaipTest(unittest.TestCase):
 
   def test_get_machine_spec_gpu(self):
     job = xm.Job(
-        executable=local_executables.GoogleContainerRegistryImage(''),
+        executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Caip(resources=xm.JobRequirements(p100=2)),
         args={})
     machine_spec = caip.get_machine_spec(job)
@@ -56,7 +56,7 @@ class CaipTest(unittest.TestCase):
 
   def test_get_machine_spec_tpu(self):
     job = xm.Job(
-        executable=local_executables.GoogleContainerRegistryImage(''),
+        executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Caip(resources=xm.JobRequirements(v3=8)),
         args={})
     machine_spec = caip.get_machine_spec(job)
