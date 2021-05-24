@@ -94,15 +94,21 @@ JobType = Union['Job', 'JobGroup', JobGeneratorType]
 
 @attr.s(auto_attribs=True)
 class Job:
-  """Job describes a unique unit of computation that is run only once.
+  """Job describes a unit of computation to be run.
 
-  Jobs have unique identities, so they can only be run once. To launch an
-  identical job, a new job should be constructed instead with the same
-  arguments.
+  Attributes:
+    executable: What to run -- one of `xm.Experiment.package` results.
+    executor: Where to run -- one of `xm.Executor` subclasses.
+    name: Name of the job. Must be unique within the context (work unit). By
+      default '_{job_index}' is assigned. Used for naming related entities such
+      as newly created containers or hostnames.
+    args: Command line arguments to pass.
+    env_vars: Environment variables to apply.
   """
 
   executable: Executable
   executor: Executor
+  name: Optional[str] = None
   args: ArgsType = attr.Factory(list)
   env_vars: Dict[str, str] = attr.Factory(dict)
 
@@ -355,6 +361,7 @@ class WorkUnit(abc.ABC):
     """
     # pyformat: enable
     job = _apply_args(job, args)
+    # TODO: Populate job names.
 
     def launch_job(job: Job) -> Awaitable[None]:
       return self._launch_job_group(
