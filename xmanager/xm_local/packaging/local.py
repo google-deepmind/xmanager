@@ -27,15 +27,23 @@ from xmanager.xm_local import executables as local_executables
 
 def _package_container(packageable: xm.Packageable,
                        container: executables.Container) -> xm.Executable:
-  if not os.path.exists(container.image_path):
-    raise ValueError(f'{container.image_path} does not exist on this machine')
-  image_id = docker_adapter.instance().load_image(container.image_path)
-  return local_executables.LoadedContainerImage(
-      name=packageable.executable_spec.name,
-      image_id=image_id,
-      args=packageable.args,
-      env_vars=packageable.env_vars,
-  )
+  """Packages a container for local execution."""
+  instance = docker_adapter.instance()
+  image_id = None
+  if os.path.exists(container.image_path):
+    image_id = instance.load_image(container.image_path)
+  elif instance.is_registry_label(container.image_path):
+    image_id = instance.pull_image(container.image_path)
+  if image_id is not None:
+    return local_executables.LoadedContainerImage(
+        name=packageable.executable_spec.name,
+        image_id=image_id,
+        args=packageable.args,
+        env_vars=packageable.env_vars,
+    )
+  else:
+    raise ValueError(
+        f'{container.image_path} is found neither locally nor remotely')
 
 
 def _package_binary(packageable: xm.Packageable, binary: executables.Binary):
