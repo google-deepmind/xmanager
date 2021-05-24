@@ -215,6 +215,22 @@ _apply_args = pattern_matching.match(
     pattern_matching.Case([JobGeneratorType, Any], lambda other, args: other))
 
 
+class WorkUnitStatus(abc.ABC):
+  """The status of a work unit."""
+
+  def is_running(self) -> bool:
+    raise NotImplementedError
+
+  def is_succeeded(self) -> bool:
+    raise NotImplementedError
+
+  def is_failed(self) -> bool:
+    raise NotImplementedError
+
+  def error(self) -> str:
+    raise NotImplementedError
+
+
 class WorkUnitError(RuntimeError):
   """Work unit could not be completed."""
 
@@ -406,6 +422,22 @@ class WorkUnit(abc.ABC):
   def job_count(self) -> int:
     raise NotImplementedError
 
+  def stop(self) -> None:
+    """Initiate the process to stop the work unit from running.
+
+    This method will synchronously make a request for the work unit to stop.
+    However, the method does not actually wait for the work unit to be in a
+    terminal state.
+
+    Use self.wait_until_complete() after self.stop() to guarantee the work unit
+    is stopped.
+    """
+    raise NotImplementedError
+
+  def get_status(self) -> Any:
+    """Gets the status of this work unit."""
+    raise NotImplementedError
+
 
 class Experiment(abc.ABC):
   """Experiment contains a family of jobs run on the same snapshot of code.
@@ -519,9 +551,26 @@ class Experiment(abc.ABC):
     """Returns how many work units the experiment has."""
     raise NotImplementedError
 
+  @abc.abstractmethod
+  def work_units(self) -> Mapping[int, WorkUnit]:
+    """Returns a mapping from work_unit_id to an instance of the work unit."""
+    raise NotImplementedError
+
 
 # FIXME: Determine base Experiment properties.
 @abc.abstractmethod
 def create_experiment() -> Experiment:
   """Returns a concrete Experiment instance."""
+  raise NotImplementedError
+
+
+@abc.abstractmethod
+def get_experiment(experiment_id: int) -> Experiment:
+  """Returns a Experiment instance associated with this experiment id."""
+  raise NotImplementedError
+
+
+@abc.abstractmethod
+def list_experiments() -> Iterable[Experiment]:
+  """Yields a list of Experiment instances that have been created thus far."""
   raise NotImplementedError

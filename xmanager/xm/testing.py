@@ -47,8 +47,8 @@ class TestExperiment(core.Experiment):
 
   def __init__(self) -> None:
     super().__init__()
-    self.launched_jobs = []
-    self.work_units = []
+    self._launched_jobs = []
+    self._work_units = []
 
   def package(
       self,
@@ -59,13 +59,17 @@ class TestExperiment(core.Experiment):
   def _create_work_unit(self) -> TestWorkUnit:
     """Creates a new WorkUnit instance for the experiment."""
     work_unit = TestWorkUnit(self, self._work_unit_id_predictor,
-                             self._create_task, self.launched_jobs)
-    self.work_units.append(work_unit)
+                             self._create_task, self._launched_jobs)
+    self._work_units.append(work_unit)
     return work_unit
 
   @property
   def work_unit_count(self) -> int:
     return len(self.work_units)
+
+  @property
+  def work_units(self):
+    return self._work_units
 
 
 class TestExecutor(core.Executor):

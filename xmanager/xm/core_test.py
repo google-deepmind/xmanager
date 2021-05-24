@@ -37,7 +37,7 @@ class ExperimentTest(unittest.TestCase):
       job = core.Job(core.Executable(), testing.TestExecutor(), args={})
       experiment.add(job)
 
-    self.assertEqual(experiment.launched_jobs, [job])
+    self.assertEqual(experiment._launched_jobs, [job])
 
   def test_job_group_launch(self):
     experiment = testing.TestExperiment()
@@ -48,7 +48,7 @@ class ExperimentTest(unittest.TestCase):
           core.Executable(), testing.TestExecutor(), args={'bar': 2})
       experiment.add(core.JobGroup(foo=foo_job, bar=bar_job))
 
-    self.assertEqual(experiment.launched_jobs, [foo_job, bar_job])
+    self.assertEqual(experiment._launched_jobs, [foo_job, bar_job])
 
   def test_job_generator_launch(self):
     experiment = testing.TestExperiment()
@@ -60,7 +60,7 @@ class ExperimentTest(unittest.TestCase):
 
       experiment.add(job_generator)
 
-    self.assertEqual(experiment.launched_jobs, [job])
+    self.assertEqual(experiment._launched_jobs, [job])
 
   def test_job_generator_raises(self):
     experiment = testing.TestExperiment()
@@ -107,12 +107,16 @@ class ExperimentTest(unittest.TestCase):
               },
           })
 
-    self.assertEqual(experiment.launched_jobs[0].args, {'x': 3, 'y': 2, 'z': 4})
-    self.assertEqual(experiment.launched_jobs[0].env_vars, {
+    self.assertEqual(experiment._launched_jobs[0].args, {
+        'x': 3,
+        'y': 2,
+        'z': 4
+    })
+    self.assertEqual(experiment._launched_jobs[0].env_vars, {
         'TURBO': 'ON',
         'EDITOR': 'vi'
     })
-    self.assertEqual(experiment.launched_jobs[1].args,
+    self.assertEqual(experiment._launched_jobs[1].args,
                      ['--bar=1', '--spacebar'])
 
   def test_add_runs_asynchronously(self):

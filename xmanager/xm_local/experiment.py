@@ -15,8 +15,11 @@
 
 import asyncio
 from concurrent import futures
+import enum
 import time
 from typing import Any, Awaitable, Callable, Iterable, List, Mapping
+
+import attr
 
 from xmanager import xm
 from xmanager.cloud import caip
@@ -46,6 +49,37 @@ def _validate_job_group(job_group: xm.JobGroup) -> None:
   all_jobs = utils.collect_jobs_by_filter(job_group, lambda _: True)
   for job in all_jobs:
     _EXECUTOR_VALIDATOR(job, job.executor)
+
+
+class LocalWorkUnitStatusEnum(enum.Enum):
+  """Status of a local experiment job."""
+
+  # Work unit was created, but has not terminated yet.
+  RUNNING = 1
+  # Work unit terminated and was successful.
+  COMPLETED = 2
+  # Work unit terminated and was not succesful.
+  FAILED = 3
+
+
+@attr.s(auto_attribs=True)
+class LocalWorkUnitStatus(xm.WorkUnitStatus):
+  """Status of a local experiment job."""
+
+  status: LocalWorkUnitStatusEnum
+  message: str
+
+  def is_running(self) -> bool:
+    return self.status == LocalWorkUnitStatusEnum.RUNNING
+
+  def is_succeeded(self) -> bool:
+    return self.status == LocalWorkUnitStatusEnum.COMPLETED
+
+  def is_failed(self) -> bool:
+    return self.status == LocalWorkUnitStatusEnum.FAILED
+
+  def error(self) -> str:
+    return self.message
 
 
 class LocalWorkUnit(xm.WorkUnit):
@@ -95,6 +129,22 @@ class LocalWorkUnit(xm.WorkUnit):
   def job_count(self) -> int:
     return len(self._local_execution_handles) + len(
         self._non_local_execution_handles)
+
+  def stop(self) -> None:
+    """Initiate the process to stop the work unit from running.
+
+    This method will synchronously make a request for the work unit to stop.
+    However, the method does not actually wait for the work unit to be in a
+    terminal state.
+
+    Use self.wait_until_complete() after self.stop() to guarantee the work unit
+    is stopped.
+    """
+    raise NotImplementedError
+
+  def get_status(self) -> LocalWorkUnitStatus:
+    """Gets the current status of the work unit."""
+    raise NotImplementedError
 
 
 class LocalExperiment(xm.Experiment):
@@ -147,7 +197,22 @@ class LocalExperiment(xm.Experiment):
   def work_unit_count(self) -> int:
     return len(self._work_units)
 
+  @property
+  def work_units(self) -> Mapping[int, LocalWorkUnit]:
+    """Gets work units created via self.add()."""
+    raise NotImplementedError
+
 
 def create_experiment(experiment_title: str) -> xm.Experiment:
   """Create Experiment."""
   return LocalExperiment(experiment_title)
+
+
+def get_experiment(experiment_id: int) -> xm.Experiment:
+  """Returns a Experiment instance associated with this experiment id."""
+  raise NotImplementedError
+
+
+def list_experiments() -> Iterable[xm.Experiment]:
+  """Yields a list of Experiment instances that have been created thus far."""
+  raise NotImplementedError
