@@ -225,16 +225,25 @@ _apply_args = pattern_matching.match(
 class WorkUnitStatus(abc.ABC):
   """The status of a work unit."""
 
+  @abc.abstractmethod
   def is_running(self) -> bool:
     raise NotImplementedError
 
+  @abc.abstractmethod
   def is_succeeded(self) -> bool:
     raise NotImplementedError
 
+  @abc.abstractmethod
   def is_failed(self) -> bool:
     raise NotImplementedError
 
-  def error(self) -> str:
+  @abc.abstractmethod
+  def message(self) -> str:
+    """An optional human-readable message providing context for the status.
+
+    This may take the form of explaining why the work unit is in this state,
+    or any potentially transient errors the work unit may be experiencing.
+    """
     raise NotImplementedError
 
 
@@ -442,7 +451,7 @@ class WorkUnit(abc.ABC):
     """
     raise NotImplementedError
 
-  def get_status(self) -> Any:
+  def get_status(self) -> WorkUnitStatus:
     """Gets the status of this work unit."""
     raise NotImplementedError
 
