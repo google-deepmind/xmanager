@@ -23,7 +23,7 @@ setup(
     author='DeepMind Technologies Limited',
     packages=find_namespace_packages(),
     include_package_data=True,
-    package_data={'': ['*.sh']},
+    package_data={'': ['*.sh', '*.sql']},
     python_requires='>=3.6',
     install_requires=[
         'absl-py',
@@ -36,6 +36,7 @@ setup(
         'google-cloud-storage',
         'humanize',
         'kubernetes',
+        'sqlalchemy==1.2',
         'termcolor',
     ],
     entry_points={
