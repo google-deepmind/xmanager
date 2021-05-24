@@ -15,8 +15,6 @@
 
 from typing import Any, Optional
 
-from docker.utils import utils as docker_utils
-
 from xmanager import xm
 from xmanager.cloud import auth
 from xmanager.cloud import build_image
@@ -77,14 +75,12 @@ def _package_container(packageable: xm.Packageable,
         env_vars=packageable.env_vars,
     )
 
-  repository, tag = docker_utils.parse_repository_tag(container.image_path)
-  if tag is None:
-    tag = 'latest'
-  client = docker_adapter.instance().get_client()
-  print(f'Pulling {repository}:{tag}...')
-  # Without a tag, docker will try to pull every image instead of latest.
-  # From docker>=4.4.0, use client.image.pull(*args, all_tags=False)
-  image = client.images.pull(repository, tag)
+  instance = docker_adapter.instance()
+  client = instance.get_client()
+  print(f'Pulling {container.image_path}...')
+  repository, tag = instance.split_tag(container.image_path)
+  image_id = instance.pull_image(container.image_path)
+  image = client.images.get(image_id)
 
   push_image_tag = _get_push_image_tag(packageable.executor_spec)
   if not push_image_tag:

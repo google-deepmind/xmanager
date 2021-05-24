@@ -14,11 +14,13 @@
 """Convenience adapter for the standard client."""
 
 import functools
-from typing import Mapping, Sequence
+from typing import Mapping, Sequence, Tuple
 
 from absl import logging
 import docker
+from docker import errors
 from docker.models import containers
+from docker.utils import utils
 
 
 @functools.lru_cache()
@@ -39,6 +41,23 @@ class DockerAdapter(object):
 
   def get_client(self) -> docker.DockerClient:
     return self._client
+
+  def is_registry_label(self, label: str) -> bool:
+    try:
+      self._client.images.get_registry_data(label)
+      return True
+    except errors.NotFound:
+      return False
+
+  def split_tag(self, label: str) -> Tuple[str, str]:
+    repository, tag = utils.parse_repository_tag(label)
+    return repository, tag or 'latest'
+
+  def pull_image(self, label: str) -> str:
+    repository, tag = self.split_tag(label)
+    # Without a tag, Docker will try to pull every image instead of latest.
+    # From docker>=4.4.0, use `client.image.pull(*args, all_tags=False)`.
+    return self._client.images.pull(repository, tag=tag).id
 
   def load_image(self, path: str) -> str:
     with open(path, 'rb') as data:

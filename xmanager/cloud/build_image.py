@@ -103,7 +103,7 @@ def build(py_executable: xm.PythonContainer,
                                            FLAGS.use_docker_build_subprocess)
   cloud_build_client = cloud_build.Client()
   cloud_build_client.build_docker_image(dirname, docker_directory, image_name)
-  docker_adapter.instance().get_client().images.pull(image_name)
+  docker_adapter.instance().pull_image(image_name)
   return image_name
 
 
