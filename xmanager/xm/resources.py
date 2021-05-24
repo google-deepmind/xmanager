@@ -195,7 +195,7 @@ def _parse_resource_quantity(
       topology = Topology(value)
       return topology.chip_count, topology
     else:
-      # TODO(b/182137853) Parse SI suffixes, like GiB.
+      # TODO: Parse SI suffixes, like GiB.
       return float(value), None
 
   def parse_topology(topology: Topology):
@@ -233,7 +233,7 @@ class JobRequirements:
     self.task_requirements = ResourceDict()
     self.accelerator = None
     self.topology = None
-    # TODO(b/182137853) Consider checking .accelerator type instead.
+    # TODO: Consider checking .accelerator type instead.
     self.is_tpu_job = False
     self.is_gpu_job = False
 
