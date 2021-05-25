@@ -48,6 +48,7 @@ class LocalExecutionHandle(ExecutionHandle, abc.ABC):
 
 
 async def _throw_on_unknown_executable(
+    get_full_job_name: Callable[[str], str],
     job: xm.Job,
     executable: Any,
 ) -> LocalExecutionHandle:
@@ -73,6 +74,7 @@ class ContainerHandle(LocalExecutionHandle):
 
 
 async def _launch_loaded_container_image(
+    get_full_job_name: Callable[[str], str],
     job: xm.Job,
     executable: executables.LoadedContainerImage,
 ) -> LocalExecutionHandle:
@@ -80,6 +82,7 @@ async def _launch_loaded_container_image(
   args = utils.to_command_line_args(xm.merge_args(executable.args, job.args))
   env_vars = {**executable.env_vars, **job.env_vars}
   container = docker_adapter.instance().run_container(
+      name=get_full_job_name(job.name),
       image_id=executable.image_id,
       args=args,
       env_vars=env_vars,
@@ -104,10 +107,12 @@ class BinaryHandle(LocalExecutionHandle):
 
 
 async def _launch_local_binary(
+    get_full_job_name: Callable[[str], str],
     job: xm.Job,
     executable: executables.LocalBinary,
 ) -> LocalExecutionHandle:
   """Launches a local binary as a detached process."""
+  del get_full_job_name  # Unused.
   args = utils.to_command_line_args(xm.merge_args(executable.args, job.args))
   env_vars = {**executable.env_vars, **job.env_vars}
   process = await asyncio.create_subprocess_exec(
@@ -118,7 +123,8 @@ async def _launch_local_binary(
 # PyType infers the return type of `async` functions without wrapping them with
 # `Awaitable`, so we are overriding the type of `_LOCAL_EXECUTION_ROUTER` to
 # make it right.
-_LocalExecutionRouter = Callable[[xm.Job, Any], Awaitable[LocalExecutionHandle]]
+_LocalExecutionRouter = Callable[[Callable[[str], str], xm.Job, Any],
+                                 Awaitable[LocalExecutionHandle]]
 _LOCAL_EXECUTION_ROUTER: _LocalExecutionRouter = pattern_matching.match(
     _launch_loaded_container_image,
     _launch_local_binary,
@@ -150,7 +156,8 @@ def _local_job_predicate(job: xm.Job) -> bool:
   return isinstance(job.executor, executors.Local)
 
 
-async def launch(job_group: xm.JobGroup) -> List[LocalExecutionHandle]:
+async def launch(get_full_job_name: Callable[[str], str],
+                 job_group: xm.JobGroup) -> List[LocalExecutionHandle]:
   """Launches jobs with `xm_local.Local` executor."""
   # Must act on all jobs with `Local` executor.
   local_jobs = utils.collect_jobs_by_filter(
@@ -158,7 +165,8 @@ async def launch(job_group: xm.JobGroup) -> List[LocalExecutionHandle]:
       _local_job_predicate,
   )
   handles: List[LocalExecutionHandle] = [
-      await _LOCAL_EXECUTION_ROUTER(job, job.executable) for job in local_jobs
+      await _LOCAL_EXECUTION_ROUTER(get_full_job_name, job, job.executable)
+      for job in local_jobs
   ]
   with _local_jobs_lock:
     _local_jobs.extend(handles)

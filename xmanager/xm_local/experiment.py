@@ -107,8 +107,8 @@ class LocalWorkUnit(xm.WorkUnit):
       self._non_local_execution_handles.extend(
           kubernetes.launch(
               str(self.experiment_id), self.get_full_job_name, job_group))
-      self._local_execution_handles.extend(await
-                                           local_execution.launch(job_group))
+      self._local_execution_handles.extend(await local_execution.launch(
+          self.get_full_job_name, job_group))
 
   async def _wait_until_complete(self) -> None:
     try:

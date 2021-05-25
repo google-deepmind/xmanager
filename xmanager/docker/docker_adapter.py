@@ -68,12 +68,14 @@ class DockerAdapter(object):
 
   def run_container(
       self,
+      name: str,
       image_id: str,
       args: Sequence[str],
       env_vars: Mapping[str, str],
   ) -> containers.Container:
     return self._client.containers.run(
         image_id,
+        name=name,
         detach=True,
         remove=True,
         command=args,
