@@ -81,7 +81,6 @@ async def main(_):
             args=hyperparameters,
         )
       work_units.append(await experiment.add(xm.JobGroup(**jobs)))
-      break
     print('Waiting for async launches to return values...')
   for work_unit in work_units:
     await work_unit.wait_until_complete()

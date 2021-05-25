@@ -13,7 +13,6 @@
 # limitations under the License.
 """Client for interacting with Cloud Build."""
 import datetime
-import os
 import tarfile
 import tempfile
 import time
@@ -46,16 +45,6 @@ flags.DEFINE_string('kaniko_cache_ttl', '336h',
                     'Cache ttl to use for kaniko builds.')
 
 
-def get_bucket() -> str:
-  bucket = os.environ.get('BUCKET_NAME', None)
-  if bucket:
-    return bucket
-  raise ValueError(
-      '$BUCKET_NAME is undefined. Run `export BUCKET_NAME=<bucket-name>`, '
-      'replacing <bucket-name> with a Google Cloud Storage bucket. You can '
-      'create a bucket with `gsutil mb -l us-central1 gs://$BUCKET_NAME`.')
-
-
 class Client:
   """Cloud Build Client."""
 
@@ -79,7 +68,7 @@ class Client:
       kaniko_cache_ttl:
     """
     self.project = project or auth.get_project_name()
-    self.bucket = bucket or get_bucket()
+    self.bucket = bucket or auth.get_bucket()
     self.credentials = credentials or auth.get_creds()
     if cloud_build_timeout_seconds is None:
       cloud_build_timeout_seconds = FLAGS.cloud_build_timeout_seconds

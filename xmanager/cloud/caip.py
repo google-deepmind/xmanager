@@ -15,15 +15,16 @@
 
 https://cloud.google.com/ai-platform-unified/docs/reference/rest
 """
-
 import asyncio
 import functools
 import logging
 import math
+import time
 from typing import Any, Dict, List, Optional, Sequence, Union
 
 import attr
-from googleapiclient import discovery
+from google.cloud import aiplatform
+from google.cloud import aiplatform_v1 as aip_v1
 import immutabledict
 
 from xmanager import xm
@@ -78,21 +79,27 @@ def _caip_job_predicate(job: xm.Job) -> bool:
 class Client:
   """Client class for interacting with AI Platform (Unified)."""
 
-  def __init__(self, location: str = _DEFAULT_LOCATION) -> None:
+  def __init__(self,
+               project: Optional[str] = None,
+               location: str = _DEFAULT_LOCATION) -> None:
+    """Create a client.
+
+    Args:
+      project: GCP project ID.
+      location: Location of the API endpoint. Defaults to region us-central1.
+        https://cloud.google.com/vertex-ai/docs/reference/rest#service-endpoint
+    """
     self.location = location
-    self.client = discovery.build(
-        f'{location}-aiplatform',
-        'v1',
-        developerKey=auth.get_api_key(),
-        credentials=auth.get_creds())
-    # Without setting baseUrl, discovery returns API Client that uses the
-    # endpoint `aiplatform.googleapis.com` which is incorrect.
-    # https://cloud.google.com/ai-platform-unified/docs/reference/rest
-    self.client._baseUrl = f'https://{location}-aiplatform.googleapis.com'  # pylint: disable=protected-access
+    self.project = project or auth.get_project_name()
+    # TODO: move staging_bucket when issue is fixed
+    # https://github.com/googleapis/python-aiplatform/pull/421
+    aiplatform.init(
+        project=self.project,
+        location=self.location,
+        staging_bucket=f'gs://{auth.get_bucket()}')
 
   def launch(self, work_unit_name: str, jobs: Sequence[xm.Job]) -> str:
     """Launch jobs on AI Platform (Unified)."""
-    parent = f'projects/{auth.get_project_name()}/locations/{self.location}'
     pools = []
     for job in jobs:
       executable = job.executable
@@ -106,25 +113,25 @@ class Client:
           xm.merge_args(executable.args, job.args))
       env_vars = {**executable.env_vars, **job.env_vars}
       env = [{'name': k, 'value': v} for k, v in env_vars.items()]
-      pool = {
-          'machineSpec': get_machine_spec(job),
-          'containerSpec': {
-              'imageUri': executable.image_path,
-              'args': args,
-              'env': env,
-          },
-          'replica_count': 1,
-      }
       if job.executor.resources.is_tpu_job:
         tpu_runtime_version = 'nightly'  # pylint: disable=unused-variable
         if job.executor.tpu_capability:
           tpu_runtime_version = job.executor.tpu_capability.tpu_runtime_version
-        # TODO: The `tpuTfVersion` field doesn't exist yet in
-        # AI Platform (Unified). This is a placeholder based on the legacy
-        # AI Platform ReplicaConfig.
-        # https://cloud.google.com/ai-platform/training/docs/reference/rest/v1/projects.jobs#ReplicaConfig
-        # pool['tpuTfVersion'] = tpu_runtime_version
-      pools.append(pool)
+      pools.append(
+          aip_v1.WorkerPoolSpec(
+              machine_spec=get_machine_spec(job),
+              container_spec=aip_v1.ContainerSpec(
+                  image_uri=executable.image_path,
+                  args=args,
+                  env=env,
+                  # TODO: The `tpuTfVersion` field doesn't exist
+                  # yet in AI Platform (Unified). This is a placeholder
+                  # based on the legacy AI Platform ReplicaConfig.
+                  # https://cloud.google.com/ai-platform/training/docs/reference/rest/v1/projects.jobs#ReplicaConfig
+                  # 'tpuTfVersion': tpu_runtime_version,
+              ),
+              replica_count=1,
+          ))
 
     # TOOD(chenandrew): CAIP only allows for 4 worker pools.
     # If CAIP does not implement more worker pools, another work-around
@@ -136,35 +143,28 @@ class Client:
       raise ValueError('Cloud Job for xm jobs {} contains {} worker types. '
                        'Only 4 worker types are supported'.format(
                            jobs, len(pools)))
-    body = {
-        'displayName': work_unit_name,
-        'jobSpec': {
-            'workerPoolSpecs': pools,
-        },
-    }
-    response = self.client.projects().locations().customJobs().create(
-        parent=parent, body=body).execute()
-    name = response.get('name', None)
-    if name:
-      job_id = name.split('/')[-1]
-      print('Job launched at: ' +
-            'https://console.cloud.google.com/ai/platform/locations/' +
-            f'{self.location}/training/{job_id}/cpu')
-    return name
+
+    custom_job = aiplatform.CustomJob(
+        project=self.project,
+        location=self.location,
+        display_name=work_unit_name,
+        worker_pool_specs=pools,
+    )
+    custom_job.run(sync=False)
+
+    time.sleep(5)  # Wait for custom_job.run to execute asynchronously.
+    print(f'Job launched at: {custom_job._dashboard_uri()}')  # pylint: disable=protected-access
+    return custom_job.resource_name
 
   async def wait_for_job(self, job_name: str) -> None:
-    backoff = 5  # seconds
-    while True:
-      await asyncio.sleep(backoff)
-      job = self.client.projects().locations().customJobs().get(
-          name=job_name).execute()
-      if job.get('endTime', None):
-        return
+    job = aiplatform.CustomJob.get(job_name)
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(None, job._block_until_complete)  # pylint: disable=protected-access
 
 
 _CLOUD_TPU_ACCELERATOR_TYPES = immutabledict.immutabledict({
-    xm.ResourceType.V2: 'tpu_v2',
-    xm.ResourceType.V3: 'tpu_v3',
+    xm.ResourceType.V2: 'TPU_V2',
+    xm.ResourceType.V3: 'TPU_V3',
 })
 
 
@@ -175,14 +175,16 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   machine_type = cpu_ram_to_machine_type(
       resources.task_requirements.get(xm.ResourceType.CPU),
       resources.task_requirements.get(xm.ResourceType.RAM))
-  spec = {'machineType': machine_type}
+  spec = {'machine_type': machine_type}
   for resource, value in resources.task_requirements.items():
+    accelerator_type = None
     if xm_resources.is_gpu(resource):
-      spec['acceleratorType'] = 'nvidia_tesla_' + str(resource).lower()
-      spec['acceleratorCount'] = f'{value:g}'
+      accelerator_type = 'NVIDIA_TESLA_' + str(resource).upper()
     elif xm_resources.is_tpu(resource):
-      spec['acceleratorType'] = _CLOUD_TPU_ACCELERATOR_TYPES[resource]
-      spec['acceleratorCount'] = f'{value:g}'
+      accelerator_type = _CLOUD_TPU_ACCELERATOR_TYPES[resource]
+    if accelerator_type:
+      spec['accelerator_type'] = aip_v1.AcceleratorType[accelerator_type]
+      spec['accelerator_count'] = value
   return spec
 
 

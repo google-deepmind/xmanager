@@ -30,7 +30,7 @@ class CaipTest(unittest.TestCase):
         executor=local_executors.Caip(resources=xm.JobRequirements()),
         args={})
     machine_spec = caip.get_machine_spec(job)
-    self.assertDictEqual(machine_spec, {'machineType': 'n1-standard-4'})
+    self.assertDictEqual(machine_spec, {'machine_type': 'n1-standard-4'})
 
   def test_get_machine_spec_cpu(self):
     job = xm.Job(
@@ -39,7 +39,7 @@ class CaipTest(unittest.TestCase):
             resources=xm.JobRequirements(cpu=20, ram=40)),
         args={})
     machine_spec = caip.get_machine_spec(job)
-    self.assertDictEqual(machine_spec, {'machineType': 'n1-highcpu-64'})
+    self.assertDictEqual(machine_spec, {'machine_type': 'n1-highcpu-64'})
 
   def test_get_machine_spec_gpu(self):
     job = xm.Job(
@@ -49,9 +49,9 @@ class CaipTest(unittest.TestCase):
     machine_spec = caip.get_machine_spec(job)
     self.assertDictEqual(
         machine_spec, {
-            'machineType': 'n1-standard-4',
-            'acceleratorType': 'nvidia_tesla_p100',
-            'acceleratorCount': '2',
+            'machine_type': 'n1-standard-4',
+            'accelerator_type': caip.aip_v1.AcceleratorType.NVIDIA_TESLA_P100,
+            'accelerator_count': 2,
         })
 
   def test_get_machine_spec_tpu(self):
@@ -62,9 +62,9 @@ class CaipTest(unittest.TestCase):
     machine_spec = caip.get_machine_spec(job)
     self.assertDictEqual(
         machine_spec, {
-            'machineType': 'n1-standard-4',
-            'acceleratorType': 'tpu_v3',
-            'acceleratorCount': '8',
+            'machine_type': 'n1-standard-4',
+            'accelerator_type': caip.aip_v1.AcceleratorType.TPU_V3,
+            'accelerator_count': 8,
         })
 
   def test_cpu_ram_to_machine_type_exact(self):

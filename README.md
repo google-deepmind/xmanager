@@ -54,6 +54,22 @@ jobs.
    export GOOGLE_CLOUD_API_KEY=<API key>
    ```
 
+8. Create a staging bucket in us-central1 if you do not already have one. This
+   bucket should be used to save experiment artifacts like Tensorflow log files,
+   which can be read by Tensorboard. This bucket may also be used to stage files
+   to build your Docker image if you build your images remotely.
+
+   ```bash
+   export GOOGLE_CLOUD_BUCKET_NAME=<GOOGLE_CLOUD_BUCKET_NAME>
+   gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME
+   ```
+
+   Add the GOOGLE_CLOUD_BUCKET_NAME to your environment variables or your .bashrc:
+
+   ```bash
+   export GOOGLE_CLOUD_BUCKET_NAME=<GOOGLE_CLOUD_BUCKET_NAME>
+   ```
+
 ## Install XManager
 
 ```bash

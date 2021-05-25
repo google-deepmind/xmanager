@@ -41,6 +41,18 @@ def get_api_key():
   return os.environ.get('GOOGLE_CLOUD_API_KEY', None)
 
 
+def get_bucket() -> str:
+  bucket = os.environ.get('GOOGLE_CLOUD_BUCKET_NAME', None)
+  if bucket:
+    return bucket
+  raise ValueError(
+      '$GOOGLE_CLOUD_BUCKET_NAME is undefined. Run'
+      '`export GOOGLE_CLOUD_BUCKET_NAME=<bucket-name>`, '
+      'replacing <bucket-name> with a Google Cloud Storage bucket. '
+      'You can create a bucket with '
+      '`gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME`.')
+
+
 def check_cloud():
   su = discovery.build('serviceusage', 'v1')
   su.services().enable(
