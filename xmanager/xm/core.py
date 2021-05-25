@@ -14,8 +14,12 @@
 """Abstract API Spec for XManager.
 
 Each implementation of the XManager API should override the abstract and
-unimplemented methods. Users can then use the implemention via:
-from xmanager import impl as xm
+unimplemented methods. Users can then use the implementions via:
+
+```
+from xmanager import xm
+from xmanager import xm_foo
+```
 """
 
 import abc
