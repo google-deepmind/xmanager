@@ -90,8 +90,7 @@ class Client:
     # https://cloud.google.com/ai-platform-unified/docs/reference/rest
     self.client._baseUrl = f'https://{location}-aiplatform.googleapis.com'  # pylint: disable=protected-access
 
-  def launch(self, experiment_title: str, experiment_id: int, work_unit_id: int,
-             jobs: Sequence[xm.Job]) -> str:
+  def launch(self, work_unit_name: str, jobs: Sequence[xm.Job]) -> str:
     """Launch jobs on AI Platform (Unified)."""
     parent = f'projects/{auth.get_project_name()}/locations/{self.location}'
     pools = []
@@ -138,8 +137,7 @@ class Client:
                        'Only 4 worker types are supported'.format(
                            jobs, len(pools)))
     body = {
-        # TODO: Replace with job identity.
-        'displayName': f'{experiment_title}.{experiment_id}.{work_unit_id}',
+        'displayName': work_unit_name,
         'jobSpec': {
             'workerPoolSpecs': pools,
         },
@@ -199,8 +197,7 @@ class CaipHandle(local_execution.ExecutionHandle):
 
 
 # Must act on all jobs with `local_executors.Caip` executor.
-def launch(experiment_title: str, experiment_id: int, work_unit_id: int,
-           job_group: xm.JobGroup) -> List[CaipHandle]:
+def launch(work_unit_name: str, job_group: xm.JobGroup) -> List[CaipHandle]:
   """Launch CAIP jobs in the job_group and return a handler."""
   jobs = utils.collect_jobs_by_filter(job_group, _caip_job_predicate)
   # As client creation may throw, do not initiate it if there are no jobs.
@@ -208,9 +205,7 @@ def launch(experiment_title: str, experiment_id: int, work_unit_id: int,
     return []
 
   job_name = client().launch(
-      experiment_title=experiment_title,
-      experiment_id=experiment_id,
-      work_unit_id=work_unit_id,
+      work_unit_name=work_unit_name,
       jobs=jobs,
   )
   return [CaipHandle(job_name=job_name)]

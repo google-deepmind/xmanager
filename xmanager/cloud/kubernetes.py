@@ -15,7 +15,7 @@
 
 import asyncio
 import functools
-from typing import Dict, List, Optional, Sequence
+from typing import Callable, Dict, List, Optional, Sequence
 
 import attr
 from kubernetes import client as k8s_client
@@ -50,14 +50,15 @@ class Client:
       api_client = k8s_client.ApiClient()
     self.api_client = api_client
 
-  def launch(self, experiment_title: str, experiment_id: int, work_unit_id: int,
+  def launch(self, experiment_name: str, get_full_job_name: Callable[[str],
+                                                                     str],
              jobs: Sequence[xm.Job]) -> List[k8s_client.V1Job]:
     """Launches jobs on Kubernetes."""
     batch_jobs = []
-    service = f'{experiment_title}-{experiment_id}'
+    service = experiment_name
     domains = [
-        f'workerpool{i}.{service}.default.svc.cluster.local:2222'
-        for i in range(len(jobs))
+        f'workerpool_{get_full_job_name(job.name)}.{service}.default.svc.cluster.local:2222'
+        for job in jobs
     ]
     specs = cloud_utils.create_cluster_specs(domains)
     for i, job in enumerate(jobs):
@@ -76,17 +77,15 @@ class Client:
       ]
       env.append(k8s_client.V1EnvVar('CLUSTER_SPEC', specs[i]))
       container = k8s_client.V1Container(
-          # TODO: Replace with xm.Job identity.
-          name='container',
+          name=get_full_job_name(job.name),
           image=executable.image_path,
           resources=resources_from_executor(executor),
           args=utils.to_command_line_args(
               xm.merge_args(executable.args, job.args)),
           env=env)
       k8s_job = k8s_client.V1Job()
-      # TODO: Replace with xm.Job identity.
       k8s_job.metadata = k8s_client.V1ObjectMeta(
-          name=f'{experiment_title}.{experiment_id}.{work_unit_id}.{i}')
+          name=get_full_job_name(job.name))
       k8s_job.spec = k8s_client.V1JobSpec(
           template=k8s_client.V1PodTemplateSpec(
               metadata=k8s_client.V1ObjectMeta(
@@ -94,7 +93,7 @@ class Client:
                   annotations=annotations_from_executor(executor),
               ),
               spec=k8s_client.V1PodSpec(
-                  hostname=f'workerpool{i}',
+                  hostname=f'workerpool_{get_full_job_name(job.name)}',
                   subdomain=service,
                   restart_policy='Never',
                   containers=[container],
@@ -145,7 +144,7 @@ class KubernetesHandle(local_execution.ExecutionHandle):
 
 
 # Must act on all jobs with `local_executors.Kubernetes` executor.
-def launch(experiment_title: str, experiment_id: int, work_unit_id: int,
+def launch(experiment_name: str, get_full_job_name: Callable[[str], str],
            job_group: xm.JobGroup) -> List[KubernetesHandle]:
   """Launch K8s jobs in the job_group and return a handler."""
   jobs = utils.collect_jobs_by_filter(job_group, _kubernetes_job_predicate)
@@ -153,9 +152,8 @@ def launch(experiment_title: str, experiment_id: int, work_unit_id: int,
   if not jobs:
     return []
   k8_jobs = client().launch(
-      experiment_title=experiment_title,
-      experiment_id=experiment_id,
-      work_unit_id=work_unit_id,
+      experiment_name=experiment_name,
+      get_full_job_name=get_full_job_name,
       jobs=jobs,
   )
   return [KubernetesHandle(jobs=k8_jobs)]

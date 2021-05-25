@@ -370,6 +370,11 @@ class WorkUnit(abc.ABC):
     self._launched_error = None
 
   @property
+  def experiment_id(self) -> int:
+    """Returns a unique ID assigned to the experiment."""
+    return self._experiment.experiment_id
+
+  @property
   @functools.lru_cache()
   def _launched_event(self) -> asyncio.Event:
     """Event to be set when the work unit is launched."""
@@ -378,11 +383,6 @@ class WorkUnit(abc.ABC):
     # that after migration to Python >= 3.8 this code can be moved to the
     # constructor.
     return asyncio.Event()
-
-  @property
-  def experiment_id(self) -> int:
-    """Returns a unique ID assigned to the experiment."""
-    return self._experiment.experiment_id
 
   def add(
       self,
@@ -495,6 +495,10 @@ class WorkUnit(abc.ABC):
     """Gets the status of this work unit."""
     raise NotImplementedError
 
+  @property
+  def work_unit_name(self) -> str:
+    return f'{self.experiment_id}_{self.work_unit_id}'
+
   def get_full_job_name(self, job_name: str) -> str:
     """Given `Job.name` constructs its full name.
 
@@ -507,7 +511,7 @@ class WorkUnit(abc.ABC):
     Returns:
         Full name of the job.
     """
-    return f'{self.experiment_id}_{self.work_unit_id}_{job_name}'
+    return f'{self.work_unit_name}_{job_name}'
 
 
 class Experiment(abc.ABC):

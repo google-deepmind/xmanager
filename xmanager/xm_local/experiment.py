@@ -103,11 +103,10 @@ class LocalWorkUnit(xm.WorkUnit):
     # modularity, but sacrifices the ability to make cross-executor decisions.
     async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
       self._non_local_execution_handles.extend(
-          caip.launch(self._experiment_title, self.experiment_id,
-                      self.work_unit_id, job_group))
+          caip.launch(self.work_unit_name, job_group))
       self._non_local_execution_handles.extend(
-          kubernetes.launch(self._experiment_title, self.experiment_id,
-                            self.work_unit_id, job_group))
+          kubernetes.launch(
+              str(self.experiment_id), self.get_full_job_name, job_group))
       self._local_execution_handles.extend(await
                                            local_execution.launch(job_group))
 
