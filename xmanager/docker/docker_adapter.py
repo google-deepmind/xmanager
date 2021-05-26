@@ -14,7 +14,7 @@
 """Convenience adapter for the standard client."""
 
 import functools
-from typing import Mapping, Sequence, Tuple
+from typing import Dict, List, Mapping, Sequence, Tuple, Union
 
 from absl import logging
 import docker
@@ -31,6 +31,9 @@ def instance() -> 'DockerAdapter':
   focus on a concrete small subset of required actions.
   """
   return DockerAdapter(docker.from_env())
+
+
+Ports = Dict[Union[int, str], Union[None, int, Tuple[str, int], List[int]]]
 
 
 class DockerAdapter(object):
@@ -72,14 +75,21 @@ class DockerAdapter(object):
       image_id: str,
       args: Sequence[str],
       env_vars: Mapping[str, str],
+      ports: Ports,
+      volumes: Dict[str, str],
   ) -> containers.Container:
+    """Runs a given container image."""
+    make_mount = lambda guest: {'bind': guest, 'mode': 'rw'}
     return self._client.containers.run(
         image_id,
         name=name,
+        hostname=name,
         detach=True,
         remove=True,
         command=args,
         environment=env_vars,
+        ports=ports,
+        volumes={host: make_mount(guest) for host, guest in volumes.items()},
     )
 
   def stop_container(self, container_id: str) -> None:

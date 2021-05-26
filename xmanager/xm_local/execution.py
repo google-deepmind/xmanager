@@ -18,7 +18,7 @@ import asyncio
 import atexit
 from concurrent import futures
 import threading
-from typing import Any, Awaitable, Callable, List
+from typing import Any, Awaitable, Callable, List, cast
 
 from absl import logging
 import attr
@@ -79,13 +79,20 @@ async def _launch_loaded_container_image(
     executable: executables.LoadedContainerImage,
 ) -> LocalExecutionHandle:
   """Launches a preloaded image as a detached container."""
+  assert isinstance(job.executor, executors.Local)
+  executor = cast(executors.Local, job.executor)
+
   args = utils.to_command_line_args(xm.merge_args(executable.args, job.args))
   env_vars = {**executable.env_vars, **job.env_vars}
+  options = executor.docker_options or executors.DockerOptions()
+
   container = docker_adapter.instance().run_container(
       name=get_full_job_name(job.name),
       image_id=executable.image_id,
       args=args,
       env_vars=env_vars,
+      ports=options.ports or {},
+      volumes=options.volumes or {},
   )
   return ContainerHandle(model=container)
 

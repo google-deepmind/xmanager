@@ -13,10 +13,11 @@
 # limitations under the License.
 """Local backend executors."""
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, Optional
 
 import attr
 from xmanager import xm
+from xmanager.docker import docker_adapter
 
 
 GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER = 'GOOGLE_KUBERNETES_ENGINE'
@@ -24,9 +25,6 @@ GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER = 'GOOGLE_KUBERNETES_ENGINE'
 
 class LocalSpec(xm.ExecutorSpec):
   """Current machine executor's specification."""
-
-
-Ports = Dict[Union[int, str], Union[None, int, Tuple[str, int], List[int]]]
 
 
 @attr.s(auto_attribs=True)
@@ -42,7 +40,7 @@ class DockerOptions:
         inside on the host to mount and the values represent paths in the
         container.
   """
-  ports: Optional[Ports] = None
+  ports: Optional[docker_adapter.Ports] = None
   volumes: Optional[Dict[str, str]] = None
 
 
