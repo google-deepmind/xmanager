@@ -13,7 +13,7 @@
 # limitations under the License.
 """Local backend executors."""
 
-from typing import Optional
+from typing import Dict, List, Optional, Tuple, Union
 
 import attr
 from xmanager import xm
@@ -26,8 +26,31 @@ class LocalSpec(xm.ExecutorSpec):
   """Current machine executor's specification."""
 
 
+Ports = Dict[Union[int, str], Union[None, int, Tuple[str, int], List[int]]]
+
+
+@attr.s(auto_attribs=True)
+class DockerOptions:
+  """Options of the container to be run.
+
+  Attributes:
+      ports: In the simplest form -- a dictionary from `int` to `int`, where the
+        keys represent the ports inside the container and the values represent
+        the ports of the host to bind. See the specification at
+        https://docker-py.readthedocs.io/en/stable/containers.html.
+      volumes: A dictionary from `str` to `str`, where the keys represent paths
+        inside on the host to mount and the values represent paths in the
+        container.
+  """
+  ports: Optional[Ports] = None
+  volumes: Optional[Dict[str, str]] = None
+
+
+@attr.s(auto_attribs=True)
 class Local(xm.Executor):
   """Current machine executor."""
+
+  docker_options: Optional[DockerOptions] = None
 
   @classmethod
   def Spec(cls):
