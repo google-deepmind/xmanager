@@ -25,6 +25,7 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 import attr
 from google.cloud import aiplatform
 from google.cloud import aiplatform_v1 as aip_v1
+from google.cloud import aiplatform_v1beta1 as aip_v1beta
 import immutabledict
 
 from xmanager import xm
@@ -91,6 +92,7 @@ class Client:
     """
     self.location = location
     self.project = project or auth.get_project_name()
+    self.parent = f'projects/{self.project}/locations/{self.location}'
     # TODO: move staging_bucket when issue is fixed
     # https://github.com/googleapis/python-aiplatform/pull/421
     aiplatform.init(
@@ -160,6 +162,20 @@ class Client:
     job = aiplatform.CustomJob.get(job_name)
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, job._block_until_complete)  # pylint: disable=protected-access
+
+  async def create_tensorboard(self, name: str) -> str:
+    """Create a CAIP tensorboard instance."""
+    tensorboard_client = aip_v1beta.TensorboardServiceAsyncClient(
+        client_options={
+            'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
+        })
+    tensorboard = aip_v1beta.Tensorboard(display_name=name)
+    op = await tensorboard_client.create_tensorboard(
+        aip_v1beta.CreateTensorboardRequest(
+            parent=self.parent,
+            tensorboard=tensorboard,
+        ))
+    return (await op.result()).name
 
 
 _CLOUD_TPU_ACCELERATOR_TYPES = immutabledict.immutabledict({
