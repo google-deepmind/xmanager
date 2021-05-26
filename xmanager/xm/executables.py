@@ -13,6 +13,7 @@
 # limitations under the License.
 """Definition of shared executable specifications."""
 
+import abc
 import os
 import re
 from typing import List, NamedTuple, Optional, Union
@@ -78,6 +79,13 @@ class PythonContainer(core.ExecutableSpec):
     return _name_from_path(self.path)
 
 
+class BinaryDependency(abc.ABC):
+  """Additional resource for `Binary` / `BazelBinary`.
+
+  Implementations can define backend-specific dependencies.
+  """
+
+
 @attr.s(auto_attribs=True)
 class Container(core.ExecutableSpec):
   """A prebuilt Docker image.
@@ -97,6 +105,7 @@ class Binary(core.ExecutableSpec):
   """A prebuilt executable program."""
 
   path: str
+  dependencies: List[BinaryDependency] = attr.Factory(list)
 
   @property
   def name(self) -> str:
@@ -127,6 +136,7 @@ class BazelBinary(core.ExecutableSpec):
   """
 
   label: str
+  dependencies: List[BinaryDependency] = attr.Factory(list)
 
   @property
   def name(self) -> str:
