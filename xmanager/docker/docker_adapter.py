@@ -42,6 +42,12 @@ class DockerAdapter(object):
   def __init__(self, client: docker.DockerClient) -> None:
     self._client = client
 
+  def has_network(self, name: str) -> bool:
+    return bool(self._client.networks.list([name]))
+
+  def create_network(self, name: str) -> str:
+    return self._client.networks.create(name).id
+
   def get_client(self) -> docker.DockerClient:
     return self._client
 
@@ -75,6 +81,7 @@ class DockerAdapter(object):
       image_id: str,
       args: Sequence[str],
       env_vars: Mapping[str, str],
+      network: str,
       ports: Ports,
       volumes: Dict[str, str],
   ) -> containers.Container:
@@ -84,6 +91,7 @@ class DockerAdapter(object):
         image_id,
         name=name,
         hostname=name,
+        network=network,
         detach=True,
         remove=True,
         command=args,

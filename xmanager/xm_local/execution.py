@@ -30,6 +30,8 @@ from xmanager.xm import utils
 from xmanager.xm_local import executables
 from xmanager.xm_local import executors
 
+BRIDGE_NETWORK_NAME = 'xmanager'
+
 
 class ExecutionHandle(abc.ABC):
   """An interface for operating on executions."""
@@ -81,14 +83,19 @@ async def _launch_loaded_container_image(
   """Launches a preloaded image as a detached container."""
   assert isinstance(job.executor, executors.Local)
   executor = cast(executors.Local, job.executor)
+  instance = docker_adapter.instance()
+
+  if not instance.has_network(BRIDGE_NETWORK_NAME):
+    instance.create_network(BRIDGE_NETWORK_NAME)
 
   args = utils.to_command_line_args(xm.merge_args(executable.args, job.args))
   env_vars = {**executable.env_vars, **job.env_vars}
   options = executor.docker_options or executors.DockerOptions()
 
-  container = docker_adapter.instance().run_container(
+  container = instance.run_container(
       name=get_full_job_name(job.name),
       image_id=executable.image_id,
+      network=BRIDGE_NETWORK_NAME,
       args=args,
       env_vars=env_vars,
       ports=options.ports or {},
