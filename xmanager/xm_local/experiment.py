@@ -158,6 +158,7 @@ class LocalExperiment(xm.Experiment):
   def package(
       self, packageables: Iterable[xm.Packageable]) -> Iterable[xm.Executable]:
     """Packages executable specs into executables based on the executor specs."""
+    # TODO: Bundle together.
     return [
         packaging_router.package(packageable) for packageable in packageables
     ]
