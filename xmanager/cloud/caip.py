@@ -20,7 +20,7 @@ import functools
 import logging
 import math
 import time
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import attr
 from google.cloud import aiplatform
@@ -103,6 +103,8 @@ class Client:
   def launch(self, work_unit_name: str, jobs: Sequence[xm.Job]) -> str:
     """Launch jobs on AI Platform (Unified)."""
     pools = []
+    tensorboard, service_account, staging_bucket = (
+        self.get_tensorboard_settings(jobs))
     for job in jobs:
       executable = job.executable
       if not isinstance(executable,
@@ -119,21 +121,30 @@ class Client:
         tpu_runtime_version = 'nightly'  # pylint: disable=unused-variable
         if job.executor.tpu_capability:
           tpu_runtime_version = job.executor.tpu_capability.tpu_runtime_version
-      pools.append(
-          aip_v1.WorkerPoolSpec(
-              machine_spec=get_machine_spec(job),
-              container_spec=aip_v1.ContainerSpec(
-                  image_uri=executable.image_path,
-                  args=args,
-                  env=env,
-                  # TODO: The `tpuTfVersion` field doesn't exist
-                  # yet in AI Platform (Unified). This is a placeholder
-                  # based on the legacy AI Platform ReplicaConfig.
-                  # https://cloud.google.com/ai-platform/training/docs/reference/rest/v1/projects.jobs#ReplicaConfig
-                  # 'tpuTfVersion': tpu_runtime_version,
-              ),
-              replica_count=1,
-          ))
+      pool = aip_v1.WorkerPoolSpec(
+          machine_spec=get_machine_spec(job),
+          container_spec=aip_v1.ContainerSpec(
+              image_uri=executable.image_path,
+              args=args,
+              env=env,
+              # TODO: The `tpuTfVersion` field doesn't exist
+              # yet in AI Platform (Unified). This is a placeholder
+              # based on the legacy AI Platform ReplicaConfig.
+              # https://cloud.google.com/ai-platform/training/docs/reference/rest/v1/projects.jobs#ReplicaConfig
+              # 'tpuTfVersion': tpu_runtime_version,
+          ),
+          replica_count=1,
+      )
+      # The model SDK only supports tensorboard in v1beta1.
+      # https://github.com/googleapis/python-aiplatform/blob/master/google/cloud/aiplatform/jobs.py#L1201
+      # But ContainerSpec.env is not supported in v1beta1.
+      # https://github.com/googleapis/python-aiplatform/blob/master/google/cloud/aiplatform_v1beta1/types/custom_job.py#L216
+      if tensorboard:
+        if env:
+          print('Enviornment variables are not supported when running with '
+                'tensorboard. Set environment variables using `args` instead.')
+        pool.container_spec.env = None
+      pools.append(pool)
 
     # TOOD(chenandrew): CAIP only allows for 4 worker pools.
     # If CAIP does not implement more worker pools, another work-around
@@ -151,12 +162,50 @@ class Client:
         location=self.location,
         display_name=work_unit_name,
         worker_pool_specs=pools,
+        staging_bucket=staging_bucket,
     )
-    custom_job.run(sync=False)
-
-    time.sleep(5)  # Wait for custom_job.run to execute asynchronously.
+    custom_job.run(
+        sync=False,
+        service_account=service_account,
+        tensorboard=tensorboard,
+    )
+    while not custom_job.resource_name:
+      time.sleep(1)
     print(f'Job launched at: {custom_job._dashboard_uri()}')  # pylint: disable=protected-access
     return custom_job.resource_name
+
+  def get_tensorboard_settings(self,
+                               jobs: Sequence[xm.Job]) -> Tuple[str, str, str]:
+    """Get the tensorboard settings for a sequence of Jobs."""
+    executors = []
+    for job in jobs:
+      assert isinstance(job.executor, local_executors.Caip)
+      executors.append(job.executor)
+    if all(not executor.tensorboard for executor in executors):
+      return '', '', ''
+
+    if not executors[0].tensorboard:
+      raise ValueError(
+          'Jobs in this job group must have the same tensorboard settings. ' +
+          'jobs[0] has no tensorboard settings.')
+    service_account = (
+        auth.get_project_number() + '-compute@developer.gserviceaccount.com')
+    staging_bucket = executors[0].tensorboard.base_output_directory
+    tensorboard = executors[0].tensorboard.name
+    for i, executor in enumerate(executors):
+      if not executor:
+        raise ValueError(
+            'Jobs in this job group must have the same tensorboard settings. ' +
+            'jobs[i] has no tensorboard settings.')
+      if (executor.tensorboard.name != tensorboard or
+          executor.tensorboard.base_output_directory != staging_bucket):
+        raise ValueError(
+            'Jobs in this job group must have the same tensorboard settings. ' +
+            f'jobs[0] has tensorboard = {tensorboard} and staging_bucket =' +
+            f'{staging_bucket}. jobs[{i}] has tensorboard = ' +
+            f'{executor.tensorboard.name} and staging_bucket = '
+            f'{executor.tensorboard.base_output_directory}.')
+    return tensorboard, service_account, staging_bucket
 
   async def wait_for_job(self, job_name: str) -> None:
     job = aiplatform.CustomJob.get(job_name)

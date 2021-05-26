@@ -65,6 +65,18 @@ class TpuCapability:
 
 
 @attr.s(auto_attribs=True)
+class TensorboardCapability:
+  """Tensorboard capability integrates a CAIP Job with Vertex Tensorboard."""
+
+  # The name of the tensorboard to use.
+  name: str
+  # The "gs://$GCS_BUCKET/dir_name" to save output.
+  # Tensorboard will read the logs from $BASE_OUTPUT_DIRECTORY/logs/
+  # If None, then the root of the default bucket will be used.
+  base_output_directory: Optional[str] = None
+
+
+@attr.s(auto_attribs=True)
 class CaipSpec(xm.ExecutorSpec):
   """Caip spec describes the Google Cloud Platform (GCP) location."""
 
@@ -79,6 +91,7 @@ class Caip(xm.Executor):
 
   resources: xm.JobRequirements
   tpu_capability: Optional[TpuCapability] = None
+  tensorboard: Optional[TensorboardCapability] = None
 
   @classmethod
   def Spec(cls, *args, **kwargs):

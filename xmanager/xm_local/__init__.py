@@ -17,5 +17,6 @@ from xmanager.xm_local import experiment
 from xmanager.xm_local.executors import Caip
 from xmanager.xm_local.executors import Kubernetes
 from xmanager.xm_local.executors import Local
+from xmanager.xm_local.executors import TensorboardCapability
 
 create_experiment = experiment.create_experiment
