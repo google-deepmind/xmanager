@@ -249,7 +249,7 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
       accelerator_type = _CLOUD_TPU_ACCELERATOR_TYPES[resource]
     if accelerator_type:
       spec['accelerator_type'] = aip_v1.AcceleratorType[accelerator_type]
-      spec['accelerator_count'] = value
+      spec['accelerator_count'] = int(value)
   return spec
 
 
