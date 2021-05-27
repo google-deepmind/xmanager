@@ -14,9 +14,6 @@
 """Implementation of the XManager Launch API within the local scheduler."""
 
 from xmanager.xm_local import experiment
-from xmanager.xm_local.executors import Caip
-from xmanager.xm_local.executors import Kubernetes
-from xmanager.xm_local.executors import Local
-from xmanager.xm_local.executors import TensorboardCapability
+from xmanager.xm_local.executors import *
 
 create_experiment = experiment.create_experiment
