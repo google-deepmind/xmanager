@@ -25,8 +25,6 @@ from xmanager.generated import build_event_stream_pb2 as bes_pb2
 
 FLAGS = flags.FLAGS
 
-# TODO: Customize the default value based on the environment. Most
-# notable options include `bazel` and `bazelisk`.
 flags.DEFINE_string('bazel_command', 'bazel', 'A command that runs Bazel.')
 
 
@@ -50,6 +48,13 @@ def _get_normalized_label(events: Sequence[bes_pb2.BuildEvent],
         # Note that we ignore `event.children[0].target_configured.aspect`.
         return event.children[0].target_configured.label
   raise ValueError(f'Missing pattern expansion event for {label} in Bazel logs')
+
+
+def _get_workspace_directory(events: Sequence[bes_pb2.BuildEvent]) -> str:
+  for event in events:
+    if event.id.HasField('started'):
+      return event.started.workspace_directory
+  raise ValueError('Missing start event in Bazel logs')
 
 
 def _read_build_events(path: str) -> List[bes_pb2.BuildEvent]:
@@ -108,4 +113,7 @@ def build_single_target(label: str) -> List[str]:
     events = _read_build_events(bep_path)
     normalized_label = _get_normalized_label(events, label)
     files = _get_important_output(events, normalized_label)
-    return [os.path.join(*file.path_prefix, file.name) for file in files]
+    workspace = _get_workspace_directory(events)
+    return [
+        os.path.join(workspace, *file.path_prefix, file.name) for file in files
+    ]
