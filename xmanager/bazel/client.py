@@ -109,6 +109,8 @@ def build_single_target(label: str) -> List[str]:
             label,
         ],
         check=True,
+        # https://docs.bazel.build/versions/master/user-manual.html#run
+        cwd=os.environ['BUILD_WORKSPACE_DIRECTORY'],
     )
     events = _read_build_events(bep_path)
     normalized_label = _get_normalized_label(events, label)
