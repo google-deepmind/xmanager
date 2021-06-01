@@ -77,8 +77,8 @@ class JobRequirementsTest(parameterized.TestCase):
     self.assertIsNone(requirements.topology)
 
   def test_tpu_job(self):
-    requirements = resources.JobRequirements(v3='4x4')
-    self.assertEqual(requirements.accelerator, resources.ResourceType.V3)
+    requirements = resources.JobRequirements(tpu_v3='4x4')
+    self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
     self.assertEqual(requirements.topology.name, '4x4')
 
 

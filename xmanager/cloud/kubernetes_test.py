@@ -42,7 +42,8 @@ class KubernetesTest(unittest.TestCase):
     self.assertDictEqual(requirements['limits'], {})
 
   def test_annotations_from_executor_tpu(self):
-    executor = local_executors.Kubernetes(resources=xm.JobRequirements(v2=8))
+    executor = local_executors.Kubernetes(
+        resources=xm.JobRequirements(tpu_v2=8))
     self.assertDictEqual(
         kubernetes.annotations_from_executor(executor),
         {'tf-version.cloud-tpus.google.com': 'nightly'})
@@ -58,7 +59,8 @@ class KubernetesTest(unittest.TestCase):
         {'cloud.google.com/gke-accelerator': 'nvidia-tesla-v100'})
 
   def test_node_selector_from_executor_tpu(self):
-    executor = local_executors.Kubernetes(resources=xm.JobRequirements(v2=8))
+    executor = local_executors.Kubernetes(
+        resources=xm.JobRequirements(tpu_v2=8))
     self.assertDictEqual(kubernetes.node_selector_from_executor(executor), {})
 
   def test_node_selector_from_executor_empty(self):

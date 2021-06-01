@@ -50,8 +50,8 @@ class ResourceType(enum.Enum):
   A100 = 46
 
   # TPUs
-  V2 = 3
-  V3 = 16
+  TPU_V2 = 3
+  TPU_V3 = 16
 
   # TODO: do we need V2_DONUT and V3_DONUT?
 
@@ -111,8 +111,8 @@ class ResourceDict(MutableMapping):
 
 # TODO: Use centralized resource metadata.
 _TPU_RESOURCES = (
-    ResourceType.V2,
-    ResourceType.V3,
+    ResourceType.TPU_V2,
+    ResourceType.TPU_V3,
 )
 _GPU_RESOURCES = (
     ResourceType.P4,

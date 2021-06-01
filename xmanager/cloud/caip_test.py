@@ -57,7 +57,7 @@ class CaipTest(unittest.TestCase):
   def test_get_machine_spec_tpu(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
-        executor=local_executors.Caip(resources=xm.JobRequirements(v3=8)),
+        executor=local_executors.Caip(resources=xm.JobRequirements(tpu_v3=8)),
         args={})
     machine_spec = caip.get_machine_spec(job)
     self.assertDictEqual(

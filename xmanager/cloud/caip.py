@@ -228,8 +228,8 @@ class Client:
 
 
 _CLOUD_TPU_ACCELERATOR_TYPES = immutabledict.immutabledict({
-    xm.ResourceType.V2: 'TPU_V2',
-    xm.ResourceType.V3: 'TPU_V3',
+    xm.ResourceType.TPU_V2: 'TPU_V2',
+    xm.ResourceType.TPU_V3: 'TPU_V3',
 })
 
 

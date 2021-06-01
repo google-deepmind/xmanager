@@ -63,7 +63,7 @@ def main(_):
     if FLAGS.platform == 'gpu':
       resources = xm.JobRequirements(t4=FLAGS.cores)
     elif FLAGS.platform == 'tpu':
-      resources = xm.JobRequirements(v3=8)
+      resources = xm.JobRequirements(tpu_v3=8)
     for hyperparameters in trials:
       jobs = {}
       jobs['coordinator'] = xm.Job(
