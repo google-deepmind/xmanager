@@ -36,6 +36,7 @@ from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
+from xmanager.xm_local import status as local_status
 
 _DEFAULT_LOCATION = 'us-central1'
 # The only machines available on AI Platform are N1 machines.
@@ -60,6 +61,25 @@ _MACHINE_TYPE_TO_CPU_RAM = {
     'n1-highcpu-32': (32, 28),
     'n1-highcpu-64': (64, 57),
     'n1-highcpu-96': (96, 86),
+}
+
+_STATE_TO_STATUS_MAP = {
+    aip_v1.JobState.JOB_STATE_SUCCEEDED:
+        local_status.LocalWorkUnitStatusEnum.COMPLETED,
+    aip_v1.JobState.JOB_STATE_CANCELLED:
+        local_status.LocalWorkUnitStatusEnum.CANCELLED,
+    aip_v1.JobState.JOB_STATE_QUEUED:
+        local_status.LocalWorkUnitStatusEnum.RUNNING,
+    aip_v1.JobState.JOB_STATE_PENDING:
+        local_status.LocalWorkUnitStatusEnum.RUNNING,
+    aip_v1.JobState.JOB_STATE_RUNNING:
+        local_status.LocalWorkUnitStatusEnum.RUNNING,
+    aip_v1.JobState.JOB_STATE_CANCELLING:
+        local_status.LocalWorkUnitStatusEnum.RUNNING,
+    aip_v1.JobState.JOB_STATE_PAUSED:
+        local_status.LocalWorkUnitStatusEnum.RUNNING,
+    aip_v1.JobState.JOB_STATE_FAILED:
+        local_status.LocalWorkUnitStatusEnum.FAILED,
 }
 
 # Hide noisy warning regarding:
@@ -229,6 +249,9 @@ class Client:
         ))
     return (await op.result()).name
 
+  def get_state(self, job_name: str) -> aip_v1.JobState:
+    return aiplatform.CustomJob.get(job_name).state
+
 
 _CLOUD_TPU_ACCELERATOR_TYPES = immutabledict.immutabledict({
     xm.ResourceType.TPU_V2: 'TPU_V2',
@@ -264,6 +287,11 @@ class CaipHandle(local_execution.ExecutionHandle):
 
   async def wait(self) -> None:
     await client().wait_for_job(self.job_name)
+
+  def get_status(self) -> local_status.LocalWorkUnitStatus:
+    state = client().get_state(self.job_name)
+    status = _STATE_TO_STATUS_MAP[state]
+    return local_status.LocalWorkUnitStatus(status=status)
 
 
 # Must act on all jobs with `local_executors.Caip` executor.

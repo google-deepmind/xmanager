@@ -29,6 +29,7 @@ from xmanager.xm import pattern_matching
 from xmanager.xm import utils
 from xmanager.xm_local import executables
 from xmanager.xm_local import executors
+from xmanager.xm_local import status
 
 BRIDGE_NETWORK_NAME = 'xmanager'
 
@@ -38,6 +39,11 @@ class ExecutionHandle(abc.ABC):
 
   @abc.abstractmethod
   async def wait(self) -> None:
+    raise NotImplementedError
+
+  @abc.abstractmethod
+  def get_status(self) -> status.LocalWorkUnitStatus:
+    """Aggregates the statuses of all jobs in the work unit into one status."""
     raise NotImplementedError
 
 
@@ -70,6 +76,9 @@ class ContainerHandle(LocalExecutionHandle):
       if status_code != 0:
         raise RuntimeError(
             f'Container {self.model!r} returned non-zero status: {status_code}')
+
+  def get_status(self) -> status.LocalWorkUnitStatus:
+    raise NotImplementedError
 
   def terminate(self) -> None:
     self.model.stop()
@@ -115,6 +124,9 @@ class BinaryHandle(LocalExecutionHandle):
     if return_code != 0:
       raise RuntimeError(
           f'Process {self.process!r} returned non-zero code: {return_code}')
+
+  def get_status(self) -> status.LocalWorkUnitStatus:
+    raise NotImplementedError
 
   def terminate(self) -> None:
     self.process.terminate()

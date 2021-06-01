@@ -15,11 +15,8 @@
 
 import asyncio
 from concurrent import futures
-import enum
 import time
 from typing import Any, Awaitable, Callable, Iterable, List, Mapping
-
-import attr
 
 from xmanager import xm
 from xmanager.cloud import caip
@@ -29,6 +26,7 @@ from xmanager.xm import pattern_matching
 from xmanager.xm import utils
 from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
+from xmanager.xm_local import status as local_status
 from xmanager.xm_local.packaging import router as packaging_router
 
 
@@ -49,37 +47,6 @@ def _validate_job_group(job_group: xm.JobGroup) -> None:
   all_jobs = utils.collect_jobs_by_filter(job_group, lambda _: True)
   for job in all_jobs:
     _EXECUTOR_VALIDATOR(job, job.executor)
-
-
-class LocalWorkUnitStatusEnum(enum.Enum):
-  """Status of a local experiment job."""
-
-  # Work unit was created, but has not terminated yet.
-  RUNNING = 1
-  # Work unit terminated and was successful.
-  COMPLETED = 2
-  # Work unit terminated and was not succesful.
-  FAILED = 3
-
-
-@attr.s(auto_attribs=True)
-class LocalWorkUnitStatus(xm.WorkUnitStatus):
-  """Status of a local experiment job."""
-
-  status: LocalWorkUnitStatusEnum
-  message: str
-
-  def is_running(self) -> bool:
-    return self.status == LocalWorkUnitStatusEnum.RUNNING
-
-  def is_succeeded(self) -> bool:
-    return self.status == LocalWorkUnitStatusEnum.COMPLETED
-
-  def is_failed(self) -> bool:
-    return self.status == LocalWorkUnitStatusEnum.FAILED
-
-  def error(self) -> str:
-    return self.message
 
 
 class LocalWorkUnit(xm.WorkUnit):
@@ -136,9 +103,14 @@ class LocalWorkUnit(xm.WorkUnit):
     """
     raise NotImplementedError
 
-  def get_status(self) -> LocalWorkUnitStatus:
+  def get_status(self) -> local_status.LocalWorkUnitStatus:
     """Gets the current status of the work unit."""
-    raise NotImplementedError
+    handles = self._non_local_execution_handles + self._local_execution_handles
+    if len(handles) == 1:
+      return handles[0].get_status()
+    raise NotImplementedError(
+        'Status aggregation for work units with multiple jobs is not '
+        'implemented yet.')
 
 
 class LocalExperiment(xm.Experiment):

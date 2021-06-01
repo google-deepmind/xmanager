@@ -28,6 +28,7 @@ from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
+from xmanager.xm_local import status as local_status
 
 
 @functools.lru_cache()
@@ -141,6 +142,9 @@ class KubernetesHandle(local_execution.ExecutionHandle):
 
   async def wait(self) -> None:
     await asyncio.gather(*[client().wait_for_job(job) for job in self.jobs])
+
+  def get_status(self) -> local_status.LocalWorkUnitStatus:
+    raise NotImplementedError
 
 
 # Must act on all jobs with `local_executors.Kubernetes` executor.
