@@ -652,9 +652,3 @@ def create_experiment() -> Experiment:
 def get_experiment(experiment_id: int) -> Experiment:
   """Returns a Experiment instance associated with this experiment id."""
   raise NotImplementedError
-
-
-@abc.abstractmethod
-def list_experiments() -> Iterable[Experiment]:
-  """Yields a list of Experiment instances that have been created thus far."""
-  raise NotImplementedError
