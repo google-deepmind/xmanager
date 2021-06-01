@@ -19,6 +19,7 @@ import asyncio
 import functools
 import logging
 import math
+import os
 import time
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
@@ -103,7 +104,7 @@ class Client:
   def launch(self, work_unit_name: str, jobs: Sequence[xm.Job]) -> str:
     """Launch jobs on AI Platform (Unified)."""
     pools = []
-    tensorboard, service_account, staging_bucket = (
+    tensorboard, service_account, output_dir = (
         self.get_tensorboard_settings(jobs))
     for job in jobs:
       executable = job.executable
@@ -162,7 +163,7 @@ class Client:
         location=self.location,
         display_name=work_unit_name,
         worker_pool_specs=pools,
-        staging_bucket=staging_bucket,
+        staging_bucket=output_dir,
     )
     custom_job.run(
         sync=False,
@@ -190,7 +191,7 @@ class Client:
           'jobs[0] has no tensorboard settings.')
     service_account = (
         auth.get_project_number() + '-compute@developer.gserviceaccount.com')
-    staging_bucket = executors[0].tensorboard.base_output_directory
+    output_dir = executors[0].tensorboard.base_output_directory
     tensorboard = executors[0].tensorboard.name
     for i, executor in enumerate(executors):
       if not executor:
@@ -198,14 +199,16 @@ class Client:
             'Jobs in this job group must have the same tensorboard settings. ' +
             'jobs[i] has no tensorboard settings.')
       if (executor.tensorboard.name != tensorboard or
-          executor.tensorboard.base_output_directory != staging_bucket):
+          executor.tensorboard.base_output_directory != output_dir):
         raise ValueError(
             'Jobs in this job group must have the same tensorboard settings. ' +
-            f'jobs[0] has tensorboard = {tensorboard} and staging_bucket =' +
-            f'{staging_bucket}. jobs[{i}] has tensorboard = ' +
-            f'{executor.tensorboard.name} and staging_bucket = '
+            f'jobs[0] has tensorboard = {tensorboard} and output_dir =' +
+            f'{output_dir}. jobs[{i}] has tensorboard = ' +
+            f'{executor.tensorboard.name} and output_dir = '
             f'{executor.tensorboard.base_output_directory}.')
-    return tensorboard, service_account, staging_bucket
+    if output_dir and not output_dir.startswith('gs://'):
+      output_dir = os.path.join('gs://', output_dir)
+    return tensorboard, service_account, output_dir
 
   async def wait_for_job(self, job_name: str) -> None:
     job = aiplatform.CustomJob.get(job_name)

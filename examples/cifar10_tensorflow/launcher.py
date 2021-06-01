@@ -20,6 +20,7 @@ xmanager launch examples/cifar10_tensorflow/launcher.py -- \
 """
 import asyncio
 import itertools
+import os
 
 from absl import app
 from absl import flags
@@ -58,13 +59,18 @@ def main(_):
       tensorboard = caip.client().create_tensorboard('cifar10')
       tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
 
-    for hyperparameters in trials:
+    for i, hyperparameters in enumerate(trials):
+      output_dir = os.environ.get('GOOGLE_CLOUD_BUCKET_NAME', None)
+      if output_dir:
+        output_dir = os.path.join(output_dir, str(experiment.experiment_id),
+                                  str(i))
+      tensorboard_capability = xm_local.TensorboardCapability(
+          name=tensorboard, base_output_directory=output_dir)
       experiment.add(
           xm.Job(
               executable=executable,
               executor=xm_local.Caip(
-                  xm.JobRequirements(),
-                  tensorboard=xm_local.TensorboardCapability(name=tensorboard)),
+                  xm.JobRequirements(), tensorboard=tensorboard_capability),
               args=hyperparameters,
           ))
 
