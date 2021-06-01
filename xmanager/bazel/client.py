@@ -86,6 +86,19 @@ def _read_build_events(path: str) -> List[bes_pb2.BuildEvent]:
     return events
 
 
+def _root_absolute_path() -> str:
+  # If the launch script is run with Bazel, use `BUILD_WORKSPACE_DIRECTORY` to
+  # get the root of the workspace where the build was initiated. If the launch
+  # script is run with the CLI, query Bazel to find out.
+  return os.getenv('BUILD_WORKSPACE_DIRECTORY') or subprocess.run(
+      [FLAGS.bazel_command, 'info', 'workspace'],
+      check=True,
+      stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE,
+      universal_newlines=True,
+  ).stdout.strip()
+
+
 def build_single_target(label: str) -> List[str]:
   """Builds a target and returns paths to its important output.
 
@@ -109,8 +122,7 @@ def build_single_target(label: str) -> List[str]:
             label,
         ],
         check=True,
-        # https://docs.bazel.build/versions/master/user-manual.html#run
-        cwd=os.environ['BUILD_WORKSPACE_DIRECTORY'],
+        cwd=_root_absolute_path(),
     )
     events = _read_build_events(bep_path)
     normalized_label = _get_normalized_label(events, label)
