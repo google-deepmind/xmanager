@@ -123,8 +123,7 @@ class Client:
   def launch(self, work_unit_name: str, jobs: Sequence[xm.Job]) -> str:
     """Launch jobs on AI Platform (Unified)."""
     pools = []
-    tensorboard, service_account, output_dir = (
-        self.get_tensorboard_settings(jobs))
+    tensorboard, output_dir = self.get_tensorboard_settings(jobs)
     for job in jobs:
       executable = job.executable
       if not isinstance(executable,
@@ -186,7 +185,7 @@ class Client:
     )
     custom_job.run(
         sync=False,
-        service_account=service_account,
+        service_account=auth.get_service_account(),
         tensorboard=tensorboard,
     )
     while not custom_job.resource_name:
@@ -194,22 +193,19 @@ class Client:
     print(f'Job launched at: {custom_job._dashboard_uri()}')  # pylint: disable=protected-access
     return custom_job.resource_name
 
-  def get_tensorboard_settings(self,
-                               jobs: Sequence[xm.Job]) -> Tuple[str, str, str]:
+  def get_tensorboard_settings(self, jobs: Sequence[xm.Job]) -> Tuple[str, str]:
     """Get the tensorboard settings for a sequence of Jobs."""
     executors = []
     for job in jobs:
       assert isinstance(job.executor, local_executors.Caip)
       executors.append(job.executor)
     if all(not executor.tensorboard for executor in executors):
-      return '', '', ''
+      return '', ''
 
     if not executors[0].tensorboard:
       raise ValueError(
           'Jobs in this job group must have the same tensorboard settings. ' +
           'jobs[0] has no tensorboard settings.')
-    service_account = (
-        auth.get_project_number() + '-compute@developer.gserviceaccount.com')
     output_dir = executors[0].tensorboard.base_output_directory
     tensorboard = executors[0].tensorboard.name
     for i, executor in enumerate(executors):
@@ -227,7 +223,7 @@ class Client:
             f'{executor.tensorboard.base_output_directory}.')
     if output_dir and not output_dir.startswith('gs://'):
       output_dir = os.path.join('gs://', output_dir)
-    return tensorboard, service_account, output_dir
+    return tensorboard, output_dir
 
   async def wait_for_job(self, job_name: str) -> None:
     job = aiplatform.CustomJob.get(job_name)

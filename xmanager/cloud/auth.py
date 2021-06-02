@@ -14,31 +14,99 @@
 """Utility functions to authenticate with GCP."""
 
 import os
+from typing import Any, Dict, Optional
 
 from google import auth
 from googleapiclient import discovery
 
 
 def get_project_name() -> str:
+  """Gets the Project ID of the GCP Project."""
   _, project = auth.default()
   return project
 
 
 def get_project_number() -> str:
+  """Gets the Project Number of the GCP Project."""
   rm = discovery.build('cloudresourcemanager', 'v1')
   response = rm.projects().get(projectId=get_project_name()).execute()
   return response['projectNumber']
 
 
 def get_creds():
+  """Gets the google credentials to be used with GCP APIs."""
   creds, _ = auth.default()
   return creds
 
 
-def get_api_key():
+def get_api_key() -> Optional[str]:
+  """Gets the API Key for calling GCP APIs."""
   # TODO: This shouldn't be necessary because we get creds from
   # auth default. Find out how to use CAIP API without needing API KEY.
   return os.environ.get('GOOGLE_CLOUD_API_KEY', None)
+
+
+def get_service_account() -> str:
+  """Gets or creates the service account for running XManager in GCP.
+
+  The default Vertex AI Training Service Agent has limited scopes. It is more
+  useful to use a custom service account that can access a greater number of
+  GCP APIs.
+
+  Returns:
+    The service account email.
+  """
+  service_account = f'xmanager@{get_project_name()}.iam.gserviceaccount.com'
+  _maybe_create_service_account(service_account)
+  _maybe_grant_service_account_permissions(service_account)
+  return service_account
+
+
+def _maybe_create_service_account(service_account: str) -> None:
+  """Creates the default service account if it does not exist."""
+  iam = discovery.build('iam', 'v1')
+  accounts = iam.projects().serviceAccounts().list(
+      name='projects/' + get_project_name()).execute()
+  for account in accounts['accounts']:
+    if account['email'] == service_account:
+      return
+
+  # https://cloud.google.com/iam/docs/reference/rest/v1/projects.serviceAccounts
+  body = {
+      'accountId': service_account.split('@')[0],
+      'serviceAccount': {
+          'displayName': service_account.split('@')[0],
+          'description': 'XManager service account',
+      },
+  }
+  accounts = iam.projects().serviceAccounts().create(
+      name='projects/' + get_project_name(), body=body).execute()
+
+
+def _maybe_grant_service_account_permissions(service_account: str) -> None:
+  """Grants the default service account IAM permissions if necessary."""
+  rm = discovery.build('cloudresourcemanager', 'v1')
+  policy = rm.projects().getIamPolicy(resource=get_project_name()).execute()
+  want_roles = ['roles/aiplatform.user', 'roles/storage.admin']
+
+  for role in want_roles:
+    _add_member_to_iam_policy(policy, role, 'serviceAccount:' + service_account)
+
+  body = {'policy': policy}
+  rm.projects().setIamPolicy(resource=get_project_name(), body=body).execute()
+
+
+def _add_member_to_iam_policy(policy: Dict[str, Any], role: str,
+                              member: str) -> None:
+  """Modifies the IAM policy to add the member with the role."""
+  for i, binding in enumerate(policy['bindings']):
+    if binding['role'] == role:
+      if member in binding['members']:
+        return
+      policy['bindings'][i]['members'].append(member)
+      return
+
+  policy['bindings'].append({'role': role, 'members': [member]})
 
 
 def get_bucket() -> str:
