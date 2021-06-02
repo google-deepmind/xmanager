@@ -25,7 +25,19 @@ from typing import Any, Dict, MutableMapping, Optional, Tuple, Union
 from xmanager.xm import pattern_matching
 
 
-class ResourceType(enum.Enum):
+class _ResourceTypeMeta(enum.EnumMeta):
+  """Metaclass which allows case-insensetive enum lookup.
+
+  ResourceType keys are upper case, but we allow other cases for the input. In
+  particular existing flags and JobRequirements use lower case for resource
+  names.
+  """
+
+  def __getitem__(cls, resource_name: str) -> 'ResourceType':
+    return super().__getitem__(resource_name.upper())
+
+
+class ResourceType(enum.Enum, metaclass=_ResourceTypeMeta):
   """Type of a countable resource (e.g., CPU, memory, accelerators etc).
 
   We use a schema in which every particular accelerator has its own type. This
@@ -121,20 +133,6 @@ _GPU_RESOURCES = (
     ResourceType.V100,
     ResourceType.A100,
 )
-
-
-def resource_type_by_name(resource_name: str) -> ResourceType:
-  """Returns a ResourceType corresponding to the given name.
-
-  ResourceType keys are upper case, but we allow other case for the input.
-
-  Args:
-    resource_name: name of the resource type, arbitrary case.
-
-  Returns:
-    a ResourceType value corresponding to the given name.
-  """
-  return ResourceType[resource_name.upper()]
 
 
 def is_gpu(resource_type: ResourceType) -> bool:
@@ -239,7 +237,7 @@ class JobRequirements:
 
     for resource_name, value in resources.items():
       scalar, topology = _parse_resource_quantity(value)
-      resource = resource_type_by_name(resource_name)
+      resource = ResourceType[resource_name]
 
       if is_tpu(resource) or is_gpu(resource):
         if self.accelerator is not None:
