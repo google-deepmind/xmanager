@@ -21,7 +21,7 @@ import functools
 import itertools
 import operator
 import re
-from typing import Any, Dict, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import Any, Iterable, Iterator, Dict, Mapping, MutableMapping, Optional, Tuple, Union
 
 import immutabledict
 from xmanager.xm import pattern_matching as pm
@@ -73,6 +73,81 @@ class ResourceType(enum.Enum, metaclass=_ResourceTypeMeta):
     return self._name_
 
 
+def _enum_subset(class_name: str, values: Iterable[ResourceType]) -> type:  # pylint: disable=g-bare-generic
+  """Returns an enum subset class.
+
+  The class is syntactically equivalent to an enum with the given resource
+  types. But the concrete constants are the same as in the ResourceType enum,
+  making all equivalence comparisons work correctly. Additionally operator `in`
+  is supported for checking if a resource belongs to the subset.
+
+  Args:
+    class_name: Class name of the subset enum.
+    values: A list of resources that belong to the subset.
+  """
+  values = set(values)
+
+  class EnumSubsetMetaclass(type):  # pylint: disable=g-bare-generic
+    """Metaclass which implements enum subset operations."""
+
+    def __new__(
+        cls,
+        name: str,
+        bases: Tuple[type],  # pylint: disable=g-bare-generic
+        dct: Dict[str, Any],
+    ) -> type:  # pylint: disable=g-bare-generic
+      # Add constants to the class dict.
+      for name, member in ResourceType.__members__.items():
+        if member in values:
+          dct[name] = member
+
+      return super().__new__(cls, class_name, bases, dct)
+
+    def __getitem__(cls, item: str) -> ResourceType:
+      result = ResourceType[item]
+      if result not in cls:  # pylint: disable=unsupported-membership-test
+        raise AttributeError(
+            f"type object '{cls.__name__}' has no attribute '{item}'")
+      return result
+
+    def __iter__(cls) -> Iterator[ResourceType]:
+      return iter(values)
+
+    def contains(cls, value: ResourceType) -> bool:
+      return value in values
+
+  class EnumSubset(metaclass=EnumSubsetMetaclass):
+
+    def __new__(cls, value: int) -> ResourceType:
+      resource = ResourceType(value)
+      if resource not in cls:
+        raise ValueError(f'{value} is not a valid {cls.__name__}')
+      return resource
+
+  return EnumSubset
+
+
+# TODO: Use centralized resource metadata.
+TpuType = _enum_subset(
+    'TpuType',
+    [
+        ResourceType.TPU_V2,
+        ResourceType.TPU_V3,
+    ],
+)
+
+GpuType = _enum_subset(
+    'GpuType',
+    [
+        ResourceType.P4,
+        ResourceType.T4,
+        ResourceType.P100,
+        ResourceType.V100,
+        ResourceType.A100,
+    ],
+)
+
+
 class ResourceDict(MutableMapping):
   """Internal class to represent amount of countable resources.
 
@@ -121,28 +196,6 @@ class ResourceDict(MutableMapping):
     # user-friendly.
     return ', '.join(
         sorted([f'{key}: {value}' for (key, value) in self.items()]))
-
-
-# TODO: Use centralized resource metadata.
-_TPU_RESOURCES = (
-    ResourceType.TPU_V2,
-    ResourceType.TPU_V3,
-)
-_GPU_RESOURCES = (
-    ResourceType.P4,
-    ResourceType.T4,
-    ResourceType.P100,
-    ResourceType.V100,
-    ResourceType.A100,
-)
-
-
-def is_gpu(resource_type: ResourceType) -> bool:
-  return resource_type in _GPU_RESOURCES
-
-
-def is_tpu(resource_type: ResourceType) -> bool:
-  return resource_type in _TPU_RESOURCES
 
 
 class InvalidTpuTopologyError(Exception):
@@ -268,7 +321,7 @@ class JobRequirements:
           pm.Case([ResourceType], lambda r: r))(
               resource_name)
 
-      if is_tpu(resource) or is_gpu(resource):
+      if resource in TpuType or resource in GpuType:
         if self.accelerator is not None:
           raise ValueError('Accelerator already set.')
         self.accelerator = resource
@@ -277,9 +330,9 @@ class JobRequirements:
         raise ValueError(
             f'A topology specified for non accelerator resource {resource}.')
 
-      if is_tpu(resource):
+      if resource in TpuType:
         self.is_tpu_job = True
-      elif is_gpu(resource):
+      elif resource in GpuType:
         self.is_gpu_job = True
 
       if resource in self.task_requirements:

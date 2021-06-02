@@ -23,7 +23,6 @@ from kubernetes import config as k8s_config
 
 from xmanager import xm
 from xmanager.cloud import utils as cloud_utils
-from xmanager.xm import resources as xm_resources
 from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import execution as local_execution
@@ -168,11 +167,11 @@ def resources_from_executor(
   """Get resource limits from the executor."""
   limits = {}
   for resource, value in executor.resources.task_requirements.items():
-    if xm_resources.is_gpu(resource):
+    if resource in xm.GpuType:
       # TODO: Implement detection of whether an accelerator is an Nvidia
       # GPU. amd.com/gpu is another type of GPU that is not present in GCP.
       limits['nvidia.com/gpu'] = f'{value:g}'
-    elif xm_resources.is_tpu(resource):
+    elif resource in xm.TpuType:
       pass
     else:
       # Converts resource amount to a string accepted by Kubernetes:
@@ -204,7 +203,7 @@ def node_selector_from_executor(
     return {}
 
   for resource in executor.resources.task_requirements:
-    if xm_resources.is_gpu(resource):
+    if resource in xm.GpuType:
       return {
           'cloud.google.com/gke-accelerator':
               'nvidia-tesla-' + str(resource).lower()

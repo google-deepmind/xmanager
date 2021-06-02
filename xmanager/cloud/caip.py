@@ -31,7 +31,6 @@ import immutabledict
 
 from xmanager import xm
 from xmanager.cloud import auth
-from xmanager.xm import resources as xm_resources
 from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import execution as local_execution
@@ -269,9 +268,9 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   spec = {'machine_type': machine_type}
   for resource, value in resources.task_requirements.items():
     accelerator_type = None
-    if xm_resources.is_gpu(resource):
+    if resource in xm.GpuType:
       accelerator_type = 'NVIDIA_TESLA_' + str(resource).upper()
-    elif xm_resources.is_tpu(resource):
+    elif resource in xm.TpuType:
       accelerator_type = _CLOUD_TPU_ACCELERATOR_TYPES[resource]
     if accelerator_type:
       spec['accelerator_type'] = aip_v1.AcceleratorType[accelerator_type]

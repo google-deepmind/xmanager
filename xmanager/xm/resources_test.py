@@ -96,5 +96,27 @@ class JobRequirementsTest(parameterized.TestCase):
     self.assertEqual(requirements.location, 'lon_r7')
 
 
+class EnumSubsetTest(parameterized.TestCase):
+
+  def test_construction(self):
+    self.assertEqual(resources.GpuType['V100'], resources.GpuType(17))
+    with self.assertRaises(AttributeError):
+      resources.GpuType['TPU_V3']  # pylint: disable=pointless-statement
+    with self.assertRaises(ValueError):
+      resources.GpuType(170)
+
+  def test_equivalence(self):
+    self.assertEqual(resources.ResourceType.V100, resources.GpuType.V100)
+
+  def test_iteration(self):
+    gpus = set(iter(resources.GpuType))
+    self.assertIn(resources.ResourceType.V100, gpus)
+    self.assertNotIn(resources.ResourceType.TPU_V3, gpus)
+
+  def test_contains(self):
+    self.assertIn(resources.ResourceType.V100, resources.GpuType)
+    self.assertNotIn(resources.ResourceType.TPU_V3, resources.GpuType)
+
+
 if __name__ == '__main__':
   unittest.main()
