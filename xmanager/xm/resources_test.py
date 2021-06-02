@@ -80,6 +80,10 @@ class JobRequirementsTest(parameterized.TestCase):
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
     self.assertEqual(requirements.topology.name, '4x4')
 
+  def test_location(self):
+    requirements = resources.JobRequirements(location='lon_r7')
+    self.assertEqual(requirements.location, 'lon_r7')
+
 
 if __name__ == '__main__':
   unittest.main()

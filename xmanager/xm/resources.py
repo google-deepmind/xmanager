@@ -216,18 +216,29 @@ class JobRequirements:
       multiple accelerators are not supported because different kinds of
       accelerators are usually not installed on the same host.
     topology: Accelerator topology, if an accelerator is used.
+    location: Place where the job should run. For example a cluster name or
+      a Borg cell.
   """
 
   task_requirements: ResourceDict
   accelerator: Optional[ResourceType]
   topology: Optional[Topology]
 
-  def __init__(self, **resources: ResourceQuantity) -> None:
+  location: Optional[str]
+
+  def __init__(self,
+               *,
+               location: Optional[str] = None,
+               **resources: ResourceQuantity) -> None:
     """Define a set of resources.
 
     Args:
+      location: Place where the job should run. For example a cluster name or
+        a Borg cell.
       **resources: resource amounts, for example v100=2 or ram=1 * xm.GiB.
     """
+    self.location = location
+
     self.task_requirements = ResourceDict()
     self.accelerator = None
     self.topology = None
