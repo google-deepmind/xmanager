@@ -18,11 +18,13 @@ Various classes defined to support resources specification for jobs.
 
 import enum
 import functools
+import itertools
 import operator
 import re
-from typing import Any, Dict, MutableMapping, Optional, Tuple, Union
+from typing import Any, Dict, Mapping, MutableMapping, Optional, Tuple, Union
 
-from xmanager.xm import pattern_matching
+import immutabledict
+from xmanager.xm import pattern_matching as pm
 
 
 class _ResourceTypeMeta(enum.EnumMeta):
@@ -202,8 +204,7 @@ def _parse_resource_quantity(
   def parse_number(value: Any):
     return float(value), None
 
-  return pattern_matching.match(parse_string, parse_topology, parse_number)(
-      value)
+  return pm.match(parse_string, parse_topology, parse_number)(value)
 
 
 class JobRequirements:
@@ -227,15 +228,28 @@ class JobRequirements:
   location: Optional[str]
 
   def __init__(self,
+               resources: Mapping[
+                   Union[ResourceType, str],
+                   ResourceQuantity] = immutabledict.immutabledict(),
                *,
                location: Optional[str] = None,
-               **resources: ResourceQuantity) -> None:
+               **kw_resources: ResourceQuantity) -> None:
     """Define a set of resources.
 
     Args:
+      resources: resource amounts as a dictionary,
+        for example {xm.ResourceType.V100: 2}.
       location: Place where the job should run. For example a cluster name or
         a Borg cell.
-      **resources: resource amounts, for example v100=2 or ram=1 * xm.GiB.
+      **kw_resources: resource amounts as a kwargs,
+        for example v100=2 or ram=1 * xm.GiB.
+
+    Raises:
+      ValueError:
+        If several accelerator resources are supplied (i.e. GPU and TPU).
+        If the same resource is passed in a `resources` dictionary and as
+          a command line argument.
+        If topology is supplied for a non acceelerator resource.
     """
     self.location = location
 
@@ -246,9 +260,13 @@ class JobRequirements:
     self.is_tpu_job = False
     self.is_gpu_job = False
 
-    for resource_name, value in resources.items():
+    for resource_name, value in itertools.chain(resources.items(),
+                                                kw_resources.items()):
       scalar, topology = _parse_resource_quantity(value)
-      resource = ResourceType[resource_name]
+      resource = pm.match(
+          pm.Case([str], lambda r: ResourceType[r]),
+          pm.Case([ResourceType], lambda r: r))(
+              resource_name)
 
       if is_tpu(resource) or is_gpu(resource):
         if self.accelerator is not None:
@@ -264,4 +282,6 @@ class JobRequirements:
       elif is_gpu(resource):
         self.is_gpu_job = True
 
+      if resource in self.task_requirements:
+        raise ValueError(f'{resource} has been specified twice.')
       self.task_requirements[resource] = scalar

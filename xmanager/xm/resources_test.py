@@ -75,6 +75,17 @@ class JobRequirementsTest(parameterized.TestCase):
     self.assertIsNone(requirements.accelerator)
     self.assertIsNone(requirements.topology)
 
+  def test_construct_requirements(self):
+    requirements = resources.JobRequirements({resources.ResourceType.CPU: 4},
+                                             v100=1)
+    task_requirements = requirements.task_requirements
+    self.assertEqual(task_requirements[resources.ResourceType.CPU], 4)
+    self.assertEqual(task_requirements[resources.ResourceType.V100], 1)
+
+  def test_resource_specified_twice(self):
+    with self.assertRaises(ValueError):
+      resources.JobRequirements({resources.ResourceType.CPU: 1}, cpu=2)
+
   def test_tpu_job(self):
     requirements = resources.JobRequirements(tpu_v3='4x4')
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
