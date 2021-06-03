@@ -17,9 +17,13 @@
 #include <iostream>
 #include <thread>
 
-int main() {
-  std::ofstream ouf("/tmp/binary_output.txt");
-  ouf << "Hello, world!" << std::endl;
-  std::this_thread::sleep_for(std::chrono::milliseconds(5 * 1000));
+int main(int argc, char* argv[]) {
+  std::ofstream ouf(std::getenv("OUTPUT_PATH"));
+  ouf << argc << std::endl;
+  for (int i = 0; i < argc; ++i) {
+    ouf << argv[i] << std::endl;
+  }
+  // Sleep to demonstrate local jobs waiting.
+  std::this_thread::sleep_for(std::chrono::seconds(5));
   return 0;
 }

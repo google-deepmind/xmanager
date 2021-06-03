@@ -11,10 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""XManager launcher example building with Bazel.
+"""XManager launcher that runs locally a binary built with Bazel.
 
-You must `cd` into xmanager/examples/bazel/ in order to run this example
-because you need to be in the same directory as WORKSPACE.
+One must `cd` into xmanager/examples/local_arg_printer/ in order to run this
+example because Bazel needs to locate the WORKSPACE file.
 """
 
 from typing import Sequence
@@ -26,18 +26,23 @@ from xmanager import xm_local
 
 def main(argv: Sequence[str]) -> None:
   del argv
+
   with xm_local.create_experiment(
-      experiment_title='bazel_binary') as experiment:
+      experiment_title='local_arg_printer') as experiment:
     [executable] = experiment.package([
         xm.Packageable(
             executable_spec=xm.BazelBinary(
-                label='//:binary'
+                label='//:arg_printer'
             ),
             executor_spec=xm_local.Local.Spec(),
         ),
     ])
-    print(repr(executable))
-    experiment.add(xm.Job(executable=executable, executor=xm_local.Local()))
+    experiment.add(
+        xm.Job(
+            executable=executable,
+            executor=xm_local.Local(),
+            env_vars={'OUTPUT_PATH': '/tmp/local_arg_printer.txt'},
+        ))
 
 
 if __name__ == '__main__':
