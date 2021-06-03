@@ -15,7 +15,8 @@
 # limitations under the License.
 
 readonly BAZEL_DIR="/tmp/bazel"
-readonly GENERATED_DIR="third_party/py/xmanager/generated"
+readonly SOURCE_ROOT_DIR="$(realpath $(dirname $0))"
+readonly GENERATED_DIR="$SOURCE_ROOT_DIR/generated"
 
 git clone https://github.com/bazelbuild/bazel.git "${BAZEL_DIR}"
 
@@ -31,6 +32,10 @@ cp "${BAZEL_DIR}/src/main/protobuf/command_line_pb2.py" "${GENERATED_DIR}/"
 cp "${BAZEL_DIR}/src/main/protobuf/failure_details_pb2.py" "${GENERATED_DIR}/"
 cp "${BAZEL_DIR}/src/main/protobuf/invocation_policy_pb2.py" "${GENERATED_DIR}/"
 cp "${BAZEL_DIR}/src/main/protobuf/option_filters_pb2.py" "${GENERATED_DIR}/"
+
+protoc --proto_path="$SOURCE_ROOT_DIR" --python_out="$SOURCE_ROOT_DIR" \
+  "$SOURCE_ROOT_DIR/xm_local/storage/data.proto"
+mv "$SOURCE_ROOT_DIR/xm_local/storage/data_pb2.py" "${GENERATED_DIR}/"
 
 # Make generated imports local to xmanager.generated.
 find "${GENERATED_DIR}/" -name '*pb2*' -exec \

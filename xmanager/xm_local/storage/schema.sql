@@ -26,6 +26,7 @@ INSERT INTO VersionHistory(Version, Timestamp) VALUES(1, strftime('%s', 'now'));
 -- Experiment.
 CREATE TABLE Experiment (
   Id INTEGER,
+  Title TEXT,
   PRIMARY KEY(Id)
 );
 
