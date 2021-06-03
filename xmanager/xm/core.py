@@ -312,7 +312,12 @@ def _work_unit_arguments(
     return {key: value for key, value in args.items() if value}
 
   def deduce_args_for_job_group(group: JobGroup) -> Dict[str, Any]:
-    return {job_name: deduce_args(job) for job_name, job in group.jobs.items()}
+    args = {}
+    for job_name, job in group.jobs.items():
+      job_args = deduce_args(job)
+      if job_args:
+        args[job_name] = job_args
+    return args
 
   deduce_args = pattern_matching.match(
       deduce_args_for_job, deduce_args_for_job_group,
