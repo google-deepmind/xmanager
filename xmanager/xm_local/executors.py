@@ -23,6 +23,7 @@ from xmanager.docker import docker_adapter
 GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER = 'GOOGLE_KUBERNETES_ENGINE'
 
 
+@attr.s(auto_attribs=True)
 class LocalSpec(xm.ExecutorSpec):
   """Current machine executor's specification."""
 

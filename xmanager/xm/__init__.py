@@ -19,6 +19,7 @@ Provides XManager public API for configuring and launching experiments.
 from xmanager.xm.compute_units import *
 from xmanager.xm.core import *
 from xmanager.xm.executables import *
+from xmanager.xm.factories import *
 from xmanager.xm.resources import *
 from xmanager.xm.utils import run_in_asyncio_loop
 from xmanager.xm.utils import ShellSafeArg
