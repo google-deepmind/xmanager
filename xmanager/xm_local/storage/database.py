@@ -88,3 +88,18 @@ class Database:
       if rows[0][0] > 1:
         raise ValueError(
             f'The database schema is on an unsupported version: {rows[0][0]}')
+
+  def insert_experiment(self, experiment_id: int,
+                        experiment_title: str) -> None:
+    with self.engine.connect() as conn:
+      query = ('INSERT INTO Experiment (Id, Title) '
+               'VALUES (:experiment_id, :experiment_title)')
+      conn.execute(
+          query, experiment_id=experiment_id, experiment_title=experiment_title)
+
+  def insert_work_unit(self, experiment_id: int, work_unit_id: int) -> None:
+    with self.engine.connect() as conn:
+      query = ('INSERT INTO WorkUnit (ExperimentId, WorkUnitId) '
+               'VALUES (:experiment_id, :work_unit_id)')
+      conn.execute(
+          query, experiment_id=experiment_id, work_unit_id=work_unit_id)

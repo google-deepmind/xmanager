@@ -28,6 +28,7 @@ from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
 from xmanager.xm_local import status as local_status
 from xmanager.xm_local.packaging import router as packaging_router
+from xmanager.xm_local.storage import database
 
 
 def _throw_on_unknown_executor(job: xm.Job, executor: Any):
@@ -138,6 +139,8 @@ class LocalExperiment(xm.Experiment):
   def _create_work_unit(self) -> LocalWorkUnit:
     work_unit = LocalWorkUnit(self, self._experiment_title,
                               self._work_unit_id_predictor, self._create_task)
+    database.database().insert_work_unit(self.experiment_id,
+                                         work_unit.work_unit_id)
     self._work_units.append(work_unit)
     return work_unit
 
@@ -176,7 +179,10 @@ class LocalExperiment(xm.Experiment):
 
 def create_experiment(experiment_title: str) -> xm.Experiment:
   """Create Experiment."""
-  return LocalExperiment(experiment_title)
+  experiment = LocalExperiment(experiment_title)
+  database.database().insert_experiment(experiment.experiment_id,
+                                        experiment._experiment_title)  # pylint: disable=protected-access
+  return experiment
 
 
 def get_experiment(experiment_id: int) -> xm.Experiment:
