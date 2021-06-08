@@ -42,11 +42,15 @@ jobs.
    gcloud auth configure-docker
    ```
 
-5. Enable the 'Cloud AI Platfrom' here: https://console.cloud.google.com/apis/library/aiplatform.googleapis.com
+5. Enable Google Cloud Platform APIs.
 
-6. Enable the 'Container Registry' here: https://console.cloud.google.com/apis/library/containerregistry.googleapis.com
+   * Enable IAM here: https://console.cloud.google.com/apis/library/iam.googleapis.com
 
-7. Create an API key here: http://console.cloud.google.com/apis/credentials
+   * Enable the 'Cloud AI Platfrom' here: https://console.cloud.google.com/apis/library/aiplatform.googleapis.com
+
+   * Enable the 'Container Registry' here: https://console.cloud.google.com/apis/library/containerregistry.googleapis.com
+
+6. Create an API key here: http://console.cloud.google.com/apis/credentials
 
    Add the API key to your environment variables or your .bashrc:
 
@@ -54,7 +58,7 @@ jobs.
    export GOOGLE_CLOUD_API_KEY=<API key>
    ```
 
-8. Create a staging bucket in us-central1 if you do not already have one. This
+7. Create a staging bucket in us-central1 if you do not already have one. This
    bucket should be used to save experiment artifacts like Tensorflow log files,
    which can be read by Tensorboard. This bucket may also be used to stage files
    to build your Docker image if you build your images remotely.
