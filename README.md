@@ -20,7 +20,7 @@ to run XManager experiments, you need to install Bazel.
 
 ### Create a Google Cloud Platform (GCP) project
 
-If you use `xmanager.cloud.CaipExecutor` to run XManager experiments, you need
+If you use `xm_local.Caip` to run XManager experiments, you need
 to have a GCP project in order to be able to access Cloud AI Platform to run
 jobs.
 
@@ -110,12 +110,12 @@ steps:
 3. Package your executables.
 
     ```python
-    from xmanager.xm_local import executors
+    from xmanager import xm_local
 
     [executable] = experiment.package([
       xm.Packageable(
         executable_spec=spec,
-        executor_spec=executors.Caip.Spec(),
+        executor_spec=xm_local.Caip.Spec(),
       ),
     ])
    ```
@@ -150,7 +150,7 @@ steps:
     for hyperparameters in trials:
       experiment.add(xm.Job(
           executable=executable,
-          executor=executors.Caip(resources=resources),
+          executor=xm_local.Caip(resources=resources),
           args=hyperparameters,
         ))
     ```
@@ -171,12 +171,44 @@ Container defines a pre-built Docker image located at a URL (or locally).
 xm.Container(path='gcr.io/project-name/image-name:latest')
 ```
 
+`xm.container` is a shortener for packageable construction.
+
+```python
+assert xm.container(
+    executor_spec=xm_local.Local.Spec(),
+    args=args,
+    env_vars=env_vars,
+    ...
+) == xm.Packageable(
+    executable_spec=xm.Container(...),
+    executor_spec=xm_local.Local.Spec(),
+    args=args,
+    env_vars=env_vars,
+)
+```
+
 #### BazelBinary
 
 BazelBinary defines a Bazel binary target identified by a label.
 
 ```python
 xm.Binary(path='//path/to/target:label')
+```
+
+`xm.bazel_binary` is a shortener for packageable construction.
+
+```python
+assert xm.bazel_binary(
+    executor_spec=xm_local.Local.Spec(),
+    args=args,
+    env_vars=env_vars,
+    ...
+) == xm.Packageable(
+    executable_spec=xm.BazelBinary(...),
+    executor_spec=xm_local.Local.Spec(),
+    args=args,
+    env_vars=env_vars,
+)
 ```
 
 #### PythonContainer
@@ -191,9 +223,7 @@ xm.PythonContainer(
     # Optionals.
     path: '/path/to/python/project/',  # Defaults to the current directory of the launch script.
     base_image: '<image>[:<tag>]',
-    docker_instructions: ['RUN ...', 'COPY ...', ...]
-    env_vars: [<fixed environment variables>],
-    args: [<fixed command-line arguments>],
+    docker_instructions: ['RUN ...', 'COPY ...', ...],
 )
 ```
 
@@ -201,7 +231,7 @@ A simple form of PythonContainer is to just launch a Python module with default
 `docker_intructions`.
 
 ```python
-xm.PythonContainer(entrypoint: xm.ModuleName('cifar10'))
+xm.PythonContainer(entrypoint=xm.ModuleName('cifar10'))
 ```
 
 That specification produces a Docker image that runs the following command:
@@ -215,18 +245,18 @@ command as well as the Docker instructions.
 
 ```python
 xm.PythonContainer(
-    entrypoint: xm.CommandList([
+    entrypoint=xm.CommandList([
       './pre_process.sh',
       'python3 -m cifar10 $@',
       './post_process.sh',
-    ])
-    docker_instructions: [
+    ]),
+    docker_instructions=[
       'COPY pre_process.sh pre_process.sh',
       'RUN chmod +x ./pre_process.sh',
       'COPY cifar10.py',
       'COPY post_process.sh post_process.sh',
       'RUN chmod +x ./post_process.sh',
-    ]
+    ],
 )
 ```
 
@@ -240,6 +270,22 @@ python3 -m cifar10 fixed_arg1 fixed_arg2
 
 IMPORTANT: Note the use of `$@` which accepts command-line arguments. Otherwise,
 all command-line arguments are ignored by your entrypoint.
+
+`xm.python_container` is a shortener for packageable construction.
+
+```python
+assert xm.python_container(
+    executor_spec=xm_local.Local.Spec(),
+    args=args,
+    env_vars=env_vars,
+    ...
+) == xm.Packageable(
+    executable_spec=xm.PythonContainer(...),
+    executor_spec=xm_local.Local.Spec(),
+    args=args,
+    env_vars=env_vars,
+)
+```
 
 ### Executors
 
@@ -256,7 +302,7 @@ The Caip executor declares that an executable will be run on the CAIP platform.
 The Caip executor takes in a resource object.
 
 ```python
-executors.Caip(
+xm_local.Caip(
     xm.Resources(
         cpu=1,  # measured in vCPUs
         ram=4 * xm.GiB,
@@ -269,7 +315,7 @@ executors.Caip(
 ```
 
 ```python
-executors.Caip(
+xm_local..Caip(
     xm.Resources(
         cpu=1,  # measured in vCPUs
         ram=4 * xm.GiB,
@@ -300,7 +346,7 @@ IMPORTANT: Note that for `TPU_V2` and `TPU_V3` the only valid count is currently
 The CAIP executor allows you specify a remote image repository to push to.
 
 ```python
-executors.Caip.Spec(
+xm_local.Caip.Spec(
     push_image_tag='gcr.io/<project>/<image>:<tag>',
 )
 ```
@@ -337,7 +383,7 @@ gcloud container clusters get-credentials <cluster-name>
 The Kubernetes executor allows you specify a remote image repository to push to.
 
 ```python
-executors.Kubernetes.Spec(
+xm_local.Kubernetes.Spec(
     push_image_tag='gcr.io/<project>/<image>:<tag>',
 )
 ```
@@ -378,7 +424,7 @@ Jobs are defined like this:
 ```python
 [executable] = xm.Package(...)
 
-executor = xm.Caip(...)
+executor = xm_local.Caip(...)
 
 xm.Job(
     executable=executable,
