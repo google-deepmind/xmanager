@@ -25,7 +25,6 @@ _DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
 
 def get_project_name() -> str:
   """Gets the Project ID of the GCP Project."""
-  enable_apis()
   _, project = auth.default()
   return project
 
@@ -64,6 +63,15 @@ def enable_apis():
   }
   su.services().batchEnable(
       parent=f'projects/{get_project_number()}', body=body).execute()
+
+
+# If using XManager with GCP, make sure the user has Owner/Editor role
+# and can enable the APIs. If not using GCP, then this is ignored.
+try:
+  if get_project_name():
+    enable_apis()
+except auth.exceptions.DefaultCredentialsError:
+  pass
 
 
 def get_service_account() -> str:
