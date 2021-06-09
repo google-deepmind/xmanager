@@ -15,7 +15,7 @@ r"""XManager launcher for Polynomial.
 
 Usage:
 
-xmanager launch examples/polynomial/launcher.py
+xmanager launch examples/vizier/launcher.py
 """
 import time
 
