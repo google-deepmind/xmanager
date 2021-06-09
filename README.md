@@ -32,8 +32,10 @@ jobs.
    running:
 
    ```bash
+   export GCP_PROJECT=<GCP PROJECT ID>
    gcloud auth login
    gcloud auth application-default login
+   gcloud config set project $GCP_PROJECT
    ```
 
 4. Set up `gcloud` to work with Docker by running:
@@ -50,15 +52,7 @@ jobs.
 
    * Enable the 'Container Registry' here: https://console.cloud.google.com/apis/library/containerregistry.googleapis.com
 
-6. Create an API key here: http://console.cloud.google.com/apis/credentials
-
-   Add the API key to your environment variables or your .bashrc:
-
-   ```bash
-   export GOOGLE_CLOUD_API_KEY=<API key>
-   ```
-
-7. Create a staging bucket in us-central1 if you do not already have one. This
+6. Create a staging bucket in us-central1 if you do not already have one. This
    bucket should be used to save experiment artifacts like Tensorflow log files,
    which can be read by Tensorboard. This bucket may also be used to stage files
    to build your Docker image if you build your images remotely.

@@ -13,15 +13,19 @@
 # limitations under the License.
 """Utility functions to authenticate with GCP."""
 
+import functools
 import os
-from typing import Any, Dict, Optional
+from typing import Any, Iterable, Dict
 
 from google import auth
 from googleapiclient import discovery
 
+_DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
+
 
 def get_project_name() -> str:
   """Gets the Project ID of the GCP Project."""
+  enable_apis()
   _, project = auth.default()
   return project
 
@@ -33,17 +37,33 @@ def get_project_number() -> str:
   return response['projectNumber']
 
 
-def get_creds():
+def get_creds(scopes: Iterable[str] = _DEFAULT_SCOPES):
   """Gets the google credentials to be used with GCP APIs."""
-  creds, _ = auth.default()
+  creds, _ = auth.default(scopes=scopes)
   return creds
 
 
-def get_api_key() -> Optional[str]:
-  """Gets the API Key for calling GCP APIs."""
-  # TODO: This shouldn't be necessary because we get creds from
-  # auth default. Find out how to use CAIP API without needing API KEY.
-  return os.environ.get('GOOGLE_CLOUD_API_KEY', None)
+# The @lru_cache decorator causes this to only be run once per Python session.
+@functools.lru_cache()
+def enable_apis():
+  """Enables APIs on the GCP Project."""
+  su = discovery.build('serviceusage', 'v1')
+  body = {
+      'serviceIds': [
+          'aiplatform.googleapis.com',
+          'cloudbuild.googleapis.com',
+          'cloudresourcemanager.googleapis.com',
+          'compute.googleapis.com',
+          'container.googleapis.com',
+          'containerregistry.googleapis.com',
+          'iam.googleapis.com',
+          'logging.googleapis.com',
+          'storage-api.googleapis.com',
+          'tpu.googleapis.com',
+      ]
+  }
+  su.services().batchEnable(
+      parent=f'projects/{get_project_number()}', body=body).execute()
 
 
 def get_service_account() -> str:
@@ -119,12 +139,3 @@ def get_bucket() -> str:
       'replacing <bucket-name> with a Google Cloud Storage bucket. '
       'You can create a bucket with '
       '`gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME`.')
-
-
-def check_cloud():
-  su = discovery.build('serviceusage', 'v1')
-  su.services().enable(
-      name=f'projects/{get_project_number()}/services/aiplatform.googleapis.com'
-  ).execute()
-  # TODO: Give AI Platform Service Agent access to gcr.io GCS
-  # storage.
