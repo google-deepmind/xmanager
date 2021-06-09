@@ -31,7 +31,12 @@ from xmanager.xm_local import executables
 from xmanager.xm_local import executors
 from xmanager.xm_local import status
 
-BRIDGE_NETWORK_NAME = 'xmanager'
+_DEFAULT_ENCODING = 'utf-8'
+_BRIDGE_NETWORK_NAME = 'xmanager'
+
+
+def _print_chunk(name: str, line: str) -> None:
+  print('[{}] {}'.format(name, line.strip()))
 
 
 class ExecutionHandle(abc.ABC):
@@ -51,6 +56,10 @@ class LocalExecutionHandle(ExecutionHandle, abc.ABC):
   """An interface for operating on local executions."""
 
   @abc.abstractmethod
+  async def monitor(self) -> None:
+    raise NotImplementedError
+
+  @abc.abstractmethod
   def terminate(self) -> None:
     raise NotImplementedError
 
@@ -67,21 +76,34 @@ async def _throw_on_unknown_executable(
 class ContainerHandle(LocalExecutionHandle):
   """A handle for referring to the launched container."""
 
+  name: str
   model: containers.Container
+  stream_output: bool
+  futures_executor: futures.Executor = attr.Factory(futures.ThreadPoolExecutor)
 
   async def wait(self) -> None:
-    with futures.ThreadPoolExecutor() as executor:
-      response = await asyncio.wrap_future(executor.submit(self.model.wait))
-      status_code = response['StatusCode']
-      if status_code != 0:
-        raise RuntimeError(
-            f'Container {self.model!r} returned non-zero status: {status_code}')
+    response = await asyncio.wrap_future(
+        self.futures_executor.submit(self.model.wait))
+    status_code = response['StatusCode']
+    if status_code != 0:
+      raise RuntimeError(
+          f'Container {self.model!r} returned non-zero status: {status_code}')
 
   def get_status(self) -> status.LocalWorkUnitStatus:
     raise NotImplementedError
 
   def terminate(self) -> None:
     self.model.stop()
+    self.futures_executor.shutdown(wait=True)
+
+  async def monitor(self) -> None:
+
+    def _stream_chunks() -> None:
+      for chunk in self.model.logs(stream=True, follow=True):
+        _print_chunk(self.name, chunk.decode(_DEFAULT_ENCODING))
+
+    if self.stream_output:
+      await asyncio.wrap_future(self.futures_executor.submit(_stream_chunks))
 
 
 async def _launch_loaded_container_image(
@@ -94,8 +116,8 @@ async def _launch_loaded_container_image(
   executor = cast(executors.Local, job.executor)
   instance = docker_adapter.instance()
 
-  if not instance.has_network(BRIDGE_NETWORK_NAME):
-    instance.create_network(BRIDGE_NETWORK_NAME)
+  if not instance.has_network(_BRIDGE_NETWORK_NAME):
+    instance.create_network(_BRIDGE_NETWORK_NAME)
 
   args = utils.to_command_line_args(xm.merge_args(executable.args, job.args))
   env_vars = {**executable.env_vars, **job.env_vars}
@@ -104,20 +126,26 @@ async def _launch_loaded_container_image(
   container = instance.run_container(
       name=get_full_job_name(job.name),
       image_id=executable.image_id,
-      network=BRIDGE_NETWORK_NAME,
+      network=_BRIDGE_NETWORK_NAME,
       args=args,
       env_vars=env_vars,
       ports=options.ports or {},
       volumes=options.volumes or {},
   )
-  return ContainerHandle(model=container)
+  return ContainerHandle(
+      name=job.name,
+      model=container,
+      stream_output=executor.experimental_stream_output,
+  )
 
 
 @attr.s(auto_attribs=True)
 class BinaryHandle(LocalExecutionHandle):
   """A handle referring to the launched binary."""
 
+  name: str
   process: asyncio.subprocess.Process
+  stream_output: bool
 
   async def wait(self) -> None:
     return_code = await self.process.wait()
@@ -131,6 +159,14 @@ class BinaryHandle(LocalExecutionHandle):
   def terminate(self) -> None:
     self.process.terminate()
 
+  async def monitor(self) -> None:
+    if self.stream_output:
+      while True:
+        line = await self.process.stdout.readline()
+        if not line:
+          break
+        _print_chunk(self.name, line.decode(_DEFAULT_ENCODING))
+
 
 async def _launch_local_binary(
     get_full_job_name: Callable[[str], str],
@@ -139,11 +175,25 @@ async def _launch_local_binary(
 ) -> LocalExecutionHandle:
   """Launches a local binary as a detached process."""
   del get_full_job_name  # Unused.
+  assert isinstance(job.executor, executors.Local)
+
   args = utils.to_command_line_args(xm.merge_args(executable.args, job.args))
   env_vars = {**executable.env_vars, **job.env_vars}
   process = await asyncio.create_subprocess_exec(
-      executable.path, *args, env=env_vars, start_new_session=True)
-  return BinaryHandle(process=process)
+      executable.path,
+      *args,
+      env=env_vars,
+      start_new_session=True,
+      stdout=asyncio.subprocess.PIPE
+      if job.executor.experimental_stream_output else None,
+      stderr=asyncio.subprocess.STDOUT
+      if job.executor.experimental_stream_output else None,
+  )
+  return BinaryHandle(
+      name=job.name,
+      process=process,
+      stream_output=job.executor.experimental_stream_output,
+  )
 
 
 # PyType infers the return type of `async` functions without wrapping them with

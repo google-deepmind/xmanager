@@ -47,9 +47,16 @@ class DockerOptions:
 
 @attr.s(auto_attribs=True)
 class Local(xm.Executor):
-  """Current machine executor."""
+  """Current machine executor.
+
+  Attributes:
+    docker_options: Options applied if the job is a container-based executable.
+    experimental_stream_output: Whether to pipe the job's stdout and stderr to
+      the terminal. Might be removed once we decide on the logging design.
+  """
 
   docker_options: Optional[DockerOptions] = None
+  experimental_stream_output: bool = False
 
   @classmethod
   def Spec(cls):
