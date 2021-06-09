@@ -223,12 +223,16 @@ def _wrap_late_bindings(path: str, dockerfile: str) -> Tuple[str, str]:
   shutil.copytree(path, new_path.name)
 
   dirname = os.path.dirname(os.path.realpath(__file__))
+
   shutil.copyfile(
       os.path.join(dirname, 'data', 'wrapped_entrypoint.sh'),
       os.path.join(new_path.name, 'wrapped_entrypoint.sh'))
   shutil.copyfile(
       os.path.join(dirname, 'utils.py'),
       os.path.join(new_path.name, 'caip_utils.py'))
+  shutil.copyfile(
+      os.path.join(dirname, 'vizier_worker.py'),
+      os.path.join(new_path.name, 'vizier_worker.py'))
 
   new_dockerfile = tempfile.NamedTemporaryFile(delete=False)
   insert_instructions = [
