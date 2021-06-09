@@ -36,6 +36,7 @@ import attr
 import immutabledict
 
 from xmanager.xm import id_predictor
+from xmanager.xm import metadata_context
 from xmanager.xm import pattern_matching
 
 ArgsType = Union[List, Dict]
@@ -522,6 +523,12 @@ class WorkUnit(abc.ABC):
     """
     return f'{self.work_unit_name}_{job_name}'
 
+  @property
+  def context(self) -> metadata_context.MetadataContext:
+    """Returns metadata context for a work unit."""
+    return metadata_context.MetadataContext(
+        annotations=metadata_context.ContextAnnotations())
+
 
 class Experiment(abc.ABC):
   """Experiment contains a family of jobs run on the same snapshot of code.
@@ -644,6 +651,12 @@ class Experiment(abc.ABC):
   def work_units(self) -> Mapping[int, WorkUnit]:
     """Returns a mapping from work_unit_id to an instance of the work unit."""
     raise NotImplementedError
+
+  @property
+  def context(self) -> metadata_context.MetadataContext:
+    """Returns metadata context for a work unit."""
+    return metadata_context.MetadataContext(
+        annotations=metadata_context.ContextAnnotations())
 
 
 # FIXME: Determine base Experiment properties.
