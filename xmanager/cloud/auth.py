@@ -65,15 +65,6 @@ def enable_apis():
       parent=f'projects/{get_project_number()}', body=body).execute()
 
 
-# If using XManager with GCP, make sure the user has Owner/Editor role
-# and can enable the APIs. If not using GCP, then this is ignored.
-try:
-  if get_project_name():
-    enable_apis()
-except auth.exceptions.DefaultCredentialsError:
-  pass
-
-
 def get_service_account() -> str:
   """Gets or creates the service account for running XManager in GCP.
 
