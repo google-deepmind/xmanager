@@ -95,6 +95,11 @@ class JobRequirementsTest(parameterized.TestCase):
     requirements = resources.JobRequirements(location='lon_r7')
     self.assertEqual(requirements.location, 'lon_r7')
 
+  def test_service_tier(self):
+    requirements = resources.JobRequirements(
+        service_tier=resources.ServiceTier.PROD)
+    self.assertEqual(requirements.service_tier, resources.ServiceTier.PROD)
+
 
 class EnumSubsetTest(parameterized.TestCase):
 

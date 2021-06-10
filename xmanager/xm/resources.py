@@ -27,19 +27,18 @@ import immutabledict
 from xmanager.xm import pattern_matching as pm
 
 
-class _ResourceTypeMeta(enum.EnumMeta):
+class _CaseInsensetiveEnumMeta(enum.EnumMeta):
   """Metaclass which allows case-insensetive enum lookup.
 
-  ResourceType keys are upper case, but we allow other cases for the input. In
-  particular existing flags and JobRequirements use lower case for resource
-  names.
+  Enum keys are upper case, but we allow other cases for the input. For
+  example existing flags and JobRequirements use lower case for resource names.
   """
 
   def __getitem__(cls, resource_name: str) -> 'ResourceType':
     return super().__getitem__(resource_name.upper())
 
 
-class ResourceType(enum.Enum, metaclass=_ResourceTypeMeta):
+class ResourceType(enum.Enum, metaclass=_CaseInsensetiveEnumMeta):
   """Type of a countable resource (e.g., CPU, memory, accelerators etc).
 
   We use a schema in which every particular accelerator has its own type. This
@@ -71,6 +70,27 @@ class ResourceType(enum.Enum, metaclass=_ResourceTypeMeta):
 
   def __str__(self):
     return self._name_
+
+
+class ServiceTier(enum.Enum, metaclass=_CaseInsensetiveEnumMeta):
+  """The job availability guarantees which underlying platfrom should provide.
+
+  Most cloud platforms offer a selection of availability/price tradeoff options.
+  Usually there are at least "Take my money, this workload is important" and
+  "Buy excess compute for cheap" offerings. This enum provides a classification
+  of such offerings and allows matching comparable (but not necessary identical)
+  options from different runetimes.
+  """
+
+  # Highly available tier. The job is expected to be scheduled fast once sent to
+  # the cloud. Recommended tier for multi-job work units as lower tiers may lead
+  # to partially-scheduled work units.
+  PROD = 200
+  # A cheaper tier with guaranteed average throughput. Jobs may spend hours
+  # awaiting scheduling by the cloud and can be preempted.
+  BATCH = 100
+  # The cheapest tier. No guarantees, but it often works.
+  FREEBIE = 25
 
 
 def _enum_subset(class_name: str, values: Iterable[ResourceType]) -> type:  # pylint: disable=g-bare-generic
@@ -272,6 +292,7 @@ class JobRequirements:
     topology: Accelerator topology, if an accelerator is used.
     location: Place where the job should run. For example a cluster name or
       a Borg cell.
+    service_tier: A service tier at which the job should run.
   """
 
   task_requirements: ResourceDict
@@ -279,14 +300,16 @@ class JobRequirements:
   topology: Optional[Topology]
 
   location: Optional[str]
+  service_tier: Optional[ServiceTier]
 
-  def __init__(self,
-               resources: Mapping[
-                   Union[ResourceType, str],
-                   ResourceQuantity] = immutabledict.immutabledict(),
-               *,
-               location: Optional[str] = None,
-               **kw_resources: ResourceQuantity) -> None:
+  def __init__(
+      self,
+      resources: Mapping[Union[ResourceType, str],
+                         ResourceQuantity] = immutabledict.immutabledict(),
+      *,
+      location: Optional[str] = None,
+      service_tier: Optional[ServiceTier] = None,
+      **kw_resources: ResourceQuantity) -> None:
     """Define a set of resources.
 
     Args:
@@ -294,6 +317,7 @@ class JobRequirements:
         for example {xm.ResourceType.V100: 2}.
       location: Place where the job should run. For example a cluster name or
         a Borg cell.
+      service_tier: A service tier at which the job should run.
       **kw_resources: resource amounts as a kwargs,
         for example v100=2 or ram=1 * xm.GiB.
 
@@ -305,6 +329,7 @@ class JobRequirements:
         If topology is supplied for a non acceelerator resource.
     """
     self.location = location
+    self.service_tier = service_tier
 
     self.task_requirements = ResourceDict()
     self.accelerator = None
