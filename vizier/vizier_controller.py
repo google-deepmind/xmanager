@@ -46,24 +46,22 @@ class VizierController:
     self._num_work_units_total = num_work_units_total
     self._num_parallel_work_units = num_parallel_work_units
 
-    self._work_units = []
-    self._trials = []
+    self._work_unit_updaters = []
 
   def run(self, poll_frequency_in_sec: float = 60) -> None:
     """Peridically check and sync status between vizier and work units and create new work units when needed."""
     while True:
-      # 1. Complete trial for completed work unit;
-      # TODO: i. Early-stop first if needed.
-      # ii. Add infeasible_reason if available.
-      for i in range(len(self._work_units)):
-        if not self._work_units[i].get_status().is_running():
-          self._complete_trial(self._trials[i])
+      # 1. Complete trial for completed work unit; Early stop first if needed.
+      for work_unit_updater in self._work_unit_updaters:
+        if not work_unit_updater.completed:
+          work_unit_updater.check_for_completion()
 
       # 2. TODO: Return by Vizier's indication that study is done
       # when such API is ready on Vizier side.
-      if len(self._work_units) == self._num_work_units_total and sum([
-          not wu.get_status().is_running() for wu in self._work_units
-      ]) == self._num_work_units_total:
+      num_exisiting_work_units = len(self._work_unit_updaters)
+      num_completed_work_units = sum(
+          [wuu.completed for wuu in self._work_unit_updaters])
+      if num_exisiting_work_units == self._num_work_units_total and num_completed_work_units == self._num_work_units_total:
         print('All done! Exiting VizierController... \n')
         return
 
@@ -75,9 +73,11 @@ class VizierController:
   def _launch_new_work_units(self) -> None:
     """Get hyperparmeter suggestions from Vizier and assign to new work units to run."""
     # 1. Compute num of work units to create next.
-    num_existing_work_units = len(self._work_units)
-    num_running_work_units = len(
-        [wu for wu in self._work_units if wu.get_status().is_running()])
+    num_existing_work_units = len(self._work_unit_updaters)
+    num_running_work_units = len([
+        wuu for wuu in self._work_unit_updaters
+        if wuu.work_unit_status().is_running()
+    ])
     num_work_units_to_create_total = self._num_work_units_total - num_existing_work_units
     num_work_units_to_create_next = min(
         self._num_parallel_work_units - num_running_work_units,
@@ -97,15 +97,54 @@ class VizierController:
 
       work_unit = self._work_unit_generator({
           'trial_name': trial.name,
-          **{p.parameter_id: p.value for p in trial.parameters}
+          **{
+              p.parameter_id: getattr(p.value, p.value.WhichOneof('kind'))
+              for p in trial.parameters
+          }
       })
 
       # TODO: Add an utility to handle logging conditionally
       # (use print when run local otherwise logging.info.)
       print(f'Work unit (index: {i}, id: {work_unit.work_unit_id}) created. \n')
 
-      self._work_units.append(work_unit)
-      self._trials.append(trial)
+      self._work_unit_updaters.append(
+          WorkUnitVizierUpdater(
+              vz_client=self._vz_client, work_unit=work_unit, trial=trial))
+
+
+class WorkUnitVizierUpdater:
+  """An updater for syncing completion state between work unit and vizier trial."""
+
+  def __init__(self, vz_client: aip.VizierServiceClient, work_unit: xm.WorkUnit,
+               trial: aip.Trial) -> None:
+    self.completed = False
+    self._vz_client = vz_client
+    self._work_unit = work_unit
+    self._trial = trial
+
+  def work_unit_status(self) -> xm.WorkUnitStatus:
+    return self._work_unit.get_status()
+
+  def check_for_completion(self) -> None:
+    """Sync the completion status between WorkUnit and Vizier Trial if needed."""
+    if self.completed:
+      return
+
+    print(
+        f'Start completion check for work unit {self._work_unit.work_unit_id}.\n'
+    )
+
+    # TODO: Add infeasible_reason when available.
+    if not self.work_unit_status().is_running():
+      self._complete_trial(self._trial)
+      self.completed = True
+    elif self._vz_client.check_trial_early_stopping_state(
+        request=aip.CheckTrialEarlyStoppingStateRequest(
+            trial_name=self._trial.name)).result().should_stop:
+      print(f'Early stopping work unit {self._work_unit.work_unit_id}.\n')
+      self._work_unit.stop()
+    else:
+      print(f'Work unit {self._work_unit.work_unit_id} is still running.\n')
 
   def _complete_trial(self,
                       trial: aip.Trial,
@@ -116,4 +155,4 @@ class VizierController:
             name=trial.name,
             trial_infeasible=infeasible_reason is not None,
             infeasible_reason=infeasible_reason))
-    print(f'Trial {trial.name} is completed')
+    print(f'Trial {trial.name} is completed\n')
