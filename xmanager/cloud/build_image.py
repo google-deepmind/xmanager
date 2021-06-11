@@ -99,8 +99,10 @@ def build(py_executable: xm.PythonContainer,
       print('Falling back to CloudBuild. See INFO log for details.')
     else:
       # TODO: Improve out-of-disk space handling.
-      return docker_lib.build_docker_image(image_name, docker_directory,
-                                           FLAGS.use_docker_build_subprocess)
+      return docker_lib.build_docker_image(
+          image_name,
+          docker_directory,
+          docker_subprocess=FLAGS.use_docker_build_subprocess)
   cloud_build_client = cloud_build.Client()
   cloud_build_client.build_docker_image(dirname, docker_directory, image_name)
   docker_adapter.instance().pull_image(image_name)

@@ -18,6 +18,7 @@ import pathlib
 import shutil
 import subprocess
 import tempfile
+from typing import Optional
 
 from absl import logging
 import docker
@@ -49,14 +50,17 @@ def prepare_directory(project_path: str, project_name: str,
 
 def build_docker_image(image: str,
                        directory: str,
+                       dockerfile: Optional[str] = None,
                        docker_subprocess: bool = True) -> str:
   """Builds a Docker image locally."""
   logging.info('Building Docker image locally')
   docker_client = docker.from_env()
+  if not dockerfile:
+    dockerfile = os.path.join(directory, 'Dockerfile')
   if docker_subprocess:
-    _run_docker_build_in_subprocess(directory, image)
+    _run_docker_build_in_subprocess(directory, image, dockerfile)
   else:
-    _run_docker_build(docker_client, directory, image)
+    _run_docker_build(docker_client, directory, image, dockerfile)
   logging.info('Building docker image locally: Done')
   return image
 
@@ -75,11 +79,12 @@ def push_docker_image(image: str):
   return image
 
 
-def _run_docker_build_in_subprocess(path: str, image: str) -> None:
+def _run_docker_build_in_subprocess(path: str, image: str,
+                                    dockerfile: str) -> None:
   """Builds a Docker image by calling `docker build` within a subprocess."""
   # "Pre-pulling" the image in Dockerfile so that the docker build subprocess
   # (next command) can pull from cache (see b/174748727 for more details).
-  with open(os.path.join(path, 'Dockerfile'), 'r') as f:
+  with open(os.path.join(path, dockerfile), 'r') as f:
     for line in f:
       if 'FROM' in line:
         line = line.strip()
@@ -88,16 +93,16 @@ def _run_docker_build_in_subprocess(path: str, image: str) -> None:
         docker_adapter.instance().pull_image(raw_image_name)
         break
 
-  subprocess.run(['docker', 'build', '-t', image, path],
+  subprocess.run(['docker', 'build', '-t', image, '-f', dockerfile, path],
                  check=True,
                  env={'DOCKER_BUILDKIT': '1'})
 
 
-def _run_docker_build(client: docker.DockerClient, path: str,
-                      image: str) -> None:
+def _run_docker_build(client: docker.DockerClient, path: str, image: str,
+                      dockerfile: str) -> None:
   """Builds a Docker image by calling the Docker Python client."""
   try:
-    _, logs = client.images.build(path=path, tag=image)
+    _, logs = client.images.build(path=path, tag=image, dockerfile=dockerfile)
   except docker.errors.BuildError as e:
     for l in e.build_log:
       print(l.get('stream', ''), end='')
