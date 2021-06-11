@@ -142,7 +142,7 @@ def _default_steps(directory: str) -> Iterable[str]:
       # what is described at [1]. This seems to be good practice and not hurt so
       # we're just always setting it.
       # [1] https://github.com/spotDL/spotify-downloader/issues/279
-      'ENV LANG C.UTF-8',
+      'ENV LANG=C.UTF-8',
       # Updating and installing on the same line causes cache-busting.
       # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
       'RUN apt-get update && apt-get install -y git',
