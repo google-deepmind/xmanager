@@ -17,7 +17,6 @@ Usage:
 
 xmanager launch examples/vizier/launcher.py
 """
-import time
 
 from absl import app
 
@@ -68,9 +67,7 @@ def main(_):
         job=xm.Job(
             executable=executable,
             executor=xm_local.Caip(resources=xm.JobRequirements())),
-        study_factory=vizier.NewStudy(
-            display_name=f'polynomial{int(time.time())}',
-            study_spec=get_study_spec()),
+        study_factory=vizier.NewStudy(study_spec=get_study_spec()),
         num_trials_total=3,
         num_parallel_trial_runs=2).launch()
 

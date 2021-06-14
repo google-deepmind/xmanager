@@ -30,17 +30,13 @@ class VizierStudyFactory(abc.ABC):
   """Abstract class representing vizier study generator."""
 
   def __init__(self, location: str) -> None:
-    self._vz_client = aip.VizierServiceClient(
+    self.vz_client = aip.VizierServiceClient(
         client_options=dict(
             api_endpoint=f'{location}-aiplatform.googleapis.com'))
 
-  @property
-  def vz_client(self) -> aip.VizierServiceClient:
-    return self._vz_client
-
   @abc.abstractmethod
-  def study(self) -> aip.Study:
-    pass
+  def study(self, experiment: xm.Experiment) -> aip.Study:
+    """Create or load the study for the given `experiment`."""
 
 
 class NewStudy(VizierStudyFactory):
@@ -49,8 +45,8 @@ class NewStudy(VizierStudyFactory):
   def __init__(self,
                study_spec: aip.StudySpec,
                display_name: Optional[str] = None,
-               project: Optional[str] = auth.get_project_name(),
-               location: Optional[str] = _DEFAULT_LOCATION) -> None:
+               project: str = auth.get_project_name(),
+               location: str = _DEFAULT_LOCATION) -> None:
     super().__init__(location)
 
     self._display_name = display_name
@@ -58,11 +54,12 @@ class NewStudy(VizierStudyFactory):
     self._project = project
     self._location = location
 
-  def study(self) -> aip.Study:
+  def study(self, experiment: xm.Experiment) -> aip.Study:
     return self.vz_client.create_study(
         parent=f'projects/{self._project}/locations/{self._location}',
         study=aip.Study(
-            display_name=self._display_name, study_spec=self._study_spec))
+            display_name=self._display_name or f'X{experiment.experiment_id}',
+            study_spec=self._study_spec))
 
 
 class VizierExploration:
@@ -87,12 +84,10 @@ class VizierExploration:
       return asyncio.get_event_loop().run_until_complete(
           experiment.add(job, self._to_job_params(vizier_params)))
 
-    # TODO: set study display_name with experiment title and
-    # id if not set.
-
     self._controller = VizierController(work_unit_generator,
                                         study_factory.vz_client,
-                                        study_factory.study(), num_trials_total,
+                                        study_factory.study(experiment),
+                                        num_trials_total,
                                         num_parallel_trial_runs)
 
   def _to_job_params(self, vizier_params: Dict[str, Any]) -> Dict[str, Any]:
