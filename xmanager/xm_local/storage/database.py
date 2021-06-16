@@ -19,6 +19,9 @@ import os
 import attr
 import sqlalchemy
 import sqlite3
+from xmanager.generated import data_pb2
+
+from google.protobuf import text_format
 
 Engine = sqlalchemy.engine.Engine
 
@@ -78,28 +81,53 @@ class Database:
           os.path.dirname(os.path.realpath(__file__)), 'schema.sql')
       self.settings.execute_script(schema)
 
-    with engine.connect() as conn:
-      rows = list(
-          conn.execute(
-              'SELECT Version, Timestamp FROM VersionHistory ORDER BY Timestamp DESC LIMIT 1'
-          ))
-      if not rows:
-        raise ValueError('The database is invalid. It has no VersionHistory.')
-      if rows[0][0] > 1:
-        raise ValueError(
-            f'The database schema is on an unsupported version: {rows[0][0]}')
+    rows = list(
+        self.engine.execute(
+            'SELECT Version, Timestamp FROM VersionHistory ORDER BY Timestamp DESC LIMIT 1'
+        ))
+    if not rows:
+      raise ValueError('The database is invalid. It has no VersionHistory.')
+    if rows[0][0] > 1:
+      raise ValueError(
+          f'The database schema is on an unsupported version: {rows[0][0]}')
 
   def insert_experiment(self, experiment_id: int,
                         experiment_title: str) -> None:
-    with self.engine.connect() as conn:
-      query = ('INSERT INTO Experiment (Id, Title) '
-               'VALUES (:experiment_id, :experiment_title)')
-      conn.execute(
-          query, experiment_id=experiment_id, experiment_title=experiment_title)
+    query = ('INSERT INTO Experiment (Id, Title) '
+             'VALUES (:experiment_id, :experiment_title)')
+    self.engine.execute(
+        query, experiment_id=experiment_id, experiment_title=experiment_title)
 
   def insert_work_unit(self, experiment_id: int, work_unit_id: int) -> None:
-    with self.engine.connect() as conn:
-      query = ('INSERT INTO WorkUnit (ExperimentId, WorkUnitId) '
-               'VALUES (:experiment_id, :work_unit_id)')
-      conn.execute(
-          query, experiment_id=experiment_id, work_unit_id=work_unit_id)
+    query = ('INSERT INTO WorkUnit (ExperimentId, WorkUnitId) '
+             'VALUES (:experiment_id, :work_unit_id)')
+    self.engine.execute(
+        query, experiment_id=experiment_id, work_unit_id=work_unit_id)
+
+  def insert_caip_job(self, experiment_id: int, work_unit_id: int, name: str,
+                      caip_job_id: str) -> None:
+    job = data_pb2.Job(caip=data_pb2.AIPlatformJob(resource_name=caip_job_id))
+    data = text_format.MessageToBytes(job)
+    query = ('INSERT INTO Job (ExperimentId, WorkUnitId, Name, Data) '
+             'VALUES (:experiment_id, :work_unit_id, :name, :data)')
+    self.engine.execute(
+        query,
+        experiment_id=experiment_id,
+        work_unit_id=work_unit_id,
+        name=name,
+        data=data)
+
+  def insert_kubernetes_job(self, experiment_id: int, work_unit_id: int,
+                            name: str, namespace: str, job_name: str) -> None:
+    job = data_pb2.Job(
+        kubernetes=data_pb2.KubernetesJob(
+            namespace=namespace, job_name=job_name))
+    data = text_format.MessageToString(job)
+    query = ('INSERT INTO Job (ExperimentId, WorkUnitId, Name, Data) '
+             'VALUES (:experiment_id, :work_unit_id, :name, :data)')
+    self.engine.execute(
+        query,
+        experiment_id=experiment_id,
+        work_unit_id=work_unit_id,
+        name=name,
+        data=data)

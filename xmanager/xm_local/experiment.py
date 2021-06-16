@@ -70,16 +70,43 @@ class LocalWorkUnit(xm.WorkUnit):
     # We are delegating the traversal of the job group to modules. That improves
     # modularity, but sacrifices the ability to make cross-executor decisions.
     async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
-      self._non_local_execution_handles.extend(
-          caip.launch(self.work_unit_name, job_group))
-      self._non_local_execution_handles.extend(
-          kubernetes.launch(
-              str(self.experiment_id), self.get_full_job_name, job_group))
+      caip_handles = caip.launch(self.work_unit_name, job_group)
+      k8s_handles = kubernetes.launch(
+          str(self.experiment_id), self.get_full_job_name, job_group)
+      self._non_local_execution_handles.extend(caip_handles + k8s_handles)
+      self._save_handles_to_storage(caip_handles + k8s_handles)
+      # TODO Save the local jobs to database.
       local_handles = await local_execution.launch(self.get_full_job_name,
                                                    job_group)
       for handle in local_handles:
         self._create_task(handle.monitor())
       self._local_execution_handles.extend(local_handles)
+
+  def _save_handles_to_storage(
+      self, handles: Iterable[local_execution.ExecutionHandle]) -> None:
+    """Saves jobs present in the handlers."""
+
+    def save_caip_handle(caip_handle: caip.CaipHandle) -> None:
+      database.database().insert_caip_job(self.experiment_id, self.work_unit_id,
+                                          self.work_unit_name,
+                                          caip_handle.job_name)
+
+    def save_k8s_handle(k8s_handle: kubernetes.KubernetesHandle) -> None:
+      for job in k8s_handle.jobs:
+        namespace = job.metadata.namespace or 'default'
+        name = job.metadata.name
+        database.database().insert_kubernetes_job(self.experiment_id,
+                                                  self.work_unit_id,
+                                                  self.work_unit_name,
+                                                  namespace, name)
+
+    def throw_on_unknown_handle(handle: Any) -> None:
+      raise TypeError(f'Unsupported handle: {handle}')
+
+    for handle in handles:
+      pattern_matching.match(save_caip_handle, save_k8s_handle,
+                             throw_on_unknown_handle)(
+                                 handle)
 
   async def _wait_until_complete(self) -> None:
     try:
