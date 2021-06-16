@@ -83,7 +83,7 @@ def _run_docker_build_in_subprocess(path: str, image: str,
                                     dockerfile: str) -> None:
   """Builds a Docker image by calling `docker build` within a subprocess."""
   # "Pre-pulling" the image in Dockerfile so that the docker build subprocess
-  # (next command) can pull from cache (see b/174748727 for more details).
+  # (next command) can pull from cache.
   with open(os.path.join(path, dockerfile), 'r') as f:
     for line in f:
       if 'FROM' in line:
