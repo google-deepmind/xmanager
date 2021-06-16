@@ -41,6 +41,23 @@ def _kubernetes_job_predicate(job: xm.Job) -> bool:
   return isinstance(job.executor, local_executors.Kubernetes)
 
 
+def convert_to_valid_label(label: str) -> str:
+  """Kubernetes labels must be RFC 1123 format compliant.
+
+  https://github.com/kubernetes/kubernetes/blob/master/pkg/apis/apps/validation/validation.go
+  A lowercase RFC 1123 label must consist of lower case alphanumeric characters
+  or '-', and must start and end with an alphanumeric character (e.g. 'my-name',
+  or '123-abc', regex used for validation is '[a-z0-9]([-a-z0-9]*[a-z0-9])?')
+
+  Args:
+    label: Label that may or may not be RFC 1123 compliant.
+
+  Returns:
+    A RFC 1123 format compliant label.
+  """
+  return label.replace('_', '-')
+
+
 class Client:
   """Client class for interacting with Kubernetes."""
 
@@ -55,10 +72,10 @@ class Client:
              jobs: Sequence[xm.Job]) -> List[k8s_client.V1Job]:
     """Launches jobs on Kubernetes."""
     batch_jobs = []
-    service = experiment_name
+    service = convert_to_valid_label('exp-' + experiment_name)
+    hostnames = [f'workerpool{i}' for i in range(len(jobs))]
     domains = [
-        f'workerpool_{get_full_job_name(job.name)}.{service}.default.svc.cluster.local:2222'
-        for job in jobs
+        f'{host}.{service}.default.svc.cluster.local:2222' for host in hostnames
     ]
     specs = cloud_utils.create_cluster_specs(domains)
     for i, job in enumerate(jobs):
@@ -76,16 +93,16 @@ class Client:
           }.items()
       ]
       env.append(k8s_client.V1EnvVar('CLUSTER_SPEC', specs[i]))
+      job_name = convert_to_valid_label(get_full_job_name(job.name))
       container = k8s_client.V1Container(
-          name=get_full_job_name(job.name),
+          name=job_name,
           image=executable.image_path,
           resources=resources_from_executor(executor),
           args=utils.to_command_line_args(
               xm.merge_args(executable.args, job.args)),
           env=env)
       k8s_job = k8s_client.V1Job()
-      k8s_job.metadata = k8s_client.V1ObjectMeta(
-          name=get_full_job_name(job.name))
+      k8s_job.metadata = k8s_client.V1ObjectMeta(name=job_name)
       k8s_job.spec = k8s_client.V1JobSpec(
           template=k8s_client.V1PodTemplateSpec(
               metadata=k8s_client.V1ObjectMeta(
@@ -93,7 +110,7 @@ class Client:
                   annotations=annotations_from_executor(executor),
               ),
               spec=k8s_client.V1PodSpec(
-                  hostname=f'workerpool_{get_full_job_name(job.name)}',
+                  hostname=hostnames[i],
                   subdomain=service,
                   restart_policy='Never',
                   containers=[container],
