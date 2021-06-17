@@ -19,6 +19,7 @@ from typing import Any
 from xmanager import xm
 from xmanager.bazel import client as bazel_client
 from xmanager.cloud import build_image
+from xmanager.cloud import docker_lib
 from xmanager.docker import docker_adapter
 from xmanager.xm import executables
 from xmanager.xm import pattern_matching
@@ -52,6 +53,17 @@ def _package_binary(packageable: xm.Packageable, binary: executables.Binary):
   return local_executables.LocalBinary(
       name=packageable.executable_spec.name,
       path=binary.path,
+      args=packageable.args,
+      env_vars=packageable.env_vars,
+  )
+
+
+def _package_dockerfile(packageable: xm.Packageable,
+                        dockerfile: executables.Dockerfile):
+  image_id = docker_lib.build_docker_image(dockerfile.name, dockerfile.path)
+  return local_executables.LoadedContainerImage(
+      name=packageable.executable_spec.name,
+      image_id=image_id,
       args=packageable.args,
       env_vars=packageable.env_vars,
   )
@@ -102,6 +114,7 @@ _LOCAL_PACKAGING_ROUTER = pattern_matching.match(
     _package_bazel_container,
     _package_binary,
     _package_container,
+    _package_dockerfile,
     _package_python_container,
     _throw_on_unknown_executable,
 )

@@ -38,6 +38,27 @@ class CommandList(NamedTuple):
 
 
 @attr.s(auto_attribs=True)
+class Dockerfile(core.ExecutableSpec):
+  """Dockerfile describes a Dockerfile for generating a docker image.
+
+  This is a lower-level feature that could be solved using higher-level
+  Executables such as BazelContainer or PythonContainer.
+
+  Attributes:
+      path: Specifies the build's context and location of a Dockerfile.
+      dockerfile: The file that will be used for build instructions. Otherwise,
+        {path}/Dockerfile will be used. Equivalent to `docker build -f`.
+  """
+
+  path: str = attr.ib(converter=utils.get_absolute_path, default='.')
+  dockerfile: Optional[str] = None
+
+  @property
+  def name(self) -> str:
+    return _name_from_path(self.path)
+
+
+@attr.s(auto_attribs=True)
 class PythonContainer(core.ExecutableSpec):
   """PythonContainer describes a directory containing Python code.
 
