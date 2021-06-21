@@ -134,12 +134,7 @@ steps:
 5. Define resources each job should consume.
 
     ```python
-    resources = xm.Resources(
-        accelerator=xm.GPU(
-            accelerator_type='NVIDIA_TESLA_T4',
-            accelerator_count=1,
-        )
-    )
+    resources = xm.JobRequirements(T4=1)
     ```
 
 6. For each trial, add a job / job groups to launch them.
@@ -301,38 +296,31 @@ The Caip executor takes in a resource object.
 
 ```python
 xm_local.Caip(
-    xm.Resources(
-        cpu=1,  # measured in vCPUs
+    xm.JobRequirements(
+        cpu=1,  # Measured in vCPUs.
         ram=4 * xm.GiB,
-        accelerator=xm.GPU(
-            accelerator_type='NVIDIA_TESLA_T4',
-            accelerator_count=1,
-        ),
+        T4=1,  # NVIDIA Tesla T4.
     ),
 )
 ```
 
 ```python
-xm_local..Caip(
-    xm.Resources(
-        cpu=1,  # measured in vCPUs
+xm_local.Caip(
+    xm.JobRequirements(
+        cpu=1,  # Measured in vCPUs.
         ram=4 * xm.GiB,
-        accelerator=xm.TPU(
-            accelerator_type='TPU_V2',
-            accelerator_count=8,
-        ),
+        TPU_V2=8,  # TPU v2.
     ),
 )
 ```
 
-As of March 2021, the valid accelerator types are:
+As of June 2021, the valid accelerator types are:
 
-* `NVIDIA_TESLA_K80`
-* `NVIDIA_TESLA_P100`
-* `NVIDIA_TESLA_V100`
-* `NVIDIA_TESLA_P4`
-* `NVIDIA_TESLA_T4`
-* `NVIDIA_TESLA_A100`
+* `P100`
+* `V100`
+* `P4`
+* `T4`
+* `A100`
 * `TPU_V2`
 * `TPU_V3`
 
