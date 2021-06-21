@@ -65,7 +65,7 @@ def build_docker_image(image: str,
   return image
 
 
-def push_docker_image(image: str):
+def push_docker_image(image: str) -> str:
   """Pushes a Docker image to the designated repository."""
   docker_client = docker.from_env()
   push = docker_client.images.push(repository=image)
