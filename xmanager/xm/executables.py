@@ -158,6 +158,7 @@ class BazelBinary(core.ExecutableSpec):
 
   label: str
   dependencies: List[BinaryDependency] = attr.Factory(list)
+  bazel_tail_args: List[str] = attr.Factory(list)
 
   @property
   def name(self) -> str:

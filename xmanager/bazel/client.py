@@ -15,7 +15,7 @@
 
 import os
 import subprocess
-from typing import Sequence, List
+from typing import List, Sequence
 
 from absl import flags
 from xmanager.bazel import file_utils
@@ -99,7 +99,7 @@ def _root_absolute_path() -> str:
   ).stdout.strip()
 
 
-def build_single_target(label: str) -> List[str]:
+def build_single_target(label: str, tail_args: Sequence[str] = ()) -> List[str]:
   """Builds a target and returns paths to its important output.
 
   The definition of 'important artifacts in an output group' can be found at
@@ -107,6 +107,7 @@ def build_single_target(label: str) -> List[str]:
 
   Args:
     label: Label of the target to build.
+    tail_args: Arguments to append to the Bazel command.
 
   Returns:
     A list of paths to the output.
@@ -120,7 +121,7 @@ def build_single_target(label: str) -> List[str]:
             # Otherwise we may be reading an incomplete file below.
             '--bep_publish_used_heap_size_post_build',
             label,
-        ],
+        ] + list(tail_args),
         check=True,
         cwd=_root_absolute_path(),
     )
