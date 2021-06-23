@@ -154,7 +154,7 @@ class Client:
                   args_for_cached_image + ['.'],
           }],
           'options': {
-              'machineType': 'N1_HIGHCPU_8'
+              'machineType': 'E2_HIGHCPU_32'
           },
           'images': [image]
       })

@@ -18,7 +18,7 @@ class CloudBuildTest(absltest.TestCase):
         image, {
             'images': ['my-image'],
             'options': {
-                'machineType': 'N1_HIGHCPU_8'
+                'machineType': 'E2_HIGHCPU_32'
             },
             'source': {
                 'storageSource': {
@@ -74,7 +74,7 @@ class CloudBuildTest(absltest.TestCase):
         image, {
             'images': ['my-image'],
             'options': {
-                'machineType': 'N1_HIGHCPU_8'
+                'machineType': 'E2_HIGHCPU_32'
             },
             'source': {
                 'storageSource': {
