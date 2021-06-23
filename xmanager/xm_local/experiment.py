@@ -70,7 +70,8 @@ class LocalWorkUnit(xm.WorkUnit):
     # We are delegating the traversal of the job group to modules. That improves
     # modularity, but sacrifices the ability to make cross-executor decisions.
     async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
-      caip_handles = caip.launch(self.work_unit_name, job_group)
+      caip_handles = caip.launch(self._experiment_title, self.work_unit_name,
+                                 job_group)
       k8s_handles = kubernetes.launch(
           str(self.experiment_id), self.get_full_job_name, job_group)
       self._non_local_execution_handles.extend(caip_handles + k8s_handles)

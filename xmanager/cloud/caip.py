@@ -120,7 +120,7 @@ class Client:
         location=self.location,
         staging_bucket=f'gs://{auth.get_bucket()}')
 
-  def launch(self, work_unit_name: str, jobs: Sequence[xm.Job]) -> str:
+  def launch(self, name: str, jobs: Sequence[xm.Job]) -> str:
     """Launch jobs on AI Platform (Unified)."""
     pools = []
     tensorboard, output_dir = self.get_tensorboard_settings(jobs)
@@ -179,7 +179,7 @@ class Client:
     custom_job = aiplatform.CustomJob(
         project=self.project,
         location=self.location,
-        display_name=work_unit_name,
+        display_name=name,
         worker_pool_specs=pools,
         staging_bucket=output_dir,
     )
@@ -290,7 +290,8 @@ class CaipHandle(local_execution.ExecutionHandle):
 
 
 # Must act on all jobs with `local_executors.Caip` executor.
-def launch(work_unit_name: str, job_group: xm.JobGroup) -> List[CaipHandle]:
+def launch(experiment_title: str, work_unit_name: str,
+           job_group: xm.JobGroup) -> List[CaipHandle]:
   """Launch CAIP jobs in the job_group and return a handler."""
   jobs = utils.collect_jobs_by_filter(job_group, _caip_job_predicate)
   # As client creation may throw, do not initiate it if there are no jobs.
@@ -298,7 +299,7 @@ def launch(work_unit_name: str, job_group: xm.JobGroup) -> List[CaipHandle]:
     return []
 
   job_name = client().launch(
-      work_unit_name=work_unit_name,
+      name=f'{experiment_title}_{work_unit_name}',
       jobs=jobs,
   )
   return [CaipHandle(job_name=job_name)]
