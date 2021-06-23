@@ -108,24 +108,31 @@ def _maybe_grant_service_account_permissions(service_account: str) -> None:
   policy = rm.projects().getIamPolicy(resource=get_project_name()).execute()
   want_roles = ['roles/aiplatform.user', 'roles/storage.admin']
 
+  should_set = False
   for role in want_roles:
-    _add_member_to_iam_policy(policy, role, 'serviceAccount:' + service_account)
+    member = 'serviceAccount:' + service_account
+    changed = _add_member_to_iam_policy(policy, role, member)
+    should_set = should_set or changed
+
+  if not should_set:
+    return None
 
   body = {'policy': policy}
   rm.projects().setIamPolicy(resource=get_project_name(), body=body).execute()
 
 
 def _add_member_to_iam_policy(policy: Dict[str, Any], role: str,
-                              member: str) -> None:
+                              member: str) -> bool:
   """Modifies the IAM policy to add the member with the role."""
   for i, binding in enumerate(policy['bindings']):
     if binding['role'] == role:
       if member in binding['members']:
-        return
+        return False
       policy['bindings'][i]['members'].append(member)
-      return
+      return True
 
   policy['bindings'].append({'role': role, 'members': [member]})
+  return True
 
 
 def get_bucket() -> str:
