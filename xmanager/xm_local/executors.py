@@ -58,9 +58,7 @@ class Local(xm.Executor):
   docker_options: Optional[DockerOptions] = None
   experimental_stream_output: bool = False
 
-  @classmethod
-  def Spec(cls):
-    return LocalSpec()
+  Spec = LocalSpec  # pylint: disable=invalid-name
 
 
 @attr.s(auto_attribs=True)
@@ -101,9 +99,7 @@ class Caip(xm.Executor):
   tpu_capability: Optional[TpuCapability] = None
   tensorboard: Optional[TensorboardCapability] = None
 
-  @classmethod
-  def Spec(cls, *args, **kwargs):
-    return CaipSpec(*args, **kwargs)
+  Spec = CaipSpec  # pylint: disable=invalid-name
 
 
 @attr.s(auto_attribs=True)
@@ -123,6 +119,4 @@ class Kubernetes(xm.Executor):
   cloud_provider: str = GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER
   tpu_capability: Optional[TpuCapability] = None
 
-  @classmethod
-  def Spec(cls, *args, **kwargs):
-    return KubernetesSpec(*args, **kwargs)
+  Spec = KubernetesSpec  # pylint: disable=invalid-name

@@ -84,6 +84,4 @@ class TestExecutable(core.Executable):
 class TestExecutor(core.Executor):
   """A test version of Executor with abstract methods implemented."""
 
-  @classmethod
-  def Spec(cls) -> core.ExecutorSpec:  # pylint: disable=invalid-name
-    return core.ExecutorSpec()
+  Spec = core.ExecutorSpec  # pylint: disable=invalid-name
