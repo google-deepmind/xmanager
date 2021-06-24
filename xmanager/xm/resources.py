@@ -308,6 +308,7 @@ class JobRequirements:
                          ResourceQuantity] = immutabledict.immutabledict(),
       *,
       location: Optional[str] = None,
+      replicas: Optional[int] = None,
       service_tier: Optional[ServiceTier] = None,
       **kw_resources: ResourceQuantity) -> None:
     """Define a set of resources.
@@ -317,6 +318,7 @@ class JobRequirements:
         for example {xm.ResourceType.V100: 2}.
       location: Place where the job should run. For example a cluster name or
         a Borg cell.
+      replicas: Number of identical tasks to run winthin a job. 1 by default.
       service_tier: A service tier at which the job should run.
       **kw_resources: resource amounts as a kwargs,
         for example v100=2 or ram=1 * xm.GiB.
@@ -363,3 +365,7 @@ class JobRequirements:
       if resource in self.task_requirements:
         raise ValueError(f'{resource} has been specified twice.')
       self.task_requirements[resource] = scalar
+
+    if replicas is not None and self.accelerator in TpuType:
+      raise ValueError('Replicated jobs are not supported for TPUs.')
+    self.replicas = replicas or 1

@@ -67,13 +67,14 @@ class TopologyTest(parameterized.TestCase):
 class JobRequirementsTest(parameterized.TestCase):
 
   def test_cpu_job(self):
-    requirements = resources.JobRequirements(cpu=1.2, RAM=1 * xm.GiB)
+    requirements = resources.JobRequirements(cpu=1.2, ram=1 * xm.GiB)
     self.assertEqual(requirements.task_requirements[resources.ResourceType.CPU],
                      1.2)
     self.assertEqual(requirements.task_requirements[resources.ResourceType.RAM],
                      1 * xm.GiB)
     self.assertIsNone(requirements.accelerator)
     self.assertIsNone(requirements.topology)
+    self.assertEqual(requirements.replicas, 1)
 
   def test_construct_requirements(self):
     requirements = resources.JobRequirements({resources.ResourceType.CPU: 4},
@@ -99,6 +100,13 @@ class JobRequirementsTest(parameterized.TestCase):
     requirements = resources.JobRequirements(
         service_tier=resources.ServiceTier.PROD)
     self.assertEqual(requirements.service_tier, resources.ServiceTier.PROD)
+
+  def test_replicas(self):
+    requirements = resources.JobRequirements(replicas=2)
+    self.assertEqual(requirements.replicas, 2)
+
+    with self.assertRaises(ValueError):
+      resources.JobRequirements(replicas=2, tpu_v3='1x1')
 
 
 class EnumSubsetTest(parameterized.TestCase):
