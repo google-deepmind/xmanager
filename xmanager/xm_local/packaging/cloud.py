@@ -108,7 +108,8 @@ def _package_dockerfile(packageable: xm.Packageable, dockerfile: xm.Dockerfile):
     gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
     push_image_tag = f'{gcr_project_prefix}/{dockerfile.name}:latest'
   build_image.push(
-      docker_lib.build_docker_image(push_image_tag, dockerfile.path))
+      docker_lib.build_docker_image(push_image_tag, dockerfile.path,
+                                    dockerfile.dockerfile))
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
       image_path=push_image_tag,

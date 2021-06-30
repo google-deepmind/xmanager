@@ -60,7 +60,8 @@ def _package_binary(packageable: xm.Packageable, binary: executables.Binary):
 
 def _package_dockerfile(packageable: xm.Packageable,
                         dockerfile: executables.Dockerfile):
-  image_id = docker_lib.build_docker_image(dockerfile.name, dockerfile.path)
+  image_id = docker_lib.build_docker_image(dockerfile.name, dockerfile.path,
+                                           dockerfile.dockerfile)
   return local_executables.LoadedContainerImage(
       name=packageable.executable_spec.name,
       image_id=image_id,
