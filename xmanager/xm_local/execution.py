@@ -225,7 +225,7 @@ def _terminate_local_jobs():
       try:
         local_job.terminate()
       except Exception:  # pylint: disable=broad-except
-        logging.warn('Unable to terminate %s', repr(local_job))
+        logging.warning('Unable to terminate %s', repr(local_job))
 
 
 def _local_job_predicate(job: xm.Job) -> bool:
