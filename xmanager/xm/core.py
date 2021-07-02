@@ -211,32 +211,40 @@ def merge_args(left: ArgsType, right: ArgsType) -> ArgsType:
   # pyformat: enable
 
 
-def _apply_args_to_job(job: Job, args: Mapping[str, Any]):
+def _shallow_copy_job_group(job_group: JobGroup) -> JobGroup:
+  """Copies the group and jobs inside it, but not their properties."""
+  job_group = copy.copy(job_group)
+  job_group.jobs = {
+      key: _shallow_copy_job_type(job) for key, job in job_group.jobs.items()
+  }
+  return job_group
+
+
+_shallow_copy_job_type = pattern_matching.match(
+    pattern_matching.Case([Job], copy.copy),
+    _shallow_copy_job_group,
+    pattern_matching.Case([JobGeneratorType], lambda generator: generator),
+)
+
+
+def _apply_args_to_job(job: Job, args: Mapping[str, Any]) -> None:
   """Overrides job properties."""
-  if args:
-    job = copy.copy(job)
-    if 'args' in args:
-      job.args = merge_args(job.args, args['args'])
-    job.env_vars.update(args.get('env_vars', {}))
-  return job
+  if 'args' in args:
+    job.args = merge_args(job.args, args['args'])
+  job.env_vars.update(args.get('env_vars', {}))
 
 
-def _apply_args_to_job_group(job_group: JobGroup, args: Mapping[str, Any]):
+def _apply_args_to_job_group(job_group: JobGroup, args: Mapping[str,
+                                                                Any]) -> None:
   """Recursively overrides job group properties."""
   if args:
-    job_group = copy.copy(job_group)
-
-    job_group.jobs = {
-        key: _apply_args(job, args.get(key, {}))
-        for key, job in job_group.jobs.items()
-    }
-
-  return job_group
+    for key, job in job_group.jobs.items():
+      _apply_args(job, args.get(key, {}))
 
 
 _apply_args = pattern_matching.match(
     _apply_args_to_job, _apply_args_to_job_group,
-    pattern_matching.Case([JobGeneratorType, Any], lambda other, args: other))
+    pattern_matching.Case([JobGeneratorType, Any], lambda other, args: None))
 
 
 class WorkUnitStatus(abc.ABC):
@@ -327,28 +335,18 @@ def _work_unit_arguments(
   return deduce_args(job)
 
 
-def _populate_job_names(job: JobType) -> JobType:
-  """Assigns default names to the given job(s).
+def _populate_job_names(job: JobType) -> None:
+  """Assigns default names to the given job(s)."""
 
-  Args:
-      job: A `Job` / `JobGroup` to populate names for.
-
-  Returns:
-      Job(s) with `name`(s) populated (if they were absent).
-  """
-
-  def apply_to_job(target: Job):
+  def apply_to_job(target: Job) -> None:
     if target.name is None:
-      target = copy.copy(target)
       target.name = target.executable.name
-    return target
 
-  def apply_to_job_group(target: JobGroup):
-    target = copy.copy(target)
-    target.jobs = {key: matcher(job) for key, job in target.jobs.items()}
-    return target
+  def apply_to_job_group(target: JobGroup) -> None:
+    for job in target.jobs.values():
+      matcher(job)
 
-  def ignore_unknown(target: Any):
+  def ignore_unknown(target: Any) -> None:
     return target
 
   matcher = pattern_matching.match(
@@ -423,8 +421,9 @@ class WorkUnit(abc.ABC):
       An awaitable that would be fulfilled when the job is launched.
     """
     # pyformat: enable
-    job = _apply_args(job, args)
-    job = _populate_job_names(job)
+    job = _shallow_copy_job_type(job)
+    _apply_args(job, args)
+    _populate_job_names(job)
 
     def launch_job(job: Job) -> Awaitable[None]:
       return self._launch_job_group(
