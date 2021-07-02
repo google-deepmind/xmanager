@@ -250,5 +250,4 @@ def _wrap_late_bindings(path: str, dockerfile: str) -> Tuple[str, str]:
       f.write(contents)
   print()
 
-  # TODO: Remove the disable once the pytype bug is fixed.
-  return new_path.name, new_dockerfile.name  # pytype: disable=bad-return-type
+  return new_path.name, new_dockerfile.name
