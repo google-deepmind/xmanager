@@ -255,14 +255,14 @@ _CLOUD_TPU_ACCELERATOR_TYPES = immutabledict.immutabledict({
 
 
 def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
-  """Get the GCP machine type that best matches the Job's resources."""
+  """Get the GCP machine type that best matches the Job's requirements."""
   assert isinstance(job.executor, local_executors.Caip)
-  resources = job.executor.resources
+  requirements = job.executor.requirements
   machine_type = cpu_ram_to_machine_type(
-      resources.task_requirements.get(xm.ResourceType.CPU),
-      resources.task_requirements.get(xm.ResourceType.RAM))
+      requirements.task_requirements.get(xm.ResourceType.CPU),
+      requirements.task_requirements.get(xm.ResourceType.RAM))
   spec = {'machine_type': machine_type}
-  for resource, value in resources.task_requirements.items():
+  for resource, value in requirements.task_requirements.items():
     accelerator_type = None
     if resource in xm.GpuType:
       accelerator_type = 'NVIDIA_TESLA_' + str(resource).upper()

@@ -66,7 +66,8 @@ def main(_):
         experiment=experiment,
         job=xm.Job(
             executable=executable,
-            executor=xm_local.Caip(resources=xm.JobRequirements())),
+            executor=xm_local.Caip(),
+        ),
         study_factory=vizier.NewStudy(study_spec=get_study_spec()),
         num_trials_total=3,
         num_parallel_trial_runs=2).launch()

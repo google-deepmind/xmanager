@@ -97,7 +97,7 @@ class Client:
       container = k8s_client.V1Container(
           name=job_name,
           image=executable.image_path,
-          resources=resources_from_executor(executor),
+          requirements=requirements_from_executor(executor),
           args=utils.to_command_line_args(
               xm.merge_args(executable.args, job.args)),
           env=env)
@@ -179,11 +179,11 @@ def launch(experiment_name: str, get_full_job_name: Callable[[str], str],
   return [KubernetesHandle(jobs=k8_jobs)]
 
 
-def resources_from_executor(
+def requirements_from_executor(
     executor: local_executors.Kubernetes) -> k8s_client.V1ResourceRequirements:
   """Get resource limits from the executor."""
   limits = {}
-  for resource, value in executor.resources.task_requirements.items():
+  for resource, value in executor.requirements.task_requirements.items():
     if resource in xm.GpuType:
       # TODO: Implement detection of whether an accelerator is an Nvidia
       # GPU. amd.com/gpu is another type of GPU that is not present in GCP.
@@ -205,7 +205,7 @@ def annotations_from_executor(
   if executor.cloud_provider != local_executors.GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER:
     return {}
 
-  if executor.resources.is_tpu_job:
+  if executor.requirements.is_tpu_job:
     tpu_runtime_version = 'nightly'
     if executor.tpu_capability:
       tpu_runtime_version = executor.tpu_capability.tpu_runtime_version
@@ -219,7 +219,7 @@ def node_selector_from_executor(
   if executor.cloud_provider != local_executors.GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER:
     return {}
 
-  for resource in executor.resources.task_requirements:
+  for resource in executor.requirements.task_requirements:
     if resource in xm.GpuType:
       return {
           'cloud.google.com/gke-accelerator':

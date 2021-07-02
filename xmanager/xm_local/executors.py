@@ -95,7 +95,7 @@ class CaipSpec(xm.ExecutorSpec):
 class Caip(xm.Executor):
   """Caip Executor describes the runtime environment of GCP."""
 
-  resources: xm.JobRequirements
+  requirements: xm.JobRequirements = attr.Factory(xm.JobRequirements)
   tpu_capability: Optional[TpuCapability] = None
   tensorboard: Optional[TensorboardCapability] = None
 
@@ -115,7 +115,7 @@ class KubernetesSpec(xm.ExecutorSpec):
 class Kubernetes(xm.Executor):
   """K8s Executor describes the runtime environment of Kubernetes."""
 
-  resources: xm.JobRequirements
+  requirements: xm.JobRequirements = attr.Factory(xm.JobRequirements)
   cloud_provider: str = GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER
   tpu_capability: Optional[TpuCapability] = None
 

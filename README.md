@@ -131,10 +131,10 @@ steps:
     )
     ```
 
-5. Define resources each job should consume.
+5. Define resource requirements for each job.
 
     ```python
-    resources = xm.JobRequirements(T4=1)
+    requirements = xm.JobRequirements(T4=1)
     ```
 
 6. For each trial, add a job / job groups to launch them.
@@ -143,7 +143,7 @@ steps:
     for hyperparameters in trials:
       experiment.add(xm.Job(
           executable=executable,
-          executor=xm_local.Caip(resources=resources),
+          executor=xm_local.Caip(requirements=requirements),
           args=hyperparameters,
         ))
     ```
@@ -282,8 +282,8 @@ assert xm.python_container(
 
 ### Executors
 
-XManager executors define the platform where the job runs and the resources that
-the job consumes.
+XManager executors define a platform where the job runs and resource
+requirements for the job.
 
 Each executor also has a specification which describes how an executable
 specification should be prepared and packaged.
@@ -292,7 +292,7 @@ specification should be prepared and packaged.
 
 The Caip executor declares that an executable will be run on the CAIP platform.
 
-The Caip executor takes in a resource object.
+The Caip executor takes in a resource requirements object.
 
 ```python
 xm_local.Caip(

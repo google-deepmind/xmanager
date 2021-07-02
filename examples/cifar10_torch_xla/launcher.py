@@ -59,16 +59,16 @@ def main(_):
         dict([('batch_size', bs), ('learning_rate', lr)])
         for (bs, lr) in itertools.product(batch_sizes, learning_rates))
 
-    resources = xm.JobRequirements()
+    requirements = xm.JobRequirements()
     if FLAGS.platform == 'gpu':
-      resources = xm.JobRequirements(t4=FLAGS.cores)
+      requirements = xm.JobRequirements(t4=FLAGS.cores)
     elif FLAGS.platform == 'tpu':
-      resources = xm.JobRequirements(tpu_v3=8)
+      requirements = xm.JobRequirements(tpu_v3=8)
     for hyperparameters in trials:
       jobs = {}
       jobs['coordinator'] = xm.Job(
           executable=executable,
-          executor=xm_local.Caip(resources),
+          executor=xm_local.Caip(requirements),
           args=hyperparameters,
       )
       experiment.add(xm.JobGroup(**jobs))

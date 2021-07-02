@@ -27,7 +27,7 @@ class CaipTest(unittest.TestCase):
   def test_get_machine_spec_default(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
-        executor=local_executors.Caip(resources=xm.JobRequirements()),
+        executor=local_executors.Caip(),
         args={})
     machine_spec = caip.get_machine_spec(job)
     self.assertDictEqual(machine_spec, {'machine_type': 'n1-standard-4'})
@@ -36,7 +36,7 @@ class CaipTest(unittest.TestCase):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Caip(
-            resources=xm.JobRequirements(cpu=20, ram=40)),
+            requirements=xm.JobRequirements(cpu=20, ram=40)),
         args={})
     machine_spec = caip.get_machine_spec(job)
     self.assertDictEqual(machine_spec, {'machine_type': 'n1-highcpu-64'})
@@ -44,7 +44,7 @@ class CaipTest(unittest.TestCase):
   def test_get_machine_spec_gpu(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
-        executor=local_executors.Caip(resources=xm.JobRequirements(p100=2)),
+        executor=local_executors.Caip(requirements=xm.JobRequirements(p100=2)),
         args={})
     machine_spec = caip.get_machine_spec(job)
     self.assertDictEqual(
@@ -57,7 +57,8 @@ class CaipTest(unittest.TestCase):
   def test_get_machine_spec_tpu(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
-        executor=local_executors.Caip(resources=xm.JobRequirements(tpu_v3=8)),
+        executor=local_executors.Caip(
+            requirements=xm.JobRequirements(tpu_v3=8)),
         args={})
     machine_spec = caip.get_machine_spec(job)
     self.assertDictEqual(

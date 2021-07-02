@@ -33,7 +33,7 @@ def main(argv: Sequence[str]) -> None:
     experiment.add(
         xm.Job(
             executable=executable,
-            executor=xm_local.Caip(xm.JobRequirements()),
+            executor=xm_local.Caip(),
             env_vars={'FOO': 'bar'},
             args=['--a=1', '--b=2', '--c=3', '--d=4'],
         ))

@@ -69,8 +69,7 @@ def main(_):
       experiment.add(
           xm.Job(
               executable=executable,
-              executor=xm_local.Caip(
-                  xm.JobRequirements(), tensorboard=tensorboard_capability),
+              executor=xm_local.Caip(tensorboard=tensorboard_capability),
               args=hyperparameters,
           ))
 
