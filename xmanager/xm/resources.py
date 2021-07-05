@@ -332,6 +332,8 @@ class JobRequirements:
     """
     self.location = location
     self.service_tier = service_tier
+    if self.service_tier is None:
+      self.service_tier = ServiceTier.PROD
 
     self.task_requirements = ResourceDict()
     self.accelerator = None
