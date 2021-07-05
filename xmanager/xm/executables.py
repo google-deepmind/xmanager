@@ -152,8 +152,8 @@ class BazelContainer(core.ExecutableSpec):
 class BazelBinary(core.ExecutableSpec):
   """A Bazel target that produces a self-contained binary.
 
-  Note that for Python targets based on https://github.com/google/subpar one
-  should append '.par' to the label to specify a self-contained binary.
+  Note that for Python targets based on https://github.com/google/subpar
+  a self-contained '.par' binary would be built.
   """
 
   label: str

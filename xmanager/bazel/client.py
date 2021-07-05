@@ -99,6 +99,28 @@ def _root_absolute_path() -> str:
   ).stdout.strip()
 
 
+def _should_wrap_in_par(label: str) -> bool:
+  """Returns whether a build target needs to be wrapped in PAR."""
+  if label.endswith('.par'):
+    return False
+
+  # For each matching target blaze query would produce following line:
+  # <rule name> rule <target name>
+  # For example:
+  # py_library rule //third_party/py/xmanager/xm:__init__
+  output = subprocess.run(
+      [FLAGS.bazel_command, 'query', label, '--output', 'label_kind'],
+      check=True,
+      stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE,
+      cwd=_root_absolute_path(),
+  ).stdout.decode('utf-8')
+  rule_line = next(filter(lambda line: label in line, output.split(os.linesep)))
+  rule = rule_line.split()[0]
+
+  return rule in ('py_binary',)
+
+
 def build_single_target(label: str, tail_args: Sequence[str] = ()) -> List[str]:
   """Builds a target and returns paths to its important output.
 
@@ -112,6 +134,9 @@ def build_single_target(label: str, tail_args: Sequence[str] = ()) -> List[str]:
   Returns:
     A list of paths to the output.
   """
+  if _should_wrap_in_par(label):
+    label += '.par'
+
   with file_utils.TemporaryFilePath() as bep_path:
     subprocess.run(
         [
