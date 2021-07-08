@@ -136,7 +136,7 @@ class Client:
           xm.merge_args(executable.args, job.args))
       env_vars = {**executable.env_vars, **job.env_vars}
       env = [{'name': k, 'value': v} for k, v in env_vars.items()]
-      if job.executor.resources.is_tpu_job:
+      if job.executor.requirements.is_tpu_job:
         tpu_runtime_version = 'nightly'  # pylint: disable=unused-variable
         if job.executor.tpu_capability:
           tpu_runtime_version = job.executor.tpu_capability.tpu_runtime_version
