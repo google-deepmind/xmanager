@@ -74,6 +74,8 @@ jobs.
 pip install ./xmanager
 ```
 
+WARNING: Do not do `python setup.py install` instead, it leads to errors.
+
 ## Run XManager
 
 Run a launch script, e.g.
