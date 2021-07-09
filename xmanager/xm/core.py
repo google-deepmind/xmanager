@@ -427,7 +427,7 @@ class WorkUnit(abc.ABC):
 
     def launch_job(job: Job) -> Awaitable[None]:
       return self._launch_job_group(
-          JobGroup(job=job), _work_unit_arguments(job, args))
+          JobGroup(**{job.name: job}), _work_unit_arguments(job, args))
 
     def launch_job_group(group: JobGroup) -> Awaitable[None]:
       return self._launch_job_group(group, _work_unit_arguments(group, args))
