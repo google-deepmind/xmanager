@@ -17,7 +17,7 @@ Metadata is attached to a context and the context may belong to an experiment
 or a work unit.
 """
 
-from typing import Collection, List, Set
+from typing import Collection, List, Optional, Set
 import attr
 
 
@@ -40,7 +40,6 @@ class ContextAnnotations:
 
   def set_title(self, title: str) -> None:
     """Sets the context title."""
-    pass
 
 
 @attr.s(auto_attribs=True)
