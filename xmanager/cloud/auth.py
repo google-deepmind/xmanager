@@ -140,7 +140,7 @@ def get_bucket() -> str:
   if bucket:
     return bucket
   raise ValueError(
-      '$GOOGLE_CLOUD_BUCKET_NAME is undefined. Run'
+      '$GOOGLE_CLOUD_BUCKET_NAME is undefined. Run '
       '`export GOOGLE_CLOUD_BUCKET_NAME=<bucket-name>`, '
       'replacing <bucket-name> with a Google Cloud Storage bucket. '
       'You can create a bucket with '
