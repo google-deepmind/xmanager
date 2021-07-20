@@ -23,7 +23,8 @@ from xmanager.xm import core
 from xmanager.xm import utils
 
 
-def _name_from_path(path: str) -> str:
+def name_from_path(path: str) -> str:
+  """Returns a safe to use executable name based on a filesystem path."""
   return re.sub('\\W', '_', os.path.basename(path.rstrip(os.sep)))
 
 
@@ -55,7 +56,7 @@ class Dockerfile(core.ExecutableSpec):
 
   @property
   def name(self) -> str:
-    return _name_from_path(self.path)
+    return name_from_path(self.path)
 
 
 @attr.s(auto_attribs=True)
@@ -97,7 +98,7 @@ class PythonContainer(core.ExecutableSpec):
 
   @property
   def name(self) -> str:
-    return _name_from_path(self.path)
+    return name_from_path(self.path)
 
 
 class BinaryDependency(abc.ABC):
@@ -118,7 +119,7 @@ class Container(core.ExecutableSpec):
 
   @property
   def name(self) -> str:
-    return _name_from_path(self.image_path)
+    return name_from_path(self.image_path)
 
 
 @attr.s(auto_attribs=True)
@@ -130,7 +131,7 @@ class Binary(core.ExecutableSpec):
 
   @property
   def name(self) -> str:
-    return _name_from_path(self.path)
+    return name_from_path(self.path)
 
 
 @attr.s(auto_attribs=True)
@@ -145,7 +146,7 @@ class BazelContainer(core.ExecutableSpec):
 
   @property
   def name(self) -> str:
-    return _name_from_path(self.label)
+    return name_from_path(self.label)
 
 
 @attr.s(auto_attribs=True)
@@ -162,4 +163,4 @@ class BazelBinary(core.ExecutableSpec):
 
   @property
   def name(self) -> str:
-    return _name_from_path(self.label)
+    return name_from_path(self.label)
