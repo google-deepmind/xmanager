@@ -53,6 +53,7 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensetiveEnumMeta):
   RAM = 39
   # Amount of required disk resources in bytes.
   EPHEMERAL_STORAGE = 100003
+  DISK = 100003
 
   # GPUs
 
