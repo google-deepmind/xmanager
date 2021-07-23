@@ -19,6 +19,7 @@ from typing import Any, Iterable, Dict
 
 from google import auth
 from googleapiclient import discovery
+from googleapiclient import errors
 
 _DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
 
@@ -74,10 +75,19 @@ def get_service_account() -> str:
 
   Returns:
     The service account email.
+  Raises:
+    HttpError: if the response was not a 2xx or 403.
   """
   service_account = f'xmanager@{get_project_name()}.iam.gserviceaccount.com'
-  _maybe_create_service_account(service_account)
-  _maybe_grant_service_account_permissions(service_account)
+  try:
+    _maybe_create_service_account(service_account)
+    _maybe_grant_service_account_permissions(service_account)
+  except errors.HttpError as e:
+    # A 403 implies that the user is not an IAM Admin.
+    # The project admin probably already has set up IAM roles, so this check
+    # can be skipped.
+    if e.resp.status != 403:
+      raise e
   return service_account
 
 
