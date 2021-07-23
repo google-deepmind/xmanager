@@ -41,7 +41,7 @@ flags.DEFINE_boolean(
     'client library when building the docker image locally. This provies a '
     'much nicer output for interactive use.')
 flags.DEFINE_boolean(
-    'wrap_late_bindings', True,
+    'wrap_late_bindings', False,
     'Feature flag to wrap and unwrap late bindings for network addresses. '
     'ONLY works with PythonContainer with default instructions or simple '
     'instructions that do not modify the file directory.'

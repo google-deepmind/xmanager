@@ -16,7 +16,7 @@ r"""XManager launcher for CIFAR10.
 Usage:
 
 xmanager launch examples/cifar10_torch/launcher.py -- \
-  [--image_path=gcr.io/path/to/image/tag] [--platform=gpu]
+  --wrap_late_bindings [--image_path=gcr.io/path/to/image/tag] [--platform=gpu]
 """
 import itertools
 
