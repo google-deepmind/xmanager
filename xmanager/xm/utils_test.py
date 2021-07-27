@@ -37,7 +37,7 @@ class UtilsTest(unittest.TestCase):
         utils.to_command_line_args({
             'foo': 1,
             'bar': [2, 3]
-        }), ['--foo=1', "--bar='[2, 3]'"])
+        }), ['--foo', '1', '--bar', "'[2, 3]'"])
 
   def test_to_command_line_args_list(self):
     self.assertEqual(

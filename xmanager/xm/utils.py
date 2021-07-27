@@ -16,6 +16,7 @@
 This module is private and can only be used by the API itself, but not by users.
 """
 
+import abc
 import asyncio
 import functools
 import inspect
@@ -32,39 +33,48 @@ from xmanager.xm import pattern_matching
 ReturnType = TypeVar('ReturnType')
 
 
+class SpecialArg(abc.ABC):
+  """A base class for arguments with special handling on serialization."""
+
+
 @attr.s(auto_attribs=True)
-class ShellSafeArg:
+class ShellSafeArg(SpecialArg):
   """Command line argument that shouldn't be escaped.
 
   Normally all arguments would be passed to the binary as is. To let shell
   substitutions, such as environment variable expansion, to happen the argument
   must be wrapped with this structure.
   """
+
   arg: str
 
 
-def _escape(arg: Any) -> str:
-  """Returns a shell-safe text representation of the argument."""
-  if isinstance(arg, ShellSafeArg):
-    return arg.arg
-  else:
-    return shlex.quote(str(arg))
+_ESCAPER = pattern_matching.match(
+    pattern_matching.Case([ShellSafeArg], lambda v: v.arg),
+    pattern_matching.Case([Any], lambda v: shlex.quote(str(v))),
+)
 
 
-def to_command_line_args(args: core.ArgsType) -> List[str]:
+def to_command_line_args(args: core.ArgsType,
+                         escaper: Callable[[Any], str] = _ESCAPER) -> List[str]:
   """Returns arguments representation suitable to passing to a binary.
 
   For user convenience we allow arguments to be passed as dicts and don't impose
-  strong typing requirements. But at the end of a day command line arguments
+  strong typing requirements. But at the end of the day command line arguments
   need to become just a list of strings.
 
   Args:
-    args: command line arguments for an executable.
+    args: Command line arguments for an executable.
+    escaper: A serializer for the arguments.
   """
   if isinstance(args, Mapping):
-    return [f'--{k}={_escape(v)}' for k, v in args.items()]
+    sequence = []
+    for k, v in args.items():
+      for element in (escaper(f'--{k}'), escaper(v)):
+        sequence.append(element)
+    return sequence
   else:
-    return [_escape(arg) for arg in args]
+    return [escaper(v) for v in args]
 
 
 def run_in_asyncio_loop(
