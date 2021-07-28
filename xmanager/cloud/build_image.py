@@ -68,7 +68,9 @@ _ENTRYPOINT_TEMPLATE = """#!/bin/bash
 def build(py_executable: xm.PythonContainer,
           args: xm.ArgsType,
           env_vars: Dict[str, str],
-          image_name: Optional[str] = None) -> str:
+          image_name: Optional[str] = None,
+          project: Optional[str] = None,
+          bucket: Optional[str] = None) -> str:
   """Build a Docker image from a Python project."""
   if not image_name:
     image_name = _get_image_name(py_executable)
@@ -103,7 +105,8 @@ def build(py_executable: xm.PythonContainer,
           image_name,
           docker_directory,
           docker_subprocess=FLAGS.use_docker_build_subprocess)
-  cloud_build_client = cloud_build.Client()
+
+  cloud_build_client = cloud_build.Client(project=project, bucket=bucket)
   cloud_build_client.build_docker_image(dirname, docker_directory, image_name)
   docker_adapter.instance().pull_image(image_name)
   return image_name
