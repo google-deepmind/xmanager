@@ -143,6 +143,7 @@ class BazelContainer(core.ExecutableSpec):
   """
 
   label: str
+  bazel_tail_args: List[str] = attr.Factory(list)
 
   @property
   def name(self) -> str:
