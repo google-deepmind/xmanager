@@ -143,8 +143,8 @@ def build_single_target(label: str, tail_args: Sequence[str] = ()) -> List[str]:
             FLAGS.bazel_command,
             'build',
             f'--build_event_binary_file={bep_path}',
-            # Otherwise we may be reading an incomplete file below.
-            '--bep_publish_used_heap_size_post_build',
+            # Forces a GC at the end of the build and publishes value to BEP.
+            '--memory_profile=/dev/null',
             label,
         ] + list(tail_args),
         check=True,
