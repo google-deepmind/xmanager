@@ -20,7 +20,7 @@ from xmanager.xm import executables
 
 
 # TODO: Provide proper typing for autocompletion.
-def _create_packageable_factory(
+def create_packageable_factory(
     ctor: Type[core.ExecutableSpec]) -> Callable[..., core.Packageable]:
   """Creates a factory function based on a particular executable spec."""
 
@@ -38,8 +38,8 @@ def _create_packageable_factory(
   return packageable_factory
 
 
-binary = _create_packageable_factory(executables.Binary)
-bazel_binary = _create_packageable_factory(executables.BazelBinary)
-container = _create_packageable_factory(executables.Container)
-bazel_container = _create_packageable_factory(executables.BazelContainer)
-python_container = _create_packageable_factory(executables.PythonContainer)
+binary = create_packageable_factory(executables.Binary)
+bazel_binary = create_packageable_factory(executables.BazelBinary)
+container = create_packageable_factory(executables.Container)
+bazel_container = create_packageable_factory(executables.BazelContainer)
+python_container = create_packageable_factory(executables.PythonContainer)
