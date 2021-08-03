@@ -150,6 +150,7 @@ def _default_steps(directory: str) -> Iterable[str]:
       # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
       'RUN apt-get update && apt-get install -y git',
       'RUN python -m pip install --upgrade pip',
+      'RUN python -m pip install --upgrade setuptools',
       f'COPY {directory}/requirements.txt {directory}/requirements.txt',
       f'RUN python -m pip install -r {directory}/requirements.txt',
       # It is best practice to copy the project directory as late as possible,
