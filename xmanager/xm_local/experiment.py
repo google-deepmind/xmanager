@@ -55,8 +55,9 @@ class LocalWorkUnit(xm.WorkUnit):
 
   def __init__(self, experiment: 'LocalExperiment', experiment_title: str,
                work_unit_id_predictor: id_predictor.Predictor,
-               create_task: Callable[[Awaitable[Any]], futures.Future]) -> None:
-    super().__init__(experiment, work_unit_id_predictor, create_task)
+               create_task: Callable[[Awaitable[Any]], futures.Future],
+               args: Mapping[str, Any]) -> None:
+    super().__init__(experiment, work_unit_id_predictor, create_task, args)
     self._experiment_title = experiment_title
     self._local_execution_handles: List[
         local_execution.LocalExecutionHandle] = []
@@ -167,9 +168,10 @@ class LocalExperiment(xm.Experiment):
         packaging_router.package(packageable) for packageable in packageables
     ]
 
-  def _create_work_unit(self) -> LocalWorkUnit:
+  def _create_work_unit(self, args: Mapping[str, Any]) -> LocalWorkUnit:
     work_unit = LocalWorkUnit(self, self._experiment_title,
-                              self._work_unit_id_predictor, self._create_task)
+                              self._work_unit_id_predictor, self._create_task,
+                              args)
     database.database().insert_work_unit(self.experiment_id,
                                          work_unit.work_unit_id)
     self._work_units.append(work_unit)

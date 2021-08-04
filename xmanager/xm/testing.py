@@ -13,18 +13,28 @@
 # limitations under the License.
 """Utilities for testing core objects."""
 
-from typing import Any, Iterable, List, Mapping
+from concurrent import futures
+from typing import Any, Awaitable, Callable, Iterable, List, Mapping
 
 from xmanager.xm import core
+from xmanager.xm import id_predictor
 
 
 class TestWorkUnit(core.WorkUnit):
   """A test version of WorkUnit with abstract methods implemented."""
 
-  def __init__(self, experiment, work_unit_id_predictor, create_task,
-               launched_jobs) -> None:
-    super().__init__(experiment, work_unit_id_predictor, create_task)
+  def __init__(
+      self,
+      experiment: core.Experiment,
+      work_unit_id_predictor: id_predictor.Predictor,
+      create_task: Callable[[Awaitable[Any]], futures.Future],
+      launched_jobs: List[core.JobType],
+      launched_jobs_args: List[Mapping[str, Any]],
+      args: Mapping[str, Any],
+  ) -> None:
+    super().__init__(experiment, work_unit_id_predictor, create_task, args)
     self._launched_jobs = launched_jobs
+    self._launched_jobs_args = launched_jobs_args
 
   async def _wait_until_complete(self) -> None:
     """Test work unit is immediately complete."""
@@ -32,8 +42,8 @@ class TestWorkUnit(core.WorkUnit):
   async def _launch_job_group(self, job_group: core.JobGroup,
                               args: Mapping[str, Any]) -> None:
     """Appends the job group to the launched_jobs list."""
-    del args  # Unused.
     self._launched_jobs.extend(job_group.jobs.values())
+    self._launched_jobs_args.append(args)
 
 
 class TestExperiment(core.Experiment):
@@ -43,7 +53,8 @@ class TestExperiment(core.Experiment):
 
   def __init__(self) -> None:
     super().__init__()
-    self._launched_jobs = []
+    self.launched_jobs = []
+    self.launched_jobs_args = []
     self._work_units = []
 
   def package(
@@ -52,10 +63,11 @@ class TestExperiment(core.Experiment):
     """Packages executable specs into executables based on the executor specs."""
     raise NotImplementedError
 
-  def _create_work_unit(self) -> TestWorkUnit:
+  def _create_work_unit(self, args: Mapping[str, Any]) -> TestWorkUnit:
     """Creates a new WorkUnit instance for the experiment."""
     work_unit = TestWorkUnit(self, self._work_unit_id_predictor,
-                             self._create_task, self._launched_jobs)
+                             self._create_task, self.launched_jobs,
+                             self.launched_jobs_args, args)
     self._work_units.append(work_unit)
     return work_unit
 

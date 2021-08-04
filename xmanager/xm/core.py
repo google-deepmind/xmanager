@@ -105,7 +105,7 @@ class Constraint(abc.ABC):
   """
 
 
-JobGeneratorType = Callable[['WorkUnit'], Awaitable]
+JobGeneratorType = Callable[..., Awaitable]
 JobType = Union['Job', 'JobGroup', JobGeneratorType]
 
 
@@ -362,18 +362,22 @@ class WorkUnit(abc.ABC):
 
   def __init__(self, experiment: 'Experiment',
                work_unit_id_predictor: id_predictor.Predictor,
-               create_task: Callable[[Awaitable[Any]], futures.Future]) -> None:
+               create_task: Callable[[Awaitable[Any]], futures.Future],
+               args: Mapping[str, Any]) -> None:
     """Initializes a `WorkUnit` instance.
 
     Args:
       experiment: An experiment this work unit belongs to.
       work_unit_id_predictor: The experiment's ID predictor.
       create_task: A callback to register a new asynchronous task.
+      args: Work unit agruments. Represent hyperparameter sweep element
+        corresponding to this work unit.
     """
     self._work_unit_id_predictor = work_unit_id_predictor
     self.work_unit_id = self._work_unit_id_predictor.reserve_id()
     self._experiment = experiment
     self._create_task = create_task
+    self._args = args
 
     self._launched_error = None
 
@@ -427,10 +431,11 @@ class WorkUnit(abc.ABC):
 
     def launch_job(job: Job) -> Awaitable[None]:
       return self._launch_job_group(
-          JobGroup(**{job.name: job}), _work_unit_arguments(job, args))
+          JobGroup(**{job.name: job}), _work_unit_arguments(job, self._args))
 
     def launch_job_group(group: JobGroup) -> Awaitable[None]:
-      return self._launch_job_group(group, _work_unit_arguments(group, args))
+      return self._launch_job_group(group,
+                                    _work_unit_arguments(group, self._args))
 
     def launch_job_generator(
         job_generator: JobGeneratorType) -> Awaitable[None]:
@@ -624,7 +629,7 @@ class Experiment(abc.ABC):
       An awaitable that would be fulfilled when the job is launched.
     """
     # pyformat: enable
-    work_unit = self._create_work_unit()
+    work_unit = self._create_work_unit(args)
 
     async def launch():
       await work_unit.add(job, args)
@@ -632,9 +637,9 @@ class Experiment(abc.ABC):
 
     return asyncio.wrap_future(self._create_task(launch()))
 
-  def _create_work_unit(self) -> WorkUnit:
+  def _create_work_unit(self, args: Mapping[str, Any]) -> WorkUnit:
     """Creates a new WorkUnit instance for the experiment."""
-    return WorkUnit(self, self._work_unit_id_predictor, self._create_task)
+    return WorkUnit(self, self._work_unit_id_predictor, self._create_task, args)
 
   def _create_task(self, task: Awaitable[Any]) -> futures.Future:
     future = asyncio.run_coroutine_threadsafe(task, loop=self._event_loop)
