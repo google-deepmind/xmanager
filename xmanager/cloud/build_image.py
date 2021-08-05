@@ -136,11 +136,30 @@ def _create_instructions(py_executable: xm.PythonContainer,
     return '\n'.join(py_executable.docker_instructions + set_env_vars)
 
   directory = os.path.basename(py_executable.path)
-  return '\n'.join(list(_default_steps(directory)) + set_env_vars)
+  return '\n'.join(
+      list(_default_steps(directory, py_executable.use_deep_module)) +
+      set_env_vars)
 
 
-def _default_steps(directory: str) -> Iterable[str]:
-  return (
+def _default_steps(directory: str, use_deep_module: bool) -> Iterable[str]:
+  """Default commands to use in the Dockerfile."""
+  workdir_setup_prefix = []
+  workdir_setup_suffix = []
+  project_dir = directory
+  if use_deep_module:
+    # Setting a top-level work dir allows using the Python code without
+    # modifying import statements.
+    workdir_setup_prefix = [
+        'RUN mkdir /workdir',
+        'WORKDIR /workdir',
+    ]
+    project_dir = f'/workdir/{directory}'
+  else:
+    workdir_setup_suffix = [
+        f'WORKDIR {directory}',
+    ]
+
+  return workdir_setup_prefix + [
       # Without setting LANG, RDL ran into an UnicodeDecodeError, similar to
       # what is described at [1]. This seems to be good practice and not hurt so
       # we're just always setting it.
@@ -151,16 +170,15 @@ def _default_steps(directory: str) -> Iterable[str]:
       'RUN apt-get update && apt-get install -y git',
       'RUN python -m pip install --upgrade pip',
       'RUN python -m pip install --upgrade setuptools',
-      f'COPY {directory}/requirements.txt {directory}/requirements.txt',
+      f'COPY {directory}/requirements.txt {project_dir}/requirements.txt',
       f'RUN python -m pip install -r {directory}/requirements.txt',
       # It is best practice to copy the project directory as late as possible,
       # rather than at the beginning. This allows Docker to reuse cached layers.
       # If copying the project files were the first step, a tiny modification to
       # the source code will invalidate the cache.
       # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy
-      f'COPY {directory}/ {directory}',
-      f'WORKDIR {directory}',
-  )
+      f'COPY {directory}/ {project_dir}',
+  ] + workdir_setup_suffix
 
 
 def _create_dockerfile(py_executable: xm.PythonContainer, args: xm.ArgsType,

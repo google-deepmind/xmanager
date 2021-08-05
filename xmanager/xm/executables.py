@@ -71,7 +71,7 @@ class PythonContainer(core.ExecutableSpec):
       base_image: Name of the image to initialize a new Docker build stage using
         the instruction `FROM`.
       docker_instructions: List of Docker instructions to apply when building
-        the image.
+        the image. If not specified, the default one will be provided.
 
         When you use `docker_instructions`, you are responsible for copying the
         project directory. For example, if you are running with:
@@ -89,12 +89,25 @@ class PythonContainer(core.ExecutableSpec):
         If you are frequently iterating on the source code, it is best practice
         to place these steps as late as possible in the list to maximize Docker
         layer-caching.
+      use_deep_module: Whether the experiment code uses deep module structure
+        (i.e., 'from <a.prefix> import models') or not (i.e., 'import models').
+
+        If use_deep_module is set to True, and docker_instructions are used, it
+        is recommended to use dedicated workdir and copy a whole project
+        directory there. The example above should be modified as:
+
+          [
+            'RUN mkdir /workdir',
+            'WORKDIR /workdir',
+            'COPY cifar10/ /workdir/cifar10',
+          ]
   """
 
   entrypoint: Union[ModuleName, CommandList]
   path: str = attr.ib(converter=utils.get_absolute_path, default='.')
   base_image: Optional[str] = None
   docker_instructions: Optional[List[str]] = None
+  use_deep_module: bool = False
 
   @property
   def name(self) -> str:
