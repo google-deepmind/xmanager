@@ -53,10 +53,13 @@ _DEFAULT_BASE_IMAGE = 'gcr.io/deeplearning-platform-release/base-cu110'
 _DOCKERFILE_TEMPLATE = """
 FROM {base_image}
 
+RUN if ! id 1000; then useradd -m -u 1000 clouduser; fi
+
 {instructions}
 
 COPY entrypoint.sh ./entrypoint.sh
-RUN chmod +x ./entrypoint.sh
+RUN chown -R 1000:root ./entrypoint.sh && chmod -R 775 ./entrypoint.sh
+
 {entrypoint}
 """
 _ENTRYPOINT_TEMPLATE = """#!/bin/bash
@@ -145,7 +148,7 @@ def _default_steps(directory: str, use_deep_module: bool) -> Iterable[str]:
   """Default commands to use in the Dockerfile."""
   workdir_setup_prefix = []
   workdir_setup_suffix = []
-  project_dir = directory
+  project_dir = f'/{directory}'
   if use_deep_module:
     # Setting a top-level work dir allows using the Python code without
     # modifying import statements.
@@ -178,6 +181,9 @@ def _default_steps(directory: str, use_deep_module: bool) -> Iterable[str]:
       # the source code will invalidate the cache.
       # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy
       f'COPY {directory}/ {project_dir}',
+      # Changing ownwership of project_dir, so that both users: UID 1000
+      # and root are the co-owner of it.
+      f'RUN chown -R 1000:root {project_dir} && chmod -R 775 {project_dir}',
   ] + workdir_setup_suffix
 
 
