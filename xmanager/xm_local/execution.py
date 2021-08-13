@@ -236,10 +236,7 @@ async def launch(get_full_job_name: Callable[[str], str],
                  job_group: xm.JobGroup) -> List[LocalExecutionHandle]:
   """Launches jobs with `xm_local.Local` executor."""
   # Must act on all jobs with `Local` executor.
-  local_jobs = utils.collect_jobs_by_filter(
-      job_group,
-      _local_job_predicate,
-  )
+  local_jobs = utils.collect_jobs_by_filter(job_group, _local_job_predicate)
   handles: List[LocalExecutionHandle] = [
       await _LOCAL_EXECUTION_ROUTER(get_full_job_name, job, job.executable)
       for job in local_jobs

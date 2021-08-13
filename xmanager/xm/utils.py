@@ -23,7 +23,7 @@ import inspect
 import itertools
 import os
 import shlex
-from typing import Any, Callable, Dict, List, Mapping, TypeVar
+from typing import Any, Callable, List, Mapping, TypeVar
 
 import attr
 
@@ -124,37 +124,16 @@ def collect_jobs_by_filter(
     predicate: Callable[[core.Job], bool],
 ) -> List[core.Job]:
   """Flattens a given job group and filters the result."""
-  return list(
-      collect_jobs_by_filter_with_names(
-          job_group,
-          predicate=lambda _, job: predicate(job),
-      ).values())
 
+  def match_job(job: core.Job) -> List[core.Job]:
+    return [job] if predicate(job) else []
 
-def collect_jobs_by_filter_with_names(
-    job_group: core.JobGroup,
-    predicate: Callable[[str, core.Job], bool],
-) -> Dict[str, core.Job]:
-  """Flattens a given job group and filters the result, preserving job names."""
-
-  def match_job(name: str, job: core.Job) -> Dict[str, core.Job]:
-    return {name: job} if predicate(name, job) else {}
-
-  def match_job_group_with_name(
-      job_group_name: str, job_group: core.JobGroup) -> Dict[str, core.Job]:
-    flattened_group = itertools.chain.from_iterable(
-        job_collector(name, job).items()
-        for name, job in job_group.jobs.items())
-    return {f'{job_group_name}.{name}': job for name, job in flattened_group}
-
-  def match_job_group(job_group: core.JobGroup) -> Dict[str, core.Job]:
-    return dict(
+  def match_job_group(job_group: core.JobGroup) -> List[core.Job]:
+    return list(
         itertools.chain.from_iterable(
-            job_collector(name, job).items()
-            for name, job in job_group.jobs.items()))
+            [job_collector(job) for job in job_group.jobs.values()]))
 
-  job_collector = pattern_matching.match(match_job_group,
-                                         match_job_group_with_name, match_job)
+  job_collector = pattern_matching.match(match_job_group, match_job)
   return job_collector(job_group)
 
 

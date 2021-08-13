@@ -23,11 +23,11 @@ async def make_me_a_sandwich() -> str:
   return 'sandwich'
 
 
-def construct_job(args):
+def construct_job(name=None):
   return core.Job(
+      name=name,
       executable=testing.TestExecutable(),
-      executor=testing.TestExecutor(),
-      args=args)
+      executor=testing.TestExecutor())
 
 
 class UtilsTest(unittest.TestCase):
@@ -58,44 +58,30 @@ class UtilsTest(unittest.TestCase):
 
   def test_collect_jobs_by_filter(self):
     job_group = core.JobGroup(
-        foo=construct_job(args=['foo']),
-        bar=construct_job(args=['bar']),
-        baz=construct_job(args=['baz']),
+        foo=construct_job('foo'),
+        bar=construct_job('bar'),
+        baz=construct_job('baz'),
     )
-    self.assertCountEqual(
-        utils.collect_jobs_by_filter(
-            job_group, predicate=lambda job: 'bar' in job.args),
-        (job_group.jobs['bar'],),
-    )
+
     self.assertEqual(
-        utils.collect_jobs_by_filter_with_names(
+        utils.collect_jobs_by_filter(
             job_group,
-            predicate=lambda name, job: 'baz' in job.args or name == 'foo',
+            predicate=lambda job: job.name in ['foo', 'baz'],
         ),
-        {
-            'foo': job_group.jobs['foo'],
-            'baz': job_group.jobs['baz'],
-        },
+        [job_group.jobs['foo'], job_group.jobs['baz']],
     )
 
   def test_collect_jobs_by_filter_nested(self):
-    baz = construct_job(args=['baz'])
-    foo = construct_job(args=['foo'])
+    baz = construct_job('baz')
+    foo = construct_job('foo')
     job_group = core.JobGroup(
         foo=foo,
         bar=core.JobGroup(baz=baz),
     )
-    self.assertCountEqual(
-        utils.collect_jobs_by_filter(job_group, predicate=lambda _: True),
-        (foo, baz),
-    )
+
     self.assertEqual(
-        utils.collect_jobs_by_filter_with_names(
-            job_group, predicate=lambda _, __: True),
-        {
-            'foo': foo,
-            'bar.baz': baz,
-        },
+        utils.collect_jobs_by_filter(job_group, predicate=lambda _: True),
+        [foo, baz],
     )
 
 
