@@ -16,7 +16,7 @@
 import os
 import shutil
 import tempfile
-from typing import Dict, Iterable, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from absl import flags
 from absl import logging
@@ -140,11 +140,11 @@ def _create_instructions(py_executable: xm.PythonContainer,
 
   directory = os.path.basename(py_executable.path)
   return '\n'.join(
-      list(_default_steps(directory, py_executable.use_deep_module)) +
+      list(default_steps(directory, py_executable.use_deep_module)) +
       set_env_vars)
 
 
-def _default_steps(directory: str, use_deep_module: bool) -> Iterable[str]:
+def default_steps(directory: str, use_deep_module: bool) -> List[str]:
   """Default commands to use in the Dockerfile."""
   workdir_setup_prefix = []
   workdir_setup_suffix = []
