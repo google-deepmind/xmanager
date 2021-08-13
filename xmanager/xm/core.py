@@ -30,7 +30,7 @@ import functools
 import inspect
 import queue
 import threading
-from typing import Any, Awaitable, Callable, Dict, Iterable, List, Mapping, Optional, Union
+from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Union
 
 import attr
 import immutabledict
@@ -179,7 +179,7 @@ class JobGroup:
 
   def __init__(self,
                *,
-               constraints: Optional[Iterable[Constraint]] = None,
+               constraints: Optional[Sequence[Constraint]] = None,
                **jobs: JobType) -> None:
     """Builds a JobGroup.
 
@@ -338,15 +338,15 @@ def _work_unit_arguments(
 def _populate_job_names(job: JobType) -> None:
   """Assigns default names to the given job(s)."""
 
-  def apply_to_job(target: Job) -> None:
+  def apply_to_job(prefix: Sequence[str], target: Job) -> None:
     if target.name is None:
-      target.name = target.executable.name
+      target.name = '_'.join(prefix) if prefix else target.executable.name
 
-  def apply_to_job_group(target: JobGroup) -> None:
-    for job in target.jobs.values():
-      matcher(job)
+  def apply_to_job_group(prefix: Sequence[str], target: JobGroup) -> None:
+    for key, job in target.jobs.items():
+      matcher([*prefix, key], job)
 
-  def ignore_unknown(target: Any) -> None:
+  def ignore_unknown(_: Sequence[str], target: Any) -> None:
     return target
 
   matcher = pattern_matching.match(
@@ -354,7 +354,7 @@ def _populate_job_names(job: JobType) -> None:
       apply_to_job_group,
       ignore_unknown,
   )
-  return matcher(job)
+  return matcher([], job)
 
 
 class WorkUnit(abc.ABC):
@@ -597,7 +597,7 @@ class Experiment(abc.ABC):
 
   @abc.abstractmethod
   def package(self,
-              packageables: Iterable[Packageable]) -> Iterable[Executable]:
+              packageables: Sequence[Packageable]) -> Sequence[Executable]:
     """Packages executable specs into executables based on the executor specs."""
     raise NotImplementedError
 
