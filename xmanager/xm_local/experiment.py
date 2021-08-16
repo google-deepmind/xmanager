@@ -22,8 +22,8 @@ from xmanager import xm
 from xmanager.cloud import caip
 from xmanager.cloud import kubernetes
 from xmanager.xm import id_predictor
+from xmanager.xm import job_operators
 from xmanager.xm import pattern_matching
-from xmanager.xm import utils
 from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
 from xmanager.xm_local import status as local_status
@@ -45,7 +45,7 @@ _EXECUTOR_VALIDATOR = pattern_matching.match(
 
 
 def _validate_job_group(job_group: xm.JobGroup) -> None:
-  all_jobs = utils.collect_jobs_by_filter(job_group, lambda _: True)
+  all_jobs = job_operators.collect_jobs_by_filter(job_group, lambda _: True)
   for job in all_jobs:
     _EXECUTOR_VALIDATOR(job, job.executor)
 

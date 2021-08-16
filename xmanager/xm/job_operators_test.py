@@ -15,12 +15,8 @@
 import unittest
 
 from xmanager.xm import job_blocks
+from xmanager.xm import job_operators
 from xmanager.xm import testing
-from xmanager.xm import utils
-
-
-async def make_me_a_sandwich() -> str:
-  return 'sandwich'
 
 
 def construct_job(name=None):
@@ -30,31 +26,36 @@ def construct_job(name=None):
       executor=testing.TestExecutor())
 
 
-class UtilsTest(unittest.TestCase):
+class JobOperatorsTest(unittest.TestCase):
 
-  def test_to_command_line_args_dict(self):
+  def test_collect_jobs_by_filter_includes_matches(self):
+    job_group = job_blocks.JobGroup(
+        foo=construct_job('foo'),
+        bar=construct_job('bar'),
+        baz=construct_job('baz'),
+    )
+
     self.assertEqual(
-        utils.to_command_line_args({
-            'foo': 1,
-            'bar': [2, 3]
-        }), ['--foo', '1', '--bar', "'[2, 3]'"])
+        job_operators.collect_jobs_by_filter(
+            job_group,
+            predicate=lambda job: job.name in ['foo', 'baz'],
+        ),
+        [job_group.jobs['foo'], job_group.jobs['baz']],
+    )
 
-  def test_to_command_line_args_list(self):
+  def test_collect_jobs_by_filter_handles_nested_groups(self):
+    baz = construct_job('baz')
+    foo = construct_job('foo')
+    job_group = job_blocks.JobGroup(
+        foo=foo,
+        bar=job_blocks.JobGroup(baz=baz),
+    )
+
     self.assertEqual(
-        utils.to_command_line_args(['--foo', 12.0, (1, 2, 3)]),
-        ['--foo', '12.0', "'(1, 2, 3)'"])
-
-  def test_to_command_line_args_no_escape(self):
-    self.assertEqual(
-        utils.to_command_line_args([utils.ShellSafeArg('$TMP')]), ['$TMP'])
-
-  @utils.run_in_asyncio_loop
-  async def test_run_in_asyncio_loop(self):
-    self.assertEqual(await make_me_a_sandwich(), 'sandwich')
-
-  def test_run_in_asyncio_loop_returns_value(self):
-    self.assertEqual(
-        utils.run_in_asyncio_loop(make_me_a_sandwich)(), 'sandwich')
+        job_operators.collect_jobs_by_filter(
+            job_group, predicate=lambda _: True),
+        [foo, baz],
+    )
 
 
 if __name__ == '__main__':

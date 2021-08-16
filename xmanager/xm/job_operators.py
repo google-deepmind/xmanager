@@ -14,7 +14,8 @@
 """Common job operators useful in the framework and 3P-libraries."""
 
 import copy
-from typing import Any, Sequence
+import itertools
+from typing import Any, Callable, List, Sequence
 
 from xmanager.xm import job_blocks
 from xmanager.xm import pattern_matching
@@ -58,3 +59,21 @@ def populate_job_names(job_type: job_blocks.JobType) -> None:
       ignore_unknown,
   )
   return matcher([], job_type)
+
+
+def collect_jobs_by_filter(
+    job_group: job_blocks.JobGroup,
+    predicate: Callable[[job_blocks.Job], bool],
+) -> List[job_blocks.Job]:
+  """Flattens a given job group and filters the result."""
+
+  def match_job(job: job_blocks.Job) -> List[job_blocks.Job]:
+    return [job] if predicate(job) else []
+
+  def match_job_group(job_group: job_blocks.JobGroup) -> List[job_blocks.Job]:
+    return list(
+        itertools.chain.from_iterable(
+            [job_collector(job) for job in job_group.jobs.values()]))
+
+  job_collector = pattern_matching.match(match_job_group, match_job)
+  return job_collector(job_group)

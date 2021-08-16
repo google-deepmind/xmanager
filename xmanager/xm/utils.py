@@ -20,7 +20,6 @@ import abc
 import asyncio
 import functools
 import inspect
-import itertools
 import os
 import shlex
 from typing import Any, Callable, List, Mapping, TypeVar
@@ -117,24 +116,6 @@ def run_in_asyncio_loop(
     return loop.run_until_complete(f(*args, **kwargs))
 
   return decorated
-
-
-def collect_jobs_by_filter(
-    job_group: job_blocks.JobGroup,
-    predicate: Callable[[job_blocks.Job], bool],
-) -> List[job_blocks.Job]:
-  """Flattens a given job group and filters the result."""
-
-  def match_job(job: job_blocks.Job) -> List[job_blocks.Job]:
-    return [job] if predicate(job) else []
-
-  def match_job_group(job_group: job_blocks.JobGroup) -> List[job_blocks.Job]:
-    return list(
-        itertools.chain.from_iterable(
-            [job_collector(job) for job in job_group.jobs.values()]))
-
-  job_collector = pattern_matching.match(match_job_group, match_job)
-  return job_collector(job_group)
 
 
 def get_absolute_path(path: str) -> str:

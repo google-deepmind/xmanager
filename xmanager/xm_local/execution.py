@@ -25,6 +25,7 @@ import attr
 from docker.models import containers
 from xmanager import xm
 from xmanager.docker import docker_adapter
+from xmanager.xm import job_operators
 from xmanager.xm import pattern_matching
 from xmanager.xm import utils
 from xmanager.xm_local import executables
@@ -236,7 +237,8 @@ async def launch(get_full_job_name: Callable[[str], str],
                  job_group: xm.JobGroup) -> List[LocalExecutionHandle]:
   """Launches jobs with `xm_local.Local` executor."""
   # Must act on all jobs with `Local` executor.
-  local_jobs = utils.collect_jobs_by_filter(job_group, _local_job_predicate)
+  local_jobs = job_operators.collect_jobs_by_filter(job_group,
+                                                    _local_job_predicate)
   handles: List[LocalExecutionHandle] = [
       await _LOCAL_EXECUTION_ROUTER(get_full_job_name, job, job.executable)
       for job in local_jobs

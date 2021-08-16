@@ -167,7 +167,8 @@ class KubernetesHandle(local_execution.ExecutionHandle):
 def launch(experiment_name: str, get_full_job_name: Callable[[str], str],
            job_group: xm.JobGroup) -> List[KubernetesHandle]:
   """Launch K8s jobs in the job_group and return a handler."""
-  jobs = utils.collect_jobs_by_filter(job_group, _kubernetes_job_predicate)
+  jobs = xm.job_operators.collect_jobs_by_filter(job_group,
+                                                 _kubernetes_job_predicate)
   # As client creation may throw, do not initiate it if there are no jobs.
   if not jobs:
     return []

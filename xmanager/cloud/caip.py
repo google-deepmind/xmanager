@@ -293,7 +293,7 @@ class CaipHandle(local_execution.ExecutionHandle):
 def launch(experiment_title: str, work_unit_name: str,
            job_group: xm.JobGroup) -> List[CaipHandle]:
   """Launch CAIP jobs in the job_group and return a handler."""
-  jobs = utils.collect_jobs_by_filter(job_group, _caip_job_predicate)
+  jobs = xm.job_operators.collect_jobs_by_filter(job_group, _caip_job_predicate)
   # As client creation may throw, do not initiate it if there are no jobs.
   if not jobs:
     return []
