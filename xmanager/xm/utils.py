@@ -27,7 +27,7 @@ from typing import Any, Callable, List, Mapping, TypeVar
 
 import attr
 
-from xmanager.xm import core
+from xmanager.xm import job_blocks
 from xmanager.xm import pattern_matching
 
 ReturnType = TypeVar('ReturnType')
@@ -55,7 +55,7 @@ _ESCAPER = pattern_matching.match(
 )
 
 
-def to_command_line_args(args: core.ArgsType,
+def to_command_line_args(args: job_blocks.ArgsType,
                          escaper: Callable[[Any], str] = _ESCAPER) -> List[str]:
   """Returns arguments representation suitable to passing to a binary.
 
@@ -120,15 +120,15 @@ def run_in_asyncio_loop(
 
 
 def collect_jobs_by_filter(
-    job_group: core.JobGroup,
-    predicate: Callable[[core.Job], bool],
-) -> List[core.Job]:
+    job_group: job_blocks.JobGroup,
+    predicate: Callable[[job_blocks.Job], bool],
+) -> List[job_blocks.Job]:
   """Flattens a given job group and filters the result."""
 
-  def match_job(job: core.Job) -> List[core.Job]:
+  def match_job(job: job_blocks.Job) -> List[job_blocks.Job]:
     return [job] if predicate(job) else []
 
-  def match_job_group(job_group: core.JobGroup) -> List[core.Job]:
+  def match_job_group(job_group: job_blocks.JobGroup) -> List[job_blocks.Job]:
     return list(
         itertools.chain.from_iterable(
             [job_collector(job) for job in job_group.jobs.values()]))

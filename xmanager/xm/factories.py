@@ -15,20 +15,21 @@
 
 from typing import Callable, Type
 
-from xmanager.xm import core
 from xmanager.xm import executables
+from xmanager.xm import job_blocks
 
 
 # TODO: Provide proper typing for autocompletion.
 def create_packageable_factory(
-    ctor: Type[core.ExecutableSpec]) -> Callable[..., core.Packageable]:
+    ctor: Type[job_blocks.ExecutableSpec]
+) -> Callable[..., job_blocks.Packageable]:
   """Creates a factory function based on a particular executable spec."""
 
-  def packageable_factory(executor_spec: core.ExecutorSpec, *args,
-                          **kwargs) -> core.Packageable:
+  def packageable_factory(executor_spec: job_blocks.ExecutorSpec, *args,
+                          **kwargs) -> job_blocks.Packageable:
     pkg_args = kwargs.pop('args', [])
     pkg_env_vars = kwargs.pop('env_vars', {})
-    return core.Packageable(
+    return job_blocks.Packageable(
         executable_spec=ctor(*args, **kwargs),
         executor_spec=executor_spec,
         args=pkg_args,

@@ -11,10 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Abstract API Spec for XManager.
+"""Abstract API specification for XManager implementations.
 
-Each implementation of the XManager API should override the abstract and
-unimplemented methods. Users can then use the implementions via:
+Each implementation of the XManager API should override the abstract methods.
+Users are normally expected to have the following pair of imports:
 
 ```
 from xmanager import xm
@@ -30,168 +30,18 @@ import functools
 import inspect
 import queue
 import threading
-from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Union
+from typing import Any, Awaitable, Callable, Dict, List, Mapping, Sequence
 
-import attr
 import immutabledict
 
 from xmanager.xm import id_predictor
+from xmanager.xm import job_blocks
 from xmanager.xm import metadata_context
 from xmanager.xm import pattern_matching
 
-ArgsType = Union[List, Dict]
 
-
-class ExecutableSpec(abc.ABC):
-  """Executable specification describes what code / computation to run.
-
-  An executable spec must turned into an executable using package() in order
-  to be used in a Job.
-  """
-
-  @property
-  @abc.abstractmethod
-  def name(self) -> str:
-    raise NotImplementedError
-
-
-@attr.s(auto_attribs=True)
-class Executable(abc.ABC):
-  """Executable describes the final location of a packaged executable spec.
-
-  An executable depends on the executable specification and the executor
-  specification. Experiment's implementation knows how to handle each type of
-  executable.
-
-  Attributes:
-      name: An automatically populated name for the executable. Used for
-          assigning default names to `Job`s.
-  """
-
-  name: str
-
-
-class ExecutorSpec(abc.ABC):
-  """Executor spec describes the location of the runtime environment."""
-
-
-class Executor(abc.ABC):
-  """Executor describes the runtime environment of a Job."""
-
-  @classmethod
-  @abc.abstractmethod
-  def Spec(cls) -> ExecutorSpec:  # pylint: disable=invalid-name
-    raise NotImplementedError
-
-
-@attr.s(auto_attribs=True)
-class Packageable:
-  """Packageable describes what to build and its static parameters."""
-
-  executable_spec: ExecutableSpec
-  executor_spec: ExecutorSpec
-  args: ArgsType = attr.Factory(list)
-  env_vars: Dict[str, str] = attr.Factory(dict)
-
-
-class Constraint(abc.ABC):
-  """Constraint describes the requirements for where a job group can run.
-
-  Some examples of constraints include:
-   * same virtual machine
-   * same virtual private cloud subnetwork
-   * same network fabric
-   * same geographic location
-  """
-
-
-JobGeneratorType = Callable[..., Awaitable]
-JobType = Union['Job', 'JobGroup', JobGeneratorType]
-
-
-@attr.s(auto_attribs=True)
-class Job:
-  """Job describes a unit of computation to be run.
-
-  Attributes:
-    executable: What to run -- one of `xm.Experiment.package` results.
-    executor: Where to run -- one of `xm.Executor` subclasses.
-    name: Name of the job. Must be unique within the context (work unit). By
-      default it is constructed from the executable. Used for naming related
-      entities such as newly created containers.
-    args: Command line arguments to pass.
-    env_vars: Environment variables to apply.
-  """
-
-  executable: Executable
-  executor: Executor
-  name: Optional[str] = None
-  args: ArgsType = attr.Factory(list)
-  env_vars: Dict[str, str] = attr.Factory(dict)
-
-
-class JobGroup:
-  """JobGroup describes a set of jobs that run under shared constraints.
-
-  Use named arguments to give jobs meaningful names:
-
-  ```
-  JobGroup(
-      learner=Job(learner_executable, executor),
-      actor=Job(actor_executable, executor),
-  )
-  ```
-
-  JobGroups provide the gang scheduling concept: Jobs inside them would be
-  scheduled / descheduled simultaneously. Note that schedulers may not always be
-  able to enforce that.
-
-  JobGroups may include more fine grained constraints:
-
-  ```
-  JobGroup(
-      learner=Job(tpu_learner_executable, executor),
-      preprocessor=Job(preprocessor_executable, executor),
-      constraints=[xm.SameMachine()],
-  )
-  ```
-
-  To express sophisticated requirements JobGroups can be nested:
-
-  ```
-  JobGroup(
-      eval=Job(eval_executable, executor),
-      colocated_learner_and_actor=JobGroup(
-          learner=Job(tpu_learner_executable, executor),
-          actor=Job(actor_executable, executor),
-          constraints=[xm.SameMachine()],
-      ),
-  )
-  ```
-
-  Attributes:
-    jobs: A mapping of names to jobs.
-    constraints: A list of additional scheduling constraints.
-  """
-
-  jobs: Dict[str, JobType]
-  constraints: List[Constraint]
-
-  def __init__(self,
-               *,
-               constraints: Optional[Sequence[Constraint]] = None,
-               **jobs: JobType) -> None:
-    """Builds a JobGroup.
-
-    Args:
-      constraints: List of additional scheduling constraints. Keyword only arg.
-      **jobs: Jobs / job groups that constitute the group passed as kwargs.
-    """
-    self.jobs = jobs
-    self.constraints = list(constraints) if constraints else []
-
-
-def merge_args(left: ArgsType, right: ArgsType) -> ArgsType:
+def merge_args(left: job_blocks.ArgsType,
+               right: job_blocks.ArgsType) -> job_blocks.ArgsType:
   """Merges two argument sets."""
   if not left:
     return right
@@ -211,7 +61,8 @@ def merge_args(left: ArgsType, right: ArgsType) -> ArgsType:
   # pyformat: enable
 
 
-def _shallow_copy_job_group(job_group: JobGroup) -> JobGroup:
+def _shallow_copy_job_group(
+    job_group: job_blocks.JobGroup) -> job_blocks.JobGroup:
   """Copies the group and jobs inside it, but not their properties."""
   job_group = copy.copy(job_group)
   job_group.jobs = {
@@ -221,21 +72,22 @@ def _shallow_copy_job_group(job_group: JobGroup) -> JobGroup:
 
 
 _shallow_copy_job_type = pattern_matching.match(
-    pattern_matching.Case([Job], copy.copy),
+    pattern_matching.Case([job_blocks.Job], copy.copy),
     _shallow_copy_job_group,
-    pattern_matching.Case([JobGeneratorType], lambda generator: generator),
+    pattern_matching.Case([job_blocks.JobGeneratorType],
+                          lambda generator: generator),
 )
 
 
-def _apply_args_to_job(job: Job, args: Mapping[str, Any]) -> None:
+def _apply_args_to_job(job: job_blocks.Job, args: Mapping[str, Any]) -> None:
   """Overrides job properties."""
   if 'args' in args:
     job.args = merge_args(job.args, args['args'])
   job.env_vars.update(args.get('env_vars', {}))
 
 
-def _apply_args_to_job_group(job_group: JobGroup, args: Mapping[str,
-                                                                Any]) -> None:
+def _apply_args_to_job_group(job_group: job_blocks.JobGroup,
+                             args: Mapping[str, Any]) -> None:
   """Recursively overrides job group properties."""
   if args:
     for key, job in job_group.jobs.items():
@@ -244,7 +96,8 @@ def _apply_args_to_job_group(job_group: JobGroup, args: Mapping[str,
 
 _apply_args = pattern_matching.match(
     _apply_args_to_job, _apply_args_to_job_group,
-    pattern_matching.Case([JobGeneratorType, Any], lambda other, args: None))
+    pattern_matching.Case([job_blocks.JobGeneratorType, Any],
+                          lambda other, args: None))
 
 
 class WorkUnitStatus(abc.ABC):
@@ -288,7 +141,7 @@ class WorkUnitNotCompletedError(WorkUnitError):
 
 
 def _work_unit_arguments(
-    job: JobType,
+    job: job_blocks.JobType,
     args: Mapping[str, Any],
 ) -> Mapping[str, Any]:
   """Constructs work unit arguments to display them in various UIs.
@@ -316,11 +169,11 @@ def _work_unit_arguments(
     # don't alter them if a value is given.
     return args
 
-  def deduce_args_for_job(job: Job) -> Dict[str, Any]:
+  def deduce_args_for_job(job: job_blocks.Job) -> Dict[str, Any]:
     args = {'args': job.args, 'env_vars': job.env_vars}
     return {key: value for key, value in args.items() if value}
 
-  def deduce_args_for_job_group(group: JobGroup) -> Dict[str, Any]:
+  def deduce_args_for_job_group(group: job_blocks.JobGroup) -> Dict[str, Any]:
     args = {}
     for job_name, job in group.jobs.items():
       job_args = deduce_args(job)
@@ -330,19 +183,21 @@ def _work_unit_arguments(
 
   deduce_args = pattern_matching.match(
       deduce_args_for_job, deduce_args_for_job_group,
-      pattern_matching.Case([JobGeneratorType], lambda generator: {}))
+      pattern_matching.Case([job_blocks.JobGeneratorType],
+                            lambda generator: {}))
 
   return deduce_args(job)
 
 
-def _populate_job_names(job: JobType) -> None:
+def _populate_job_names(job: job_blocks.JobType) -> None:
   """Assigns default names to the given job(s)."""
 
-  def apply_to_job(prefix: Sequence[str], target: Job) -> None:
+  def apply_to_job(prefix: Sequence[str], target: job_blocks.Job) -> None:
     if target.name is None:
       target.name = '_'.join(prefix) if prefix else target.executable.name
 
-  def apply_to_job_group(prefix: Sequence[str], target: JobGroup) -> None:
+  def apply_to_job_group(prefix: Sequence[str],
+                         target: job_blocks.JobGroup) -> None:
     for key, job in target.jobs.items():
       matcher([*prefix, key], job)
 
@@ -398,7 +253,7 @@ class WorkUnit(abc.ABC):
 
   def add(
       self,
-      job: JobType,
+      job: job_blocks.JobType,
       args: Mapping[str, Any] = immutabledict.immutabledict()
   ) -> Awaitable[None]:
     # pyformat: disable
@@ -429,16 +284,17 @@ class WorkUnit(abc.ABC):
     _apply_args(job, args)
     _populate_job_names(job)
 
-    def launch_job(job: Job) -> Awaitable[None]:
+    def launch_job(job: job_blocks.Job) -> Awaitable[None]:
       return self._launch_job_group(
-          JobGroup(**{job.name: job}), _work_unit_arguments(job, self._args))
+          job_blocks.JobGroup(**{job.name: job}),
+          _work_unit_arguments(job, self._args))
 
-    def launch_job_group(group: JobGroup) -> Awaitable[None]:
+    def launch_job_group(group: job_blocks.JobGroup) -> Awaitable[None]:
       return self._launch_job_group(group,
                                     _work_unit_arguments(group, self._args))
 
     def launch_job_generator(
-        job_generator: JobGeneratorType) -> Awaitable[None]:
+        job_generator: job_blocks.JobGeneratorType) -> Awaitable[None]:
       if not inspect.iscoroutinefunction(job_generator):
         raise ValueError(
             'Job generator must be an async function. Signature needs to be '
@@ -477,7 +333,7 @@ class WorkUnit(abc.ABC):
       raise self._launched_error
     await self._wait_until_complete()
 
-  async def _launch_job_group(self, job_group: JobGroup,
+  async def _launch_job_group(self, job_group: job_blocks.JobGroup,
                               args: Mapping[str, Any]) -> None:
     """Launches a given job group as part of the work unit."""
     raise NotImplementedError
@@ -596,14 +452,15 @@ class Experiment(abc.ABC):
     await self._await_for_tasks()
 
   @abc.abstractmethod
-  def package(self,
-              packageables: Sequence[Packageable]) -> Sequence[Executable]:
+  def package(
+      self, packageables: Sequence[job_blocks.Packageable]
+  ) -> Sequence[job_blocks.Executable]:
     """Packages executable specs into executables based on the executor specs."""
     raise NotImplementedError
 
   def add(
       self,
-      job: JobType,
+      job: job_blocks.JobType,
       args: Mapping[str, Any] = immutabledict.immutabledict()
   ) -> Awaitable[WorkUnit]:
     # pyformat: disable

@@ -19,7 +19,7 @@ import re
 from typing import List, NamedTuple, Optional, Union
 
 import attr
-from xmanager.xm import core
+from xmanager.xm import job_blocks
 from xmanager.xm import utils
 
 
@@ -39,7 +39,7 @@ class CommandList(NamedTuple):
 
 
 @attr.s(auto_attribs=True)
-class Dockerfile(core.ExecutableSpec):
+class Dockerfile(job_blocks.ExecutableSpec):
   """Dockerfile describes a Dockerfile for generating a docker image.
 
   This is a lower-level feature that could be solved using higher-level
@@ -60,7 +60,7 @@ class Dockerfile(core.ExecutableSpec):
 
 
 @attr.s(auto_attribs=True)
-class PythonContainer(core.ExecutableSpec):
+class PythonContainer(job_blocks.ExecutableSpec):
   """PythonContainer describes a directory containing Python code.
 
   Attributes:
@@ -122,7 +122,7 @@ class BinaryDependency(abc.ABC):
 
 
 @attr.s(auto_attribs=True)
-class Container(core.ExecutableSpec):
+class Container(job_blocks.ExecutableSpec):
   """A prebuilt Docker image.
 
   The image can be tagged locally or in a remote repository.
@@ -136,7 +136,7 @@ class Container(core.ExecutableSpec):
 
 
 @attr.s(auto_attribs=True)
-class Binary(core.ExecutableSpec):
+class Binary(job_blocks.ExecutableSpec):
   """A prebuilt executable program."""
 
   path: str
@@ -148,7 +148,7 @@ class Binary(core.ExecutableSpec):
 
 
 @attr.s(auto_attribs=True)
-class BazelContainer(core.ExecutableSpec):
+class BazelContainer(job_blocks.ExecutableSpec):
   """A Bazel target that produces a .tar image.
 
   Note that for targets based on https://github.com/bazelbuild/rules_docker one
@@ -164,7 +164,7 @@ class BazelContainer(core.ExecutableSpec):
 
 
 @attr.s(auto_attribs=True)
-class BazelBinary(core.ExecutableSpec):
+class BazelBinary(job_blocks.ExecutableSpec):
   """A Bazel target that produces a self-contained binary.
 
   Note that for Python targets based on https://github.com/google/subpar

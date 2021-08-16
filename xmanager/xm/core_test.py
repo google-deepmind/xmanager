@@ -17,6 +17,7 @@ import threading
 import unittest
 
 from xmanager.xm import core
+from xmanager.xm import job_blocks
 from xmanager.xm import testing
 from xmanager.xm import utils
 
@@ -34,7 +35,7 @@ class ExperimentTest(unittest.TestCase):
   def test_single_job_launch(self):
     experiment = testing.TestExperiment()
     with experiment:
-      job = core.Job(
+      job = job_blocks.Job(
           testing.TestExecutable(),
           testing.TestExecutor(),
           args={},
@@ -46,24 +47,24 @@ class ExperimentTest(unittest.TestCase):
   def test_job_group_launch(self):
     experiment = testing.TestExperiment()
     with experiment:
-      foo_job = core.Job(
+      foo_job = job_blocks.Job(
           testing.TestExecutable(),
           testing.TestExecutor(),
           args={'foo': 1},
           name='1')
-      bar_job = core.Job(
+      bar_job = job_blocks.Job(
           testing.TestExecutable(),
           testing.TestExecutor(),
           args={'bar': 2},
           name='2')
-      experiment.add(core.JobGroup(foo=foo_job, bar=bar_job))
+      experiment.add(job_blocks.JobGroup(foo=foo_job, bar=bar_job))
 
     self.assertEqual(experiment.launched_jobs, [foo_job, bar_job])
 
   def test_job_generator_launch(self):
     experiment = testing.TestExperiment()
     with experiment:
-      job = core.Job(
+      job = job_blocks.Job(
           testing.TestExecutable(),
           testing.TestExecutor(),
           args={},
@@ -97,8 +98,8 @@ class ExperimentTest(unittest.TestCase):
     experiment = testing.TestExperiment()
     with experiment:
       experiment.add(
-          core.JobGroup(
-              foo=core.Job(
+          job_blocks.JobGroup(
+              foo=job_blocks.Job(
                   testing.TestExecutable(),
                   testing.TestExecutor(),
                   args={
@@ -106,7 +107,7 @@ class ExperimentTest(unittest.TestCase):
                       'y': 2
                   },
                   env_vars={'EDITOR': 'vi'}),
-              bar=core.Job(
+              bar=job_blocks.Job(
                   testing.TestExecutable(),
                   testing.TestExecutor(),
                   args=['--bar=1'])),
@@ -175,7 +176,8 @@ class ExperimentTest(unittest.TestCase):
     experiment = testing.TestExperiment()
     async with experiment:
       experiment.add(
-          core.Job(testing.TestExecutable(), testing.TestExecutor(), args={}))
+          job_blocks.Job(
+              testing.TestExecutable(), testing.TestExecutor(), args={}))
       await experiment.work_units[0].wait_until_complete()
 
   @utils.run_in_asyncio_loop

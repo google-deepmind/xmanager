@@ -18,6 +18,7 @@ from typing import Any, Awaitable, Callable, Iterable, List, Mapping
 
 from xmanager.xm import core
 from xmanager.xm import id_predictor
+from xmanager.xm import job_blocks
 
 
 class TestWorkUnit(core.WorkUnit):
@@ -28,7 +29,7 @@ class TestWorkUnit(core.WorkUnit):
       experiment: core.Experiment,
       work_unit_id_predictor: id_predictor.Predictor,
       create_task: Callable[[Awaitable[Any]], futures.Future],
-      launched_jobs: List[core.JobType],
+      launched_jobs: List[job_blocks.JobType],
       launched_jobs_args: List[Mapping[str, Any]],
       args: Mapping[str, Any],
   ) -> None:
@@ -39,7 +40,7 @@ class TestWorkUnit(core.WorkUnit):
   async def _wait_until_complete(self) -> None:
     """Test work unit is immediately complete."""
 
-  async def _launch_job_group(self, job_group: core.JobGroup,
+  async def _launch_job_group(self, job_group: job_blocks.JobGroup,
                               args: Mapping[str, Any]) -> None:
     """Appends the job group to the launched_jobs list."""
     self._launched_jobs.extend(job_group.jobs.values())
@@ -49,7 +50,7 @@ class TestWorkUnit(core.WorkUnit):
 class TestExperiment(core.Experiment):
   """A test version of Experiment with abstract methods implemented."""
 
-  constraints: List[core.JobType]
+  constraints: List[job_blocks.JobType]
 
   def __init__(self) -> None:
     super().__init__()
@@ -58,8 +59,8 @@ class TestExperiment(core.Experiment):
     self._work_units = []
 
   def package(
-      self,
-      packageables: Iterable[core.Packageable]) -> Iterable[core.Executable]:
+      self, packageables: Iterable[job_blocks.Packageable]
+  ) -> Iterable[job_blocks.Executable]:
     """Packages executable specs into executables based on the executor specs."""
     raise NotImplementedError
 
@@ -84,7 +85,7 @@ class TestExperiment(core.Experiment):
     return 1
 
 
-class TestExecutable(core.Executable):
+class TestExecutable(job_blocks.Executable):
   """A test version of Executable with abstract methods implemented."""
   counter = 0
 
@@ -93,7 +94,7 @@ class TestExecutable(core.Executable):
     TestExecutable.counter += 1
 
 
-class TestExecutor(core.Executor):
+class TestExecutor(job_blocks.Executor):
   """A test version of Executor with abstract methods implemented."""
 
-  Spec = core.ExecutorSpec  # pylint: disable=invalid-name
+  Spec = job_blocks.ExecutorSpec  # pylint: disable=invalid-name

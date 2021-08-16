@@ -14,7 +14,7 @@
 
 import unittest
 
-from xmanager.xm import core
+from xmanager.xm import job_blocks
 from xmanager.xm import testing
 from xmanager.xm import utils
 
@@ -24,7 +24,7 @@ async def make_me_a_sandwich() -> str:
 
 
 def construct_job(name=None):
-  return core.Job(
+  return job_blocks.Job(
       name=name,
       executable=testing.TestExecutable(),
       executor=testing.TestExecutor())
@@ -57,7 +57,7 @@ class UtilsTest(unittest.TestCase):
         utils.run_in_asyncio_loop(make_me_a_sandwich)(), 'sandwich')
 
   def test_collect_jobs_by_filter(self):
-    job_group = core.JobGroup(
+    job_group = job_blocks.JobGroup(
         foo=construct_job('foo'),
         bar=construct_job('bar'),
         baz=construct_job('baz'),
@@ -74,9 +74,9 @@ class UtilsTest(unittest.TestCase):
   def test_collect_jobs_by_filter_nested(self):
     baz = construct_job('baz')
     foo = construct_job('foo')
-    job_group = core.JobGroup(
+    job_group = job_blocks.JobGroup(
         foo=foo,
-        bar=core.JobGroup(baz=baz),
+        bar=job_blocks.JobGroup(baz=baz),
     )
 
     self.assertEqual(

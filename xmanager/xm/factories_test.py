@@ -15,16 +15,16 @@
 
 import unittest
 
-from xmanager.xm import core
 from xmanager.xm import executables
 from xmanager.xm import factories
+from xmanager.xm import job_blocks
 from xmanager.xm_local import executors
 
 
 class FactoriesTest(unittest.TestCase):
 
   def test_minimal_executable_spec(self):
-    expected = core.Packageable(
+    expected = job_blocks.Packageable(
         executable_spec=executables.BazelBinary(label='label'),
         executor_spec=executors.Local.Spec(),
         args=[],
@@ -36,7 +36,7 @@ class FactoriesTest(unittest.TestCase):
     self.assertEqual(actual, expected)
 
   def test_pkg_args_env_vars(self):
-    expected = core.Packageable(
+    expected = job_blocks.Packageable(
         executable_spec=executables.BazelBinary(label='label'),
         executor_spec=executors.Local.Spec(),
         args=['-f'],
