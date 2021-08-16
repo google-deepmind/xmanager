@@ -14,11 +14,95 @@
 """Data classes for job-related abstractions."""
 
 import abc
-from typing import Awaitable, Callable, Dict, List, Optional, Sequence, Union
+import itertools
+from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Type, Union
 
 import attr
 
+from xmanager.xm import pattern_matching
+
 ArgsType = Union[List, Dict]
+
+
+class SequentialArgs:
+  """A sequence of arguments supporting keyword-based value updates."""
+
+  @attr.s(auto_attribs=True)
+  class _RegularItem:
+    value: Any
+
+  @attr.s(auto_attribs=True)
+  class _KeywordItem:
+    name: str
+
+  def __init__(self):
+    self._items: List[Union[SequentialArgs._RegularItem,
+                            SequentialArgs._KeywordItem]] = []
+    self._kwvalues: Dict[str, Any] = {}
+
+  def _ingest_regular_item(self, value: Any) -> None:
+    self._items.append(SequentialArgs._RegularItem(value))
+
+  def _ingest_keyword_item(self, name: str, value: Any) -> None:
+    if name not in self._kwvalues:
+      self._items.append(SequentialArgs._KeywordItem(name))
+    self._kwvalues[name] = value
+
+  @classmethod
+  def merge(cls: Type['SequentialArgs'],
+            *operands: 'SequentialArgs') -> 'SequentialArgs':
+    """Merges several instances into one left-to-right."""
+    result = SequentialArgs()
+
+    def import_regular_item(item: SequentialArgs._RegularItem,
+                            _: SequentialArgs):
+      result._ingest_regular_item(item.value)  # pylint: disable=protected-access
+
+    def import_keyword_item(item: SequentialArgs._KeywordItem,
+                            operand: SequentialArgs):
+      result._ingest_keyword_item(item.name, operand._kwvalues[item.name])  # pylint: disable=protected-access
+
+    for operand in operands:
+      matcher = pattern_matching.match(
+          import_regular_item,
+          import_keyword_item,
+      )
+      for item in operand._items:  # pylint: disable=protected-access
+        matcher(item, operand)
+    return result
+
+  @classmethod
+  def from_collection(cls: Type['SequentialArgs'],
+                      collection: ArgsType) -> 'SequentialArgs':
+    """Populates a new instance from a given collection."""
+    result = SequentialArgs()
+
+    def import_mapping(collection: Mapping[Any, Any]) -> None:
+      for key, value in collection.items():
+        result._ingest_keyword_item(str(key), value)  # pylint: disable=protected-access
+
+    def import_sequence(collection: Sequence[Any]) -> None:
+      for value in collection:
+        result._ingest_regular_item(value)  # pylint: disable=protected-access
+
+    matcher = pattern_matching.match(import_mapping, import_sequence)
+    matcher(collection)
+    return result
+
+  def to_list(self, escaper: Callable[[Any], str]) -> List[str]:
+    """Exports items as a list ready to be passed into the command line."""
+
+    def export_regular_item(item: SequentialArgs._RegularItem) -> List[str]:
+      return [escaper(item.value)]
+
+    def export_keyword_item(item: SequentialArgs._KeywordItem) -> List[str]:
+      return [escaper(f'--{item.name}'), escaper(self._kwvalues[item.name])]
+
+    matcher = pattern_matching.match(
+        export_regular_item,
+        export_keyword_item,
+    )
+    return list(itertools.chain(*[matcher(item) for item in self._items]))
 
 
 class ExecutableSpec(abc.ABC):
