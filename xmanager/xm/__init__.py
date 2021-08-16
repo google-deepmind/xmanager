@@ -16,6 +16,7 @@
 Provides XManager public API for configuring and launching experiments.
 """
 
+from xmanager.xm import job_operators
 from xmanager.xm.compute_units import *
 from xmanager.xm.core import *
 from xmanager.xm.executables import *

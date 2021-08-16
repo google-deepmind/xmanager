@@ -25,7 +25,6 @@ from xmanager import xm_foo
 import abc
 import asyncio
 from concurrent import futures
-import copy
 import functools
 import inspect
 import queue
@@ -36,6 +35,7 @@ import immutabledict
 
 from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
+from xmanager.xm import job_operators
 from xmanager.xm import metadata_context
 from xmanager.xm import pattern_matching
 
@@ -59,24 +59,6 @@ def merge_args(left: job_blocks.ArgsType,
       raise_mismatching_types_error,
   )(left, right)
   # pyformat: enable
-
-
-def _shallow_copy_job_group(
-    job_group: job_blocks.JobGroup) -> job_blocks.JobGroup:
-  """Copies the group and jobs inside it, but not their properties."""
-  job_group = copy.copy(job_group)
-  job_group.jobs = {
-      key: _shallow_copy_job_type(job) for key, job in job_group.jobs.items()
-  }
-  return job_group
-
-
-_shallow_copy_job_type = pattern_matching.match(
-    pattern_matching.Case([job_blocks.Job], copy.copy),
-    _shallow_copy_job_group,
-    pattern_matching.Case([job_blocks.JobGeneratorType],
-                          lambda generator: generator),
-)
 
 
 def _apply_args_to_job(job: job_blocks.Job, args: Mapping[str, Any]) -> None:
@@ -189,29 +171,6 @@ def _work_unit_arguments(
   return deduce_args(job)
 
 
-def _populate_job_names(job: job_blocks.JobType) -> None:
-  """Assigns default names to the given job(s)."""
-
-  def apply_to_job(prefix: Sequence[str], target: job_blocks.Job) -> None:
-    if target.name is None:
-      target.name = '_'.join(prefix) if prefix else target.executable.name
-
-  def apply_to_job_group(prefix: Sequence[str],
-                         target: job_blocks.JobGroup) -> None:
-    for key, job in target.jobs.items():
-      matcher([*prefix, key], job)
-
-  def ignore_unknown(_: Sequence[str], target: Any) -> None:
-    return target
-
-  matcher = pattern_matching.match(
-      apply_to_job,
-      apply_to_job_group,
-      ignore_unknown,
-  )
-  return matcher([], job)
-
-
 class WorkUnit(abc.ABC):
   """WorkUnit is a collection of semantically associated `Job`s."""
 
@@ -280,9 +239,9 @@ class WorkUnit(abc.ABC):
       An awaitable that would be fulfilled when the job is launched.
     """
     # pyformat: enable
-    job = _shallow_copy_job_type(job)
+    job = job_operators.shallow_copy_job_type(job)
     _apply_args(job, args)
-    _populate_job_names(job)
+    job_operators.populate_job_names(job)
 
     def launch_job(job: job_blocks.Job) -> Awaitable[None]:
       return self._launch_job_group(
