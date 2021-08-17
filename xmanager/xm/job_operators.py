@@ -77,3 +77,7 @@ def collect_jobs_by_filter(
 
   job_collector = pattern_matching.match(match_job_group, match_job)
   return job_collector(job_group)
+
+
+def flatten_jobs(job_group: job_blocks.JobGroup) -> List[job_blocks.Job]:
+  return collect_jobs_by_filter(job_group, lambda _: True)

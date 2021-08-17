@@ -45,7 +45,7 @@ _EXECUTOR_VALIDATOR = pattern_matching.match(
 
 
 def _validate_job_group(job_group: xm.JobGroup) -> None:
-  all_jobs = job_operators.collect_jobs_by_filter(job_group, lambda _: True)
+  all_jobs = job_operators.flatten_jobs(job_group)
   for job in all_jobs:
     _EXECUTOR_VALIDATOR(job, job.executor)
 

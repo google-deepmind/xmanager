@@ -28,7 +28,7 @@ def construct_job(name=None):
 
 class JobOperatorsTest(unittest.TestCase):
 
-  def test_collect_jobs_by_filter_includes_matches(self):
+  def test_collect_jobs_by_filter_gathers_matches(self):
     job_group = job_blocks.JobGroup(
         foo=construct_job('foo'),
         bar=construct_job('bar'),
@@ -43,7 +43,7 @@ class JobOperatorsTest(unittest.TestCase):
         [job_group.jobs['foo'], job_group.jobs['baz']],
     )
 
-  def test_collect_jobs_by_filter_handles_nested_groups(self):
+  def test_flatten_jobs_traverses_nested_groups(self):
     baz = construct_job('baz')
     foo = construct_job('foo')
     job_group = job_blocks.JobGroup(
@@ -52,8 +52,7 @@ class JobOperatorsTest(unittest.TestCase):
     )
 
     self.assertEqual(
-        job_operators.collect_jobs_by_filter(
-            job_group, predicate=lambda _: True),
+        job_operators.flatten_jobs(job_group),
         [foo, baz],
     )
 
