@@ -36,7 +36,7 @@ class CaipTest(unittest.TestCase):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Caip(
-            requirements=xm.JobRequirements(cpu=20, ram=40)),
+            requirements=xm.JobRequirements(cpu=20, ram=40 * xm.GiB)),
         args={})
     machine_spec = caip.get_machine_spec(job)
     self.assertDictEqual(machine_spec, {'machine_type': 'n1-highcpu-64'})
@@ -69,13 +69,16 @@ class CaipTest(unittest.TestCase):
         })
 
   def test_cpu_ram_to_machine_type_exact(self):
-    self.assertEqual('n1-standard-16', caip.cpu_ram_to_machine_type(16, 60))
+    self.assertEqual('n1-standard-16',
+                     caip.cpu_ram_to_machine_type(16, 60 * xm.GiB))
 
   def test_cpu_ram_to_machine_type_highmem(self):
-    self.assertEqual('n1-highmem-64', caip.cpu_ram_to_machine_type(1, 415))
+    self.assertEqual('n1-highmem-64',
+                     caip.cpu_ram_to_machine_type(1, 415 * xm.GiB))
 
   def test_cpu_ram_to_machine_type_highcpu(self):
-    self.assertEqual('n1-highcpu-64', caip.cpu_ram_to_machine_type(63, 1))
+    self.assertEqual('n1-highcpu-64',
+                     caip.cpu_ram_to_machine_type(63, 1 * xm.GiB))
 
   def test_cpu_ram_to_machine_type_too_high(self):
     with self.assertRaises(ValueError):

@@ -21,7 +21,7 @@ import logging
 import math
 import os
 import time
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import attr
 from google.cloud import aiplatform
@@ -43,23 +43,23 @@ _DEFAULT_LOCATION = 'us-central1'
 # TODO: Add machines that support A100.
 # TODO: Move lookup to a canonical place.
 _MACHINE_TYPE_TO_CPU_RAM = {
-    'n1-standard-4': (4, 15),
-    'n1-standard-8': (8, 30),
-    'n1-standard-16': (16, 60),
-    'n1-standard-32': (32, 120),
-    'n1-standard-64': (64, 240),
-    'n1-standard-96': (96, 360),
-    'n1-highmem-2': (2, 13),
-    'n1-highmem-4': (4, 26),
-    'n1-highmem-8': (8, 52),
-    'n1-highmem-16': (16, 104),
-    'n1-highmem-32': (32, 208),
-    'n1-highmem-64': (64, 416),
-    'n1-highmem-96': (96, 624),
-    'n1-highcpu-16': (16, 14),
-    'n1-highcpu-32': (32, 28),
-    'n1-highcpu-64': (64, 57),
-    'n1-highcpu-96': (96, 86),
+    'n1-standard-4': (4, 15 * xm.GiB),
+    'n1-standard-8': (8, 30 * xm.GiB),
+    'n1-standard-16': (16, 60 * xm.GiB),
+    'n1-standard-32': (32, 120 * xm.GiB),
+    'n1-standard-64': (64, 240 * xm.GiB),
+    'n1-standard-96': (96, 360 * xm.GiB),
+    'n1-highmem-2': (2, 13 * xm.GiB),
+    'n1-highmem-4': (4, 26 * xm.GiB),
+    'n1-highmem-8': (8, 52 * xm.GiB),
+    'n1-highmem-16': (16, 104 * xm.GiB),
+    'n1-highmem-32': (32, 208 * xm.GiB),
+    'n1-highmem-64': (64, 416 * xm.GiB),
+    'n1-highmem-96': (96, 624 * xm.GiB),
+    'n1-highcpu-16': (16, 14 * xm.GiB),
+    'n1-highcpu-32': (32, 28 * xm.GiB),
+    'n1-highcpu-64': (64, 57 * xm.GiB),
+    'n1-highcpu-96': (96, 86 * xm.GiB),
 }
 
 _STATE_TO_STATUS_MAP = {
@@ -305,8 +305,7 @@ def launch(experiment_title: str, work_unit_name: str,
   return [CaipHandle(job_name=job_name)]
 
 
-def cpu_ram_to_machine_type(cpu: Optional[int],
-                            ram: Optional[Union[int, float]]) -> str:
+def cpu_ram_to_machine_type(cpu: Optional[int], ram: Optional[int]) -> str:
   """Convert a cpu and memory spec into a machine type."""
   if cpu is None or ram is None:
     return 'n1-standard-4'
