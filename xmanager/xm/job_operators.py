@@ -21,7 +21,8 @@ from xmanager.xm import job_blocks
 from xmanager.xm import pattern_matching
 
 
-def shallow_copy_job_type(job_type: job_blocks.JobType) -> job_blocks.JobType:
+def shallow_copy_job_type(
+    job_type: job_blocks.JobTypeVar) -> job_blocks.JobTypeVar:
   """Creates a shallow copy of the job structure."""
 
   def apply_to_job_group(job_group: job_blocks.JobGroup) -> job_blocks.JobGroup:
@@ -38,7 +39,7 @@ def shallow_copy_job_type(job_type: job_blocks.JobType) -> job_blocks.JobType:
   return matcher(job_type)
 
 
-def populate_job_names(job_type: job_blocks.JobType) -> None:
+def populate_job_names(job_type: job_blocks.JobTypeVar) -> None:
   """Assigns default names to the given jobs."""
 
   def apply_to_job(prefix: Sequence[str], target: job_blocks.Job) -> None:

@@ -15,7 +15,7 @@
 
 import abc
 import itertools
-from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Type, Union
+from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Type, TypeVar, Union
 
 import attr
 
@@ -252,3 +252,6 @@ class JobGroup:
     """
     self.jobs = jobs
     self.constraints = list(constraints) if constraints else []
+
+
+JobTypeVar = TypeVar('JobTypeVar', Job, JobGroup, JobGeneratorType)
