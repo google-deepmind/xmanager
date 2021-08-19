@@ -13,7 +13,7 @@
 # limitations under the License.
 """Methods for routing packageables to appropriate packagers."""
 
-from typing import Any
+from typing import Any, List, Sequence
 
 from xmanager import xm
 from xmanager.xm import pattern_matching
@@ -48,6 +48,10 @@ _PACKAGING_ROUTER = pattern_matching.match(_visit_caip_spec, _visit_local_spec,
                                            _throw_on_unknown_executor)
 
 
-def package(packageable: xm.Packageable) -> xm.Executable:
+def package(packageables: Sequence[xm.Packageable]) -> List[xm.Executable]:
   """Routes a packageable to an appropriate packaging mechanism."""
-  return _PACKAGING_ROUTER(packageable, packageable.executor_spec)
+  # TODO: Bundle together.
+  return [
+      _PACKAGING_ROUTER(packageable, packageable.executor_spec)
+      for packageable in packageables
+  ]

@@ -16,7 +16,7 @@
 import asyncio
 from concurrent import futures
 import time
-from typing import Any, Awaitable, Callable, Iterable, List, Mapping
+from typing import Any, Awaitable, Callable, List, Mapping, Sequence
 
 from xmanager import xm
 from xmanager.cloud import caip
@@ -85,7 +85,7 @@ class LocalWorkUnit(xm.WorkUnit):
       self._local_execution_handles.extend(local_handles)
 
   def _save_handles_to_storage(
-      self, handles: Iterable[local_execution.ExecutionHandle]) -> None:
+      self, handles: Sequence[local_execution.ExecutionHandle]) -> None:
     """Saves jobs present in the handlers."""
 
     def save_caip_handle(caip_handle: caip.CaipHandle) -> None:
@@ -161,12 +161,9 @@ class LocalExperiment(xm.Experiment):
     self._work_units = []
 
   def package(
-      self, packageables: Iterable[xm.Packageable]) -> Iterable[xm.Executable]:
+      self, packageables: Sequence[xm.Packageable]) -> Sequence[xm.Executable]:
     """Packages executable specs into executables based on the executor specs."""
-    # TODO: Bundle together.
-    return [
-        packaging_router.package(packageable) for packageable in packageables
-    ]
+    return packaging_router.package(packageables)
 
   def _create_work_unit(self, args: Mapping[str, Any]) -> LocalWorkUnit:
     work_unit = LocalWorkUnit(self, self._experiment_title,
@@ -223,6 +220,6 @@ def get_experiment(experiment_id: int) -> xm.Experiment:
   raise NotImplementedError
 
 
-def list_experiments() -> Iterable[xm.Experiment]:
+def list_experiments() -> Sequence[xm.Experiment]:
   """Yields a list of Experiment instances that have been created thus far."""
   raise NotImplementedError
