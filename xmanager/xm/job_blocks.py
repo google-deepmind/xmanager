@@ -102,6 +102,9 @@ class SequentialArgs:
     )
     return list(itertools.chain(*[matcher(item) for item in self._items]))
 
+  def to_dict(self) -> Dict[str, Any]:
+    return self._kwvalues
+
   def __eq__(self, other) -> bool:
     return isinstance(other, SequentialArgs) and all([
         self._items == other._items,
