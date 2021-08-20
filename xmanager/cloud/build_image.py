@@ -69,7 +69,7 @@ _ENTRYPOINT_TEMPLATE = """#!/bin/bash
 
 
 def build(py_executable: xm.PythonContainer,
-          args: xm.ArgsType,
+          args: xm.SequentialArgs,
           env_vars: Dict[str, str],
           image_name: Optional[str] = None,
           project: Optional[str] = None,
@@ -186,8 +186,9 @@ def default_steps(directory: str, use_deep_module: bool) -> List[str]:
   ] + workdir_setup_suffix
 
 
-def _create_dockerfile(py_executable: xm.PythonContainer, args: xm.ArgsType,
-                       env_vars: Dict[str, str]) -> str:
+def _create_dockerfile(py_executable: xm.PythonContainer,
+                       args: xm.SequentialArgs, env_vars: Dict[str,
+                                                               str]) -> str:
   """Creates a Dockerfile from a project executable."""
   base_image = _get_base_image(py_executable)
   instructions = _create_instructions(py_executable, env_vars)
@@ -220,10 +221,10 @@ def _create_entrypoint(py_executable: xm.PythonContainer) -> str:
   return t.name
 
 
-def _create_entrypoint_cmd(args: xm.ArgsType) -> str:
+def _create_entrypoint_cmd(args: xm.SequentialArgs) -> str:
   """Create the entrypoint command with optional args."""
   entrypoint_args = ['./entrypoint.sh']
-  entrypoint_args += utils.to_command_line_args(args)
+  entrypoint_args += args.to_list(utils.ARG_ESCAPER)
   entrypoint = ', '.join([f'"{arg}"' for arg in entrypoint_args])
   return f'ENTRYPOINT [{entrypoint}]'
 

@@ -36,7 +36,7 @@ class JobBlocksTest(unittest.TestCase):
 
   def test_merge(self):
     mix = job_blocks.SequentialArgs.merge(
-        *map(job_blocks.SequentialArgs.from_collection, [[1], {
+        map(job_blocks.SequentialArgs.from_collection, [[1], {
             'a': 'z',
             'b': 'y'
         }, [2], {

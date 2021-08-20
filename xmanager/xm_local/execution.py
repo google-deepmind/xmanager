@@ -120,7 +120,7 @@ async def _launch_loaded_container_image(
   if not instance.has_network(_BRIDGE_NETWORK_NAME):
     instance.create_network(_BRIDGE_NETWORK_NAME)
 
-  args = utils.to_command_line_args(xm.merge_args(executable.args, job.args))
+  args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
   env_vars = {**executable.env_vars, **job.env_vars}
   options = executor.docker_options or executors.DockerOptions()
 
@@ -178,7 +178,7 @@ async def _launch_local_binary(
   del get_full_job_name  # Unused.
   assert isinstance(job.executor, executors.Local)
 
-  args = utils.to_command_line_args(xm.merge_args(executable.args, job.args))
+  args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
   env_vars = {**executable.env_vars, **job.env_vars}
   process = await asyncio.create_subprocess_exec(
       executable.path,

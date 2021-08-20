@@ -22,11 +22,10 @@ import functools
 import inspect
 import os
 import shlex
-from typing import Any, Callable, List, Mapping, TypeVar
+from typing import Any, Callable, TypeVar
 
 import attr
 
-from xmanager.xm import job_blocks
 from xmanager.xm import pattern_matching
 
 ReturnType = TypeVar('ReturnType')
@@ -41,39 +40,17 @@ class ShellSafeArg(SpecialArg):
   """Command line argument that shouldn't be escaped.
 
   Normally all arguments would be passed to the binary as is. To let shell
-  substitutions, such as environment variable expansion, to happen the argument
+  substitutions (such as environment variable expansion) to happen the argument
   must be wrapped with this structure.
   """
 
   arg: str
 
 
-_ESCAPER = pattern_matching.match(
+ARG_ESCAPER = pattern_matching.match(
     pattern_matching.Case([ShellSafeArg], lambda v: v.arg),
     pattern_matching.Case([Any], lambda v: shlex.quote(str(v))),
 )
-
-
-def to_command_line_args(args: job_blocks.ArgsType,
-                         escaper: Callable[[Any], str] = _ESCAPER) -> List[str]:
-  """Returns arguments representation suitable to passing to a binary.
-
-  For user convenience we allow arguments to be passed as dicts and don't impose
-  strong typing requirements. But at the end of the day command line arguments
-  need to become just a list of strings.
-
-  Args:
-    args: Command line arguments for an executable.
-    escaper: A serializer for the arguments.
-  """
-  if isinstance(args, Mapping):
-    sequence = []
-    for k, v in args.items():
-      for element in (escaper(f'--{k}'), escaper(v)):
-        sequence.append(element)
-    return sequence
-  else:
-    return [escaper(v) for v in args]
 
 
 def run_in_asyncio_loop(

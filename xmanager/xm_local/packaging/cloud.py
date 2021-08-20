@@ -129,8 +129,6 @@ def _package_python_container(
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
       image_path=image,
-      args=[],
-      env_vars={},
   )
 
 

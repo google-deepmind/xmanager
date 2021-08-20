@@ -29,7 +29,7 @@ import functools
 import inspect
 import queue
 import threading
-from typing import Any, Awaitable, Callable, Dict, List, Mapping, Sequence
+from typing import Any, Awaitable, Callable, Dict, Mapping, Sequence
 
 import immutabledict
 
@@ -40,31 +40,10 @@ from xmanager.xm import metadata_context
 from xmanager.xm import pattern_matching
 
 
-def merge_args(left: job_blocks.ArgsType,
-               right: job_blocks.ArgsType) -> job_blocks.ArgsType:
-  """Merges two argument sets."""
-  if not left:
-    return right
-  if not right:
-    return left
-
-  def raise_mismatching_types_error(l: Any, r: Any):
-    raise ValueError(f'Args types do not match. Must both be dicts or lists, '
-                     f'but got {l!r} and {r!r}')
-
-  # pyformat: disable
-  return pattern_matching.match(
-      pattern_matching.Case([List, List], lambda l, r: [*l, *r]),
-      pattern_matching.Case([Dict, Dict], lambda l, r: {**l, **r}),
-      raise_mismatching_types_error,
-  )(left, right)
-  # pyformat: enable
-
-
 def _apply_args_to_job(job: job_blocks.Job, args: Mapping[str, Any]) -> None:
   """Overrides job properties."""
   if 'args' in args:
-    job.args = merge_args(job.args, args['args'])
+    job.args = job_blocks.merge_args(job.args, args['args'])
   job.env_vars.update(args.get('env_vars', {}))
 
 

@@ -132,8 +132,7 @@ class Client:
                          'type GoogleContainerRegistryImage'.format(
                              executable, type(executable)))
 
-      args = utils.to_command_line_args(
-          xm.merge_args(executable.args, job.args))
+      args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
       env_vars = {**executable.env_vars, **job.env_vars}
       env = [{'name': k, 'value': v} for k, v in env_vars.items()]
       if job.executor.requirements.is_tpu_job:

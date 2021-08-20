@@ -126,13 +126,22 @@ class ExperimentTest(unittest.TestCase):
               },
           })
 
-    self.assertEqual(experiment.launched_jobs[0].args, {'x': 3, 'y': 2, 'z': 4})
+    self.assertEqual(
+        experiment.launched_jobs[0].args,
+        job_blocks.SequentialArgs.from_collection({
+            'x': 3,
+            'y': 2,
+            'z': 4
+        }),
+    )
     self.assertEqual(experiment.launched_jobs[0].env_vars, {
         'TURBO': 'ON',
         'EDITOR': 'vi'
     })
-    self.assertEqual(experiment.launched_jobs[1].args,
-                     ['--bar=1', '--spacebar'])
+    self.assertEqual(
+        experiment.launched_jobs[1].args,
+        job_blocks.SequentialArgs.from_collection(['--bar=1', '--spacebar']),
+    )
 
   def test_add_runs_asynchronously(self):
     generator_called = threading.Event()

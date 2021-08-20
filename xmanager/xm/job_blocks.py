@@ -15,13 +15,13 @@
 
 import abc
 import itertools
-from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Type, TypeVar, Union
+from typing import Any, Awaitable, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, TypeVar, Union
 
 import attr
 
 from xmanager.xm import pattern_matching
 
-ArgsType = Union[List, Dict]
+UserArgs = Union[Mapping, Sequence]
 
 
 class SequentialArgs:
@@ -48,9 +48,8 @@ class SequentialArgs:
       self._items.append(SequentialArgs._KeywordItem(name))
     self._kwvalues[name] = value
 
-  @classmethod
-  def merge(cls: Type['SequentialArgs'],
-            *operands: 'SequentialArgs') -> 'SequentialArgs':
+  @staticmethod
+  def merge(operands: Iterable['SequentialArgs']) -> 'SequentialArgs':
     """Merges several instances into one left-to-right."""
     result = SequentialArgs()
 
@@ -71,9 +70,8 @@ class SequentialArgs:
         matcher(item, operand)
     return result
 
-  @classmethod
-  def from_collection(cls: Type['SequentialArgs'],
-                      collection: ArgsType) -> 'SequentialArgs':
+  @staticmethod
+  def from_collection(collection: UserArgs) -> 'SequentialArgs':
     """Populates a new instance from a given collection."""
     result = SequentialArgs()
 
@@ -103,6 +101,24 @@ class SequentialArgs:
         export_keyword_item,
     )
     return list(itertools.chain(*[matcher(item) for item in self._items]))
+
+  def __eq__(self, other) -> bool:
+    return isinstance(other, SequentialArgs) and all([
+        self._items == other._items,
+        self._kwvalues == other._kwvalues,
+    ])
+
+  def __repr__(self) -> str:
+    return f"[{', '.join(self.to_list(repr))}]"
+
+
+def merge_args(*operands: Union[SequentialArgs, UserArgs]) -> SequentialArgs:
+  return SequentialArgs.merge(
+      map(
+          pattern_matching.match(
+              pattern_matching.Case([SequentialArgs], lambda args: args),
+              pattern_matching.Case([Any], SequentialArgs.from_collection)),
+          operands))
 
 
 class ExecutableSpec(abc.ABC):
@@ -153,7 +169,8 @@ class Packageable:
 
   executable_spec: ExecutableSpec
   executor_spec: ExecutorSpec
-  args: ArgsType = attr.Factory(list)
+  args: SequentialArgs = attr.ib(
+      factory=list, converter=SequentialArgs.from_collection)  # pytype: disable=annotation-type-mismatch
   env_vars: Dict[str, str] = attr.Factory(dict)
 
 
@@ -189,7 +206,8 @@ class Job:
   executable: Executable
   executor: Executor
   name: Optional[str] = None
-  args: ArgsType = attr.Factory(list)
+  args: SequentialArgs = attr.ib(
+      factory=list, converter=SequentialArgs.from_collection)  # pytype: disable=annotation-type-mismatch
   env_vars: Dict[str, str] = attr.Factory(dict)
 
 

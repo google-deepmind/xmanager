@@ -14,8 +14,6 @@
 
 import unittest
 
-from xmanager.xm import job_blocks
-from xmanager.xm import testing
 from xmanager.xm import utils
 
 
@@ -23,30 +21,7 @@ async def make_me_a_sandwich() -> str:
   return 'sandwich'
 
 
-def construct_job(name=None):
-  return job_blocks.Job(
-      name=name,
-      executable=testing.TestExecutable(),
-      executor=testing.TestExecutor())
-
-
 class UtilsTest(unittest.TestCase):
-
-  def test_to_command_line_args_dict(self):
-    self.assertEqual(
-        utils.to_command_line_args({
-            'foo': 1,
-            'bar': [2, 3]
-        }), ['--foo', '1', '--bar', "'[2, 3]'"])
-
-  def test_to_command_line_args_list(self):
-    self.assertEqual(
-        utils.to_command_line_args(['--foo', 12.0, (1, 2, 3)]),
-        ['--foo', '12.0', "'(1, 2, 3)'"])
-
-  def test_to_command_line_args_no_escape(self):
-    self.assertEqual(
-        utils.to_command_line_args([utils.ShellSafeArg('$TMP')]), ['$TMP'])
 
   @utils.run_in_asyncio_loop
   async def test_run_in_asyncio_loop(self):

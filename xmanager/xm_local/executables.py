@@ -24,7 +24,7 @@ class LoadedContainerImage(xm.Executable):
   """A locally loaded container image."""
 
   image_id: str
-  args: xm.ArgsType = attr.Factory(list)
+  args: xm.SequentialArgs = attr.Factory(xm.SequentialArgs)
   env_vars: Dict[str, str] = attr.Factory(dict)
 
 
@@ -33,7 +33,7 @@ class LocalBinary(xm.Executable):
   """A locally located binary."""
 
   path: str
-  args: xm.ArgsType = attr.Factory(list)
+  args: xm.SequentialArgs = attr.Factory(xm.SequentialArgs)
   env_vars: Dict[str, str] = attr.Factory(dict)
 
 
@@ -42,5 +42,5 @@ class GoogleContainerRegistryImage(xm.Executable):
   """An image inside Google Container Registry."""
 
   image_path: str
-  args: xm.ArgsType = attr.Factory(list)
+  args: xm.SequentialArgs = attr.Factory(xm.SequentialArgs)
   env_vars: Dict[str, str] = attr.Factory(dict)

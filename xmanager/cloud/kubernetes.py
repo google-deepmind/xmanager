@@ -98,8 +98,8 @@ class Client:
           name=job_name,
           image=executable.image_path,
           requirements=requirements_from_executor(executor),
-          args=utils.to_command_line_args(
-              xm.merge_args(executable.args, job.args)),
+          args=xm.merge_args(executable.args,
+                             job.args).to_list(utils.ARG_ESCAPER),
           env=env)
       k8s_job = k8s_client.V1Job()
       k8s_job.metadata = k8s_client.V1ObjectMeta(name=job_name)
