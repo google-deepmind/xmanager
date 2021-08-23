@@ -24,7 +24,7 @@ setup(
     packages=find_namespace_packages(),
     include_package_data=True,
     package_data={'': ['*.sh', '*.sql']},
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     install_requires=[
         'absl-py',
         'async_generator',
