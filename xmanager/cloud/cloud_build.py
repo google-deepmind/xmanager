@@ -91,8 +91,8 @@ class Client:
     blob = bucket.blob(destination_name)
     blob.upload_from_filename(archive_path)
 
-  def build_docker_image(self, name: str, directory: str,
-                         image_name: str) -> str:
+  def build_docker_image(self, image_name: str, directory: str,
+                         upload_name: str) -> str:
     """Create a Docker image via Cloud Build and push to Cloud Repository."""
     image, tag = docker_utils.parse_repository_tag(image_name)
     if not tag:
@@ -101,7 +101,7 @@ class Client:
     _, archive_path = tempfile.mkstemp(suffix='.tar.gz')
     with tarfile.open(archive_path, 'w:gz') as tar:
       tar.add(directory, '/')
-    destination_name = f'{name}-{tag}.tar.gz'
+    destination_name = f'{upload_name}-{tag}.tar.gz'
     self.upload_tar_to_storage(archive_path, destination_name)
     build_body = self._build_request_body(destination_name, image, tag)
     # Note: On GCP cache_discovery=True (the default) leads to ugly error

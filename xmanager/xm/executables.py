@@ -46,13 +46,21 @@ class Dockerfile(job_blocks.ExecutableSpec):
   Executables such as BazelContainer or PythonContainer.
 
   Attributes:
-      path: Specifies the build's context and location of a Dockerfile.
+      path: Specifies the build's context.
       dockerfile: The file that will be used for build instructions. Otherwise,
         {path}/Dockerfile will be used. Equivalent to `docker build -f`.
+        A relative path will use a Dockerfile that is relative to the launcher
+        script.
   """
 
   path: str = attr.ib(converter=utils.get_absolute_path, default='.')
-  dockerfile: Optional[str] = None
+  # None is default instead of './Dockerfile' because the default behavior is
+  # to use '{path}/Dockerfile'. If './Dockerfile' were used, that would be
+  # equivalent to '{os.path.dir(launcher.py)}/Dockerfile'.
+  dockerfile: str = attr.ib(
+      converter=utils.get_absolute_path,
+      default=attr.Factory(
+          lambda self: os.path.join(self.path, 'Dockerfile'), takes_self=True))
 
   @property
   def name(self) -> str:

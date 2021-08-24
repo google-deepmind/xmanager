@@ -21,6 +21,7 @@ from typing import Dict, List, Optional, Tuple
 from absl import flags
 from absl import logging
 import docker
+from docker.utils import utils as docker_utils
 import requests
 
 from xmanager import xm
@@ -74,7 +75,19 @@ def build(py_executable: xm.PythonContainer,
           image_name: Optional[str] = None,
           project: Optional[str] = None,
           bucket: Optional[str] = None) -> str:
-  """Build a Docker image from a Python project."""
+  """Build a Docker image from a Python project.
+
+  Args:
+    py_executable: The PythonContainer to build.
+    args: Args to pass to the image.
+    env_vars: Environment variables to set in the image.
+    image_name: The image name that will be assigned to the resulting image.
+    project: The project to use if CloudBuild is used.
+    bucket: The bucket to upload if CloudBuild is used.
+
+  Returns:
+    The name of the built image.
+  """
   if not image_name:
     image_name = _get_image_name(py_executable)
   dockerfile = _create_dockerfile(py_executable, args, env_vars)
@@ -85,6 +98,28 @@ def build(py_executable: xm.PythonContainer,
     path, dockerfile = _wrap_late_bindings(path, dockerfile)
   docker_directory = docker_lib.prepare_directory(path, dirname, entrypoint,
                                                   dockerfile)
+  return build_dockerfile(docker_directory,
+                          os.path.join(docker_directory, 'Dockerfile'),
+                          image_name, project, bucket)
+
+
+def build_dockerfile(path: str,
+                     dockerfile: str,
+                     image_name: str,
+                     project: Optional[str] = None,
+                     bucket: Optional[str] = None):
+  """Build a Docker image from a Docker directory.
+
+  Args:
+    path: The directory to use for the Docker build context.
+    dockerfile: The path of Dockerfile.
+    image_name: The name to set the built image to.
+    project: The project to use if CloudBuild is used.
+    bucket: The bucket to upload if CloudBuild is used.
+
+  Returns:
+    The name of the built image.
+  """
   print('Building Docker image, please wait...')
   if FLAGS.build_image_locally:
     try:
@@ -106,11 +141,23 @@ def build(py_executable: xm.PythonContainer,
       # TODO: Improve out-of-disk space handling.
       return docker_lib.build_docker_image(
           image_name,
-          docker_directory,
+          path,
+          dockerfile,
           docker_subprocess=FLAGS.use_docker_build_subprocess)
 
+  # If Dockerfile is not a direct child of path, then create a temp directory
+  # that contains both the contents of path and Dockerfile.
+  if os.path.dirname(dockerfile) != path:
+    tempdir = tempfile.mkdtemp()
+    new_path = os.path.join(tempdir, os.path.basename(path))
+    shutil.copytree(path, new_path)
+    shutil.copyfile(dockerfile, os.path.join(path, 'Dockerfile'))
+    path = new_path
+
   cloud_build_client = cloud_build.Client(project=project, bucket=bucket)
-  cloud_build_client.build_docker_image(dirname, docker_directory, image_name)
+  image, _ = docker_utils.parse_repository_tag(image_name)
+  upload_name = image.split('/')[-1]
+  cloud_build_client.build_docker_image(image_name, path, upload_name)
   docker_adapter.instance().pull_image(image_name)
   return image_name
 

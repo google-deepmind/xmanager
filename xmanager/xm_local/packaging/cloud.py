@@ -18,7 +18,6 @@ from typing import Any, Optional
 from xmanager import xm
 from xmanager.cloud import auth
 from xmanager.cloud import build_image
-from xmanager.cloud import docker_lib
 from xmanager.docker import docker_adapter
 from xmanager.xm import pattern_matching
 from xmanager.xm_local import executables as local_executables
@@ -103,13 +102,15 @@ def _package_container(packageable: xm.Packageable,
 
 
 def _package_dockerfile(packageable: xm.Packageable, dockerfile: xm.Dockerfile):
+  """Matcher method for packaging `xm.Dockerfile`."""
   push_image_tag = _get_push_image_tag(packageable.executor_spec)
   if not push_image_tag:
     gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
     push_image_tag = f'{gcr_project_prefix}/{dockerfile.name}:latest'
+
   build_image.push(
-      docker_lib.build_docker_image(push_image_tag, dockerfile.path,
-                                    dockerfile.dockerfile))
+      build_image.build_dockerfile(dockerfile.path, dockerfile.dockerfile,
+                                   push_image_tag))
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
       image_path=push_image_tag,
