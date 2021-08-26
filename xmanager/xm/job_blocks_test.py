@@ -52,7 +52,7 @@ class JobBlocksTest(unittest.TestCase):
             1: False
         }]))
 
-    self.assertEqual(args.to_dict(lambda: True), {'--knob': True, '1': False})
+    self.assertEqual(args.to_dict(), {'--knob': True, '1': False})
 
 
 if __name__ == '__main__':

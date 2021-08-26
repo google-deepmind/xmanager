@@ -131,7 +131,10 @@ def _work_unit_arguments(
     return args
 
   def deduce_args_for_job(job: job_blocks.Job) -> Dict[str, Any]:
-    args = {'args': job.args, 'env_vars': job.env_vars}
+    args = {
+        'args': job.args.to_dict(kwargs_only=True),
+        'env_vars': job.env_vars
+    }
     return {key: value for key, value in args.items() if value}
 
   def deduce_args_for_job_group(group: job_blocks.JobGroup) -> Dict[str, Any]:
@@ -272,7 +275,7 @@ class WorkUnit(abc.ABC):
     await self._wait_until_complete()
 
   async def _launch_job_group(self, job_group: job_blocks.JobGroup,
-                              args: Mapping[str, Any]) -> None:
+                              args_view: Mapping[str, Any]) -> None:
     """Launches a given job group as part of the work unit."""
     raise NotImplementedError
 

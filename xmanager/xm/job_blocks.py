@@ -108,19 +108,21 @@ class SequentialArgs:
     )
     return list(itertools.chain(*[matcher(item) for item in self._items]))
 
-  def to_dict(self, default: Callable[[], Any]) -> Dict[str, Any]:
+  def to_dict(self, kwargs_only: bool = False) -> Dict[str, Any]:
     """Exports items as a dictionary.
 
     Args:
-      default: A generator of default values for positional arguments.
+      kwargs_only: Whether to skip positional arguments.
 
     Returns:
       The sought dictionary.
     """
+    if kwargs_only:
+      return self._kwvalues
 
     def export_regular_item(
         item: SequentialArgs._RegularItem) -> Tuple[str, Any]:
-      return (str(item.value), default())
+      return (str(item.value), True)
 
     def export_keyword_item(
         item: SequentialArgs._KeywordItem) -> Tuple[str, Any]:
