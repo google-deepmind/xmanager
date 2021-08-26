@@ -15,7 +15,7 @@
 
 import abc
 import itertools
-from typing import Any, Awaitable, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, TypeVar, Union
+from typing import Any, Awaitable, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
 import attr
 
@@ -25,7 +25,13 @@ UserArgs = Union[Mapping, Sequence]
 
 
 class SequentialArgs:
-  """A sequence of arguments supporting keyword-based value updates."""
+  """A mix of positional and keyword arguments.
+
+  Its main purpose is to provide merging capabilities as arguments can be both
+  lists and dicts. We cannot just convert dicts to lists as we want to allow
+  overriding, for example `['--a'] ∪ {'z': 1, 'y': 2} ∪ ['--b'] ∪ {'z': 3}`
+  is `['--a', '--z=3', '--y=2', '--b']`.
+  """
 
   @attr.s(auto_attribs=True)
   class _RegularItem:
@@ -102,8 +108,29 @@ class SequentialArgs:
     )
     return list(itertools.chain(*[matcher(item) for item in self._items]))
 
-  def to_dict(self) -> Dict[str, Any]:
-    return self._kwvalues
+  def to_dict(self, default: Callable[[], Any]) -> Dict[str, Any]:
+    """Exports items as a dictionary.
+
+    Args:
+      default: A generator of default values for positional arguments.
+
+    Returns:
+      The sought dictionary.
+    """
+
+    def export_regular_item(
+        item: SequentialArgs._RegularItem) -> Tuple[str, Any]:
+      return (str(item.value), default())
+
+    def export_keyword_item(
+        item: SequentialArgs._KeywordItem) -> Tuple[str, Any]:
+      return (item.name, self._kwvalues[item.name])
+
+    matcher = pattern_matching.match(
+        export_regular_item,
+        export_keyword_item,
+    )
+    return dict([matcher(item) for item in self._items])
 
   def __eq__(self, other) -> bool:
     return isinstance(other, SequentialArgs) and all([

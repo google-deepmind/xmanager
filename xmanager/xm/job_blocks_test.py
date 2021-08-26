@@ -20,22 +20,21 @@ from xmanager.xm import job_blocks
 class JobBlocksTest(unittest.TestCase):
 
   def test_from_mapping(self):
-    sequential_args = job_blocks.SequentialArgs.from_collection({
+    args = job_blocks.SequentialArgs.from_collection({
         'a': 1,
         'b': 2,
         'c': 3,
     })
 
-    self.assertEqual(
-        sequential_args.to_list(str), ['--a', '1', '--b', '2', '--c', '3'])
+    self.assertEqual(args.to_list(str), ['--a', '1', '--b', '2', '--c', '3'])
 
   def test_from_sequence(self):
-    sequential_args = job_blocks.SequentialArgs.from_collection([1, 2, 3])
+    args = job_blocks.SequentialArgs.from_collection([1, 2, 3])
 
-    self.assertEqual(sequential_args.to_list(str), ['1', '2', '3'])
+    self.assertEqual(args.to_list(str), ['1', '2', '3'])
 
   def test_merge(self):
-    mix = job_blocks.SequentialArgs.merge(
+    args = job_blocks.SequentialArgs.merge(
         map(job_blocks.SequentialArgs.from_collection, [[1], {
             'a': 'z',
             'b': 'y'
@@ -45,7 +44,15 @@ class JobBlocksTest(unittest.TestCase):
         }, [3]]))
 
     self.assertEqual(
-        mix.to_list(str), ['1', '--a', 'z', '--b', 'x', '2', '--c', 't', '3'])
+        args.to_list(str), ['1', '--a', 'z', '--b', 'x', '2', '--c', 't', '3'])
+
+  def test_to_dict(self):
+    args = job_blocks.SequentialArgs.merge(
+        map(job_blocks.SequentialArgs.from_collection, [['--knob'], {
+            1: False
+        }]))
+
+    self.assertEqual(args.to_dict(lambda: True), {'--knob': True, '1': False})
 
 
 if __name__ == '__main__':
