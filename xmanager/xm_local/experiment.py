@@ -65,8 +65,8 @@ class LocalWorkUnit(xm.WorkUnit):
         local_execution.ExecutionHandle] = []
 
   async def _launch_job_group(self, job_group: xm.JobGroup,
-                              args: Mapping[str, Any]) -> None:
-    del args  # Unused.
+                              args_view: Mapping[str, Any]) -> None:
+    del args_view  # Unused.
     _validate_job_group(job_group)
     # We are delegating the traversal of the job group to modules. That improves
     # modularity, but sacrifices the ability to make cross-executor decisions.
