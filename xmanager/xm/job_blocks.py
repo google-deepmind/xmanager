@@ -30,7 +30,7 @@ class SequentialArgs:
   Its main purpose is to provide merging capabilities as arguments can be both
   lists and dicts. We cannot just convert dicts to lists as we want to allow
   overriding, for example `['--a'] ∪ {'z': 1, 'y': 2} ∪ ['--b'] ∪ {'z': 3}`
-  is `['--a', '--z=3', '--y=2', '--b']`.
+  is `['--a', '--z', '3', '--y', '2', '--b']`.
   """
 
   @attr.s(auto_attribs=True)
@@ -100,7 +100,11 @@ class SequentialArgs:
       return [escaper(item.value)]
 
     def export_keyword_item(item: SequentialArgs._KeywordItem) -> List[str]:
-      return [escaper(f'--{item.name}'), escaper(self._kwvalues[item.name])]
+      value = self._kwvalues[item.name]
+      if isinstance(value, bool):
+        return [escaper(f"--{'' if value else 'no'}{item.name}")]
+      else:
+        return [escaper(f'--{item.name}'), escaper(value)]
 
     matcher = pattern_matching.match(
         export_regular_item,

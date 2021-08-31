@@ -54,6 +54,11 @@ class JobBlocksTest(unittest.TestCase):
 
     self.assertEqual(args.to_dict(), {'--knob': True, '1': False})
 
+  def test_to_list_bool(self):
+    args = job_blocks.SequentialArgs.from_collection({'yes': True, 'no': False})
+
+    self.assertEqual(args.to_list(str), ['--yes', '--nono'])
+
 
 if __name__ == '__main__':
   unittest.main()
