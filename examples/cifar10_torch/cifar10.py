@@ -33,10 +33,12 @@ from torch.utils import data
 import torchvision
 from torchvision import transforms
 
+# pylint: disable=g-import-not-at-top
 try:
-  from xmanager.cloud import utils as caip_utils  # pylint: disable=g-import-not-at-top
+  from xmanager.cloud import utils as caip_utils
 except ModuleNotFoundError:
-  pass
+  import caip_utils  # a copy of caip_utils.py is present in the directory.
+# pylint: enable=g-import-not-at-top
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('master_addr_port', None, 'master address and port.')
