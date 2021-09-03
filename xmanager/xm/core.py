@@ -392,9 +392,10 @@ class Experiment(abc.ABC):
   async def __aexit__(self, exc_type, exc_value, traceback):
     await self._await_for_tasks()
 
+  @classmethod
   @abc.abstractmethod
   def package(
-      self, packageables: Sequence[job_blocks.Packageable]
+      cls, packageables: Sequence[job_blocks.Packageable]
   ) -> Sequence[job_blocks.Executable]:
     """Packages executable specs into executables based on the executor specs."""
     raise NotImplementedError

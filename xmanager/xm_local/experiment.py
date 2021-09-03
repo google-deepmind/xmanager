@@ -160,8 +160,9 @@ class LocalExperiment(xm.Experiment):
     self._experiment_title = experiment_title
     self._work_units = []
 
+  @classmethod
   def package(
-      self, packageables: Sequence[xm.Packageable]) -> Sequence[xm.Executable]:
+      cls, packageables: Sequence[xm.Packageable]) -> Sequence[xm.Executable]:
     """Packages executable specs into executables based on the executor specs."""
     return packaging_router.package(packageables)
 

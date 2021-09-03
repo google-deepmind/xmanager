@@ -58,8 +58,9 @@ class TestExperiment(core.Experiment):
     self.launched_jobs_args = []
     self._work_units = []
 
+  @classmethod
   def package(
-      self, packageables: Iterable[job_blocks.Packageable]
+      cls, packageables: Iterable[job_blocks.Packageable]
   ) -> Iterable[job_blocks.Executable]:
     """Packages executable specs into executables based on the executor specs."""
     raise NotImplementedError
