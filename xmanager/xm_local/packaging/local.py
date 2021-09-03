@@ -97,7 +97,7 @@ def _package_bazel_binary(packageable: xm.Packageable,
                           binary: executables.BazelBinary) -> xm.Executable:
   paths = bazel_client.build_single_target(
       label=binary.label,
-      tail_args=binary.bazel_tail_args,
+      tail_args=binary.bazel_args,
   )
   assert len(paths) == 1
   return local_executables.LocalBinary(

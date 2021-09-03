@@ -164,7 +164,7 @@ class BazelContainer(job_blocks.ExecutableSpec):
   """
 
   label: str
-  bazel_tail_args: List[str] = attr.Factory(list)
+  bazel_args: List[str] = attr.Factory(list)
 
   @property
   def name(self) -> str:
@@ -181,7 +181,7 @@ class BazelBinary(job_blocks.ExecutableSpec):
 
   label: str
   dependencies: List[BinaryDependency] = attr.Factory(list)
-  bazel_tail_args: List[str] = attr.Factory(list)
+  bazel_args: List[str] = attr.Factory(list)
 
   @property
   def name(self) -> str:
