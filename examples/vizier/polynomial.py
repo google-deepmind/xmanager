@@ -43,12 +43,13 @@ def main(_):
   worker = VizierWorker(FLAGS.trial_name)
 
   # dummy training loop: "train" for one epoch
-  metric_value = float(
-      FLAGS.a * FLAGS.x * FLAGS.x + FLAGS.b * FLAGS.y * FLAGS.y +
-      FLAGS.c * FLAGS.x * FLAGS.y + FLAGS.d * FLAGS.x + FLAGS.e * FLAGS.y +
-      FLAGS.f)
+  metric_value = float(FLAGS.a * FLAGS.x * FLAGS.x +
+                       FLAGS.b * FLAGS.y * FLAGS.y +
+                       FLAGS.c * FLAGS.x * FLAGS.y + FLAGS.d * FLAGS.x +
+                       FLAGS.e * FLAGS.y + FLAGS.f)
 
   worker.add_trial_measurement(1, {'loss': metric_value})
+
 
 if __name__ == '__main__':
   app.run(main)

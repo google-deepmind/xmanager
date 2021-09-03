@@ -208,7 +208,6 @@ _LOCAL_EXECUTION_ROUTER: _LocalExecutionRouter = pattern_matching.match(
     _throw_on_unknown_executable,  # pytype: disable=annotation-type-mismatch
 )
 
-
 # Note that currently handles are never removed from the list. We can consider
 # removing them on completion if needed.
 _local_jobs: List[LocalExecutionHandle] = []

@@ -24,7 +24,6 @@ import inspect
 import sys
 from typing import Any, Callable, Iterable, Generic, Tuple, Type, TypeVar, Union
 
-
 R = TypeVar('R')
 
 

@@ -21,10 +21,11 @@ http_archive(
     strip_prefix = "rules_docker-0.17.0",
     urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.17.0/rules_docker-v0.17.0.tar.gz"],
 )
+
 http_archive(
     name = "rules_python",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/0.3.0/rules_python-0.3.0.tar.gz",
     sha256 = "934c9ceb552e84577b0faf1e5a2f0450314985b4d8712b2b70717dc679fdc01b",
+    url = "https://github.com/bazelbuild/rules_python/releases/download/0.3.0/rules_python-0.3.0.tar.gz",
 )
 
 git_repository(
@@ -36,13 +37,16 @@ git_repository(
 load("@rules_python//python:pip.bzl", "pip_install")
 
 pip_install(
-   name = "python_deps",
-   requirements = "//:requirements.txt",
+    name = "python_deps",
+    requirements = "//:requirements.txt",
 )
 
 load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repositories = "repositories")
+
 container_repositories()
+
 load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
 container_deps()
 
 load("@io_bazel_rules_docker//container:container.bzl", "container_pull")

@@ -241,9 +241,7 @@ def _create_dockerfile(py_executable: xm.PythonContainer,
   instructions = _create_instructions(py_executable, env_vars)
   entrypoint = _create_entrypoint_cmd(args)
   contents = _DOCKERFILE_TEMPLATE.format(
-      base_image=base_image,
-      instructions=instructions,
-      entrypoint=entrypoint)
+      base_image=base_image, instructions=instructions, entrypoint=entrypoint)
   print('Dockerfile:', contents, sep='\n')
   t = tempfile.NamedTemporaryFile(delete=False)
   with open(t.name, 'w') as f:

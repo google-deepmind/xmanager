@@ -19,7 +19,6 @@ import attr
 from xmanager import xm
 from xmanager.docker import docker_adapter
 
-
 GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER = 'GOOGLE_KUBERNETES_ENGINE'
 
 

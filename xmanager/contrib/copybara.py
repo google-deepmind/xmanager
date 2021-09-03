@@ -56,6 +56,7 @@ def run_workflow(config: str,
     destination_folder: The destination folder to output.
     config_root: Configuration root path to be used for resolving absolute
       config labels like '//foo/bar'.
+
   Returns:
     The output destination folder.
   """
@@ -63,8 +64,8 @@ def run_workflow(config: str,
   if not destination_folder:
     destination_folder = tempfile.mkdtemp()
   command = [
-      COPYBARA_BIN, config, workflow, '--ignore-noop',
-      origin_folder, '--folder-dir=' + destination_folder
+      COPYBARA_BIN, config, workflow, '--ignore-noop', origin_folder,
+      '--folder-dir=' + destination_folder
   ]
   if config_root:
     command += ['--config-root=' + config_root]

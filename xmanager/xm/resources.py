@@ -317,8 +317,8 @@ class JobRequirements:
     Args:
       resources: resource amounts as a dictionary,
         for example {xm.ResourceType.V100: 2}.
-      location: Place where the job should run. For example a cluster name or
-        a Borg cell.
+      location: Place where the job should run. For example a cluster name or a
+        Borg cell.
       replicas: Number of identical tasks to run winthin a job. 1 by default.
       service_tier: A service tier at which the job should run.
       **kw_resources: resource amounts as a kwargs,
