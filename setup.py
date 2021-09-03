@@ -33,7 +33,7 @@ setup(
         'immutabledict',
         'google-api-core',
         'google-api-python-client',
-        'google-cloud-aiplatform',
+        'google-cloud-aiplatform>=1.4.0',
         'google-auth',
         'google-cloud-storage',
         'humanize',
