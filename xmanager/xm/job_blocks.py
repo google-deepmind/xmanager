@@ -21,7 +21,7 @@ import attr
 
 from xmanager.xm import pattern_matching
 
-UserArgs = Union[Mapping, Sequence]
+UserArgs = Union[Mapping, Sequence, 'SequentialArgs']
 
 
 class SequentialArgs:
@@ -54,32 +54,37 @@ class SequentialArgs:
       self._items.append(SequentialArgs._KeywordItem(name))
     self._kwvalues[name] = value
 
+  def _merge_from(self, args: 'SequentialArgs') -> None:
+    """Merges another instance of SequentialArgs into self."""
+
+    def import_regular_item(item: SequentialArgs._RegularItem):
+      self._ingest_regular_item(item.value)
+
+    def import_keyword_item(item: SequentialArgs._KeywordItem):
+      self._ingest_keyword_item(item.name, args._kwvalues[item.name])  # pylint: disable=protected-access
+
+    matcher = pattern_matching.match(
+        import_regular_item,
+        import_keyword_item,
+    )
+    for item in args._items:  # pylint: disable=protected-access
+      matcher(item)
+
   @staticmethod
   def merge(operands: Iterable['SequentialArgs']) -> 'SequentialArgs':
     """Merges several instances into one left-to-right."""
     result = SequentialArgs()
-
-    def import_regular_item(item: SequentialArgs._RegularItem,
-                            _: SequentialArgs):
-      result._ingest_regular_item(item.value)  # pylint: disable=protected-access
-
-    def import_keyword_item(item: SequentialArgs._KeywordItem,
-                            operand: SequentialArgs):
-      result._ingest_keyword_item(item.name, operand._kwvalues[item.name])  # pylint: disable=protected-access
-
     for operand in operands:
-      matcher = pattern_matching.match(
-          import_regular_item,
-          import_keyword_item,
-      )
-      for item in operand._items:  # pylint: disable=protected-access
-        matcher(item, operand)
+      result._merge_from(operand)  # pylint: disable=protected-access
     return result
 
   @staticmethod
   def from_collection(collection: UserArgs) -> 'SequentialArgs':
     """Populates a new instance from a given collection."""
     result = SequentialArgs()
+
+    def import_sequential_args(args: SequentialArgs) -> None:
+      result._merge_from(args)  # pylint: disable=protected-access
 
     def import_mapping(collection: Mapping[Any, Any]) -> None:
       for key, value in collection.items():
@@ -89,7 +94,8 @@ class SequentialArgs:
       for value in collection:
         result._ingest_regular_item(value)  # pylint: disable=protected-access
 
-    matcher = pattern_matching.match(import_mapping, import_sequence)
+    matcher = pattern_matching.match(import_sequential_args, import_mapping,
+                                     import_sequence)
     matcher(collection)
     return result
 
