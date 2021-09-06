@@ -63,6 +63,16 @@ class TopologyTest(parameterized.TestCase):
     with self.assertRaises(resources.InvalidTpuTopologyError):
       resources.Topology('euclidian')
 
+  def test_topology_repr(self):
+    self.assertEqual(repr(resources.Topology('4x4')), "xm.Topology('4x4')")
+
+  def test_topology_eq(self):
+    self.assertEqual(resources.Topology('4x4'), resources.Topology('4x4'))
+    self.assertNotEqual(resources.Topology('2x2'), resources.Topology('4x4'))
+
+    self.assertEqual(
+        hash(resources.Topology('4x4')), hash(resources.Topology('4x4')))
+
 
 class JobRequirementsTest(parameterized.TestCase):
 

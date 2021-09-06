@@ -256,6 +256,15 @@ class Topology:
     """Returns the topology as a string."""
     return self._name
 
+  def __repr__(self) -> str:
+    return f'xm.Topology({self.name!r})'
+
+  def __eq__(self, other: 'Topology') -> bool:
+    return self.name == other.name
+
+  def __hash__(self) -> int:
+    return hash(self.name)
+
 
 ResourceQuantity = Union[int, float, str, Topology]
 
