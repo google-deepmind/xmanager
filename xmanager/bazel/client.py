@@ -13,6 +13,7 @@
 # limitations under the License.
 """A module for communicating with the Bazel server."""
 
+import abc
 import os
 import subprocess
 from typing import List, Sequence
@@ -157,3 +158,35 @@ def build_single_target(label: str, tail_args: Sequence[str] = ()) -> List[str]:
     return [
         os.path.join(workspace, *file.path_prefix, file.name) for file in files
     ]
+
+
+class BazelService(abc.ABC):
+  """An interface for Bazel operations."""
+
+  @abc.abstractmethod
+  def fetch_kinds(self, labels: Sequence[str]) -> List[str]:
+    """Fetches kinds of given targets.
+
+    See https://docs.bazel.build/versions/main/query.html#output-label_kind.
+
+    Args:
+      labels: Labels of the targets to query.
+
+    Returns:
+      A list of kinds, for example, `['py_binary rule']`.
+    """
+    raise NotImplementedError
+
+  @abc.abstractmethod
+  def build_targets(self, labels: Sequence[str],
+                    tail_args: Sequence[str]) -> List[List[str]]:
+    """Builds given targets and returns paths to their important outputs.
+
+    Args:
+      labels: Labels of the targets to build.
+      tail_args: Arguments to append to the Bazel command.
+
+    Returns:
+      For each label returns a list of its important outputs.
+    """
+    raise NotImplementedError
