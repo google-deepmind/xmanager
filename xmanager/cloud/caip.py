@@ -267,7 +267,15 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
     elif resource in xm.TpuType:
       accelerator_type = _CLOUD_TPU_ACCELERATOR_TYPES[resource]
     if accelerator_type:
-      spec['accelerator_type'] = aip_v1.AcceleratorType[accelerator_type]
+      # TPU_V2 and TPU_V3 removed in
+      # https://github.com/googleapis/python-aiplatform/commit/f3a3d03c8509dc49c24139155a572dacbe954f66
+      # Hardcode their values until they are reintroduced.
+      if accelerator_type == 'TPU_V2':
+        spec['accelerator_type'] = 6
+      elif accelerator_type == 'TPU_V3':
+        spec['accelerator_type'] = 7
+      else:
+        spec['accelerator_type'] = aip_v1.AcceleratorType[accelerator_type]
       spec['accelerator_count'] = int(value)
   return spec
 
