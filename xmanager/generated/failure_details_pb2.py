@@ -17,8 +17,6 @@
 # pylint: skip-file
 # source: src/main/protobuf/failure_details.proto
 
-import sys
-_b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -35,8 +33,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='src/main/protobuf/failure_details.proto',
   package='failure_details',
   syntax='proto3',
-  serialized_options=_b('\n$com.google.devtools.build.lib.server'),
-  serialized_pb=_b('\n\'src/main/protobuf/failure_details.proto\x12\x0f\x66\x61ilure_details\x1a google/protobuf/descriptor.proto\"*\n\x15\x46\x61ilureDetailMetadata\x12\x11\n\texit_code\x18\x01 \x01(\r\"\xef\x1a\n\rFailureDetail\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x33\n\x0binterrupted\x18\x65 \x01(\x0b\x32\x1c.failure_details.InterruptedH\x00\x12\x42\n\x13\x65xternal_repository\x18g \x01(\x0b\x32#.failure_details.ExternalRepositoryH\x00\x12\x38\n\x0e\x62uild_progress\x18h \x01(\x0b\x32\x1e.failure_details.BuildProgressH\x00\x12\x38\n\x0eremote_options\x18j \x01(\x0b\x32\x1e.failure_details.RemoteOptionsH\x00\x12@\n\x12\x63lient_environment\x18k \x01(\x0b\x32\".failure_details.ClientEnvironmentH\x00\x12\'\n\x05\x63rash\x18l \x01(\x0b\x32\x16.failure_details.CrashH\x00\x12\x38\n\x0esymlink_forest\x18n \x01(\x0b\x32\x1e.failure_details.SymlinkForestH\x00\x12:\n\x0fpackage_options\x18r \x01(\x0b\x32\x1f.failure_details.PackageOptionsH\x00\x12<\n\x10remote_execution\x18s \x01(\x0b\x32 .failure_details.RemoteExecutionH\x00\x12/\n\texecution\x18t \x01(\x0b\x32\x1a.failure_details.ExecutionH\x00\x12\x31\n\nworkspaces\x18u \x01(\x0b\x32\x1b.failure_details.WorkspacesH\x00\x12\x36\n\rcrash_options\x18v \x01(\x0b\x32\x1d.failure_details.CrashOptionsH\x00\x12\x31\n\nfilesystem\x18w \x01(\x0b\x32\x1b.failure_details.FilesystemH\x00\x12>\n\x11\x65xecution_options\x18y \x01(\x0b\x32!.failure_details.ExecutionOptionsH\x00\x12+\n\x07\x63ommand\x18z \x01(\x0b\x32\x18.failure_details.CommandH\x00\x12\'\n\x05spawn\x18{ \x01(\x0b\x32\x16.failure_details.SpawnH\x00\x12\x32\n\x0bgrpc_server\x18| \x01(\x0b\x32\x1b.failure_details.GrpcServerH\x00\x12@\n\x12\x63\x61nonicalize_flags\x18} \x01(\x0b\x32\".failure_details.CanonicalizeFlagsH\x00\x12\x42\n\x13\x62uild_configuration\x18~ \x01(\x0b\x32#.failure_details.BuildConfigurationH\x00\x12\x34\n\x0cinfo_command\x18\x7f \x01(\x0b\x32\x1c.failure_details.InfoCommandH\x00\x12\x39\n\x0ememory_options\x18\x81\x01 \x01(\x0b\x32\x1e.failure_details.MemoryOptionsH\x00\x12(\n\x05query\x18\x82\x01 \x01(\x0b\x32\x16.failure_details.QueryH\x00\x12;\n\x0flocal_execution\x18\x84\x01 \x01(\x0b\x32\x1f.failure_details.LocalExecutionH\x00\x12\x35\n\x0c\x61\x63tion_cache\x18\x86\x01 \x01(\x0b\x32\x1c.failure_details.ActionCacheH\x00\x12\x37\n\rfetch_command\x18\x87\x01 \x01(\x0b\x32\x1d.failure_details.FetchCommandH\x00\x12\x35\n\x0csync_command\x18\x88\x01 \x01(\x0b\x32\x1c.failure_details.SyncCommandH\x00\x12,\n\x07sandbox\x18\x89\x01 \x01(\x0b\x32\x18.failure_details.SandboxH\x00\x12=\n\x10include_scanning\x18\x8b\x01 \x01(\x0b\x32 .failure_details.IncludeScanningH\x00\x12\x35\n\x0ctest_command\x18\x8c\x01 \x01(\x0b\x32\x1c.failure_details.TestCommandH\x00\x12\x35\n\x0c\x61\x63tion_query\x18\x8d\x01 \x01(\x0b\x32\x1c.failure_details.ActionQueryH\x00\x12;\n\x0ftarget_patterns\x18\x8e\x01 \x01(\x0b\x32\x1f.failure_details.TargetPatternsH\x00\x12\x37\n\rclean_command\x18\x90\x01 \x01(\x0b\x32\x1d.failure_details.CleanCommandH\x00\x12\x39\n\x0e\x63onfig_command\x18\x91\x01 \x01(\x0b\x32\x1e.failure_details.ConfigCommandH\x00\x12\x41\n\x12\x63onfigurable_query\x18\x92\x01 \x01(\x0b\x32\".failure_details.ConfigurableQueryH\x00\x12\x35\n\x0c\x64ump_command\x18\x93\x01 \x01(\x0b\x32\x1c.failure_details.DumpCommandH\x00\x12\x35\n\x0chelp_command\x18\x94\x01 \x01(\x0b\x32\x1c.failure_details.HelpCommandH\x00\x12\x39\n\x0emobile_install\x18\x96\x01 \x01(\x0b\x32\x1e.failure_details.MobileInstallH\x00\x12;\n\x0fprofile_command\x18\x97\x01 \x01(\x0b\x32\x1f.failure_details.ProfileCommandH\x00\x12\x33\n\x0brun_command\x18\x98\x01 \x01(\x0b\x32\x1b.failure_details.RunCommandH\x00\x12;\n\x0fversion_command\x18\x99\x01 \x01(\x0b\x32\x1f.failure_details.VersionCommandH\x00\x12\x44\n\x14print_action_command\x18\x9a\x01 \x01(\x0b\x32#.failure_details.PrintActionCommandH\x00\x12=\n\x10workspace_status\x18\x9e\x01 \x01(\x0b\x32 .failure_details.WorkspaceStatusH\x00\x12\x35\n\x0cjava_compile\x18\x9f\x01 \x01(\x0b\x32\x1c.failure_details.JavaCompileH\x00\x12=\n\x10\x61\x63tion_rewinding\x18\xa0\x01 \x01(\x0b\x32 .failure_details.ActionRewindingH\x00\x12\x33\n\x0b\x63pp_compile\x18\xa1\x01 \x01(\x0b\x32\x1b.failure_details.CppCompileH\x00\x12;\n\x0fstarlark_action\x18\xa2\x01 \x01(\x0b\x32\x1f.failure_details.StarlarkActionH\x00\x12\x35\n\x0cninja_action\x18\xa3\x01 \x01(\x0b\x32\x1c.failure_details.NinjaActionH\x00\x12?\n\x11\x64ynamic_execution\x18\xa4\x01 \x01(\x0b\x32!.failure_details.DynamicExecutionH\x00\x12\x33\n\x0b\x66\x61il_action\x18\xa6\x01 \x01(\x0b\x32\x1b.failure_details.FailActionH\x00\x12\x39\n\x0esymlink_action\x18\xa7\x01 \x01(\x0b\x32\x1e.failure_details.SymlinkActionH\x00\x12-\n\x08\x63pp_link\x18\xa8\x01 \x01(\x0b\x32\x18.failure_details.CppLinkH\x00\x12\x31\n\nlto_action\x18\xa9\x01 \x01(\x0b\x32\x1a.failure_details.LtoActionH\x00\x12\x33\n\x0btest_action\x18\xac\x01 \x01(\x0b\x32\x1b.failure_details.TestActionH\x00\x12*\n\x06worker\x18\xad\x01 \x01(\x0b\x32\x17.failure_details.WorkerH\x00\x12.\n\x08\x61nalysis\x18\xae\x01 \x01(\x0b\x32\x19.failure_details.AnalysisH\x00\x12;\n\x0fpackage_loading\x18\xaf\x01 \x01(\x0b\x32\x1f.failure_details.PackageLoadingH\x00\x12\x30\n\ttoolchain\x18\xb1\x01 \x01(\x0b\x32\x1a.failure_details.ToolchainH\x00\x12=\n\x10starlark_loading\x18\xb3\x01 \x01(\x0b\x32 .failure_details.StarlarkLoadingH\x00\x42\n\n\x08\x63\x61tegoryJ\x04\x08\x02\x10\x65J\x04\x08\x66\x10gJ\x04\x08i\x10jJ\x04\x08m\x10nJ\x04\x08o\x10rJ\x04\x08x\x10yJ\x06\x08\x80\x01\x10\x81\x01J\x06\x08\x83\x01\x10\x84\x01J\x06\x08\x85\x01\x10\x86\x01J\x06\x08\x8a\x01\x10\x8b\x01J\x06\x08\x8f\x01\x10\x90\x01J\x06\x08\x95\x01\x10\x96\x01J\x06\x08\x9b\x01\x10\x9e\x01J\x06\x08\xa5\x01\x10\xa6\x01J\x06\x08\xaa\x01\x10\xac\x01J\x06\x08\xb0\x01\x10\xb1\x01J\x06\x08\xb2\x01\x10\xb3\x01\"\xa2\x05\n\x0bInterrupted\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.Interrupted.Code\"\xe1\x04\n\x04\x43ode\x12\x1e\n\x13INTERRUPTED_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08\x08\x12\x16\n\x0bINTERRUPTED\x10\x1c\x1a\x05\xb2\x43\x02\x08\x08\x12\x1b\n\x10\x44\x45PRECATED_BUILD\x10\x04\x1a\x05\xb2\x43\x02\x08\x08\x12&\n\x1b\x44\x45PRECATED_BUILD_COMPLETION\x10\x05\x1a\x05\xb2\x43\x02\x08\x08\x12*\n\x1f\x44\x45PRECATED_PACKAGE_LOADING_SYNC\x10\x06\x1a\x05\xb2\x43\x02\x08\x08\x12)\n\x1e\x44\x45PRECATED_EXECUTOR_COMPLETION\x10\x07\x1a\x05\xb2\x43\x02\x08\x08\x12&\n\x1b\x44\x45PRECATED_COMMAND_DISPATCH\x10\x08\x1a\x05\xb2\x43\x02\x08\x08\x12\x1f\n\x14\x44\x45PRECATED_INFO_ITEM\x10\t\x1a\x05\xb2\x43\x02\x08\x08\x12!\n\x16\x44\x45PRECATED_AFTER_QUERY\x10\n\x1a\x05\xb2\x43\x02\x08\x08\x12#\n\x18\x44\x45PRECATED_FETCH_COMMAND\x10\x11\x1a\x05\xb2\x43\x02\x08\x08\x12\"\n\x17\x44\x45PRECATED_SYNC_COMMAND\x10\x12\x1a\x05\xb2\x43\x02\x08\x08\x12#\n\x18\x44\x45PRECATED_CLEAN_COMMAND\x10\x14\x1a\x05\xb2\x43\x02\x08\x08\x12,\n!DEPRECATED_MOBILE_INSTALL_COMMAND\x10\x15\x1a\x05\xb2\x43\x02\x08\x08\x12\x1b\n\x10\x44\x45PRECATED_QUERY\x10\x16\x1a\x05\xb2\x43\x02\x08\x08\x12!\n\x16\x44\x45PRECATED_RUN_COMMAND\x10\x17\x1a\x05\xb2\x43\x02\x08\x08\x12%\n\x1a\x44\x45PRECATED_OPTIONS_PARSING\x10\x1b\x1a\x05\xb2\x43\x02\x08\x08\"\x04\x08\x01\x10\x03\"\x04\x08\x0b\x10\x10\"\x04\x08\x13\x10\x13\"\x04\x08\x18\x10\x1a\"\x8a\x04\n\x05Spawn\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Spawn.Code\x12\x14\n\x0c\x63\x61tastrophic\x18\x02 \x01(\x08\x12\x17\n\x0fspawn_exit_code\x18\x03 \x01(\x05\"\xa6\x03\n\x04\x43ode\x12\x18\n\rSPAWN_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNON_ZERO_EXIT\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x12\n\x07TIMEOUT\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rOUT_OF_MEMORY\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10\x45XECUTION_FAILED\x10\x04\x1a\x05\xb2\x43\x02\x08\"\x12\x1b\n\x10\x45XECUTION_DENIED\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13REMOTE_CACHE_FAILED\x10\x06\x1a\x05\xb2\x43\x02\x08\"\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x45XEC_IO_EXCEPTION\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0fINVALID_TIMEOUT\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#INVALID_REMOTE_EXECUTION_PROPERTIES\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NO_USABLE_STRATEGY_FOUND\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dUNSPECIFIED_EXECUTION_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\"\xb0\x01\n\x12\x45xternalRepository\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.ExternalRepository.Code\"b\n\x04\x43ode\x12&\n\x1b\x45XTERNAL_REPOSITORY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x32\n\'OVERRIDE_DISALLOWED_MANAGED_DIRECTORIES\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\xee\x05\n\rBuildProgress\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.BuildProgress.Code\"\xa9\x05\n\x04\x43ode\x12!\n\x16\x42UILD_PROGRESS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12 \n\x15OUTPUT_INITIALIZATION\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12.\n#BES_RUNS_PER_TEST_LIMIT_UNSUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x42\x45S_LOCAL_WRITE_ERROR\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18\x42\x45S_INITIALIZATION_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18\x42\x45S_UPLOAD_TIMEOUT_ERROR\x10\x07\x1a\x05\xb2\x43\x02\x08&\x12!\n\x16\x42\x45S_FILE_WRITE_TIMEOUT\x10\x08\x1a\x05\xb2\x43\x02\x08&\x12\"\n\x17\x42\x45S_FILE_WRITE_IO_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08&\x12%\n\x1a\x42\x45S_FILE_WRITE_INTERRUPTED\x10\n\x1a\x05\xb2\x43\x02\x08&\x12\"\n\x17\x42\x45S_FILE_WRITE_CANCELED\x10\x0b\x1a\x05\xb2\x43\x02\x08&\x12\'\n\x1c\x42\x45S_FILE_WRITE_UNKNOWN_ERROR\x10\x0c\x1a\x05\xb2\x43\x02\x08&\x12&\n\x1b\x42\x45S_UPLOAD_LOCAL_FILE_ERROR\x10\r\x1a\x05\xb2\x43\x02\x08&\x12*\n\x1f\x42\x45S_STREAM_NOT_RETRYING_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08-\x12\x37\n,BES_STREAM_COMPLETED_WITH_UNACK_EVENTS_ERROR\x10\x0f\x1a\x05\xb2\x43\x02\x08-\x12\x38\n-BES_STREAM_COMPLETED_WITH_UNSENT_EVENTS_ERROR\x10\x10\x1a\x05\xb2\x43\x02\x08-\x12\x32\n\'BES_UPLOAD_RETRY_LIMIT_EXCEEDED_FAILURE\x10\x11\x1a\x05\xb2\x43\x02\x08&\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\xc3\x02\n\rRemoteOptions\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.RemoteOptions.Code\"\xfe\x01\n\x04\x43ode\x12!\n\x16REMOTE_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x35\n*REMOTE_DEFAULT_EXEC_PROPERTIES_LOGIC_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x43REDENTIALS_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19\x43REDENTIALS_WRITE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1d\x44OWNLOADER_WITHOUT_GRPC_CACHE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1c\x45XECUTION_WITH_INVALID_CACHE\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\"\x9a\x01\n\x11\x43lientEnvironment\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.ClientEnvironment.Code\"N\n\x04\x43ode\x12%\n\x1a\x43LIENT_ENVIRONMENT_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14\x43LIENT_CWD_MALFORMED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x96\x01\n\x05\x43rash\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Crash.Code\x12*\n\x06\x63\x61uses\x18\x02 \x03(\x0b\x32\x1a.failure_details.Throwable\"6\n\x04\x43ode\x12\x18\n\rCRASH_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x14\n\tCRASH_OOM\x10\x01\x1a\x05\xb2\x43\x02\x08!\"J\n\tThrowable\x12\x17\n\x0fthrowable_class\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x13\n\x0bstack_trace\x18\x03 \x03(\t\"\xe7\x01\n\rSymlinkForest\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.SymlinkForest.Code\"\xa2\x01\n\x04\x43ode\x12!\n\x16SYMLINK_FOREST_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%TOPLEVEL_OUTDIR_PACKAGE_PATH_CONFLICT\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eTOPLEVEL_OUTDIR_USED_AS_SOURCE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0f\x43REATION_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\"\x9d\x01\n\x0ePackageOptions\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.PackageOptions.Code\"W\n\x04\x43ode\x12\"\n\x17PACKAGE_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14PACKAGE_PATH_INVALID\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x02\x10\x02\"\x04\x08\x03\x10\x03\"\xb3\x06\n\x0fRemoteExecution\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.RemoteExecution.Code\"\xea\x05\n\x04\x43ode\x12#\n\x18REMOTE_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1a\x43\x41PABILITIES_QUERY_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\"\x12#\n\x18\x43REDENTIALS_INIT_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12\x43\x41\x43HE_INIT_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0fRPC_LOG_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19\x45XEC_CHANNEL_INIT_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1a\x43\x41\x43HE_CHANNEL_INIT_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1f\x44OWNLOADER_CHANNEL_INIT_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17LOG_DIR_CLEANUP_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x43LIENT_SERVER_INCOMPATIBLE\x10\t\x1a\x05\xb2\x43\x02\x08\"\x12-\n\"DOWNLOADED_INPUTS_DELETION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\"\x12@\n5REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_DOTD\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x41\n6REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_JDEPS\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\x12\x35\n*INCOMPLETE_OUTPUT_DOWNLOAD_CLEANUP_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12;\n0REMOTE_DEFAULT_PLATFORM_PROPERTIES_PARSE_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0eILLEGAL_OUTPUT\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12/\n$INVALID_EXEC_AND_PLATFORM_PROPERTIES\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\"\xd8\r\n\tExecution\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.Execution.Code\"\x9b\r\n\x04\x43ode\x12\x1c\n\x11\x45XECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12/\n$EXECUTION_LOG_INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12&\n\x1b\x45XECUTION_LOG_WRITE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19\x45XECROOT_CREATION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-TEMP_ACTION_OUTPUT_DIRECTORY_DELETION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-TEMP_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12>\n3PERSISTENT_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x31\n&LOCAL_OUTPUT_DIRECTORY_SYMLINK_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12+\n LOCAL_TEMPLATE_EXPANSION_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08$\x12-\n\"INPUT_DIRECTORY_CHECK_IO_EXCEPTION\x10\n\x1a\x05\xb2\x43\x02\x08$\x12/\n$EXTRA_ACTION_OUTPUT_CREATION_FAILURE\x10\x0b\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18TEST_RUNNER_IO_EXCEPTION\x10\x0c\x1a\x05\xb2\x43\x02\x08$\x12\"\n\x17\x46ILE_WRITE_IO_EXCEPTION\x10\r\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19TEST_OUT_ERR_IO_EXCEPTION\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_MANIFEST_COPY_IO_EXCEPTION\x10\x0f\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_MANIFEST_LINK_IO_EXCEPTION\x10\x10\x1a\x05\xb2\x43\x02\x08$\x12-\n\"SYMLINK_TREE_CREATION_IO_EXCEPTION\x10\x11\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_CREATION_COMMAND_EXCEPTION\x10\x12\x1a\x05\xb2\x43\x02\x08$\x12)\n\x1e\x41\x43TION_INPUT_READ_IO_EXCEPTION\x10\x13\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15\x41\x43TION_NOT_UP_TO_DATE\x10\x14\x1a\x05\xb2\x43\x02\x08\x01\x12-\n\"PSEUDO_ACTION_EXECUTION_PROHIBITED\x10\x15\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x44ISCOVERED_INPUT_DOES_NOT_EXIST\x10\x16\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x41\x43TION_OUTPUTS_DELETION_FAILURE\x10\x17\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x41\x43TION_OUTPUTS_NOT_CREATED\x10\x18\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x41\x43TION_FINALIZATION_FAILURE\x10\x19\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x41\x43TION_INPUT_LOST\x10\x1a\x1a\x05\xb2\x43\x02\x08\x01\x12,\n!FILESYSTEM_CONTEXT_UPDATE_FAILURE\x10\x1b\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x41\x43TION_OUTPUT_CLOSE_FAILURE\x10\x1c\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cINPUT_DISCOVERY_IO_EXCEPTION\x10\x1d\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(TREE_ARTIFACT_DIRECTORY_CREATION_FAILURE\x10\x1e\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x1f\x1a\x05\xb2\x43\x02\x08\x01\x12\x36\n+ACTION_FS_OUTPUT_DIRECTORY_CREATION_FAILURE\x10 \x1a\x05\xb2\x43\x02\x08\x01\x12\x37\n,ACTION_FS_OUT_ERR_DIRECTORY_CREATION_FAILURE\x10!\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cNON_ACTION_EXECUTION_FAILURE\x10\"\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10#\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14SOURCE_INPUT_MISSING\x10$\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14UNEXPECTED_EXCEPTION\x10%\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19SOURCE_INPUT_IO_EXCEPTION\x10\'\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x08\x10\x08\"\x04\x08&\x10&\"\xc4\x02\n\nWorkspaces\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.Workspaces.Code\"\x85\x02\n\x04\x43ode\x12\x1d\n\x12WORKSPACES_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%WORKSPACES_LOG_INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cWORKSPACES_LOG_WRITE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12\x42\n7ILLEGAL_WORKSPACE_FILE_SYMLINK_WITH_MANAGED_DIRECTORIES\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12?\n4WORKSPACE_FILE_READ_FAILURE_WITH_MANAGED_DIRECTORIES\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\"p\n\x0c\x43rashOptions\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.CrashOptions.Code\".\n\x04\x43ode\x12 \n\x15\x43RASH_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\"\x04\x08\x01\x10\x01\"\xb2\x02\n\nFilesystem\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.Filesystem.Code\"\xf3\x01\n\x04\x43ode\x12\x1d\n\x12\x46ILESYSTEM_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%EMBEDDED_BINARIES_ENUMERATION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12+\n SERVER_PID_TXT_FILE_READ_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19SERVER_FILE_WRITE_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x35\n*DEFAULT_DIGEST_HASH_FUNCTION_INVALID_VALUE\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x04\x08\x07\x10\x07\"\xea\x03\n\x10\x45xecutionOptions\x12\x34\n\x04\x63ode\x18\x01 \x01(\x0e\x32&.failure_details.ExecutionOptions.Code\"\x9f\x03\n\x04\x43ode\x12$\n\x19\x45XECUTION_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10INVALID_STRATEGY\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12:\n/REQUESTED_STRATEGY_INCOMPATIBLE_WITH_SANDBOXING\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1f\x44\x45PRECATED_LOCAL_RESOURCES_USED\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1fINVALID_CYCLIC_DYNAMIC_STRATEGY\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'RESTRICTION_UNMATCHED_TO_ACTION_CONTEXT\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+REMOTE_FALLBACK_STRATEGY_NOT_ABSTRACT_SPAWN\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12STRATEGY_NOT_FOUND\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1e\x44YNAMIC_STRATEGY_NOT_SANDBOXED\x10\n\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x96\x05\n\x07\x43ommand\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.Command.Code\"\xdd\x04\n\x04\x43ode\x12\"\n\x17\x43OMMAND_FAILURE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1c\n\x11\x43OMMAND_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17\x41NOTHER_COMMAND_RUNNING\x10\x02\x1a\x05\xb2\x43\x02\x08\t\x12\x1e\n\x13PREVIOUSLY_SHUTDOWN\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12;\n0STARLARK_CPU_PROFILE_FILE_INITIALIZATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-STARLARK_CPU_PROFILING_INITIALIZATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'STARLARK_CPU_PROFILE_FILE_WRITE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1fINVOCATION_POLICY_PARSE_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19INVOCATION_POLICY_INVALID\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15OPTIONS_PARSE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eSTARLARK_OPTIONS_PARSE_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x41RGUMENTS_NOT_RECOGNIZED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10NOT_IN_WORKSPACE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18SPACES_IN_WORKSPACE_PATH\x10\r\x1a\x05\xb2\x43\x02\x08$\x12\x1e\n\x13IN_OUTPUT_DIRECTORY\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\"\xec\x01\n\nGrpcServer\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.GrpcServer.Code\"\xad\x01\n\x04\x43ode\x12\x1e\n\x13GRPC_SERVER_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12&\n\x1bGRPC_SERVER_NOT_COMPILED_IN\x10\x01\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13SERVER_BIND_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x15\n\nBAD_COOKIE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15NO_CLIENT_DESCRIPTION\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\x04\x08\x05\x10\x05\"\x99\x01\n\x11\x43\x61nonicalizeFlags\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.CanonicalizeFlags.Code\"M\n\x04\x43ode\x12%\n\x1a\x43\x41NONICALIZE_FLAGS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13\x46OR_COMMAND_INVALID\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\xc2\x04\n\x12\x42uildConfiguration\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.BuildConfiguration.Code\"\xf3\x03\n\x04\x43ode\x12&\n\x1b\x42UILD_CONFIGURATION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12.\n#PLATFORM_MAPPING_EVALUATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12.\n#PLATFORM_MAPPINGS_FILE_IS_DIRECTORY\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12+\n PLATFORM_MAPPINGS_FILE_NOT_FOUND\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(TOP_LEVEL_CONFIGURATION_CREATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15INVALID_CONFIGURATION\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15INVALID_BUILD_OPTIONS\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16MULTI_CPU_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\x33\n(HEURISTIC_INSTRUMENTATION_FILTER_INVALID\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x10\n\x05\x43YCLE\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1a\x43ONFLICTING_CONFIGURATIONS\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12,\n!INVALID_OUTPUT_DIRECTORY_MNEMONIC\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\"\xe9\x01\n\x0bInfoCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.InfoCommand.Code\"\xa8\x01\n\x04\x43ode\x12\x1f\n\x14INFO_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rTOO_MANY_KEYS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12KEY_NOT_RECOGNIZED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18INFO_BLOCK_WRITE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12!\n\x16\x41LL_INFO_WRITE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\xf6\x01\n\rMemoryOptions\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.MemoryOptions.Code\"\xb1\x01\n\x04\x43ode\x12!\n\x16MEMORY_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12@\n5EXPERIMENTAL_OOM_MORE_EAGERLY_THRESHOLD_INVALID_VALUE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x44\n9EXPERIMENTAL_OOM_MORE_EAGERLY_NO_TENURED_COLLECTORS_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xd3\x0b\n\x05Query\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Query.Code\"\x9e\x0b\n\x04\x43ode\x12\x18\n\rQUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x32\n\'QUERY_FILE_WITH_COMMAND_LINE_EXPRESSION\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17QUERY_FILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15OUTPUT_FORMAT_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16GRAPHLESS_PREREQ_UNMET\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aQUERY_OUTPUT_WRITE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aQUERY_STDOUT_FLUSH_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12&\n\x1b\x41NALYSIS_QUERY_PREREQ_UNMET\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\x12&\n\x1bQUERY_RESULTS_FLUSH_FAILURE\x10\x0f\x1a\x05\xb2\x43\x02\x08$\x12\x39\n.DEPRECATED_UNCLOSED_QUOTATION_EXPRESSION_ERROR\x10\x10\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15VARIABLE_NAME_INVALID\x10\x11\x1a\x05\xb2\x43\x02\x08\x07\x12\x1d\n\x12VARIABLE_UNDEFINED\x10\x12\x1a\x05\xb2\x43\x02\x08\x07\x12\x44\n9BUILDFILES_AND_LOADFILES_CANNOT_USE_OUTPUT_LOCATION_ERROR\x10\x13\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10\x42UILD_FILE_ERROR\x10\x14\x1a\x05\xb2\x43\x02\x08\x07\x12\x10\n\x05\x43YCLE\x10\x15\x1a\x05\xb2\x43\x02\x08\x07\x12+\n UNIQUE_SKYKEY_THRESHOLD_EXCEEDED\x10\x16\x1a\x05\xb2\x43\x02\x08\x07\x12\'\n\x1cTARGET_NOT_IN_UNIVERSE_SCOPE\x10\x17\x1a\x05\xb2\x43\x02\x08\x02\x12+\n INVALID_FULL_UNIVERSE_EXPRESSION\x10\x18\x1a\x05\xb2\x43\x02\x08\x07\x12(\n\x1dUNIVERSE_SCOPE_LIMIT_EXCEEDED\x10\x19\x1a\x05\xb2\x43\x02\x08\x07\x12&\n\x1bINVALIDATION_LIMIT_EXCEEDED\x10\x1a\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1aOUTPUT_FORMAT_PREREQ_UNMET\x10\x1b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x41RGUMENTS_MISSING\x10\x1c\x1a\x05\xb2\x43\x02\x08\x07\x12\x31\n&RBUILDFILES_FUNCTION_REQUIRES_SKYQUERY\x10\x1d\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1a\x46ULL_TARGETS_NOT_SUPPORTED\x10\x1e\x1a\x05\xb2\x43\x02\x08\x07\x12,\n!DEPRECATED_UNEXPECTED_TOKEN_ERROR\x10\x1f\x1a\x05\xb2\x43\x02\x08\x02\x12-\n\"DEPRECATED_INTEGER_LITERAL_MISSING\x10 \x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+DEPRECATED_INVALID_STARTING_CHARACTER_ERROR\x10!\x1a\x05\xb2\x43\x02\x08\x02\x12\x32\n\'DEPRECATED_PREMATURE_END_OF_INPUT_ERROR\x10\"\x1a\x05\xb2\x43\x02\x08\x02\x12\x17\n\x0cSYNTAX_ERROR\x10#\x1a\x05\xb2\x43\x02\x08\x02\x12(\n\x1dOUTPUT_FORMATTER_IO_EXCEPTION\x10$\x1a\x05\xb2\x43\x02\x08$\x12+\n SKYQUERY_TRANSITIVE_TARGET_ERROR\x10%\x1a\x05\xb2\x43\x02\x08\x07\x12$\n\x19SKYQUERY_TARGET_EXCEPTION\x10&\x1a\x05\xb2\x43\x02\x08\x07\x12&\n\x1bINVALID_LABEL_IN_TEST_SUITE\x10\'\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18ILLEGAL_FLAG_COMBINATION\x10(\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x07\x10\x0c\"\x99\x01\n\x0eLocalExecution\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.LocalExecution.Code\"S\n\x04\x43ode\x12\"\n\x17LOCAL_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\'\n\x1cLOCKFREE_OUTPUT_PREREQ_UNMET\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x8a\x01\n\x0b\x41\x63tionCache\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.ActionCache.Code\"J\n\x04\x43ode\x12\x1f\n\x14\x41\x43TION_CACHE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12!\n\x16INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\"\xe7\x01\n\x0c\x46\x65tchCommand\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.FetchCommand.Code\"\xa4\x01\n\x04\x43ode\x12 \n\x15\x46\x45TCH_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1d\n\x12\x45XPRESSION_MISSING\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0fOPTIONS_INVALID\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11QUERY_PARSE_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16QUERY_EVALUATION_ERROR\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\"\xf8\x01\n\x0bSyncCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.SyncCommand.Code\"\xb7\x01\n\x04\x43ode\x12\x1f\n\x14SYNC_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14PACKAGE_LOOKUP_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1aWORKSPACE_EVALUATION_ERROR\x10\x02\x1a\x05\xb2\x43\x02\x08\x07\x12\"\n\x17REPOSITORY_FETCH_ERRORS\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12\"\n\x17REPOSITORY_NAME_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x07\"\xdf\x03\n\x07Sandbox\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.Sandbox.Code\"\xa6\x03\n\x04\x43ode\x12\"\n\x17SANDBOX_FAILURE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12!\n\x16INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12!\n\x16\x45XECUTION_IO_EXCEPTION\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16\x44OCKER_COMMAND_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fNO_DOCKER_IMAGE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12+\n DOCKER_IMAGE_PREPARATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x42IND_MOUNT_ANALYSIS_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bMOUNT_SOURCE_DOES_NOT_EXIST\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12,\n!MOUNT_SOURCE_TARGET_TYPE_MISMATCH\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bMOUNT_TARGET_DOES_NOT_EXIST\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17SUBPROCESS_START_FAILED\x10\n\x1a\x05\xb2\x43\x02\x08$\"\xd9\x02\n\x0fIncludeScanning\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.IncludeScanning.Code\"\x90\x02\n\x04\x43ode\x12#\n\x18INCLUDE_SCANNING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1eINITIALIZE_INCLUDE_HINTS_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15SCANNING_IO_EXCEPTION\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12,\n!INCLUDE_HINTS_FILE_NOT_IN_PACKAGE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aINCLUDE_HINTS_READ_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15ILLEGAL_ABSOLUTE_PATH\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_LOAD_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\"\xbc\x01\n\x0bTestCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.TestCommand.Code\"|\n\x04\x43ode\x12\x1f\n\x14TEST_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1a\n\x0fNO_TEST_TARGETS\x10\x01\x1a\x05\xb2\x43\x02\x08\x04\x12\x1e\n\x13TEST_WITH_NOANALYZE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x17\n\x0cTESTS_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x03\"\xff\x04\n\x0b\x41\x63tionQuery\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.ActionQuery.Code\"\xbe\x04\n\x04\x43ode\x12\x1f\n\x14\x41\x43TION_QUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x19\n\x0eOUTPUT_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x06\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x45XPRESSION_PARSE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+SKYFRAME_STATE_WITH_COMMAND_LINE_EXPRESSION\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19INVALID_AQUERY_EXPRESSION\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bSKYFRAME_STATE_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x41QUERY_OUTPUT_TOO_BIG\x10\x08\x1a\x05\xb2\x43\x02\x08\x07\x12!\n\x16ILLEGAL_PATTERN_SYNTAX\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13INCORRECT_ARGUMENTS\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12>\n3TOP_LEVEL_TARGETS_WITH_SKYFRAME_STATE_NOT_SUPPORTED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eSKYFRAME_STATE_AFTER_EXECUTION\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dLABELS_FUNCTION_NOT_SUPPORTED\x10\r\x1a\x05\xb2\x43\x02\x08\x02\"\xd7\x06\n\x0eTargetPatterns\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.TargetPatterns.Code\"\x90\x06\n\x04\x43ode\x12\"\n\x17TARGET_PATTERNS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x38\n-TARGET_PATTERN_FILE_WITH_COMMAND_LINE_PATTERN\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12+\n TARGET_PATTERN_FILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cTARGET_PATTERN_PARSE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11PACKAGE_NOT_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15TARGET_FORMAT_INVALID\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x41\x42SOLUTE_TARGET_PATTERN_INVALID\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%CANNOT_DETERMINE_TARGET_FROM_FILENAME\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12LABEL_SYNTAX_ERROR\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dTARGET_CANNOT_BE_EMPTY_STRING\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12+\n PACKAGE_PART_CANNOT_END_IN_SLASH\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15\x43\x41NNOT_PRELOAD_TARGET\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fTARGETS_MISSING\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%RECURSIVE_TARGET_PATTERNS_NOT_ALLOWED\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1fUP_LEVEL_REFERENCES_NOT_ALLOWED\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#NEGATIVE_TARGET_PATTERN_NOT_ALLOWED\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15TARGET_MUST_BE_A_FILE\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x44\x45PENDENCY_NOT_FOUND\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_NAME_INVALID\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\"\xf5\x03\n\x0c\x43leanCommand\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.CleanCommand.Code\"\xb2\x03\n\x04\x43ode\x12 \n\x15\x43LEAN_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\'\n\x1cOUTPUT_SERVICE_CLEAN_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x06\x12%\n\x1a\x41\x43TION_CACHE_CLEAN_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15OUT_ERR_CLOSE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aOUTPUT_BASE_DELETE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1dOUTPUT_BASE_TEMP_MOVE_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12+\n ASYNC_OUTPUT_BASE_DELETE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x06\x12\"\n\x17\x45XECROOT_DELETE_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x45XECROOT_TEMP_MOVE_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1d\x41SYNC_EXECROOT_DELETE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x06\x12#\n\x18\x41RGUMENTS_NOT_RECOGNIZED\x10\n\x1a\x05\xb2\x43\x02\x08\x02\"\xb1\x01\n\rConfigCommand\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.ConfigCommand.Code\"m\n\x04\x43ode\x12!\n\x16\x43ONFIG_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13TOO_MANY_CONFIG_IDS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17\x43ONFIGURATION_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xbb\x04\n\x11\x43onfigurableQuery\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.ConfigurableQuery.Code\"\xee\x03\n\x04\x43ode\x12%\n\x1a\x43ONFIGURABLE_QUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x45XPRESSION_PARSE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x46ILTERS_NOT_SUPPORTED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12,\n!BUILDFILES_FUNCTION_NOT_SUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1fSIBLINGS_FUNCTION_NOT_SUPPORTED\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eVISIBLE_FUNCTION_NOT_SUPPORTED\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x41TTRIBUTE_MISSING\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1fINCORRECT_CONFIG_ARGUMENT_ERROR\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x19\n\x0eTARGET_MISSING\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15STARLARK_SYNTAX_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13STARLARK_EVAL_ERROR\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x46ORMAT_FUNCTION_ERROR\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\"\xa3\x02\n\x0b\x44umpCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.DumpCommand.Code\"\xe2\x01\n\x04\x43ode\x12\x1f\n\x14\x44UMP_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13NO_OUTPUT_SPECIFIED\x10\x01\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18\x41\x43TION_CACHE_DUMP_FAILED\x10\x02\x1a\x05\xb2\x43\x02\x08\x07\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18\x41\x43TION_GRAPH_DUMP_FAILED\x10\x04\x1a\x05\xb2\x43\x02\x08\x07\x12$\n\x19STARLARK_HEAP_DUMP_FAILED\x10\x05\x1a\x05\xb2\x43\x02\x08\x08\"\xa2\x01\n\x0bHelpCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.HelpCommand.Code\"b\n\x04\x43ode\x12\x1f\n\x14HELP_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MISSING_ARGUMENT\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x43OMMAND_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xb1\x02\n\rMobileInstall\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.MobileInstall.Code\"\xec\x01\n\x04\x43ode\x12!\n\x16MOBILE_INSTALL_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13\x43LASSIC_UNSUPPORTED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13NO_TARGET_SPECIFIED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aMULTIPLE_TARGETS_SPECIFIED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13TARGET_TYPE_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x06\x12\x18\n\rNON_ZERO_EXIT\x10\x05\x1a\x05\xb2\x43\x02\x08\x06\x12 \n\x15\x45RROR_RUNNING_PROGRAM\x10\x06\x1a\x05\xb2\x43\x02\x08\x06\"\xb8\x01\n\x0eProfileCommand\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.ProfileCommand.Code\"r\n\x04\x43ode\x12\"\n\x17PROFILE_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12(\n\x1dOLD_BINARY_FORMAT_UNSUPPORTED\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x46ILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xc6\x05\n\nRunCommand\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.RunCommand.Code\"\x87\x05\n\x04\x43ode\x12\x1e\n\x13RUN_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13NO_TARGET_SPECIFIED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aTOO_MANY_TARGETS_SPECIFIED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15TARGET_NOT_EXECUTABLE\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12/\n$TARGET_BUILT_BUT_PATH_NOT_EXECUTABLE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x32\n\'TARGET_BUILT_BUT_PATH_VALIDATION_FAILED\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aRUN_UNDER_TARGET_NOT_BUILT\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10RUN_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cTOO_MANY_TEST_SHARDS_OR_RUNS\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eTEST_ENVIRONMENT_SETUP_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08$\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08$\x12\x1d\n\x12NO_SHELL_SPECIFIED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1f\n\x14SCRIPT_WRITE_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x06\x12\x30\n%RUNFILES_DIRECTORIES_CREATION_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12-\n\"RUNFILES_SYMLINKS_CREATION_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12-\n\"TEST_ENVIRONMENT_SETUP_INTERRUPTED\x10\x0f\x1a\x05\xb2\x43\x02\x08\x08\"\x8a\x01\n\x0eVersionCommand\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.VersionCommand.Code\"D\n\x04\x43ode\x12\"\n\x17VERSION_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNOT_AVAILABLE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x88\x02\n\x12PrintActionCommand\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.PrintActionCommand.Code\"\xb9\x01\n\x04\x43ode\x12\'\n\x1cPRINT_ACTION_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10TARGET_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17TARGET_KIND_UNSUPPORTED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x41\x43TIONS_NOT_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\"\xc8\x02\n\x0fWorkspaceStatus\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.WorkspaceStatus.Code\"\xff\x01\n\x04\x43ode\x12#\n\x18WORKSPACE_STATUS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNON_ZERO_EXIT\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x41\x42NORMAL_TERMINATION\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0b\x45XEC_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rPARSE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x1d\n\x12VALIDATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x43ONTENT_UPDATE_IO_EXCEPTION\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13STDERR_IO_EXCEPTION\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\"\x94\x02\n\x0bJavaCompile\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.JavaCompile.Code\"\xd3\x01\n\x04\x43ode\x12\x1f\n\x14JAVA_COMPILE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19REDUCED_CLASSPATH_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17JDEPS_READ_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12\x35\n*REDUCED_CLASSPATH_FALLBACK_CLEANUP_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\xba\x01\n\x0f\x41\x63tionRewinding\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.ActionRewinding.Code\"r\n\x04\x43ode\x12#\n\x18\x41\x43TION_REWINDING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19LOST_INPUT_TOO_MANY_TIMES\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14LOST_INPUT_IS_SOURCE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\x8d\x04\n\nCppCompile\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.CppCompile.Code\"\xce\x03\n\x04\x43ode\x12\x1e\n\x13\x43PP_COMPILE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1e\x46IND_USED_HEADERS_IO_EXCEPTION\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\x1f\n\x14\x43OPY_OUT_ERR_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12\x1e\n\x13\x44_FILE_READ_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x43OMMAND_GENERATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18MODULE_EXPANSION_TIMEOUT\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eINCLUDE_PATH_OUTSIDE_EXEC_ROOT\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x46\x41KE_COMMAND_GENERATION_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15UNDECLARED_INCLUSIONS\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x44_FILE_PARSE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x43OVERAGE_NOTES_CREATION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dMODULE_EXPANSION_MISSING_DATA\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\"\xc9\x01\n\x0eStarlarkAction\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.StarlarkAction.Code\"\x82\x01\n\x04\x43ode\x12\"\n\x17STARLARK_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1eUNUSED_INPUT_LIST_READ_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12+\n UNUSED_INPUT_LIST_FILE_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xb8\x01\n\x0bNinjaAction\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.NinjaAction.Code\"x\n\x04\x43ode\x12\x1f\n\x14NINJA_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12.\n#INVALID_DEPFILE_DECLARED_DEPENDENCY\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\x1f\n\x14\x44_FILE_PARSE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\"\xda\x01\n\x10\x44ynamicExecution\x12\x34\n\x04\x63ode\x18\x01 \x01(\x0e\x32&.failure_details.DynamicExecution.Code\"\x8f\x01\n\x04\x43ode\x12$\n\x19\x44YNAMIC_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1aXCODE_RELATED_PREREQ_UNMET\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\"\n\x17\x41\x43TION_LOG_MOVE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bRUN_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\"\x92\x03\n\nFailAction\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.FailAction.Code\"\xd3\x02\n\x04\x43ode\x12\x1e\n\x13\x46\x41IL_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13INTENTIONAL_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18INCORRECT_PYTHON_VERSION\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16PROGUARD_SPECS_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1d\x44YNAMIC_LINKING_NOT_SUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14SOURCE_FILES_MISSING\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13INCORRECT_TOOLCHAIN\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16\x46RAGMENT_CLASS_MISSING\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43\x41NT_BUILD_INCOMPATIBLE_TARGET\x10\n\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x08\x10\x08\"\x04\x08\t\x10\t\"\xb3\x02\n\rSymlinkAction\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.SymlinkAction.Code\"\xee\x01\n\x04\x43ode\x12!\n\x16SYMLINK_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19\x45XECUTABLE_INPUT_NOT_FILE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17\x45XECUTABLE_INPUT_IS_NOT\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#EXECUTABLE_INPUT_CHECK_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aLINK_CREATION_IO_EXCEPTION\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17LINK_TOUCH_IO_EXCEPTION\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\"\xae\x01\n\x07\x43ppLink\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.CppLink.Code\"v\n\x04\x43ode\x12\x1b\n\x10\x43PP_LINK_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1a\x43OMMAND_GENERATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x46\x41KE_COMMAND_GENERATION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xd7\x01\n\tLtoAction\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.LtoAction.Code\"\x9a\x01\n\x04\x43ode\x12\x1d\n\x12LTO_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12+\n INVALID_ABSOLUTE_PATH_IN_IMPORTS\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15MISSING_BITCODE_FILES\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19IMPORTS_READ_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\"\x96\x02\n\nTestAction\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.TestAction.Code\"\xd7\x01\n\x04\x43ode\x12\x1e\n\x13TEST_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1aNO_KEEP_GOING_TEST_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17LOCAL_TEST_PREREQ_UNMET\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x44UPLICATE_CPU_TAGS\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fINVALID_CPU_TAG\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\"\xd5\x03\n\x06Worker\x12*\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1c.failure_details.Worker.Code\"\x9e\x03\n\x04\x43ode\x12\x19\n\x0eWORKER_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12/\n$MULTIPLEXER_INSTANCE_REMOVAL_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aMULTIPLEXER_DOES_NOT_EXIST\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x13\n\x08NO_TOOLS\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bNO_FLAGFILE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%VIRTUAL_INPUT_MATERIALIZATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x42ORROW_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10PREFETCH_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fPREPARE_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fREQUEST_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16PARSE_RESPONSE_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bNO_RESPONSE\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x46INISH_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\"\x8e\x06\n\x08\x41nalysis\x12,\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1e.failure_details.Analysis.Code\"\xd3\x05\n\x04\x43ode\x12\x1b\n\x10\x41NALYSIS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x17\n\x0cLOAD_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dGENERIC_LOADING_PHASE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NOT_ALL_TARGETS_ANALYZED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x31\n&PARAMETERIZED_TOP_LEVEL_ASPECT_INVALID\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19\x41SPECT_LABEL_SYNTAX_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13\x41SPECT_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10\x41SPECT_NOT_FOUND\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x41\x43TION_CONFLICT\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x41RTIFACT_PREFIX_CONFLICT\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dUNEXPECTED_ANALYSIS_EXCEPTION\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cTARGETS_MISSING_ENVIRONMENTS\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13INVALID_ENVIRONMENT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x45NVIRONMENT_MISSING_FROM_GROUPS\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x45XEC_GROUP_MISSING\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aINVALID_EXECUTION_PLATFORM\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16\x41SPECT_CREATION_FAILED\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12+\n CONFIGURED_VALUE_CREATION_FAILED\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dINCOMPATIBLE_TARGET_REQUESTED\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\"\xe9\x08\n\x0ePackageLoading\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.PackageLoading.Code\"\xa2\x08\n\x04\x43ode\x12\"\n\x17PACKAGE_LOADING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14WORKSPACE_FILE_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eMAX_COMPUTATION_STEPS_EXCEEDED\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x42UILD_FILE_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12REPOSITORY_MISSING\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(PERSISTENT_INCONSISTENT_FILESYSTEM_ERROR\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x32\n\'TRANSIENT_INCONSISTENT_FILESYSTEM_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x17\n\x0cINVALID_NAME\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x45VAL_GLOBS_SYMLINK_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aIMPORT_STARLARK_FILE_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fPACKAGE_MISSING\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0eTARGET_MISSING\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rNO_SUCH_THING\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11GLOB_IO_EXCEPTION\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x44UPLICATE_LABEL\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dINVALID_PACKAGE_SPECIFICATION\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12\x17\n\x0cSYNTAX_ERROR\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12+\n ENVIRONMENT_IN_DIFFERENT_PACKAGE\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x44\x45\x46\x41ULT_ENVIRONMENT_UNDECLARED\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x45NVIRONMENT_IN_MULTIPLE_GROUPS\x10\x14\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x45NVIRONMENT_DOES_NOT_EXIST\x10\x15\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13\x45NVIRONMENT_INVALID\x10\x16\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x45NVIRONMENT_NOT_IN_GROUP\x10\x17\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_NAME_INVALID\x10\x18\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13STARLARK_EVAL_ERROR\x10\x19\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15LICENSE_PARSE_FAILURE\x10\x1a\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x44ISTRIBUTIONS_PARSE_FAILURE\x10\x1b\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eLABEL_CROSSES_PACKAGE_BOUNDARY\x10\x1c\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x42UILTINS_INJECTION_FAILURE\x10\x1d\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x08\x10\x08\"\xd4\x02\n\tToolchain\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.Toolchain.Code\"\x97\x02\n\x04\x43ode\x12\x1c\n\x11TOOLCHAIN_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MISSING_PROVIDER\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18INVALID_CONSTRAINT_VALUE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16INVALID_PLATFORM_VALUE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11INVALID_TOOLCHAIN\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eNO_MATCHING_EXECUTION_PLATFORM\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15NO_MATCHING_TOOLCHAIN\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16INVALID_TOOLCHAIN_TYPE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\"\xf1\x02\n\x0fStarlarkLoading\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.StarlarkLoading.Code\"\xa8\x02\n\x04\x43ode\x12#\n\x18STARLARK_LOADING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x10\n\x05\x43YCLE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rCOMPILE_ERROR\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bPARSE_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x15\n\nEVAL_ERROR\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1c\x43ONTAINING_PACKAGE_NOT_FOUND\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11PACKAGE_NOT_FOUND\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x13\n\x08IO_ERROR\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eLABEL_CROSSES_PACKAGE_BOUNDARY\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x42UILTINS_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08\x01:\\\n\x08metadata\x12!.google.protobuf.EnumValueOptions\x18\xb6\x08 \x01(\x0b\x32&.failure_details.FailureDetailMetadataB&\n$com.google.devtools.build.lib.serverb\x06proto3')
+  serialized_options=b'\n$com.google.devtools.build.lib.server',
+  create_key=_descriptor._internal_create_key,
+  serialized_pb=b'\n\'src/main/protobuf/failure_details.proto\x12\x0f\x66\x61ilure_details\x1a google/protobuf/descriptor.proto\"*\n\x15\x46\x61ilureDetailMetadata\x12\x11\n\texit_code\x18\x01 \x01(\r\"\xeb\x1b\n\rFailureDetail\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x33\n\x0binterrupted\x18\x65 \x01(\x0b\x32\x1c.failure_details.InterruptedH\x00\x12\x42\n\x13\x65xternal_repository\x18g \x01(\x0b\x32#.failure_details.ExternalRepositoryH\x00\x12\x38\n\x0e\x62uild_progress\x18h \x01(\x0b\x32\x1e.failure_details.BuildProgressH\x00\x12\x38\n\x0eremote_options\x18j \x01(\x0b\x32\x1e.failure_details.RemoteOptionsH\x00\x12@\n\x12\x63lient_environment\x18k \x01(\x0b\x32\".failure_details.ClientEnvironmentH\x00\x12\'\n\x05\x63rash\x18l \x01(\x0b\x32\x16.failure_details.CrashH\x00\x12\x38\n\x0esymlink_forest\x18n \x01(\x0b\x32\x1e.failure_details.SymlinkForestH\x00\x12:\n\x0fpackage_options\x18r \x01(\x0b\x32\x1f.failure_details.PackageOptionsH\x00\x12<\n\x10remote_execution\x18s \x01(\x0b\x32 .failure_details.RemoteExecutionH\x00\x12/\n\texecution\x18t \x01(\x0b\x32\x1a.failure_details.ExecutionH\x00\x12\x31\n\nworkspaces\x18u \x01(\x0b\x32\x1b.failure_details.WorkspacesH\x00\x12\x36\n\rcrash_options\x18v \x01(\x0b\x32\x1d.failure_details.CrashOptionsH\x00\x12\x31\n\nfilesystem\x18w \x01(\x0b\x32\x1b.failure_details.FilesystemH\x00\x12>\n\x11\x65xecution_options\x18y \x01(\x0b\x32!.failure_details.ExecutionOptionsH\x00\x12+\n\x07\x63ommand\x18z \x01(\x0b\x32\x18.failure_details.CommandH\x00\x12\'\n\x05spawn\x18{ \x01(\x0b\x32\x16.failure_details.SpawnH\x00\x12\x32\n\x0bgrpc_server\x18| \x01(\x0b\x32\x1b.failure_details.GrpcServerH\x00\x12@\n\x12\x63\x61nonicalize_flags\x18} \x01(\x0b\x32\".failure_details.CanonicalizeFlagsH\x00\x12\x42\n\x13\x62uild_configuration\x18~ \x01(\x0b\x32#.failure_details.BuildConfigurationH\x00\x12\x34\n\x0cinfo_command\x18\x7f \x01(\x0b\x32\x1c.failure_details.InfoCommandH\x00\x12\x39\n\x0ememory_options\x18\x81\x01 \x01(\x0b\x32\x1e.failure_details.MemoryOptionsH\x00\x12(\n\x05query\x18\x82\x01 \x01(\x0b\x32\x16.failure_details.QueryH\x00\x12;\n\x0flocal_execution\x18\x84\x01 \x01(\x0b\x32\x1f.failure_details.LocalExecutionH\x00\x12\x35\n\x0c\x61\x63tion_cache\x18\x86\x01 \x01(\x0b\x32\x1c.failure_details.ActionCacheH\x00\x12\x37\n\rfetch_command\x18\x87\x01 \x01(\x0b\x32\x1d.failure_details.FetchCommandH\x00\x12\x35\n\x0csync_command\x18\x88\x01 \x01(\x0b\x32\x1c.failure_details.SyncCommandH\x00\x12,\n\x07sandbox\x18\x89\x01 \x01(\x0b\x32\x18.failure_details.SandboxH\x00\x12=\n\x10include_scanning\x18\x8b\x01 \x01(\x0b\x32 .failure_details.IncludeScanningH\x00\x12\x35\n\x0ctest_command\x18\x8c\x01 \x01(\x0b\x32\x1c.failure_details.TestCommandH\x00\x12\x35\n\x0c\x61\x63tion_query\x18\x8d\x01 \x01(\x0b\x32\x1c.failure_details.ActionQueryH\x00\x12;\n\x0ftarget_patterns\x18\x8e\x01 \x01(\x0b\x32\x1f.failure_details.TargetPatternsH\x00\x12\x37\n\rclean_command\x18\x90\x01 \x01(\x0b\x32\x1d.failure_details.CleanCommandH\x00\x12\x39\n\x0e\x63onfig_command\x18\x91\x01 \x01(\x0b\x32\x1e.failure_details.ConfigCommandH\x00\x12\x41\n\x12\x63onfigurable_query\x18\x92\x01 \x01(\x0b\x32\".failure_details.ConfigurableQueryH\x00\x12\x35\n\x0c\x64ump_command\x18\x93\x01 \x01(\x0b\x32\x1c.failure_details.DumpCommandH\x00\x12\x35\n\x0chelp_command\x18\x94\x01 \x01(\x0b\x32\x1c.failure_details.HelpCommandH\x00\x12\x39\n\x0emobile_install\x18\x96\x01 \x01(\x0b\x32\x1e.failure_details.MobileInstallH\x00\x12;\n\x0fprofile_command\x18\x97\x01 \x01(\x0b\x32\x1f.failure_details.ProfileCommandH\x00\x12\x33\n\x0brun_command\x18\x98\x01 \x01(\x0b\x32\x1b.failure_details.RunCommandH\x00\x12;\n\x0fversion_command\x18\x99\x01 \x01(\x0b\x32\x1f.failure_details.VersionCommandH\x00\x12\x44\n\x14print_action_command\x18\x9a\x01 \x01(\x0b\x32#.failure_details.PrintActionCommandH\x00\x12=\n\x10workspace_status\x18\x9e\x01 \x01(\x0b\x32 .failure_details.WorkspaceStatusH\x00\x12\x35\n\x0cjava_compile\x18\x9f\x01 \x01(\x0b\x32\x1c.failure_details.JavaCompileH\x00\x12=\n\x10\x61\x63tion_rewinding\x18\xa0\x01 \x01(\x0b\x32 .failure_details.ActionRewindingH\x00\x12\x33\n\x0b\x63pp_compile\x18\xa1\x01 \x01(\x0b\x32\x1b.failure_details.CppCompileH\x00\x12;\n\x0fstarlark_action\x18\xa2\x01 \x01(\x0b\x32\x1f.failure_details.StarlarkActionH\x00\x12\x35\n\x0cninja_action\x18\xa3\x01 \x01(\x0b\x32\x1c.failure_details.NinjaActionH\x00\x12?\n\x11\x64ynamic_execution\x18\xa4\x01 \x01(\x0b\x32!.failure_details.DynamicExecutionH\x00\x12\x33\n\x0b\x66\x61il_action\x18\xa6\x01 \x01(\x0b\x32\x1b.failure_details.FailActionH\x00\x12\x39\n\x0esymlink_action\x18\xa7\x01 \x01(\x0b\x32\x1e.failure_details.SymlinkActionH\x00\x12-\n\x08\x63pp_link\x18\xa8\x01 \x01(\x0b\x32\x18.failure_details.CppLinkH\x00\x12\x31\n\nlto_action\x18\xa9\x01 \x01(\x0b\x32\x1a.failure_details.LtoActionH\x00\x12\x33\n\x0btest_action\x18\xac\x01 \x01(\x0b\x32\x1b.failure_details.TestActionH\x00\x12*\n\x06worker\x18\xad\x01 \x01(\x0b\x32\x17.failure_details.WorkerH\x00\x12.\n\x08\x61nalysis\x18\xae\x01 \x01(\x0b\x32\x19.failure_details.AnalysisH\x00\x12;\n\x0fpackage_loading\x18\xaf\x01 \x01(\x0b\x32\x1f.failure_details.PackageLoadingH\x00\x12\x30\n\ttoolchain\x18\xb1\x01 \x01(\x0b\x32\x1a.failure_details.ToolchainH\x00\x12=\n\x10starlark_loading\x18\xb3\x01 \x01(\x0b\x32 .failure_details.StarlarkLoadingH\x00\x12\x37\n\rexternal_deps\x18\xb5\x01 \x01(\x0b\x32\x1d.failure_details.ExternalDepsH\x00\x12\x39\n\x0e\x64iff_awareness\x18\xb6\x01 \x01(\x0b\x32\x1e.failure_details.DiffAwarenessH\x00\x42\n\n\x08\x63\x61tegoryJ\x04\x08\x02\x10\x65J\x04\x08\x66\x10gJ\x04\x08i\x10jJ\x04\x08m\x10nJ\x04\x08o\x10rJ\x04\x08x\x10yJ\x06\x08\x80\x01\x10\x81\x01J\x06\x08\x83\x01\x10\x84\x01J\x06\x08\x85\x01\x10\x86\x01J\x06\x08\x8a\x01\x10\x8b\x01J\x06\x08\x8f\x01\x10\x90\x01J\x06\x08\x95\x01\x10\x96\x01J\x06\x08\x9b\x01\x10\x9e\x01J\x06\x08\xa5\x01\x10\xa6\x01J\x06\x08\xaa\x01\x10\xac\x01J\x06\x08\xb0\x01\x10\xb1\x01J\x06\x08\xb2\x01\x10\xb3\x01J\x06\x08\xb4\x01\x10\xb5\x01\"\xa2\x05\n\x0bInterrupted\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.Interrupted.Code\"\xe1\x04\n\x04\x43ode\x12\x1e\n\x13INTERRUPTED_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08\x08\x12\x16\n\x0bINTERRUPTED\x10\x1c\x1a\x05\xb2\x43\x02\x08\x08\x12\x1b\n\x10\x44\x45PRECATED_BUILD\x10\x04\x1a\x05\xb2\x43\x02\x08\x08\x12&\n\x1b\x44\x45PRECATED_BUILD_COMPLETION\x10\x05\x1a\x05\xb2\x43\x02\x08\x08\x12*\n\x1f\x44\x45PRECATED_PACKAGE_LOADING_SYNC\x10\x06\x1a\x05\xb2\x43\x02\x08\x08\x12)\n\x1e\x44\x45PRECATED_EXECUTOR_COMPLETION\x10\x07\x1a\x05\xb2\x43\x02\x08\x08\x12&\n\x1b\x44\x45PRECATED_COMMAND_DISPATCH\x10\x08\x1a\x05\xb2\x43\x02\x08\x08\x12\x1f\n\x14\x44\x45PRECATED_INFO_ITEM\x10\t\x1a\x05\xb2\x43\x02\x08\x08\x12!\n\x16\x44\x45PRECATED_AFTER_QUERY\x10\n\x1a\x05\xb2\x43\x02\x08\x08\x12#\n\x18\x44\x45PRECATED_FETCH_COMMAND\x10\x11\x1a\x05\xb2\x43\x02\x08\x08\x12\"\n\x17\x44\x45PRECATED_SYNC_COMMAND\x10\x12\x1a\x05\xb2\x43\x02\x08\x08\x12#\n\x18\x44\x45PRECATED_CLEAN_COMMAND\x10\x14\x1a\x05\xb2\x43\x02\x08\x08\x12,\n!DEPRECATED_MOBILE_INSTALL_COMMAND\x10\x15\x1a\x05\xb2\x43\x02\x08\x08\x12\x1b\n\x10\x44\x45PRECATED_QUERY\x10\x16\x1a\x05\xb2\x43\x02\x08\x08\x12!\n\x16\x44\x45PRECATED_RUN_COMMAND\x10\x17\x1a\x05\xb2\x43\x02\x08\x08\x12%\n\x1a\x44\x45PRECATED_OPTIONS_PARSING\x10\x1b\x1a\x05\xb2\x43\x02\x08\x08\"\x04\x08\x01\x10\x03\"\x04\x08\x0b\x10\x10\"\x04\x08\x13\x10\x13\"\x04\x08\x18\x10\x1a\"\xa6\x04\n\x05Spawn\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Spawn.Code\x12\x14\n\x0c\x63\x61tastrophic\x18\x02 \x01(\x08\x12\x17\n\x0fspawn_exit_code\x18\x03 \x01(\x05\"\xc2\x03\n\x04\x43ode\x12\x18\n\rSPAWN_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNON_ZERO_EXIT\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x12\n\x07TIMEOUT\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rOUT_OF_MEMORY\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10\x45XECUTION_FAILED\x10\x04\x1a\x05\xb2\x43\x02\x08\"\x12\x1b\n\x10\x45XECUTION_DENIED\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13REMOTE_CACHE_FAILED\x10\x06\x1a\x05\xb2\x43\x02\x08\"\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x45XEC_IO_EXCEPTION\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0fINVALID_TIMEOUT\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#INVALID_REMOTE_EXECUTION_PROPERTIES\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NO_USABLE_STRATEGY_FOUND\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dUNSPECIFIED_EXECUTION_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x46ORBIDDEN_INPUT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\"\xd3\x01\n\x12\x45xternalRepository\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.ExternalRepository.Code\"\x84\x01\n\x04\x43ode\x12&\n\x1b\x45XTERNAL_REPOSITORY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x32\n\'OVERRIDE_DISALLOWED_MANAGED_DIRECTORIES\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x42\x41\x44_DOWNLOADER_CONFIG\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xa7\x06\n\rBuildProgress\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.BuildProgress.Code\"\xe2\x05\n\x04\x43ode\x12!\n\x16\x42UILD_PROGRESS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12 \n\x15OUTPUT_INITIALIZATION\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12.\n#BES_RUNS_PER_TEST_LIMIT_UNSUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x42\x45S_LOCAL_WRITE_ERROR\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18\x42\x45S_INITIALIZATION_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18\x42\x45S_UPLOAD_TIMEOUT_ERROR\x10\x07\x1a\x05\xb2\x43\x02\x08&\x12!\n\x16\x42\x45S_FILE_WRITE_TIMEOUT\x10\x08\x1a\x05\xb2\x43\x02\x08&\x12\"\n\x17\x42\x45S_FILE_WRITE_IO_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08&\x12%\n\x1a\x42\x45S_FILE_WRITE_INTERRUPTED\x10\n\x1a\x05\xb2\x43\x02\x08&\x12\"\n\x17\x42\x45S_FILE_WRITE_CANCELED\x10\x0b\x1a\x05\xb2\x43\x02\x08&\x12\'\n\x1c\x42\x45S_FILE_WRITE_UNKNOWN_ERROR\x10\x0c\x1a\x05\xb2\x43\x02\x08&\x12&\n\x1b\x42\x45S_UPLOAD_LOCAL_FILE_ERROR\x10\r\x1a\x05\xb2\x43\x02\x08&\x12*\n\x1f\x42\x45S_STREAM_NOT_RETRYING_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08-\x12\x37\n,BES_STREAM_COMPLETED_WITH_UNACK_EVENTS_ERROR\x10\x0f\x1a\x05\xb2\x43\x02\x08-\x12\x38\n-BES_STREAM_COMPLETED_WITH_UNSENT_EVENTS_ERROR\x10\x10\x1a\x05\xb2\x43\x02\x08-\x12\x31\n&BES_STREAM_COMPLETED_WITH_REMOTE_ERROR\x10\x13\x1a\x05\xb2\x43\x02\x08-\x12\x32\n\'BES_UPLOAD_RETRY_LIMIT_EXCEEDED_FAILURE\x10\x11\x1a\x05\xb2\x43\x02\x08&\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x04\x08\x12\x10\x12\"\xc3\x02\n\rRemoteOptions\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.RemoteOptions.Code\"\xfe\x01\n\x04\x43ode\x12!\n\x16REMOTE_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x35\n*REMOTE_DEFAULT_EXEC_PROPERTIES_LOGIC_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x43REDENTIALS_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19\x43REDENTIALS_WRITE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1d\x44OWNLOADER_WITHOUT_GRPC_CACHE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1c\x45XECUTION_WITH_INVALID_CACHE\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\"\x9a\x01\n\x11\x43lientEnvironment\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.ClientEnvironment.Code\"N\n\x04\x43ode\x12%\n\x1a\x43LIENT_ENVIRONMENT_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14\x43LIENT_CWD_MALFORMED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x96\x01\n\x05\x43rash\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Crash.Code\x12*\n\x06\x63\x61uses\x18\x02 \x03(\x0b\x32\x1a.failure_details.Throwable\"6\n\x04\x43ode\x12\x18\n\rCRASH_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x14\n\tCRASH_OOM\x10\x01\x1a\x05\xb2\x43\x02\x08!\"J\n\tThrowable\x12\x17\n\x0fthrowable_class\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x13\n\x0bstack_trace\x18\x03 \x03(\t\"\xe7\x01\n\rSymlinkForest\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.SymlinkForest.Code\"\xa2\x01\n\x04\x43ode\x12!\n\x16SYMLINK_FOREST_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%TOPLEVEL_OUTDIR_PACKAGE_PATH_CONFLICT\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eTOPLEVEL_OUTDIR_USED_AS_SOURCE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0f\x43REATION_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\"\x9d\x01\n\x0ePackageOptions\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.PackageOptions.Code\"W\n\x04\x43ode\x12\"\n\x17PACKAGE_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14PACKAGE_PATH_INVALID\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x02\x10\x02\"\x04\x08\x03\x10\x03\"\xb3\x06\n\x0fRemoteExecution\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.RemoteExecution.Code\"\xea\x05\n\x04\x43ode\x12#\n\x18REMOTE_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1a\x43\x41PABILITIES_QUERY_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\"\x12#\n\x18\x43REDENTIALS_INIT_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12\x43\x41\x43HE_INIT_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0fRPC_LOG_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19\x45XEC_CHANNEL_INIT_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1a\x43\x41\x43HE_CHANNEL_INIT_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1f\x44OWNLOADER_CHANNEL_INIT_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17LOG_DIR_CLEANUP_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x43LIENT_SERVER_INCOMPATIBLE\x10\t\x1a\x05\xb2\x43\x02\x08\"\x12-\n\"DOWNLOADED_INPUTS_DELETION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\"\x12@\n5REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_DOTD\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x41\n6REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_JDEPS\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\x12\x35\n*INCOMPLETE_OUTPUT_DOWNLOAD_CLEANUP_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12;\n0REMOTE_DEFAULT_PLATFORM_PROPERTIES_PARSE_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0eILLEGAL_OUTPUT\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12/\n$INVALID_EXEC_AND_PLATFORM_PROPERTIES\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\"\xd8\r\n\tExecution\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.Execution.Code\"\x9b\r\n\x04\x43ode\x12\x1c\n\x11\x45XECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12/\n$EXECUTION_LOG_INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12&\n\x1b\x45XECUTION_LOG_WRITE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19\x45XECROOT_CREATION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-TEMP_ACTION_OUTPUT_DIRECTORY_DELETION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-TEMP_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12>\n3PERSISTENT_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x31\n&LOCAL_OUTPUT_DIRECTORY_SYMLINK_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12+\n LOCAL_TEMPLATE_EXPANSION_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08$\x12-\n\"INPUT_DIRECTORY_CHECK_IO_EXCEPTION\x10\n\x1a\x05\xb2\x43\x02\x08$\x12/\n$EXTRA_ACTION_OUTPUT_CREATION_FAILURE\x10\x0b\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18TEST_RUNNER_IO_EXCEPTION\x10\x0c\x1a\x05\xb2\x43\x02\x08$\x12\"\n\x17\x46ILE_WRITE_IO_EXCEPTION\x10\r\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19TEST_OUT_ERR_IO_EXCEPTION\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_MANIFEST_COPY_IO_EXCEPTION\x10\x0f\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_MANIFEST_LINK_IO_EXCEPTION\x10\x10\x1a\x05\xb2\x43\x02\x08$\x12-\n\"SYMLINK_TREE_CREATION_IO_EXCEPTION\x10\x11\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_CREATION_COMMAND_EXCEPTION\x10\x12\x1a\x05\xb2\x43\x02\x08$\x12)\n\x1e\x41\x43TION_INPUT_READ_IO_EXCEPTION\x10\x13\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15\x41\x43TION_NOT_UP_TO_DATE\x10\x14\x1a\x05\xb2\x43\x02\x08\x01\x12-\n\"PSEUDO_ACTION_EXECUTION_PROHIBITED\x10\x15\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x44ISCOVERED_INPUT_DOES_NOT_EXIST\x10\x16\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1f\x41\x43TION_OUTPUTS_DELETION_FAILURE\x10\x17\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x41\x43TION_OUTPUTS_NOT_CREATED\x10\x18\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x41\x43TION_FINALIZATION_FAILURE\x10\x19\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x41\x43TION_INPUT_LOST\x10\x1a\x1a\x05\xb2\x43\x02\x08\x01\x12,\n!FILESYSTEM_CONTEXT_UPDATE_FAILURE\x10\x1b\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x41\x43TION_OUTPUT_CLOSE_FAILURE\x10\x1c\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cINPUT_DISCOVERY_IO_EXCEPTION\x10\x1d\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(TREE_ARTIFACT_DIRECTORY_CREATION_FAILURE\x10\x1e\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x1f\x1a\x05\xb2\x43\x02\x08\x01\x12\x36\n+ACTION_FS_OUTPUT_DIRECTORY_CREATION_FAILURE\x10 \x1a\x05\xb2\x43\x02\x08\x01\x12\x37\n,ACTION_FS_OUT_ERR_DIRECTORY_CREATION_FAILURE\x10!\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cNON_ACTION_EXECUTION_FAILURE\x10\"\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10#\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14SOURCE_INPUT_MISSING\x10$\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14UNEXPECTED_EXCEPTION\x10%\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19SOURCE_INPUT_IO_EXCEPTION\x10\'\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x08\x10\x08\"\x04\x08&\x10&\"\xc4\x02\n\nWorkspaces\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.Workspaces.Code\"\x85\x02\n\x04\x43ode\x12\x1d\n\x12WORKSPACES_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%WORKSPACES_LOG_INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cWORKSPACES_LOG_WRITE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12\x42\n7ILLEGAL_WORKSPACE_FILE_SYMLINK_WITH_MANAGED_DIRECTORIES\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12?\n4WORKSPACE_FILE_READ_FAILURE_WITH_MANAGED_DIRECTORIES\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\"p\n\x0c\x43rashOptions\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.CrashOptions.Code\".\n\x04\x43ode\x12 \n\x15\x43RASH_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\"\x04\x08\x01\x10\x01\"\xb2\x02\n\nFilesystem\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.Filesystem.Code\"\xf3\x01\n\x04\x43ode\x12\x1d\n\x12\x46ILESYSTEM_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%EMBEDDED_BINARIES_ENUMERATION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12+\n SERVER_PID_TXT_FILE_READ_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19SERVER_FILE_WRITE_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x35\n*DEFAULT_DIGEST_HASH_FUNCTION_INVALID_VALUE\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x04\x08\x07\x10\x07\"\xea\x03\n\x10\x45xecutionOptions\x12\x34\n\x04\x63ode\x18\x01 \x01(\x0e\x32&.failure_details.ExecutionOptions.Code\"\x9f\x03\n\x04\x43ode\x12$\n\x19\x45XECUTION_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10INVALID_STRATEGY\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12:\n/REQUESTED_STRATEGY_INCOMPATIBLE_WITH_SANDBOXING\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1f\x44\x45PRECATED_LOCAL_RESOURCES_USED\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1fINVALID_CYCLIC_DYNAMIC_STRATEGY\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'RESTRICTION_UNMATCHED_TO_ACTION_CONTEXT\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+REMOTE_FALLBACK_STRATEGY_NOT_ABSTRACT_SPAWN\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12STRATEGY_NOT_FOUND\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1e\x44YNAMIC_STRATEGY_NOT_SANDBOXED\x10\n\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x96\x05\n\x07\x43ommand\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.Command.Code\"\xdd\x04\n\x04\x43ode\x12\"\n\x17\x43OMMAND_FAILURE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1c\n\x11\x43OMMAND_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17\x41NOTHER_COMMAND_RUNNING\x10\x02\x1a\x05\xb2\x43\x02\x08\t\x12\x1e\n\x13PREVIOUSLY_SHUTDOWN\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12;\n0STARLARK_CPU_PROFILE_FILE_INITIALIZATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-STARLARK_CPU_PROFILING_INITIALIZATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'STARLARK_CPU_PROFILE_FILE_WRITE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1fINVOCATION_POLICY_PARSE_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19INVOCATION_POLICY_INVALID\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15OPTIONS_PARSE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eSTARLARK_OPTIONS_PARSE_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x41RGUMENTS_NOT_RECOGNIZED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10NOT_IN_WORKSPACE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18SPACES_IN_WORKSPACE_PATH\x10\r\x1a\x05\xb2\x43\x02\x08$\x12\x1e\n\x13IN_OUTPUT_DIRECTORY\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\"\xec\x01\n\nGrpcServer\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.GrpcServer.Code\"\xad\x01\n\x04\x43ode\x12\x1e\n\x13GRPC_SERVER_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12&\n\x1bGRPC_SERVER_NOT_COMPILED_IN\x10\x01\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13SERVER_BIND_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x15\n\nBAD_COOKIE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15NO_CLIENT_DESCRIPTION\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\x04\x08\x05\x10\x05\"\x99\x01\n\x11\x43\x61nonicalizeFlags\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.CanonicalizeFlags.Code\"M\n\x04\x43ode\x12%\n\x1a\x43\x41NONICALIZE_FLAGS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13\x46OR_COMMAND_INVALID\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\xc2\x04\n\x12\x42uildConfiguration\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.BuildConfiguration.Code\"\xf3\x03\n\x04\x43ode\x12&\n\x1b\x42UILD_CONFIGURATION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12.\n#PLATFORM_MAPPING_EVALUATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12.\n#PLATFORM_MAPPINGS_FILE_IS_DIRECTORY\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12+\n PLATFORM_MAPPINGS_FILE_NOT_FOUND\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(TOP_LEVEL_CONFIGURATION_CREATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15INVALID_CONFIGURATION\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15INVALID_BUILD_OPTIONS\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16MULTI_CPU_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\x33\n(HEURISTIC_INSTRUMENTATION_FILTER_INVALID\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x10\n\x05\x43YCLE\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1a\x43ONFLICTING_CONFIGURATIONS\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12,\n!INVALID_OUTPUT_DIRECTORY_MNEMONIC\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\"\xe9\x01\n\x0bInfoCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.InfoCommand.Code\"\xa8\x01\n\x04\x43ode\x12\x1f\n\x14INFO_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rTOO_MANY_KEYS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12KEY_NOT_RECOGNIZED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18INFO_BLOCK_WRITE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12!\n\x16\x41LL_INFO_WRITE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\xf6\x01\n\rMemoryOptions\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.MemoryOptions.Code\"\xb1\x01\n\x04\x43ode\x12!\n\x16MEMORY_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12@\n5EXPERIMENTAL_OOM_MORE_EAGERLY_THRESHOLD_INVALID_VALUE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x44\n9EXPERIMENTAL_OOM_MORE_EAGERLY_NO_TENURED_COLLECTORS_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xd3\x0b\n\x05Query\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Query.Code\"\x9e\x0b\n\x04\x43ode\x12\x18\n\rQUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x32\n\'QUERY_FILE_WITH_COMMAND_LINE_EXPRESSION\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17QUERY_FILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15OUTPUT_FORMAT_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16GRAPHLESS_PREREQ_UNMET\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aQUERY_OUTPUT_WRITE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aQUERY_STDOUT_FLUSH_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12&\n\x1b\x41NALYSIS_QUERY_PREREQ_UNMET\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\x12&\n\x1bQUERY_RESULTS_FLUSH_FAILURE\x10\x0f\x1a\x05\xb2\x43\x02\x08$\x12\x39\n.DEPRECATED_UNCLOSED_QUOTATION_EXPRESSION_ERROR\x10\x10\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15VARIABLE_NAME_INVALID\x10\x11\x1a\x05\xb2\x43\x02\x08\x07\x12\x1d\n\x12VARIABLE_UNDEFINED\x10\x12\x1a\x05\xb2\x43\x02\x08\x07\x12\x44\n9BUILDFILES_AND_LOADFILES_CANNOT_USE_OUTPUT_LOCATION_ERROR\x10\x13\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10\x42UILD_FILE_ERROR\x10\x14\x1a\x05\xb2\x43\x02\x08\x07\x12\x10\n\x05\x43YCLE\x10\x15\x1a\x05\xb2\x43\x02\x08\x07\x12+\n UNIQUE_SKYKEY_THRESHOLD_EXCEEDED\x10\x16\x1a\x05\xb2\x43\x02\x08\x07\x12\'\n\x1cTARGET_NOT_IN_UNIVERSE_SCOPE\x10\x17\x1a\x05\xb2\x43\x02\x08\x02\x12+\n INVALID_FULL_UNIVERSE_EXPRESSION\x10\x18\x1a\x05\xb2\x43\x02\x08\x07\x12(\n\x1dUNIVERSE_SCOPE_LIMIT_EXCEEDED\x10\x19\x1a\x05\xb2\x43\x02\x08\x07\x12&\n\x1bINVALIDATION_LIMIT_EXCEEDED\x10\x1a\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1aOUTPUT_FORMAT_PREREQ_UNMET\x10\x1b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x41RGUMENTS_MISSING\x10\x1c\x1a\x05\xb2\x43\x02\x08\x07\x12\x31\n&RBUILDFILES_FUNCTION_REQUIRES_SKYQUERY\x10\x1d\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1a\x46ULL_TARGETS_NOT_SUPPORTED\x10\x1e\x1a\x05\xb2\x43\x02\x08\x07\x12,\n!DEPRECATED_UNEXPECTED_TOKEN_ERROR\x10\x1f\x1a\x05\xb2\x43\x02\x08\x02\x12-\n\"DEPRECATED_INTEGER_LITERAL_MISSING\x10 \x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+DEPRECATED_INVALID_STARTING_CHARACTER_ERROR\x10!\x1a\x05\xb2\x43\x02\x08\x02\x12\x32\n\'DEPRECATED_PREMATURE_END_OF_INPUT_ERROR\x10\"\x1a\x05\xb2\x43\x02\x08\x02\x12\x17\n\x0cSYNTAX_ERROR\x10#\x1a\x05\xb2\x43\x02\x08\x02\x12(\n\x1dOUTPUT_FORMATTER_IO_EXCEPTION\x10$\x1a\x05\xb2\x43\x02\x08$\x12+\n SKYQUERY_TRANSITIVE_TARGET_ERROR\x10%\x1a\x05\xb2\x43\x02\x08\x07\x12$\n\x19SKYQUERY_TARGET_EXCEPTION\x10&\x1a\x05\xb2\x43\x02\x08\x07\x12&\n\x1bINVALID_LABEL_IN_TEST_SUITE\x10\'\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18ILLEGAL_FLAG_COMBINATION\x10(\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x07\x10\x0c\"\x99\x01\n\x0eLocalExecution\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.LocalExecution.Code\"S\n\x04\x43ode\x12\"\n\x17LOCAL_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\'\n\x1cLOCKFREE_OUTPUT_PREREQ_UNMET\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x8a\x01\n\x0b\x41\x63tionCache\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.ActionCache.Code\"J\n\x04\x43ode\x12\x1f\n\x14\x41\x43TION_CACHE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12!\n\x16INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\"\xe7\x01\n\x0c\x46\x65tchCommand\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.FetchCommand.Code\"\xa4\x01\n\x04\x43ode\x12 \n\x15\x46\x45TCH_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1d\n\x12\x45XPRESSION_MISSING\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0fOPTIONS_INVALID\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11QUERY_PARSE_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16QUERY_EVALUATION_ERROR\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\"\xf8\x01\n\x0bSyncCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.SyncCommand.Code\"\xb7\x01\n\x04\x43ode\x12\x1f\n\x14SYNC_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14PACKAGE_LOOKUP_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1aWORKSPACE_EVALUATION_ERROR\x10\x02\x1a\x05\xb2\x43\x02\x08\x07\x12\"\n\x17REPOSITORY_FETCH_ERRORS\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12\"\n\x17REPOSITORY_NAME_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x07\"\xfb\x03\n\x07Sandbox\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.Sandbox.Code\"\xc2\x03\n\x04\x43ode\x12\"\n\x17SANDBOX_FAILURE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12!\n\x16INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12!\n\x16\x45XECUTION_IO_EXCEPTION\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12!\n\x16\x44OCKER_COMMAND_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fNO_DOCKER_IMAGE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12+\n DOCKER_IMAGE_PREPARATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x42IND_MOUNT_ANALYSIS_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bMOUNT_SOURCE_DOES_NOT_EXIST\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12,\n!MOUNT_SOURCE_TARGET_TYPE_MISMATCH\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bMOUNT_TARGET_DOES_NOT_EXIST\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17SUBPROCESS_START_FAILED\x10\n\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0f\x46ORBIDDEN_INPUT\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\"\x9d\x04\n\x0fIncludeScanning\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.IncludeScanning.Code\x12\x42\n\x14package_loading_code\x18\x02 \x01(\x0e\x32$.failure_details.PackageLoading.Code\"\x90\x03\n\x04\x43ode\x12#\n\x18INCLUDE_SCANNING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1eINITIALIZE_INCLUDE_HINTS_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15SCANNING_IO_EXCEPTION\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12,\n!INCLUDE_HINTS_FILE_NOT_IN_PACKAGE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aINCLUDE_HINTS_READ_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15ILLEGAL_ABSOLUTE_PATH\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_LOAD_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19USER_PACKAGE_LOAD_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bSYSTEM_PACKAGE_LOAD_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12\x30\n%UNDIFFERENTIATED_PACKAGE_LOAD_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\"\xbc\x01\n\x0bTestCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.TestCommand.Code\"|\n\x04\x43ode\x12\x1f\n\x14TEST_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1a\n\x0fNO_TEST_TARGETS\x10\x01\x1a\x05\xb2\x43\x02\x08\x04\x12\x1e\n\x13TEST_WITH_NOANALYZE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x17\n\x0cTESTS_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x03\"\xff\x04\n\x0b\x41\x63tionQuery\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.ActionQuery.Code\"\xbe\x04\n\x04\x43ode\x12\x1f\n\x14\x41\x43TION_QUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x19\n\x0eOUTPUT_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x06\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x45XPRESSION_PARSE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+SKYFRAME_STATE_WITH_COMMAND_LINE_EXPRESSION\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19INVALID_AQUERY_EXPRESSION\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bSKYFRAME_STATE_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x41QUERY_OUTPUT_TOO_BIG\x10\x08\x1a\x05\xb2\x43\x02\x08\x07\x12!\n\x16ILLEGAL_PATTERN_SYNTAX\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13INCORRECT_ARGUMENTS\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12>\n3TOP_LEVEL_TARGETS_WITH_SKYFRAME_STATE_NOT_SUPPORTED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eSKYFRAME_STATE_AFTER_EXECUTION\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dLABELS_FUNCTION_NOT_SUPPORTED\x10\r\x1a\x05\xb2\x43\x02\x08\x02\"\xd7\x06\n\x0eTargetPatterns\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.TargetPatterns.Code\"\x90\x06\n\x04\x43ode\x12\"\n\x17TARGET_PATTERNS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x38\n-TARGET_PATTERN_FILE_WITH_COMMAND_LINE_PATTERN\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12+\n TARGET_PATTERN_FILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cTARGET_PATTERN_PARSE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11PACKAGE_NOT_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15TARGET_FORMAT_INVALID\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x41\x42SOLUTE_TARGET_PATTERN_INVALID\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%CANNOT_DETERMINE_TARGET_FROM_FILENAME\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12LABEL_SYNTAX_ERROR\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dTARGET_CANNOT_BE_EMPTY_STRING\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12+\n PACKAGE_PART_CANNOT_END_IN_SLASH\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15\x43\x41NNOT_PRELOAD_TARGET\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fTARGETS_MISSING\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%RECURSIVE_TARGET_PATTERNS_NOT_ALLOWED\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1fUP_LEVEL_REFERENCES_NOT_ALLOWED\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#NEGATIVE_TARGET_PATTERN_NOT_ALLOWED\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15TARGET_MUST_BE_A_FILE\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x44\x45PENDENCY_NOT_FOUND\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_NAME_INVALID\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\"\xf5\x03\n\x0c\x43leanCommand\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.CleanCommand.Code\"\xb2\x03\n\x04\x43ode\x12 \n\x15\x43LEAN_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\'\n\x1cOUTPUT_SERVICE_CLEAN_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x06\x12%\n\x1a\x41\x43TION_CACHE_CLEAN_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15OUT_ERR_CLOSE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aOUTPUT_BASE_DELETE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1dOUTPUT_BASE_TEMP_MOVE_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12+\n ASYNC_OUTPUT_BASE_DELETE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x06\x12\"\n\x17\x45XECROOT_DELETE_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x45XECROOT_TEMP_MOVE_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1d\x41SYNC_EXECROOT_DELETE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x06\x12#\n\x18\x41RGUMENTS_NOT_RECOGNIZED\x10\n\x1a\x05\xb2\x43\x02\x08\x02\"\xb1\x01\n\rConfigCommand\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.ConfigCommand.Code\"m\n\x04\x43ode\x12!\n\x16\x43ONFIG_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13TOO_MANY_CONFIG_IDS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17\x43ONFIGURATION_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xbb\x04\n\x11\x43onfigurableQuery\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.ConfigurableQuery.Code\"\xee\x03\n\x04\x43ode\x12%\n\x1a\x43ONFIGURABLE_QUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x45XPRESSION_PARSE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x46ILTERS_NOT_SUPPORTED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12,\n!BUILDFILES_FUNCTION_NOT_SUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1fSIBLINGS_FUNCTION_NOT_SUPPORTED\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eVISIBLE_FUNCTION_NOT_SUPPORTED\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x41TTRIBUTE_MISSING\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1fINCORRECT_CONFIG_ARGUMENT_ERROR\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x19\n\x0eTARGET_MISSING\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15STARLARK_SYNTAX_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13STARLARK_EVAL_ERROR\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x46ORMAT_FUNCTION_ERROR\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\"\xa9\x02\n\x0b\x44umpCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.DumpCommand.Code\"\xe8\x01\n\x04\x43ode\x12\x1f\n\x14\x44UMP_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13NO_OUTPUT_SPECIFIED\x10\x01\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18\x41\x43TION_CACHE_DUMP_FAILED\x10\x02\x1a\x05\xb2\x43\x02\x08\x07\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18\x41\x43TION_GRAPH_DUMP_FAILED\x10\x04\x1a\x05\xb2\x43\x02\x08\x07\x12$\n\x19STARLARK_HEAP_DUMP_FAILED\x10\x05\x1a\x05\xb2\x43\x02\x08\x08\"\x04\x08\x06\x10\x06\"\xa2\x01\n\x0bHelpCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.HelpCommand.Code\"b\n\x04\x43ode\x12\x1f\n\x14HELP_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MISSING_ARGUMENT\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x43OMMAND_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xb1\x02\n\rMobileInstall\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.MobileInstall.Code\"\xec\x01\n\x04\x43ode\x12!\n\x16MOBILE_INSTALL_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13\x43LASSIC_UNSUPPORTED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13NO_TARGET_SPECIFIED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aMULTIPLE_TARGETS_SPECIFIED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13TARGET_TYPE_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x06\x12\x18\n\rNON_ZERO_EXIT\x10\x05\x1a\x05\xb2\x43\x02\x08\x06\x12 \n\x15\x45RROR_RUNNING_PROGRAM\x10\x06\x1a\x05\xb2\x43\x02\x08\x06\"\xb8\x01\n\x0eProfileCommand\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.ProfileCommand.Code\"r\n\x04\x43ode\x12\"\n\x17PROFILE_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12(\n\x1dOLD_BINARY_FORMAT_UNSUPPORTED\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x46ILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xc6\x05\n\nRunCommand\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.RunCommand.Code\"\x87\x05\n\x04\x43ode\x12\x1e\n\x13RUN_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13NO_TARGET_SPECIFIED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aTOO_MANY_TARGETS_SPECIFIED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15TARGET_NOT_EXECUTABLE\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12/\n$TARGET_BUILT_BUT_PATH_NOT_EXECUTABLE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x32\n\'TARGET_BUILT_BUT_PATH_VALIDATION_FAILED\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aRUN_UNDER_TARGET_NOT_BUILT\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10RUN_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cTOO_MANY_TEST_SHARDS_OR_RUNS\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eTEST_ENVIRONMENT_SETUP_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08$\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08$\x12\x1d\n\x12NO_SHELL_SPECIFIED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1f\n\x14SCRIPT_WRITE_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x06\x12\x30\n%RUNFILES_DIRECTORIES_CREATION_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12-\n\"RUNFILES_SYMLINKS_CREATION_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12-\n\"TEST_ENVIRONMENT_SETUP_INTERRUPTED\x10\x0f\x1a\x05\xb2\x43\x02\x08\x08\"\x8a\x01\n\x0eVersionCommand\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.VersionCommand.Code\"D\n\x04\x43ode\x12\"\n\x17VERSION_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNOT_AVAILABLE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x88\x02\n\x12PrintActionCommand\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.PrintActionCommand.Code\"\xb9\x01\n\x04\x43ode\x12\'\n\x1cPRINT_ACTION_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10TARGET_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17TARGET_KIND_UNSUPPORTED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x41\x43TIONS_NOT_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\"\xc8\x02\n\x0fWorkspaceStatus\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.WorkspaceStatus.Code\"\xff\x01\n\x04\x43ode\x12#\n\x18WORKSPACE_STATUS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNON_ZERO_EXIT\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x41\x42NORMAL_TERMINATION\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0b\x45XEC_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rPARSE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x1d\n\x12VALIDATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x43ONTENT_UPDATE_IO_EXCEPTION\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13STDERR_IO_EXCEPTION\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\"\x94\x02\n\x0bJavaCompile\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.JavaCompile.Code\"\xd3\x01\n\x04\x43ode\x12\x1f\n\x14JAVA_COMPILE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19REDUCED_CLASSPATH_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17JDEPS_READ_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12\x35\n*REDUCED_CLASSPATH_FALLBACK_CLEANUP_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\xba\x01\n\x0f\x41\x63tionRewinding\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.ActionRewinding.Code\"r\n\x04\x43ode\x12#\n\x18\x41\x43TION_REWINDING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19LOST_INPUT_TOO_MANY_TIMES\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14LOST_INPUT_IS_SOURCE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\x8d\x04\n\nCppCompile\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.CppCompile.Code\"\xce\x03\n\x04\x43ode\x12\x1e\n\x13\x43PP_COMPILE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1e\x46IND_USED_HEADERS_IO_EXCEPTION\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\x1f\n\x14\x43OPY_OUT_ERR_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12\x1e\n\x13\x44_FILE_READ_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x43OMMAND_GENERATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18MODULE_EXPANSION_TIMEOUT\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eINCLUDE_PATH_OUTSIDE_EXEC_ROOT\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x46\x41KE_COMMAND_GENERATION_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15UNDECLARED_INCLUSIONS\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x44_FILE_PARSE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x43OVERAGE_NOTES_CREATION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dMODULE_EXPANSION_MISSING_DATA\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\"\xc9\x01\n\x0eStarlarkAction\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.StarlarkAction.Code\"\x82\x01\n\x04\x43ode\x12\"\n\x17STARLARK_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1eUNUSED_INPUT_LIST_READ_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12+\n UNUSED_INPUT_LIST_FILE_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xb8\x01\n\x0bNinjaAction\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.NinjaAction.Code\"x\n\x04\x43ode\x12\x1f\n\x14NINJA_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12.\n#INVALID_DEPFILE_DECLARED_DEPENDENCY\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\x1f\n\x14\x44_FILE_PARSE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\"\xff\x01\n\x10\x44ynamicExecution\x12\x34\n\x04\x63ode\x18\x01 \x01(\x0e\x32&.failure_details.DynamicExecution.Code\"\xb4\x01\n\x04\x43ode\x12$\n\x19\x44YNAMIC_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1aXCODE_RELATED_PREREQ_UNMET\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\"\n\x17\x41\x43TION_LOG_MOVE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bRUN_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NO_USABLE_STRATEGY_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\"\x92\x03\n\nFailAction\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.FailAction.Code\"\xd3\x02\n\x04\x43ode\x12\x1e\n\x13\x46\x41IL_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13INTENTIONAL_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18INCORRECT_PYTHON_VERSION\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16PROGUARD_SPECS_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1d\x44YNAMIC_LINKING_NOT_SUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14SOURCE_FILES_MISSING\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13INCORRECT_TOOLCHAIN\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16\x46RAGMENT_CLASS_MISSING\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43\x41NT_BUILD_INCOMPATIBLE_TARGET\x10\n\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x08\x10\x08\"\x04\x08\t\x10\t\"\xb3\x02\n\rSymlinkAction\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.SymlinkAction.Code\"\xee\x01\n\x04\x43ode\x12!\n\x16SYMLINK_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19\x45XECUTABLE_INPUT_NOT_FILE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17\x45XECUTABLE_INPUT_IS_NOT\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#EXECUTABLE_INPUT_CHECK_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aLINK_CREATION_IO_EXCEPTION\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17LINK_TOUCH_IO_EXCEPTION\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\"\xae\x01\n\x07\x43ppLink\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.CppLink.Code\"v\n\x04\x43ode\x12\x1b\n\x10\x43PP_LINK_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1a\x43OMMAND_GENERATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x46\x41KE_COMMAND_GENERATION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xd7\x01\n\tLtoAction\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.LtoAction.Code\"\x9a\x01\n\x04\x43ode\x12\x1d\n\x12LTO_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12+\n INVALID_ABSOLUTE_PATH_IN_IMPORTS\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15MISSING_BITCODE_FILES\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19IMPORTS_READ_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\"\x96\x02\n\nTestAction\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.TestAction.Code\"\xd7\x01\n\x04\x43ode\x12\x1e\n\x13TEST_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1aNO_KEEP_GOING_TEST_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17LOCAL_TEST_PREREQ_UNMET\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x44UPLICATE_CPU_TAGS\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fINVALID_CPU_TAG\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\"\xf1\x03\n\x06Worker\x12*\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1c.failure_details.Worker.Code\"\xba\x03\n\x04\x43ode\x12\x19\n\x0eWORKER_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12/\n$MULTIPLEXER_INSTANCE_REMOVAL_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aMULTIPLEXER_DOES_NOT_EXIST\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x13\n\x08NO_TOOLS\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bNO_FLAGFILE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%VIRTUAL_INPUT_MATERIALIZATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x42ORROW_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10PREFETCH_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0fPREPARE_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fREQUEST_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16PARSE_RESPONSE_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bNO_RESPONSE\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x46INISH_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x46ORBIDDEN_INPUT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\"\x8e\x06\n\x08\x41nalysis\x12,\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1e.failure_details.Analysis.Code\"\xd3\x05\n\x04\x43ode\x12\x1b\n\x10\x41NALYSIS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x17\n\x0cLOAD_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dGENERIC_LOADING_PHASE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NOT_ALL_TARGETS_ANALYZED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x31\n&PARAMETERIZED_TOP_LEVEL_ASPECT_INVALID\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19\x41SPECT_LABEL_SYNTAX_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13\x41SPECT_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10\x41SPECT_NOT_FOUND\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x41\x43TION_CONFLICT\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x41RTIFACT_PREFIX_CONFLICT\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dUNEXPECTED_ANALYSIS_EXCEPTION\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cTARGETS_MISSING_ENVIRONMENTS\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13INVALID_ENVIRONMENT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x45NVIRONMENT_MISSING_FROM_GROUPS\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x45XEC_GROUP_MISSING\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aINVALID_EXECUTION_PLATFORM\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16\x41SPECT_CREATION_FAILED\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12+\n CONFIGURED_VALUE_CREATION_FAILED\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dINCOMPATIBLE_TARGET_REQUESTED\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\"\xb8\t\n\x0ePackageLoading\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.PackageLoading.Code\"\xf1\x08\n\x04\x43ode\x12\"\n\x17PACKAGE_LOADING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14WORKSPACE_FILE_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eMAX_COMPUTATION_STEPS_EXCEEDED\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x42UILD_FILE_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12REPOSITORY_MISSING\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(PERSISTENT_INCONSISTENT_FILESYSTEM_ERROR\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'TRANSIENT_INCONSISTENT_FILESYSTEM_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x17\n\x0cINVALID_NAME\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x45VAL_GLOBS_SYMLINK_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aIMPORT_STARLARK_FILE_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fPACKAGE_MISSING\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0eTARGET_MISSING\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rNO_SUCH_THING\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11GLOB_IO_EXCEPTION\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0f\x44UPLICATE_LABEL\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dINVALID_PACKAGE_SPECIFICATION\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12\x17\n\x0cSYNTAX_ERROR\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12+\n ENVIRONMENT_IN_DIFFERENT_PACKAGE\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x44\x45\x46\x41ULT_ENVIRONMENT_UNDECLARED\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x45NVIRONMENT_IN_MULTIPLE_GROUPS\x10\x14\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x45NVIRONMENT_DOES_NOT_EXIST\x10\x15\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13\x45NVIRONMENT_INVALID\x10\x16\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x45NVIRONMENT_NOT_IN_GROUP\x10\x17\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_NAME_INVALID\x10\x18\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13STARLARK_EVAL_ERROR\x10\x19\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15LICENSE_PARSE_FAILURE\x10\x1a\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x44ISTRIBUTIONS_PARSE_FAILURE\x10\x1b\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eLABEL_CROSSES_PACKAGE_BOUNDARY\x10\x1c\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x42UILTINS_INJECTION_FAILURE\x10\x1d\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#SYMLINK_CYCLE_OR_INFINITE_EXPANSION\x10\x1e\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12OTHER_IO_EXCEPTION\x10\x1f\x1a\x05\xb2\x43\x02\x08$\"\x04\x08\x08\x10\x08\"\xd4\x02\n\tToolchain\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.Toolchain.Code\"\x97\x02\n\x04\x43ode\x12\x1c\n\x11TOOLCHAIN_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MISSING_PROVIDER\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18INVALID_CONSTRAINT_VALUE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16INVALID_PLATFORM_VALUE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11INVALID_TOOLCHAIN\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eNO_MATCHING_EXECUTION_PLATFORM\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15NO_MATCHING_TOOLCHAIN\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16INVALID_TOOLCHAIN_TYPE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\"\xf1\x02\n\x0fStarlarkLoading\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.StarlarkLoading.Code\"\xa8\x02\n\x04\x43ode\x12#\n\x18STARLARK_LOADING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x10\n\x05\x43YCLE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rCOMPILE_ERROR\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bPARSE_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x15\n\nEVAL_ERROR\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1c\x43ONTAINING_PACKAGE_NOT_FOUND\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11PACKAGE_NOT_FOUND\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x13\n\x08IO_ERROR\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eLABEL_CROSSES_PACKAGE_BOUNDARY\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x42UILTINS_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08\x01\"\x8a\x02\n\x0c\x45xternalDeps\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.ExternalDeps.Code\"\xc7\x01\n\x04\x43ode\x12 \n\x15\x45XTERNAL_DEPS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MODULE_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x30\x12\x15\n\nBAD_MODULE\x10\x02\x1a\x05\xb2\x43\x02\x08\x30\x12#\n\x18VERSION_RESOLUTION_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x30\x12\x1f\n\x14INVALID_REGISTRY_URL\x10\x04\x1a\x05\xb2\x43\x02\x08\x30\x12#\n\x18\x45RROR_ACCESSING_REGISTRY\x10\x05\x1a\x05\xb2\x43\x02\x08 \"\x8a\x01\n\rDiffAwareness\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.DiffAwareness.Code\"F\n\x04\x43ode\x12!\n\x16\x44IFF_AWARENESS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10\x44IFF_STAT_FAILED\x10\x01\x1a\x05\xb2\x43\x02\x08$:\\\n\x08metadata\x12!.google.protobuf.EnumValueOptions\x18\xb6\x08 \x01(\x0b\x32&.failure_details.FailureDetailMetadataB&\n$com.google.devtools.build.lib.serverb\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_descriptor__pb2.DESCRIPTOR,])
 
@@ -48,83 +47,100 @@ metadata = _descriptor.FieldDescriptor(
   has_default_value=False, default_value=None,
   message_type=None, enum_type=None, containing_type=None,
   is_extension=True, extension_scope=None,
-  serialized_options=None, file=DESCRIPTOR)
+  serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key)
 
 _INTERRUPTED_CODE = _descriptor.EnumDescriptor(
   name='Code',
   full_name='failure_details.Interrupted.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='INTERRUPTED_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INTERRUPTED', index=1, number=28,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_BUILD', index=2, number=4,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_BUILD_COMPLETION', index=3, number=5,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_PACKAGE_LOADING_SYNC', index=4, number=6,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_EXECUTOR_COMPLETION', index=5, number=7,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_COMMAND_DISPATCH', index=6, number=8,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_INFO_ITEM', index=7, number=9,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_AFTER_QUERY', index=8, number=10,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_FETCH_COMMAND', index=9, number=17,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_SYNC_COMMAND', index=10, number=18,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_CLEAN_COMMAND', index=11, number=20,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_MOBILE_INSTALL_COMMAND', index=12, number=21,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_QUERY', index=13, number=22,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_RUN_COMMAND', index=14, number=23,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_OPTIONS_PARSING', index=15, number=27,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=3646,
-  serialized_end=4255,
+  serialized_start=3770,
+  serialized_end=4379,
 )
 _sym_db.RegisterEnumDescriptor(_INTERRUPTED_CODE)
 
@@ -133,64 +149,83 @@ _SPAWN_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Spawn.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='SPAWN_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NON_ZERO_EXIT', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TIMEOUT', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUT_OF_MEMORY', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECUTION_FAILED', index=4, number=4,
-      serialized_options=_b('\262C\002\010\"'),
-      type=None),
+      serialized_options=b'\262C\002\010\"',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECUTION_DENIED', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REMOTE_CACHE_FAILED', index=6, number=6,
-      serialized_options=_b('\262C\002\010\"'),
-      type=None),
+      serialized_options=b'\262C\002\010\"',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPANSION_FAILURE', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXEC_IO_EXCEPTION', index=8, number=8,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_TIMEOUT', index=9, number=9,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_REMOTE_EXECUTION_PROPERTIES', index=10, number=10,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_USABLE_STRATEGY_FOUND', index=11, number=11,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='UNSPECIFIED_EXECUTION_FAILURE', index=12, number=12,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='FORBIDDEN_INPUT', index=13, number=13,
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=4358,
-  serialized_end=4780,
+  serialized_start=4482,
+  serialized_end=4932,
 )
 _sym_db.RegisterEnumDescriptor(_SPAWN_CODE)
 
@@ -199,20 +234,28 @@ _EXTERNALREPOSITORY_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.ExternalRepository.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='EXTERNAL_REPOSITORY_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OVERRIDE_DISALLOWED_MANAGED_DIRECTORIES', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='BAD_DOWNLOADER_CONFIG', index=2, number=2,
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=4861,
-  serialized_end=4959,
+  serialized_start=5014,
+  serialized_end=5146,
 )
 _sym_db.RegisterEnumDescriptor(_EXTERNALREPOSITORY_CODE)
 
@@ -221,76 +264,98 @@ _BUILDPROGRESS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.BuildProgress.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='BUILD_PROGRESS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUTPUT_INITIALIZATION', index=1, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_RUNS_PER_TEST_LIMIT_UNSUPPORTED', index=2, number=4,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_LOCAL_WRITE_ERROR', index=3, number=5,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_INITIALIZATION_ERROR', index=4, number=6,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_UPLOAD_TIMEOUT_ERROR', index=5, number=7,
-      serialized_options=_b('\262C\002\010&'),
-      type=None),
+      serialized_options=b'\262C\002\010&',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_FILE_WRITE_TIMEOUT', index=6, number=8,
-      serialized_options=_b('\262C\002\010&'),
-      type=None),
+      serialized_options=b'\262C\002\010&',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_FILE_WRITE_IO_ERROR', index=7, number=9,
-      serialized_options=_b('\262C\002\010&'),
-      type=None),
+      serialized_options=b'\262C\002\010&',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_FILE_WRITE_INTERRUPTED', index=8, number=10,
-      serialized_options=_b('\262C\002\010&'),
-      type=None),
+      serialized_options=b'\262C\002\010&',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_FILE_WRITE_CANCELED', index=9, number=11,
-      serialized_options=_b('\262C\002\010&'),
-      type=None),
+      serialized_options=b'\262C\002\010&',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_FILE_WRITE_UNKNOWN_ERROR', index=10, number=12,
-      serialized_options=_b('\262C\002\010&'),
-      type=None),
+      serialized_options=b'\262C\002\010&',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_UPLOAD_LOCAL_FILE_ERROR', index=11, number=13,
-      serialized_options=_b('\262C\002\010&'),
-      type=None),
+      serialized_options=b'\262C\002\010&',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_STREAM_NOT_RETRYING_FAILURE', index=12, number=14,
-      serialized_options=_b('\262C\002\010-'),
-      type=None),
+      serialized_options=b'\262C\002\010-',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_STREAM_COMPLETED_WITH_UNACK_EVENTS_ERROR', index=13, number=15,
-      serialized_options=_b('\262C\002\010-'),
-      type=None),
+      serialized_options=b'\262C\002\010-',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BES_STREAM_COMPLETED_WITH_UNSENT_EVENTS_ERROR', index=14, number=16,
-      serialized_options=_b('\262C\002\010-'),
-      type=None),
+      serialized_options=b'\262C\002\010-',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
-      name='BES_UPLOAD_RETRY_LIMIT_EXCEEDED_FAILURE', index=15, number=17,
-      serialized_options=_b('\262C\002\010&'),
-      type=None),
+      name='BES_STREAM_COMPLETED_WITH_REMOTE_ERROR', index=15, number=19,
+      serialized_options=b'\262C\002\010-',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='BES_UPLOAD_RETRY_LIMIT_EXCEEDED_FAILURE', index=16, number=17,
+      serialized_options=b'\262C\002\010&',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=5031,
-  serialized_end=5712,
+  serialized_start=5218,
+  serialized_end=5956,
 )
 _sym_db.RegisterEnumDescriptor(_BUILDPROGRESS_CODE)
 
@@ -299,36 +364,43 @@ _REMOTEOPTIONS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.RemoteOptions.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='REMOTE_OPTIONS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REMOTE_DEFAULT_EXEC_PROPERTIES_LOGIC_ERROR', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CREDENTIALS_READ_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CREDENTIALS_WRITE_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DOWNLOADER_WITHOUT_GRPC_CACHE', index=4, number=4,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECUTION_WITH_INVALID_CACHE', index=5, number=5,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=5784,
-  serialized_end=6038,
+  serialized_start=6028,
+  serialized_end=6282,
 )
 _sym_db.RegisterEnumDescriptor(_REMOTEOPTIONS_CODE)
 
@@ -337,20 +409,23 @@ _CLIENTENVIRONMENT_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.ClientEnvironment.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='CLIENT_ENVIRONMENT_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CLIENT_CWD_MALFORMED', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=6117,
-  serialized_end=6195,
+  serialized_start=6361,
+  serialized_end=6439,
 )
 _sym_db.RegisterEnumDescriptor(_CLIENTENVIRONMENT_CODE)
 
@@ -359,20 +434,23 @@ _CRASH_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Crash.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='CRASH_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CRASH_OOM', index=1, number=1,
-      serialized_options=_b('\262C\002\010!'),
-      type=None),
+      serialized_options=b'\262C\002\010!',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=6294,
-  serialized_end=6348,
+  serialized_start=6538,
+  serialized_end=6592,
 )
 _sym_db.RegisterEnumDescriptor(_CRASH_CODE)
 
@@ -381,28 +459,33 @@ _SYMLINKFOREST_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.SymlinkForest.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='SYMLINK_FOREST_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TOPLEVEL_OUTDIR_PACKAGE_PATH_CONFLICT', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TOPLEVEL_OUTDIR_USED_AS_SOURCE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CREATION_FAILED', index=3, number=3,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=6496,
-  serialized_end=6658,
+  serialized_start=6740,
+  serialized_end=6902,
 )
 _sym_db.RegisterEnumDescriptor(_SYMLINKFOREST_CODE)
 
@@ -411,20 +494,23 @@ _PACKAGEOPTIONS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.PackageOptions.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_OPTIONS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_PATH_INVALID', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=6731,
-  serialized_end=6818,
+  serialized_start=6975,
+  serialized_end=7062,
 )
 _sym_db.RegisterEnumDescriptor(_PACKAGEOPTIONS_CODE)
 
@@ -433,80 +519,98 @@ _REMOTEEXECUTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.RemoteExecution.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='REMOTE_EXECUTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CAPABILITIES_QUERY_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\"'),
-      type=None),
+      serialized_options=b'\262C\002\010\"',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CREDENTIALS_INIT_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CACHE_INIT_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='RPC_LOG_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXEC_CHANNEL_INIT_FAILURE', index=5, number=5,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CACHE_CHANNEL_INIT_FAILURE', index=6, number=6,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DOWNLOADER_CHANNEL_INIT_FAILURE', index=7, number=7,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LOG_DIR_CLEANUP_FAILURE', index=8, number=8,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CLIENT_SERVER_INCOMPATIBLE', index=9, number=9,
-      serialized_options=_b('\262C\002\010\"'),
-      type=None),
+      serialized_options=b'\262C\002\010\"',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DOWNLOADED_INPUTS_DELETION_FAILURE', index=10, number=10,
-      serialized_options=_b('\262C\002\010\"'),
-      type=None),
+      serialized_options=b'\262C\002\010\"',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_DOTD', index=11, number=11,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_JDEPS', index=12, number=12,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCOMPLETE_OUTPUT_DOWNLOAD_CLEANUP_FAILURE', index=13, number=13,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REMOTE_DEFAULT_PLATFORM_PROPERTIES_PARSE_FAILURE', index=14, number=14,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ILLEGAL_OUTPUT', index=15, number=15,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_EXEC_AND_PLATFORM_PROPERTIES', index=16, number=16,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=6894,
-  serialized_end=7640,
+  serialized_start=7138,
+  serialized_end=7884,
 )
 _sym_db.RegisterEnumDescriptor(_REMOTEEXECUTION_CODE)
 
@@ -515,164 +619,203 @@ _EXECUTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Execution.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='EXECUTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECUTION_LOG_INITIALIZATION_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECUTION_LOG_WRITE_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECROOT_CREATION_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TEMP_ACTION_OUTPUT_DIRECTORY_DELETION_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TEMP_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE', index=5, number=5,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PERSISTENT_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE', index=6, number=6,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LOCAL_OUTPUT_DIRECTORY_SYMLINK_FAILURE', index=7, number=7,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LOCAL_TEMPLATE_EXPANSION_FAILURE', index=8, number=9,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INPUT_DIRECTORY_CHECK_IO_EXCEPTION', index=9, number=10,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXTRA_ACTION_OUTPUT_CREATION_FAILURE', index=10, number=11,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TEST_RUNNER_IO_EXCEPTION', index=11, number=12,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FILE_WRITE_IO_EXCEPTION', index=12, number=13,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TEST_OUT_ERR_IO_EXCEPTION', index=13, number=14,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SYMLINK_TREE_MANIFEST_COPY_IO_EXCEPTION', index=14, number=15,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SYMLINK_TREE_MANIFEST_LINK_IO_EXCEPTION', index=15, number=16,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SYMLINK_TREE_CREATION_IO_EXCEPTION', index=16, number=17,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SYMLINK_TREE_CREATION_COMMAND_EXCEPTION', index=17, number=18,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_INPUT_READ_IO_EXCEPTION', index=18, number=19,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_NOT_UP_TO_DATE', index=19, number=20,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PSEUDO_ACTION_EXECUTION_PROHIBITED', index=20, number=21,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DISCOVERED_INPUT_DOES_NOT_EXIST', index=21, number=22,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_OUTPUTS_DELETION_FAILURE', index=22, number=23,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_OUTPUTS_NOT_CREATED', index=23, number=24,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_FINALIZATION_FAILURE', index=24, number=25,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_INPUT_LOST', index=25, number=26,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FILESYSTEM_CONTEXT_UPDATE_FAILURE', index=26, number=27,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_OUTPUT_CLOSE_FAILURE', index=27, number=28,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INPUT_DISCOVERY_IO_EXCEPTION', index=28, number=29,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TREE_ARTIFACT_DIRECTORY_CREATION_FAILURE', index=29, number=30,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE', index=30, number=31,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_FS_OUTPUT_DIRECTORY_CREATION_FAILURE', index=31, number=32,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_FS_OUT_ERR_DIRECTORY_CREATION_FAILURE', index=32, number=33,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NON_ACTION_EXECUTION_FAILURE', index=33, number=34,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CYCLE', index=34, number=35,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SOURCE_INPUT_MISSING', index=35, number=36,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='UNEXPECTED_EXCEPTION', index=36, number=37,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SOURCE_INPUT_IO_EXCEPTION', index=37, number=39,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=7704,
-  serialized_end=9395,
+  serialized_start=7948,
+  serialized_end=9639,
 )
 _sym_db.RegisterEnumDescriptor(_EXECUTION_CODE)
 
@@ -681,32 +824,38 @@ _WORKSPACES_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Workspaces.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='WORKSPACES_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='WORKSPACES_LOG_INITIALIZATION_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='WORKSPACES_LOG_WRITE_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ILLEGAL_WORKSPACE_FILE_SYMLINK_WITH_MANAGED_DIRECTORIES', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='WORKSPACE_FILE_READ_FAILURE_WITH_MANAGED_DIRECTORIES', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=9461,
-  serialized_end=9722,
+  serialized_start=9705,
+  serialized_end=9966,
 )
 _sym_db.RegisterEnumDescriptor(_WORKSPACES_CODE)
 
@@ -715,16 +864,18 @@ _CRASHOPTIONS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.CrashOptions.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='CRASH_OPTIONS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=9790,
-  serialized_end=9836,
+  serialized_start=10034,
+  serialized_end=10080,
 )
 _sym_db.RegisterEnumDescriptor(_CRASHOPTIONS_CODE)
 
@@ -733,32 +884,38 @@ _FILESYSTEM_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Filesystem.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='FILESYSTEM_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EMBEDDED_BINARIES_ENUMERATION_FAILURE', index=1, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SERVER_PID_TXT_FILE_READ_FAILURE', index=2, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SERVER_FILE_WRITE_FAILURE', index=3, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEFAULT_DIGEST_HASH_FUNCTION_INVALID_VALUE', index=4, number=6,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=9902,
-  serialized_end=10145,
+  serialized_start=10146,
+  serialized_end=10389,
 )
 _sym_db.RegisterEnumDescriptor(_FILESYSTEM_CODE)
 
@@ -767,48 +924,58 @@ _EXECUTIONOPTIONS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.ExecutionOptions.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='EXECUTION_OPTIONS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_STRATEGY', index=1, number=3,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REQUESTED_STRATEGY_INCOMPATIBLE_WITH_SANDBOXING', index=2, number=4,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_LOCAL_RESOURCES_USED', index=3, number=5,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_CYCLIC_DYNAMIC_STRATEGY', index=4, number=6,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='RESTRICTION_UNMATCHED_TO_ACTION_CONTEXT', index=5, number=7,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REMOTE_FALLBACK_STRATEGY_NOT_ABSTRACT_SPAWN', index=6, number=8,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STRATEGY_NOT_FOUND', index=7, number=9,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DYNAMIC_STRATEGY_NOT_SANDBOXED', index=8, number=10,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=10223,
-  serialized_end=10638,
+  serialized_start=10467,
+  serialized_end=10882,
 )
 _sym_db.RegisterEnumDescriptor(_EXECUTIONOPTIONS_CODE)
 
@@ -817,72 +984,88 @@ _COMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Command.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='COMMAND_FAILURE_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_NOT_FOUND', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ANOTHER_COMMAND_RUNNING', index=2, number=2,
-      serialized_options=_b('\262C\002\010\t'),
-      type=None),
+      serialized_options=b'\262C\002\010\t',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PREVIOUSLY_SHUTDOWN', index=3, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STARLARK_CPU_PROFILE_FILE_INITIALIZATION_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STARLARK_CPU_PROFILING_INITIALIZATION_FAILURE', index=5, number=5,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STARLARK_CPU_PROFILE_FILE_WRITE_FAILURE', index=6, number=6,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVOCATION_POLICY_PARSE_FAILURE', index=7, number=7,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVOCATION_POLICY_INVALID', index=8, number=8,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OPTIONS_PARSE_FAILURE', index=9, number=9,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STARLARK_OPTIONS_PARSE_FAILURE', index=10, number=10,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ARGUMENTS_NOT_RECOGNIZED', index=11, number=11,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NOT_IN_WORKSPACE', index=12, number=12,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SPACES_IN_WORKSPACE_PATH', index=13, number=13,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='IN_OUTPUT_DIRECTORY', index=14, number=14,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=10698,
-  serialized_end=11303,
+  serialized_start=10942,
+  serialized_end=11547,
 )
 _sym_db.RegisterEnumDescriptor(_COMMAND_CODE)
 
@@ -891,32 +1074,38 @@ _GRPCSERVER_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.GrpcServer.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='GRPC_SERVER_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='GRPC_SERVER_NOT_COMPILED_IN', index=1, number=1,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SERVER_BIND_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BAD_COOKIE', index=3, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_CLIENT_DESCRIPTION', index=4, number=4,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=11369,
-  serialized_end=11542,
+  serialized_start=11613,
+  serialized_end=11786,
 )
 _sym_db.RegisterEnumDescriptor(_GRPCSERVER_CODE)
 
@@ -925,20 +1114,23 @@ _CANONICALIZEFLAGS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.CanonicalizeFlags.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='CANONICALIZE_FLAGS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FOR_COMMAND_INVALID', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=11621,
-  serialized_end=11698,
+  serialized_start=11865,
+  serialized_end=11942,
 )
 _sym_db.RegisterEnumDescriptor(_CANONICALIZEFLAGS_CODE)
 
@@ -947,60 +1139,73 @@ _BUILDCONFIGURATION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.BuildConfiguration.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='BUILD_CONFIGURATION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PLATFORM_MAPPING_EVALUATION_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PLATFORM_MAPPINGS_FILE_IS_DIRECTORY', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PLATFORM_MAPPINGS_FILE_NOT_FOUND', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TOP_LEVEL_CONFIGURATION_CREATION_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_CONFIGURATION', index=5, number=5,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_BUILD_OPTIONS', index=6, number=6,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MULTI_CPU_PREREQ_UNMET', index=7, number=7,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='HEURISTIC_INSTRUMENTATION_FILTER_INVALID', index=8, number=8,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CYCLE', index=9, number=9,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CONFLICTING_CONFIGURATIONS', index=10, number=10,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_OUTPUT_DIRECTORY_MNEMONIC', index=11, number=11,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=11780,
-  serialized_end=12279,
+  serialized_start=12024,
+  serialized_end=12523,
 )
 _sym_db.RegisterEnumDescriptor(_BUILDCONFIGURATION_CODE)
 
@@ -1009,32 +1214,38 @@ _INFOCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.InfoCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='INFO_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TOO_MANY_KEYS', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='KEY_NOT_RECOGNIZED', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INFO_BLOCK_WRITE_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ALL_INFO_WRITE_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=12347,
-  serialized_end=12515,
+  serialized_start=12591,
+  serialized_end=12759,
 )
 _sym_db.RegisterEnumDescriptor(_INFOCOMMAND_CODE)
 
@@ -1043,24 +1254,28 @@ _MEMORYOPTIONS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.MemoryOptions.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='MEMORY_OPTIONS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXPERIMENTAL_OOM_MORE_EAGERLY_THRESHOLD_INVALID_VALUE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXPERIMENTAL_OOM_MORE_EAGERLY_NO_TENURED_COLLECTORS_FOUND', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=12587,
-  serialized_end=12764,
+  serialized_start=12831,
+  serialized_end=13008,
 )
 _sym_db.RegisterEnumDescriptor(_MEMORYOPTIONS_CODE)
 
@@ -1069,152 +1284,188 @@ _QUERY_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Query.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='QUERY_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='QUERY_FILE_WITH_COMMAND_LINE_EXPRESSION', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='QUERY_FILE_READ_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPRESSION_MISSING', index=3, number=3,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUTPUT_FORMAT_INVALID', index=4, number=4,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='GRAPHLESS_PREREQ_UNMET', index=5, number=5,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='QUERY_OUTPUT_WRITE_FAILURE', index=6, number=6,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='QUERY_STDOUT_FLUSH_FAILURE', index=7, number=13,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ANALYSIS_QUERY_PREREQ_UNMET', index=8, number=14,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='QUERY_RESULTS_FLUSH_FAILURE', index=9, number=15,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_UNCLOSED_QUOTATION_EXPRESSION_ERROR', index=10, number=16,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='VARIABLE_NAME_INVALID', index=11, number=17,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='VARIABLE_UNDEFINED', index=12, number=18,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BUILDFILES_AND_LOADFILES_CANNOT_USE_OUTPUT_LOCATION_ERROR', index=13, number=19,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BUILD_FILE_ERROR', index=14, number=20,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CYCLE', index=15, number=21,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='UNIQUE_SKYKEY_THRESHOLD_EXCEEDED', index=16, number=22,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_NOT_IN_UNIVERSE_SCOPE', index=17, number=23,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_FULL_UNIVERSE_EXPRESSION', index=18, number=24,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='UNIVERSE_SCOPE_LIMIT_EXCEEDED', index=19, number=25,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALIDATION_LIMIT_EXCEEDED', index=20, number=26,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUTPUT_FORMAT_PREREQ_UNMET', index=21, number=27,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ARGUMENTS_MISSING', index=22, number=28,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='RBUILDFILES_FUNCTION_REQUIRES_SKYQUERY', index=23, number=29,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FULL_TARGETS_NOT_SUPPORTED', index=24, number=30,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_UNEXPECTED_TOKEN_ERROR', index=25, number=31,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_INTEGER_LITERAL_MISSING', index=26, number=32,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_INVALID_STARTING_CHARACTER_ERROR', index=27, number=33,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPRECATED_PREMATURE_END_OF_INPUT_ERROR', index=28, number=34,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SYNTAX_ERROR', index=29, number=35,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUTPUT_FORMATTER_IO_EXCEPTION', index=30, number=36,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SKYQUERY_TRANSITIVE_TARGET_ERROR', index=31, number=37,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SKYQUERY_TARGET_EXCEPTION', index=32, number=38,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_LABEL_IN_TEST_SUITE', index=33, number=39,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ILLEGAL_FLAG_COMBINATION', index=34, number=40,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=12820,
-  serialized_end=14258,
+  serialized_start=13064,
+  serialized_end=14502,
 )
 _sym_db.RegisterEnumDescriptor(_QUERY_CODE)
 
@@ -1223,20 +1474,23 @@ _LOCALEXECUTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.LocalExecution.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='LOCAL_EXECUTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LOCKFREE_OUTPUT_PREREQ_UNMET', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=14331,
-  serialized_end=14414,
+  serialized_start=14575,
+  serialized_end=14658,
 )
 _sym_db.RegisterEnumDescriptor(_LOCALEXECUTION_CODE)
 
@@ -1245,20 +1499,23 @@ _ACTIONCACHE_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.ActionCache.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='ACTION_CACHE_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INITIALIZATION_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=14481,
-  serialized_end=14555,
+  serialized_start=14725,
+  serialized_end=14799,
 )
 _sym_db.RegisterEnumDescriptor(_ACTIONCACHE_CODE)
 
@@ -1267,32 +1524,38 @@ _FETCHCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.FetchCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='FETCH_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXPRESSION_MISSING', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OPTIONS_INVALID', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='QUERY_PARSE_ERROR', index=3, number=3,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='QUERY_EVALUATION_ERROR', index=4, number=4,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=14625,
-  serialized_end=14789,
+  serialized_start=14869,
+  serialized_end=15033,
 )
 _sym_db.RegisterEnumDescriptor(_FETCHCOMMAND_CODE)
 
@@ -1301,32 +1564,38 @@ _SYNCCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.SyncCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='SYNC_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_LOOKUP_ERROR', index=1, number=1,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='WORKSPACE_EVALUATION_ERROR', index=2, number=2,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REPOSITORY_FETCH_ERRORS', index=3, number=3,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REPOSITORY_NAME_INVALID', index=4, number=4,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=14857,
-  serialized_end=15040,
+  serialized_start=15101,
+  serialized_end=15284,
 )
 _sym_db.RegisterEnumDescriptor(_SYNCCOMMAND_CODE)
 
@@ -1335,56 +1604,73 @@ _SANDBOX_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Sandbox.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='SANDBOX_FAILURE_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INITIALIZATION_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECUTION_IO_EXCEPTION', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DOCKER_COMMAND_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_DOCKER_IMAGE', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DOCKER_IMAGE_PREPARATION_FAILURE', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BIND_MOUNT_ANALYSIS_FAILURE', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MOUNT_SOURCE_DOES_NOT_EXIST', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MOUNT_SOURCE_TARGET_TYPE_MISMATCH', index=8, number=8,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MOUNT_TARGET_DOES_NOT_EXIST', index=9, number=9,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SUBPROCESS_START_FAILED', index=10, number=10,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='FORBIDDEN_INPUT', index=11, number=11,
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=15100,
-  serialized_end=15522,
+  serialized_start=15344,
+  serialized_end=15794,
 )
 _sym_db.RegisterEnumDescriptor(_SANDBOX_CODE)
 
@@ -1393,40 +1679,63 @@ _INCLUDESCANNING_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.IncludeScanning.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='INCLUDE_SCANNING_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INITIALIZE_INCLUDE_HINTS_ERROR', index=1, number=1,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SCANNING_IO_EXCEPTION', index=2, number=2,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCLUDE_HINTS_FILE_NOT_IN_PACKAGE', index=3, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCLUDE_HINTS_READ_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ILLEGAL_ABSOLUTE_PATH', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_LOAD_FAILURE', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='USER_PACKAGE_LOAD_FAILURE', index=7, number=7,
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='SYSTEM_PACKAGE_LOAD_FAILURE', index=8, number=8,
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='UNDIFFERENTIATED_PACKAGE_LOAD_FAILURE', index=9, number=9,
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=15598,
-  serialized_end=15870,
+  serialized_start=15938,
+  serialized_end=16338,
 )
 _sym_db.RegisterEnumDescriptor(_INCLUDESCANNING_CODE)
 
@@ -1435,28 +1744,33 @@ _TESTCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.TestCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='TEST_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_TEST_TARGETS', index=1, number=1,
-      serialized_options=_b('\262C\002\010\004'),
-      type=None),
+      serialized_options=b'\262C\002\010\004',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TEST_WITH_NOANALYZE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TESTS_FAILED', index=3, number=3,
-      serialized_options=_b('\262C\002\010\003'),
-      type=None),
+      serialized_options=b'\262C\002\010\003',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=15937,
-  serialized_end=16061,
+  serialized_start=16405,
+  serialized_end=16529,
 )
 _sym_db.RegisterEnumDescriptor(_TESTCOMMAND_CODE)
 
@@ -1465,68 +1779,83 @@ _ACTIONQUERY_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.ActionQuery.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='ACTION_QUERY_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPANSION_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUTPUT_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\006'),
-      type=None),
+      serialized_options=b'\262C\002\010\006',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPRESSION_MISSING', index=3, number=3,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXPRESSION_PARSE_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SKYFRAME_STATE_WITH_COMMAND_LINE_EXPRESSION', index=5, number=5,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_AQUERY_EXPRESSION', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SKYFRAME_STATE_PREREQ_UNMET', index=7, number=7,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='AQUERY_OUTPUT_TOO_BIG', index=8, number=8,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ILLEGAL_PATTERN_SYNTAX', index=9, number=9,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCORRECT_ARGUMENTS', index=10, number=10,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TOP_LEVEL_TARGETS_WITH_SKYFRAME_STATE_NOT_SUPPORTED', index=11, number=11,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SKYFRAME_STATE_AFTER_EXECUTION', index=12, number=12,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LABELS_FUNCTION_NOT_SUPPORTED', index=13, number=13,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=16129,
-  serialized_end=16703,
+  serialized_start=16597,
+  serialized_end=17171,
 )
 _sym_db.RegisterEnumDescriptor(_ACTIONQUERY_CODE)
 
@@ -1535,92 +1864,113 @@ _TARGETPATTERNS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.TargetPatterns.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='TARGET_PATTERNS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_PATTERN_FILE_WITH_COMMAND_LINE_PATTERN', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_PATTERN_FILE_READ_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_PATTERN_PARSE_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_NOT_FOUND', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_FORMAT_INVALID', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ABSOLUTE_TARGET_PATTERN_INVALID', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CANNOT_DETERMINE_TARGET_FROM_FILENAME', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LABEL_SYNTAX_ERROR', index=8, number=8,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_CANNOT_BE_EMPTY_STRING', index=9, number=9,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_PART_CANNOT_END_IN_SLASH', index=10, number=10,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CYCLE', index=11, number=11,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CANNOT_PRELOAD_TARGET', index=12, number=12,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGETS_MISSING', index=13, number=13,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='RECURSIVE_TARGET_PATTERNS_NOT_ALLOWED', index=14, number=14,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='UP_LEVEL_REFERENCES_NOT_ALLOWED', index=15, number=15,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NEGATIVE_TARGET_PATTERN_NOT_ALLOWED', index=16, number=16,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_MUST_BE_A_FILE', index=17, number=17,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEPENDENCY_NOT_FOUND', index=18, number=18,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_NAME_INVALID', index=19, number=19,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=16777,
-  serialized_end=17561,
+  serialized_start=17245,
+  serialized_end=18029,
 )
 _sym_db.RegisterEnumDescriptor(_TARGETPATTERNS_CODE)
 
@@ -1629,56 +1979,68 @@ _CLEANCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.CleanCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='CLEAN_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUTPUT_SERVICE_CLEAN_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\006'),
-      type=None),
+      serialized_options=b'\262C\002\010\006',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_CACHE_CLEAN_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUT_ERR_CLOSE_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUTPUT_BASE_DELETE_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUTPUT_BASE_TEMP_MOVE_FAILURE', index=5, number=5,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ASYNC_OUTPUT_BASE_DELETE_FAILURE', index=6, number=6,
-      serialized_options=_b('\262C\002\010\006'),
-      type=None),
+      serialized_options=b'\262C\002\010\006',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECROOT_DELETE_FAILURE', index=7, number=7,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECROOT_TEMP_MOVE_FAILURE', index=8, number=8,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ASYNC_EXECROOT_DELETE_FAILURE', index=9, number=9,
-      serialized_options=_b('\262C\002\010\006'),
-      type=None),
+      serialized_options=b'\262C\002\010\006',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ARGUMENTS_NOT_RECOGNIZED', index=10, number=10,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=17631,
-  serialized_end=18065,
+  serialized_start=18099,
+  serialized_end=18533,
 )
 _sym_db.RegisterEnumDescriptor(_CLEANCOMMAND_CODE)
 
@@ -1687,24 +2049,28 @@ _CONFIGCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.ConfigCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='CONFIG_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TOO_MANY_CONFIG_IDS', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CONFIGURATION_NOT_FOUND', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=18136,
-  serialized_end=18245,
+  serialized_start=18604,
+  serialized_end=18713,
 )
 _sym_db.RegisterEnumDescriptor(_CONFIGCOMMAND_CODE)
 
@@ -1713,64 +2079,78 @@ _CONFIGURABLEQUERY_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.ConfigurableQuery.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='CONFIGURABLE_QUERY_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPRESSION_MISSING', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXPRESSION_PARSE_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FILTERS_NOT_SUPPORTED', index=3, number=3,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BUILDFILES_FUNCTION_NOT_SUPPORTED', index=4, number=4,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SIBLINGS_FUNCTION_NOT_SUPPORTED', index=5, number=5,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='VISIBLE_FUNCTION_NOT_SUPPORTED', index=6, number=6,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ATTRIBUTE_MISSING', index=7, number=7,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCORRECT_CONFIG_ARGUMENT_ERROR', index=8, number=8,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_MISSING', index=9, number=9,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STARLARK_SYNTAX_ERROR', index=10, number=10,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STARLARK_EVAL_ERROR', index=11, number=11,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FORMAT_FUNCTION_ERROR', index=12, number=12,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=18325,
-  serialized_end=18819,
+  serialized_start=18793,
+  serialized_end=19287,
 )
 _sym_db.RegisterEnumDescriptor(_CONFIGURABLEQUERY_CODE)
 
@@ -1779,36 +2159,43 @@ _DUMPCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.DumpCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='DUMP_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_OUTPUT_SPECIFIED', index=1, number=1,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_CACHE_DUMP_FAILED', index=2, number=2,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPANSION_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_GRAPH_DUMP_FAILED', index=4, number=4,
-      serialized_options=_b('\262C\002\010\007'),
-      type=None),
+      serialized_options=b'\262C\002\010\007',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STARLARK_HEAP_DUMP_FAILED', index=5, number=5,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=18887,
-  serialized_end=19113,
+  serialized_start=19355,
+  serialized_end=19587,
 )
 _sym_db.RegisterEnumDescriptor(_DUMPCOMMAND_CODE)
 
@@ -1817,24 +2204,28 @@ _HELPCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.HelpCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='HELP_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MISSING_ARGUMENT', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_NOT_FOUND', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=19180,
-  serialized_end=19278,
+  serialized_start=19654,
+  serialized_end=19752,
 )
 _sym_db.RegisterEnumDescriptor(_HELPCOMMAND_CODE)
 
@@ -1843,40 +2234,48 @@ _MOBILEINSTALL_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.MobileInstall.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='MOBILE_INSTALL_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CLASSIC_UNSUPPORTED', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_TARGET_SPECIFIED', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MULTIPLE_TARGETS_SPECIFIED', index=3, number=3,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_TYPE_INVALID', index=4, number=4,
-      serialized_options=_b('\262C\002\010\006'),
-      type=None),
+      serialized_options=b'\262C\002\010\006',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NON_ZERO_EXIT', index=5, number=5,
-      serialized_options=_b('\262C\002\010\006'),
-      type=None),
+      serialized_options=b'\262C\002\010\006',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ERROR_RUNNING_PROGRAM', index=6, number=6,
-      serialized_options=_b('\262C\002\010\006'),
-      type=None),
+      serialized_options=b'\262C\002\010\006',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=19350,
-  serialized_end=19586,
+  serialized_start=19824,
+  serialized_end=20060,
 )
 _sym_db.RegisterEnumDescriptor(_MOBILEINSTALL_CODE)
 
@@ -1885,24 +2284,28 @@ _PROFILECOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.ProfileCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='PROFILE_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OLD_BINARY_FORMAT_UNSUPPORTED', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FILE_READ_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=19659,
-  serialized_end=19773,
+  serialized_start=20133,
+  serialized_end=20247,
 )
 _sym_db.RegisterEnumDescriptor(_PROFILECOMMAND_CODE)
 
@@ -1911,76 +2314,93 @@ _RUNCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.RunCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='RUN_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_TARGET_SPECIFIED', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TOO_MANY_TARGETS_SPECIFIED', index=2, number=2,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_NOT_EXECUTABLE', index=3, number=3,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_BUILT_BUT_PATH_NOT_EXECUTABLE', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_BUILT_BUT_PATH_VALIDATION_FAILED', index=5, number=5,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='RUN_UNDER_TARGET_NOT_BUILT', index=6, number=6,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='RUN_PREREQ_UNMET', index=7, number=7,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TOO_MANY_TEST_SHARDS_OR_RUNS', index=8, number=8,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TEST_ENVIRONMENT_SETUP_FAILURE', index=9, number=9,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPANSION_FAILURE', index=10, number=10,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_SHELL_SPECIFIED', index=11, number=11,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SCRIPT_WRITE_FAILURE', index=12, number=12,
-      serialized_options=_b('\262C\002\010\006'),
-      type=None),
+      serialized_options=b'\262C\002\010\006',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='RUNFILES_DIRECTORIES_CREATION_FAILURE', index=13, number=13,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='RUNFILES_SYMLINKS_CREATION_FAILURE', index=14, number=14,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TEST_ENVIRONMENT_SETUP_INTERRUPTED', index=15, number=15,
-      serialized_options=_b('\262C\002\010\010'),
-      type=None),
+      serialized_options=b'\262C\002\010\010',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=19839,
-  serialized_end=20486,
+  serialized_start=20313,
+  serialized_end=20960,
 )
 _sym_db.RegisterEnumDescriptor(_RUNCOMMAND_CODE)
 
@@ -1989,20 +2409,23 @@ _VERSIONCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.VersionCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='VERSION_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NOT_AVAILABLE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\002'),
-      type=None),
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=20559,
-  serialized_end=20627,
+  serialized_start=21033,
+  serialized_end=21101,
 )
 _sym_db.RegisterEnumDescriptor(_VERSIONCOMMAND_CODE)
 
@@ -2011,32 +2434,38 @@ _PRINTACTIONCOMMAND_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.PrintActionCommand.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='PRINT_ACTION_COMMAND_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_NOT_FOUND', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPANSION_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_KIND_UNSUPPORTED', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTIONS_NOT_FOUND', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=20709,
-  serialized_end=20894,
+  serialized_start=21183,
+  serialized_end=21368,
 )
 _sym_db.RegisterEnumDescriptor(_PRINTACTIONCOMMAND_CODE)
 
@@ -2045,44 +2474,53 @@ _WORKSPACESTATUS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.WorkspaceStatus.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='WORKSPACE_STATUS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NON_ZERO_EXIT', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ABNORMAL_TERMINATION', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXEC_FAILED', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PARSE_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='VALIDATION_FAILURE', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CONTENT_UPDATE_IO_EXCEPTION', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STDERR_IO_EXCEPTION', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=20970,
-  serialized_end=21225,
+  serialized_start=21444,
+  serialized_end=21699,
 )
 _sym_db.RegisterEnumDescriptor(_WORKSPACESTATUS_CODE)
 
@@ -2091,32 +2529,38 @@ _JAVACOMPILE_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.JavaCompile.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='JAVA_COMPILE_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REDUCED_CLASSPATH_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPANSION_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='JDEPS_READ_IO_EXCEPTION', index=3, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REDUCED_CLASSPATH_FALLBACK_CLEANUP_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=21293,
-  serialized_end=21504,
+  serialized_start=21767,
+  serialized_end=21978,
 )
 _sym_db.RegisterEnumDescriptor(_JAVACOMPILE_CODE)
 
@@ -2125,24 +2569,28 @@ _ACTIONREWINDING_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.ActionRewinding.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='ACTION_REWINDING_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LOST_INPUT_TOO_MANY_TIMES', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LOST_INPUT_IS_SOURCE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=21579,
-  serialized_end=21693,
+  serialized_start=22053,
+  serialized_end=22167,
 )
 _sym_db.RegisterEnumDescriptor(_ACTIONREWINDING_CODE)
 
@@ -2151,60 +2599,73 @@ _CPPCOMPILE_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.CppCompile.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='CPP_COMPILE_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FIND_USED_HEADERS_IO_EXCEPTION', index=1, number=1,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COPY_OUT_ERR_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='D_FILE_READ_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_GENERATION_FAILURE', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MODULE_EXPANSION_TIMEOUT', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCLUDE_PATH_OUTSIDE_EXEC_ROOT', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FAKE_COMMAND_GENERATION_FAILURE', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='UNDECLARED_INCLUSIONS', index=8, number=8,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='D_FILE_PARSE_FAILURE', index=9, number=9,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COVERAGE_NOTES_CREATION_FAILURE', index=10, number=10,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MODULE_EXPANSION_MISSING_DATA', index=11, number=11,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=21759,
-  serialized_end=22221,
+  serialized_start=22233,
+  serialized_end=22695,
 )
 _sym_db.RegisterEnumDescriptor(_CPPCOMPILE_CODE)
 
@@ -2213,24 +2674,28 @@ _STARLARKACTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.StarlarkAction.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='STARLARK_ACTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='UNUSED_INPUT_LIST_READ_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='UNUSED_INPUT_LIST_FILE_NOT_FOUND', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=22295,
-  serialized_end=22425,
+  serialized_start=22769,
+  serialized_end=22899,
 )
 _sym_db.RegisterEnumDescriptor(_STARLARKACTION_CODE)
 
@@ -2239,24 +2704,28 @@ _NINJAACTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.NinjaAction.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='NINJA_ACTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_DEPFILE_DECLARED_DEPENDENCY', index=1, number=1,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='D_FILE_PARSE_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=22492,
-  serialized_end=22612,
+  serialized_start=22966,
+  serialized_end=23086,
 )
 _sym_db.RegisterEnumDescriptor(_NINJAACTION_CODE)
 
@@ -2265,28 +2734,38 @@ _DYNAMICEXECUTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.DynamicExecution.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='DYNAMIC_EXECUTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='XCODE_RELATED_PREREQ_UNMET', index=1, number=1,
-      serialized_options=_b('\262C\002\010$'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_LOG_MOVE_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='RUN_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='NO_USABLE_STRATEGY_FOUND', index=4, number=4,
+      serialized_options=b'\262C\002\010\002',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=22690,
-  serialized_end=22833,
+  serialized_start=23164,
+  serialized_end=23344,
 )
 _sym_db.RegisterEnumDescriptor(_DYNAMICEXECUTION_CODE)
 
@@ -2295,48 +2774,58 @@ _FAILACTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.FailAction.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='FAIL_ACTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INTENTIONAL_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCORRECT_PYTHON_VERSION', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PROGUARD_SPECS_MISSING', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DYNAMIC_LINKING_NOT_SUPPORTED', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SOURCE_FILES_MISSING', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCORRECT_TOOLCHAIN', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FRAGMENT_CLASS_MISSING', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CANT_BUILD_INCOMPATIBLE_TARGET', index=8, number=10,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=22899,
-  serialized_end=23238,
+  serialized_start=23410,
+  serialized_end=23749,
 )
 _sym_db.RegisterEnumDescriptor(_FAILACTION_CODE)
 
@@ -2345,36 +2834,43 @@ _SYMLINKACTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.SymlinkAction.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='SYMLINK_ACTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECUTABLE_INPUT_NOT_FILE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECUTABLE_INPUT_IS_NOT', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXECUTABLE_INPUT_CHECK_IO_EXCEPTION', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LINK_CREATION_IO_EXCEPTION', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LINK_TOUCH_IO_EXCEPTION', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=23310,
-  serialized_end=23548,
+  serialized_start=23821,
+  serialized_end=24059,
 )
 _sym_db.RegisterEnumDescriptor(_SYMLINKACTION_CODE)
 
@@ -2383,24 +2879,28 @@ _CPPLINK_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.CppLink.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='CPP_LINK_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_GENERATION_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FAKE_COMMAND_GENERATION_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=23607,
-  serialized_end=23725,
+  serialized_start=24118,
+  serialized_end=24236,
 )
 _sym_db.RegisterEnumDescriptor(_CPPLINK_CODE)
 
@@ -2409,28 +2909,33 @@ _LTOACTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.LtoAction.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='LTO_ACTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_ABSOLUTE_PATH_IN_IMPORTS', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MISSING_BITCODE_FILES', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='IMPORTS_READ_IO_EXCEPTION', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=23789,
-  serialized_end=23943,
+  serialized_start=24300,
+  serialized_end=24454,
 )
 _sym_db.RegisterEnumDescriptor(_LTOACTION_CODE)
 
@@ -2439,36 +2944,43 @@ _TESTACTION_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.TestAction.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='TEST_ACTION_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_KEEP_GOING_TEST_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LOCAL_TEST_PREREQ_UNMET', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMMAND_LINE_EXPANSION_FAILURE', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DUPLICATE_CPU_TAGS', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_CPU_TAG', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=24009,
-  serialized_end=24224,
+  serialized_start=24520,
+  serialized_end=24735,
 )
 _sym_db.RegisterEnumDescriptor(_TESTACTION_CODE)
 
@@ -2477,64 +2989,83 @@ _WORKER_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Worker.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='WORKER_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MULTIPLEXER_INSTANCE_REMOVAL_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MULTIPLEXER_DOES_NOT_EXIST', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_TOOLS', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_FLAGFILE', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='VIRTUAL_INPUT_MATERIALIZATION_FAILURE', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BORROW_FAILURE', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PREFETCH_FAILURE', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PREPARE_FAILURE', index=8, number=8,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REQUEST_FAILURE', index=9, number=9,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PARSE_RESPONSE_FAILURE', index=10, number=10,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_RESPONSE', index=11, number=11,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FINISH_FAILURE', index=12, number=12,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='FORBIDDEN_INPUT', index=13, number=13,
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=24282,
-  serialized_end=24696,
+  serialized_start=24793,
+  serialized_end=25235,
 )
 _sym_db.RegisterEnumDescriptor(_WORKER_CODE)
 
@@ -2543,92 +3074,113 @@ _ANALYSIS_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Analysis.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='ANALYSIS_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LOAD_FAILURE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='GENERIC_LOADING_PHASE_FAILURE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NOT_ALL_TARGETS_ANALYZED', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CYCLE', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PARAMETERIZED_TOP_LEVEL_ASPECT_INVALID', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ASPECT_LABEL_SYNTAX_ERROR', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ASPECT_PREREQ_UNMET', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ASPECT_NOT_FOUND', index=8, number=8,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ACTION_CONFLICT', index=9, number=9,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ARTIFACT_PREFIX_CONFLICT', index=10, number=10,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='UNEXPECTED_ANALYSIS_EXCEPTION', index=11, number=11,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGETS_MISSING_ENVIRONMENTS', index=12, number=12,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_ENVIRONMENT', index=13, number=13,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ENVIRONMENT_MISSING_FROM_GROUPS', index=14, number=14,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EXEC_GROUP_MISSING', index=15, number=15,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_EXECUTION_PLATFORM', index=16, number=16,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ASPECT_CREATION_FAILED', index=17, number=17,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CONFIGURED_VALUE_CREATION_FAILED', index=18, number=18,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCOMPATIBLE_TARGET_REQUESTED', index=19, number=19,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=24758,
-  serialized_end=25481,
+  serialized_start=25297,
+  serialized_end=26020,
 )
 _sym_db.RegisterEnumDescriptor(_ANALYSIS_CODE)
 
@@ -2637,128 +3189,168 @@ _PACKAGELOADING_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.PackageLoading.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_LOADING_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='WORKSPACE_FILE_ERROR', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MAX_COMPUTATION_STEPS_EXCEEDED', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BUILD_FILE_MISSING', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REPOSITORY_MISSING', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PERSISTENT_INCONSISTENT_FILESYSTEM_ERROR', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TRANSIENT_INCONSISTENT_FILESYSTEM_ERROR', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_NAME', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EVAL_GLOBS_SYMLINK_ERROR', index=8, number=9,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='IMPORT_STARLARK_FILE_ERROR', index=9, number=10,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_MISSING', index=10, number=11,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TARGET_MISSING', index=11, number=12,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_SUCH_THING', index=12, number=13,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='GLOB_IO_EXCEPTION', index=13, number=14,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DUPLICATE_LABEL', index=14, number=15,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_PACKAGE_SPECIFICATION', index=15, number=16,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SYNTAX_ERROR', index=16, number=17,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ENVIRONMENT_IN_DIFFERENT_PACKAGE', index=17, number=18,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DEFAULT_ENVIRONMENT_UNDECLARED', index=18, number=19,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ENVIRONMENT_IN_MULTIPLE_GROUPS', index=19, number=20,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ENVIRONMENT_DOES_NOT_EXIST', index=20, number=21,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ENVIRONMENT_INVALID', index=21, number=22,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ENVIRONMENT_NOT_IN_GROUP', index=22, number=23,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_NAME_INVALID', index=23, number=24,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='STARLARK_EVAL_ERROR', index=24, number=25,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LICENSE_PARSE_FAILURE', index=25, number=26,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DISTRIBUTIONS_PARSE_FAILURE', index=26, number=27,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LABEL_CROSSES_PACKAGE_BOUNDARY', index=27, number=28,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BUILTINS_INJECTION_FAILURE', index=28, number=29,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='SYMLINK_CYCLE_OR_INFINITE_EXPANSION', index=29, number=30,
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='OTHER_IO_EXCEPTION', index=30, number=31,
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=25555,
-  serialized_end=26613,
+  serialized_start=26094,
+  serialized_end=27231,
 )
 _sym_db.RegisterEnumDescriptor(_PACKAGELOADING_CODE)
 
@@ -2767,44 +3359,53 @@ _TOOLCHAIN_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.Toolchain.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='TOOLCHAIN_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MISSING_PROVIDER', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_CONSTRAINT_VALUE', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_PLATFORM_VALUE', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_TOOLCHAIN', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_MATCHING_EXECUTION_PLATFORM', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_MATCHING_TOOLCHAIN', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INVALID_TOOLCHAIN_TYPE', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=26677,
-  serialized_end=26956,
+  serialized_start=27295,
+  serialized_end=27574,
 )
 _sym_db.RegisterEnumDescriptor(_TOOLCHAIN_CODE)
 
@@ -2813,54 +3414,135 @@ _STARLARKLOADING_CODE = _descriptor.EnumDescriptor(
   full_name='failure_details.StarlarkLoading.Code',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='STARLARK_LOADING_UNKNOWN', index=0, number=0,
-      serialized_options=_b('\262C\002\010%'),
-      type=None),
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CYCLE', index=1, number=1,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='COMPILE_ERROR', index=2, number=2,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PARSE_ERROR', index=3, number=3,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='EVAL_ERROR', index=4, number=4,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CONTAINING_PACKAGE_NOT_FOUND', index=5, number=5,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PACKAGE_NOT_FOUND', index=6, number=6,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='IO_ERROR', index=7, number=7,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LABEL_CROSSES_PACKAGE_BOUNDARY', index=8, number=8,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='BUILTINS_ERROR', index=9, number=9,
-      serialized_options=_b('\262C\002\010\001'),
-      type=None),
+      serialized_options=b'\262C\002\010\001',
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=27032,
-  serialized_end=27328,
+  serialized_start=27650,
+  serialized_end=27946,
 )
 _sym_db.RegisterEnumDescriptor(_STARLARKLOADING_CODE)
+
+_EXTERNALDEPS_CODE = _descriptor.EnumDescriptor(
+  name='Code',
+  full_name='failure_details.ExternalDeps.Code',
+  filename=None,
+  file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='EXTERNAL_DEPS_UNKNOWN', index=0, number=0,
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='MODULE_NOT_FOUND', index=1, number=1,
+      serialized_options=b'\262C\002\0100',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='BAD_MODULE', index=2, number=2,
+      serialized_options=b'\262C\002\0100',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='VERSION_RESOLUTION_ERROR', index=3, number=3,
+      serialized_options=b'\262C\002\0100',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='INVALID_REGISTRY_URL', index=4, number=4,
+      serialized_options=b'\262C\002\0100',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='ERROR_ACCESSING_REGISTRY', index=5, number=5,
+      serialized_options=b'\262C\002\010 ',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=28016,
+  serialized_end=28215,
+)
+_sym_db.RegisterEnumDescriptor(_EXTERNALDEPS_CODE)
+
+_DIFFAWARENESS_CODE = _descriptor.EnumDescriptor(
+  name='Code',
+  full_name='failure_details.DiffAwareness.Code',
+  filename=None,
+  file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='DIFF_AWARENESS_UNKNOWN', index=0, number=0,
+      serialized_options=b'\262C\002\010%',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='DIFF_STAT_FAILED', index=1, number=1,
+      serialized_options=b'\262C\002\010$',
+      type=None,
+      create_key=_descriptor._internal_create_key),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=28286,
+  serialized_end=28356,
+)
+_sym_db.RegisterEnumDescriptor(_DIFFAWARENESS_CODE)
 
 
 _FAILUREDETAILMETADATA = _descriptor.Descriptor(
@@ -2869,6 +3551,7 @@ _FAILUREDETAILMETADATA = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='exit_code', full_name='failure_details.FailureDetailMetadata.exit_code', index=0,
@@ -2876,7 +3559,7 @@ _FAILUREDETAILMETADATA = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2900,420 +3583,435 @@ _FAILUREDETAIL = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='message', full_name='failure_details.FailureDetail.message', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='interrupted', full_name='failure_details.FailureDetail.interrupted', index=1,
       number=101, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='external_repository', full_name='failure_details.FailureDetail.external_repository', index=2,
       number=103, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_progress', full_name='failure_details.FailureDetail.build_progress', index=3,
       number=104, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='remote_options', full_name='failure_details.FailureDetail.remote_options', index=4,
       number=106, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='client_environment', full_name='failure_details.FailureDetail.client_environment', index=5,
       number=107, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='crash', full_name='failure_details.FailureDetail.crash', index=6,
       number=108, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='symlink_forest', full_name='failure_details.FailureDetail.symlink_forest', index=7,
       number=110, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='package_options', full_name='failure_details.FailureDetail.package_options', index=8,
       number=114, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='remote_execution', full_name='failure_details.FailureDetail.remote_execution', index=9,
       number=115, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='execution', full_name='failure_details.FailureDetail.execution', index=10,
       number=116, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='workspaces', full_name='failure_details.FailureDetail.workspaces', index=11,
       number=117, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='crash_options', full_name='failure_details.FailureDetail.crash_options', index=12,
       number=118, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='filesystem', full_name='failure_details.FailureDetail.filesystem', index=13,
       number=119, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='execution_options', full_name='failure_details.FailureDetail.execution_options', index=14,
       number=121, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='command', full_name='failure_details.FailureDetail.command', index=15,
       number=122, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='spawn', full_name='failure_details.FailureDetail.spawn', index=16,
       number=123, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='grpc_server', full_name='failure_details.FailureDetail.grpc_server', index=17,
       number=124, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='canonicalize_flags', full_name='failure_details.FailureDetail.canonicalize_flags', index=18,
       number=125, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_configuration', full_name='failure_details.FailureDetail.build_configuration', index=19,
       number=126, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='info_command', full_name='failure_details.FailureDetail.info_command', index=20,
       number=127, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='memory_options', full_name='failure_details.FailureDetail.memory_options', index=21,
       number=129, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='query', full_name='failure_details.FailureDetail.query', index=22,
       number=130, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='local_execution', full_name='failure_details.FailureDetail.local_execution', index=23,
       number=132, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action_cache', full_name='failure_details.FailureDetail.action_cache', index=24,
       number=134, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='fetch_command', full_name='failure_details.FailureDetail.fetch_command', index=25,
       number=135, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='sync_command', full_name='failure_details.FailureDetail.sync_command', index=26,
       number=136, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='sandbox', full_name='failure_details.FailureDetail.sandbox', index=27,
       number=137, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='include_scanning', full_name='failure_details.FailureDetail.include_scanning', index=28,
       number=139, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_command', full_name='failure_details.FailureDetail.test_command', index=29,
       number=140, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action_query', full_name='failure_details.FailureDetail.action_query', index=30,
       number=141, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='target_patterns', full_name='failure_details.FailureDetail.target_patterns', index=31,
       number=142, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='clean_command', full_name='failure_details.FailureDetail.clean_command', index=32,
       number=144, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='config_command', full_name='failure_details.FailureDetail.config_command', index=33,
       number=145, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configurable_query', full_name='failure_details.FailureDetail.configurable_query', index=34,
       number=146, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='dump_command', full_name='failure_details.FailureDetail.dump_command', index=35,
       number=147, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='help_command', full_name='failure_details.FailureDetail.help_command', index=36,
       number=148, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='mobile_install', full_name='failure_details.FailureDetail.mobile_install', index=37,
       number=150, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='profile_command', full_name='failure_details.FailureDetail.profile_command', index=38,
       number=151, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='run_command', full_name='failure_details.FailureDetail.run_command', index=39,
       number=152, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='version_command', full_name='failure_details.FailureDetail.version_command', index=40,
       number=153, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='print_action_command', full_name='failure_details.FailureDetail.print_action_command', index=41,
       number=154, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='workspace_status', full_name='failure_details.FailureDetail.workspace_status', index=42,
       number=158, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='java_compile', full_name='failure_details.FailureDetail.java_compile', index=43,
       number=159, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action_rewinding', full_name='failure_details.FailureDetail.action_rewinding', index=44,
       number=160, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='cpp_compile', full_name='failure_details.FailureDetail.cpp_compile', index=45,
       number=161, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='starlark_action', full_name='failure_details.FailureDetail.starlark_action', index=46,
       number=162, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='ninja_action', full_name='failure_details.FailureDetail.ninja_action', index=47,
       number=163, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='dynamic_execution', full_name='failure_details.FailureDetail.dynamic_execution', index=48,
       number=164, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='fail_action', full_name='failure_details.FailureDetail.fail_action', index=49,
       number=166, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='symlink_action', full_name='failure_details.FailureDetail.symlink_action', index=50,
       number=167, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='cpp_link', full_name='failure_details.FailureDetail.cpp_link', index=51,
       number=168, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='lto_action', full_name='failure_details.FailureDetail.lto_action', index=52,
       number=169, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_action', full_name='failure_details.FailureDetail.test_action', index=53,
       number=172, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='worker', full_name='failure_details.FailureDetail.worker', index=54,
       number=173, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='analysis', full_name='failure_details.FailureDetail.analysis', index=55,
       number=174, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='package_loading', full_name='failure_details.FailureDetail.package_loading', index=56,
       number=175, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='toolchain', full_name='failure_details.FailureDetail.toolchain', index=57,
       number=177, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='starlark_loading', full_name='failure_details.FailureDetail.starlark_loading', index=58,
       number=179, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='external_deps', full_name='failure_details.FailureDetail.external_deps', index=59,
+      number=181, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='diff_awareness', full_name='failure_details.FailureDetail.diff_awareness', index=60,
+      number=182, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3327,10 +4025,12 @@ _FAILUREDETAIL = _descriptor.Descriptor(
   oneofs=[
     _descriptor.OneofDescriptor(
       name='category', full_name='failure_details.FailureDetail.category',
-      index=0, containing_type=None, fields=[]),
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
   ],
   serialized_start=139,
-  serialized_end=3578,
+  serialized_end=3702,
 )
 
 
@@ -3340,6 +4040,7 @@ _INTERRUPTED = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Interrupted.code', index=0,
@@ -3347,7 +4048,7 @@ _INTERRUPTED = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3361,8 +4062,8 @@ _INTERRUPTED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3581,
-  serialized_end=4255,
+  serialized_start=3705,
+  serialized_end=4379,
 )
 
 
@@ -3372,6 +4073,7 @@ _SPAWN = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Spawn.code', index=0,
@@ -3379,21 +4081,21 @@ _SPAWN = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='catastrophic', full_name='failure_details.Spawn.catastrophic', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='spawn_exit_code', full_name='failure_details.Spawn.spawn_exit_code', index=2,
       number=3, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3407,8 +4109,8 @@ _SPAWN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4258,
-  serialized_end=4780,
+  serialized_start=4382,
+  serialized_end=4932,
 )
 
 
@@ -3418,6 +4120,7 @@ _EXTERNALREPOSITORY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.ExternalRepository.code', index=0,
@@ -3425,7 +4128,7 @@ _EXTERNALREPOSITORY = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3439,8 +4142,8 @@ _EXTERNALREPOSITORY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4783,
-  serialized_end=4959,
+  serialized_start=4935,
+  serialized_end=5146,
 )
 
 
@@ -3450,6 +4153,7 @@ _BUILDPROGRESS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.BuildProgress.code', index=0,
@@ -3457,7 +4161,7 @@ _BUILDPROGRESS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3471,8 +4175,8 @@ _BUILDPROGRESS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4962,
-  serialized_end=5712,
+  serialized_start=5149,
+  serialized_end=5956,
 )
 
 
@@ -3482,6 +4186,7 @@ _REMOTEOPTIONS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.RemoteOptions.code', index=0,
@@ -3489,7 +4194,7 @@ _REMOTEOPTIONS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3503,8 +4208,8 @@ _REMOTEOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5715,
-  serialized_end=6038,
+  serialized_start=5959,
+  serialized_end=6282,
 )
 
 
@@ -3514,6 +4219,7 @@ _CLIENTENVIRONMENT = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.ClientEnvironment.code', index=0,
@@ -3521,7 +4227,7 @@ _CLIENTENVIRONMENT = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3535,8 +4241,8 @@ _CLIENTENVIRONMENT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6041,
-  serialized_end=6195,
+  serialized_start=6285,
+  serialized_end=6439,
 )
 
 
@@ -3546,6 +4252,7 @@ _CRASH = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Crash.code', index=0,
@@ -3553,14 +4260,14 @@ _CRASH = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='causes', full_name='failure_details.Crash.causes', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3574,8 +4281,8 @@ _CRASH = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6198,
-  serialized_end=6348,
+  serialized_start=6442,
+  serialized_end=6592,
 )
 
 
@@ -3585,28 +4292,29 @@ _THROWABLE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='throwable_class', full_name='failure_details.Throwable.throwable_class', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='message', full_name='failure_details.Throwable.message', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='stack_trace', full_name='failure_details.Throwable.stack_trace', index=2,
       number=3, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3619,8 +4327,8 @@ _THROWABLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6350,
-  serialized_end=6424,
+  serialized_start=6594,
+  serialized_end=6668,
 )
 
 
@@ -3630,6 +4338,7 @@ _SYMLINKFOREST = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.SymlinkForest.code', index=0,
@@ -3637,7 +4346,7 @@ _SYMLINKFOREST = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3651,8 +4360,8 @@ _SYMLINKFOREST = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6427,
-  serialized_end=6658,
+  serialized_start=6671,
+  serialized_end=6902,
 )
 
 
@@ -3662,6 +4371,7 @@ _PACKAGEOPTIONS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.PackageOptions.code', index=0,
@@ -3669,7 +4379,7 @@ _PACKAGEOPTIONS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3683,8 +4393,8 @@ _PACKAGEOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6661,
-  serialized_end=6818,
+  serialized_start=6905,
+  serialized_end=7062,
 )
 
 
@@ -3694,6 +4404,7 @@ _REMOTEEXECUTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.RemoteExecution.code', index=0,
@@ -3701,7 +4412,7 @@ _REMOTEEXECUTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3715,8 +4426,8 @@ _REMOTEEXECUTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6821,
-  serialized_end=7640,
+  serialized_start=7065,
+  serialized_end=7884,
 )
 
 
@@ -3726,6 +4437,7 @@ _EXECUTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Execution.code', index=0,
@@ -3733,7 +4445,7 @@ _EXECUTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3747,8 +4459,8 @@ _EXECUTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7643,
-  serialized_end=9395,
+  serialized_start=7887,
+  serialized_end=9639,
 )
 
 
@@ -3758,6 +4470,7 @@ _WORKSPACES = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Workspaces.code', index=0,
@@ -3765,7 +4478,7 @@ _WORKSPACES = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3779,8 +4492,8 @@ _WORKSPACES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9398,
-  serialized_end=9722,
+  serialized_start=9642,
+  serialized_end=9966,
 )
 
 
@@ -3790,6 +4503,7 @@ _CRASHOPTIONS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.CrashOptions.code', index=0,
@@ -3797,7 +4511,7 @@ _CRASHOPTIONS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3811,8 +4525,8 @@ _CRASHOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9724,
-  serialized_end=9836,
+  serialized_start=9968,
+  serialized_end=10080,
 )
 
 
@@ -3822,6 +4536,7 @@ _FILESYSTEM = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Filesystem.code', index=0,
@@ -3829,7 +4544,7 @@ _FILESYSTEM = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3843,8 +4558,8 @@ _FILESYSTEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9839,
-  serialized_end=10145,
+  serialized_start=10083,
+  serialized_end=10389,
 )
 
 
@@ -3854,6 +4569,7 @@ _EXECUTIONOPTIONS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.ExecutionOptions.code', index=0,
@@ -3861,7 +4577,7 @@ _EXECUTIONOPTIONS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3875,8 +4591,8 @@ _EXECUTIONOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10148,
-  serialized_end=10638,
+  serialized_start=10392,
+  serialized_end=10882,
 )
 
 
@@ -3886,6 +4602,7 @@ _COMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Command.code', index=0,
@@ -3893,7 +4610,7 @@ _COMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3907,8 +4624,8 @@ _COMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=10641,
-  serialized_end=11303,
+  serialized_start=10885,
+  serialized_end=11547,
 )
 
 
@@ -3918,6 +4635,7 @@ _GRPCSERVER = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.GrpcServer.code', index=0,
@@ -3925,7 +4643,7 @@ _GRPCSERVER = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3939,8 +4657,8 @@ _GRPCSERVER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11306,
-  serialized_end=11542,
+  serialized_start=11550,
+  serialized_end=11786,
 )
 
 
@@ -3950,6 +4668,7 @@ _CANONICALIZEFLAGS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.CanonicalizeFlags.code', index=0,
@@ -3957,7 +4676,7 @@ _CANONICALIZEFLAGS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3971,8 +4690,8 @@ _CANONICALIZEFLAGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11545,
-  serialized_end=11698,
+  serialized_start=11789,
+  serialized_end=11942,
 )
 
 
@@ -3982,6 +4701,7 @@ _BUILDCONFIGURATION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.BuildConfiguration.code', index=0,
@@ -3989,7 +4709,7 @@ _BUILDCONFIGURATION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4003,8 +4723,8 @@ _BUILDCONFIGURATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=11701,
-  serialized_end=12279,
+  serialized_start=11945,
+  serialized_end=12523,
 )
 
 
@@ -4014,6 +4734,7 @@ _INFOCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.InfoCommand.code', index=0,
@@ -4021,7 +4742,7 @@ _INFOCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4035,8 +4756,8 @@ _INFOCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=12282,
-  serialized_end=12515,
+  serialized_start=12526,
+  serialized_end=12759,
 )
 
 
@@ -4046,6 +4767,7 @@ _MEMORYOPTIONS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.MemoryOptions.code', index=0,
@@ -4053,7 +4775,7 @@ _MEMORYOPTIONS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4067,8 +4789,8 @@ _MEMORYOPTIONS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=12518,
-  serialized_end=12764,
+  serialized_start=12762,
+  serialized_end=13008,
 )
 
 
@@ -4078,6 +4800,7 @@ _QUERY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Query.code', index=0,
@@ -4085,7 +4808,7 @@ _QUERY = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4099,8 +4822,8 @@ _QUERY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=12767,
-  serialized_end=14258,
+  serialized_start=13011,
+  serialized_end=14502,
 )
 
 
@@ -4110,6 +4833,7 @@ _LOCALEXECUTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.LocalExecution.code', index=0,
@@ -4117,7 +4841,7 @@ _LOCALEXECUTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4131,8 +4855,8 @@ _LOCALEXECUTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14261,
-  serialized_end=14414,
+  serialized_start=14505,
+  serialized_end=14658,
 )
 
 
@@ -4142,6 +4866,7 @@ _ACTIONCACHE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.ActionCache.code', index=0,
@@ -4149,7 +4874,7 @@ _ACTIONCACHE = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4163,8 +4888,8 @@ _ACTIONCACHE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14417,
-  serialized_end=14555,
+  serialized_start=14661,
+  serialized_end=14799,
 )
 
 
@@ -4174,6 +4899,7 @@ _FETCHCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.FetchCommand.code', index=0,
@@ -4181,7 +4907,7 @@ _FETCHCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4195,8 +4921,8 @@ _FETCHCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14558,
-  serialized_end=14789,
+  serialized_start=14802,
+  serialized_end=15033,
 )
 
 
@@ -4206,6 +4932,7 @@ _SYNCCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.SyncCommand.code', index=0,
@@ -4213,7 +4940,7 @@ _SYNCCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4227,8 +4954,8 @@ _SYNCCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=14792,
-  serialized_end=15040,
+  serialized_start=15036,
+  serialized_end=15284,
 )
 
 
@@ -4238,6 +4965,7 @@ _SANDBOX = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Sandbox.code', index=0,
@@ -4245,7 +4973,7 @@ _SANDBOX = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4259,8 +4987,8 @@ _SANDBOX = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15043,
-  serialized_end=15522,
+  serialized_start=15287,
+  serialized_end=15794,
 )
 
 
@@ -4270,6 +4998,7 @@ _INCLUDESCANNING = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.IncludeScanning.code', index=0,
@@ -4277,7 +5006,14 @@ _INCLUDESCANNING = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='package_loading_code', full_name='failure_details.IncludeScanning.package_loading_code', index=1,
+      number=2, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4291,8 +5027,8 @@ _INCLUDESCANNING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15525,
-  serialized_end=15870,
+  serialized_start=15797,
+  serialized_end=16338,
 )
 
 
@@ -4302,6 +5038,7 @@ _TESTCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.TestCommand.code', index=0,
@@ -4309,7 +5046,7 @@ _TESTCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4323,8 +5060,8 @@ _TESTCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=15873,
-  serialized_end=16061,
+  serialized_start=16341,
+  serialized_end=16529,
 )
 
 
@@ -4334,6 +5071,7 @@ _ACTIONQUERY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.ActionQuery.code', index=0,
@@ -4341,7 +5079,7 @@ _ACTIONQUERY = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4355,8 +5093,8 @@ _ACTIONQUERY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16064,
-  serialized_end=16703,
+  serialized_start=16532,
+  serialized_end=17171,
 )
 
 
@@ -4366,6 +5104,7 @@ _TARGETPATTERNS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.TargetPatterns.code', index=0,
@@ -4373,7 +5112,7 @@ _TARGETPATTERNS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4387,8 +5126,8 @@ _TARGETPATTERNS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=16706,
-  serialized_end=17561,
+  serialized_start=17174,
+  serialized_end=18029,
 )
 
 
@@ -4398,6 +5137,7 @@ _CLEANCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.CleanCommand.code', index=0,
@@ -4405,7 +5145,7 @@ _CLEANCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4419,8 +5159,8 @@ _CLEANCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=17564,
-  serialized_end=18065,
+  serialized_start=18032,
+  serialized_end=18533,
 )
 
 
@@ -4430,6 +5170,7 @@ _CONFIGCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.ConfigCommand.code', index=0,
@@ -4437,7 +5178,7 @@ _CONFIGCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4451,8 +5192,8 @@ _CONFIGCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=18068,
-  serialized_end=18245,
+  serialized_start=18536,
+  serialized_end=18713,
 )
 
 
@@ -4462,6 +5203,7 @@ _CONFIGURABLEQUERY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.ConfigurableQuery.code', index=0,
@@ -4469,7 +5211,7 @@ _CONFIGURABLEQUERY = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4483,8 +5225,8 @@ _CONFIGURABLEQUERY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=18248,
-  serialized_end=18819,
+  serialized_start=18716,
+  serialized_end=19287,
 )
 
 
@@ -4494,6 +5236,7 @@ _DUMPCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.DumpCommand.code', index=0,
@@ -4501,7 +5244,7 @@ _DUMPCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4515,8 +5258,8 @@ _DUMPCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=18822,
-  serialized_end=19113,
+  serialized_start=19290,
+  serialized_end=19587,
 )
 
 
@@ -4526,6 +5269,7 @@ _HELPCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.HelpCommand.code', index=0,
@@ -4533,7 +5277,7 @@ _HELPCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4547,8 +5291,8 @@ _HELPCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=19116,
-  serialized_end=19278,
+  serialized_start=19590,
+  serialized_end=19752,
 )
 
 
@@ -4558,6 +5302,7 @@ _MOBILEINSTALL = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.MobileInstall.code', index=0,
@@ -4565,7 +5310,7 @@ _MOBILEINSTALL = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4579,8 +5324,8 @@ _MOBILEINSTALL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=19281,
-  serialized_end=19586,
+  serialized_start=19755,
+  serialized_end=20060,
 )
 
 
@@ -4590,6 +5335,7 @@ _PROFILECOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.ProfileCommand.code', index=0,
@@ -4597,7 +5343,7 @@ _PROFILECOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4611,8 +5357,8 @@ _PROFILECOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=19589,
-  serialized_end=19773,
+  serialized_start=20063,
+  serialized_end=20247,
 )
 
 
@@ -4622,6 +5368,7 @@ _RUNCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.RunCommand.code', index=0,
@@ -4629,7 +5376,7 @@ _RUNCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4643,8 +5390,8 @@ _RUNCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=19776,
-  serialized_end=20486,
+  serialized_start=20250,
+  serialized_end=20960,
 )
 
 
@@ -4654,6 +5401,7 @@ _VERSIONCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.VersionCommand.code', index=0,
@@ -4661,7 +5409,7 @@ _VERSIONCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4675,8 +5423,8 @@ _VERSIONCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20489,
-  serialized_end=20627,
+  serialized_start=20963,
+  serialized_end=21101,
 )
 
 
@@ -4686,6 +5434,7 @@ _PRINTACTIONCOMMAND = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.PrintActionCommand.code', index=0,
@@ -4693,7 +5442,7 @@ _PRINTACTIONCOMMAND = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4707,8 +5456,8 @@ _PRINTACTIONCOMMAND = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20630,
-  serialized_end=20894,
+  serialized_start=21104,
+  serialized_end=21368,
 )
 
 
@@ -4718,6 +5467,7 @@ _WORKSPACESTATUS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.WorkspaceStatus.code', index=0,
@@ -4725,7 +5475,7 @@ _WORKSPACESTATUS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4739,8 +5489,8 @@ _WORKSPACESTATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=20897,
-  serialized_end=21225,
+  serialized_start=21371,
+  serialized_end=21699,
 )
 
 
@@ -4750,6 +5500,7 @@ _JAVACOMPILE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.JavaCompile.code', index=0,
@@ -4757,7 +5508,7 @@ _JAVACOMPILE = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4771,8 +5522,8 @@ _JAVACOMPILE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21228,
-  serialized_end=21504,
+  serialized_start=21702,
+  serialized_end=21978,
 )
 
 
@@ -4782,6 +5533,7 @@ _ACTIONREWINDING = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.ActionRewinding.code', index=0,
@@ -4789,7 +5541,7 @@ _ACTIONREWINDING = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4803,8 +5555,8 @@ _ACTIONREWINDING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21507,
-  serialized_end=21693,
+  serialized_start=21981,
+  serialized_end=22167,
 )
 
 
@@ -4814,6 +5566,7 @@ _CPPCOMPILE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.CppCompile.code', index=0,
@@ -4821,7 +5574,7 @@ _CPPCOMPILE = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4835,8 +5588,8 @@ _CPPCOMPILE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=21696,
-  serialized_end=22221,
+  serialized_start=22170,
+  serialized_end=22695,
 )
 
 
@@ -4846,6 +5599,7 @@ _STARLARKACTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.StarlarkAction.code', index=0,
@@ -4853,7 +5607,7 @@ _STARLARKACTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4867,8 +5621,8 @@ _STARLARKACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22224,
-  serialized_end=22425,
+  serialized_start=22698,
+  serialized_end=22899,
 )
 
 
@@ -4878,6 +5632,7 @@ _NINJAACTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.NinjaAction.code', index=0,
@@ -4885,7 +5640,7 @@ _NINJAACTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4899,8 +5654,8 @@ _NINJAACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22428,
-  serialized_end=22612,
+  serialized_start=22902,
+  serialized_end=23086,
 )
 
 
@@ -4910,6 +5665,7 @@ _DYNAMICEXECUTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.DynamicExecution.code', index=0,
@@ -4917,7 +5673,7 @@ _DYNAMICEXECUTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4931,8 +5687,8 @@ _DYNAMICEXECUTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22615,
-  serialized_end=22833,
+  serialized_start=23089,
+  serialized_end=23344,
 )
 
 
@@ -4942,6 +5698,7 @@ _FAILACTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.FailAction.code', index=0,
@@ -4949,7 +5706,7 @@ _FAILACTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4963,8 +5720,8 @@ _FAILACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=22836,
-  serialized_end=23238,
+  serialized_start=23347,
+  serialized_end=23749,
 )
 
 
@@ -4974,6 +5731,7 @@ _SYMLINKACTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.SymlinkAction.code', index=0,
@@ -4981,7 +5739,7 @@ _SYMLINKACTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -4995,8 +5753,8 @@ _SYMLINKACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23241,
-  serialized_end=23548,
+  serialized_start=23752,
+  serialized_end=24059,
 )
 
 
@@ -5006,6 +5764,7 @@ _CPPLINK = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.CppLink.code', index=0,
@@ -5013,7 +5772,7 @@ _CPPLINK = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -5027,8 +5786,8 @@ _CPPLINK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23551,
-  serialized_end=23725,
+  serialized_start=24062,
+  serialized_end=24236,
 )
 
 
@@ -5038,6 +5797,7 @@ _LTOACTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.LtoAction.code', index=0,
@@ -5045,7 +5805,7 @@ _LTOACTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -5059,8 +5819,8 @@ _LTOACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23728,
-  serialized_end=23943,
+  serialized_start=24239,
+  serialized_end=24454,
 )
 
 
@@ -5070,6 +5830,7 @@ _TESTACTION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.TestAction.code', index=0,
@@ -5077,7 +5838,7 @@ _TESTACTION = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -5091,8 +5852,8 @@ _TESTACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=23946,
-  serialized_end=24224,
+  serialized_start=24457,
+  serialized_end=24735,
 )
 
 
@@ -5102,6 +5863,7 @@ _WORKER = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Worker.code', index=0,
@@ -5109,7 +5871,7 @@ _WORKER = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -5123,8 +5885,8 @@ _WORKER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=24227,
-  serialized_end=24696,
+  serialized_start=24738,
+  serialized_end=25235,
 )
 
 
@@ -5134,6 +5896,7 @@ _ANALYSIS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Analysis.code', index=0,
@@ -5141,7 +5904,7 @@ _ANALYSIS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -5155,8 +5918,8 @@ _ANALYSIS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=24699,
-  serialized_end=25481,
+  serialized_start=25238,
+  serialized_end=26020,
 )
 
 
@@ -5166,6 +5929,7 @@ _PACKAGELOADING = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.PackageLoading.code', index=0,
@@ -5173,7 +5937,7 @@ _PACKAGELOADING = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -5187,8 +5951,8 @@ _PACKAGELOADING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=25484,
-  serialized_end=26613,
+  serialized_start=26023,
+  serialized_end=27231,
 )
 
 
@@ -5198,6 +5962,7 @@ _TOOLCHAIN = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.Toolchain.code', index=0,
@@ -5205,7 +5970,7 @@ _TOOLCHAIN = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -5219,8 +5984,8 @@ _TOOLCHAIN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26616,
-  serialized_end=26956,
+  serialized_start=27234,
+  serialized_end=27574,
 )
 
 
@@ -5230,6 +5995,7 @@ _STARLARKLOADING = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='code', full_name='failure_details.StarlarkLoading.code', index=0,
@@ -5237,7 +6003,7 @@ _STARLARKLOADING = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -5251,8 +6017,74 @@ _STARLARKLOADING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=26959,
-  serialized_end=27328,
+  serialized_start=27577,
+  serialized_end=27946,
+)
+
+
+_EXTERNALDEPS = _descriptor.Descriptor(
+  name='ExternalDeps',
+  full_name='failure_details.ExternalDeps',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='code', full_name='failure_details.ExternalDeps.code', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _EXTERNALDEPS_CODE,
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=27949,
+  serialized_end=28215,
+)
+
+
+_DIFFAWARENESS = _descriptor.Descriptor(
+  name='DiffAwareness',
+  full_name='failure_details.DiffAwareness',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='code', full_name='failure_details.DiffAwareness.code', index=0,
+      number=1, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _DIFFAWARENESS_CODE,
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=28218,
+  serialized_end=28356,
 )
 
 _FAILUREDETAIL.fields_by_name['interrupted'].message_type = _INTERRUPTED
@@ -5313,6 +6145,8 @@ _FAILUREDETAIL.fields_by_name['analysis'].message_type = _ANALYSIS
 _FAILUREDETAIL.fields_by_name['package_loading'].message_type = _PACKAGELOADING
 _FAILUREDETAIL.fields_by_name['toolchain'].message_type = _TOOLCHAIN
 _FAILUREDETAIL.fields_by_name['starlark_loading'].message_type = _STARLARKLOADING
+_FAILUREDETAIL.fields_by_name['external_deps'].message_type = _EXTERNALDEPS
+_FAILUREDETAIL.fields_by_name['diff_awareness'].message_type = _DIFFAWARENESS
 _FAILUREDETAIL.oneofs_by_name['category'].fields.append(
   _FAILUREDETAIL.fields_by_name['interrupted'])
 _FAILUREDETAIL.fields_by_name['interrupted'].containing_oneof = _FAILUREDETAIL.oneofs_by_name['category']
@@ -5487,6 +6321,12 @@ _FAILUREDETAIL.fields_by_name['toolchain'].containing_oneof = _FAILUREDETAIL.one
 _FAILUREDETAIL.oneofs_by_name['category'].fields.append(
   _FAILUREDETAIL.fields_by_name['starlark_loading'])
 _FAILUREDETAIL.fields_by_name['starlark_loading'].containing_oneof = _FAILUREDETAIL.oneofs_by_name['category']
+_FAILUREDETAIL.oneofs_by_name['category'].fields.append(
+  _FAILUREDETAIL.fields_by_name['external_deps'])
+_FAILUREDETAIL.fields_by_name['external_deps'].containing_oneof = _FAILUREDETAIL.oneofs_by_name['category']
+_FAILUREDETAIL.oneofs_by_name['category'].fields.append(
+  _FAILUREDETAIL.fields_by_name['diff_awareness'])
+_FAILUREDETAIL.fields_by_name['diff_awareness'].containing_oneof = _FAILUREDETAIL.oneofs_by_name['category']
 _INTERRUPTED.fields_by_name['code'].enum_type = _INTERRUPTED_CODE
 _INTERRUPTED_CODE.containing_type = _INTERRUPTED
 _SPAWN.fields_by_name['code'].enum_type = _SPAWN_CODE
@@ -5543,6 +6383,7 @@ _SYNCCOMMAND_CODE.containing_type = _SYNCCOMMAND
 _SANDBOX.fields_by_name['code'].enum_type = _SANDBOX_CODE
 _SANDBOX_CODE.containing_type = _SANDBOX
 _INCLUDESCANNING.fields_by_name['code'].enum_type = _INCLUDESCANNING_CODE
+_INCLUDESCANNING.fields_by_name['package_loading_code'].enum_type = _PACKAGELOADING_CODE
 _INCLUDESCANNING_CODE.containing_type = _INCLUDESCANNING
 _TESTCOMMAND.fields_by_name['code'].enum_type = _TESTCOMMAND_CODE
 _TESTCOMMAND_CODE.containing_type = _TESTCOMMAND
@@ -5604,6 +6445,10 @@ _TOOLCHAIN.fields_by_name['code'].enum_type = _TOOLCHAIN_CODE
 _TOOLCHAIN_CODE.containing_type = _TOOLCHAIN
 _STARLARKLOADING.fields_by_name['code'].enum_type = _STARLARKLOADING_CODE
 _STARLARKLOADING_CODE.containing_type = _STARLARKLOADING
+_EXTERNALDEPS.fields_by_name['code'].enum_type = _EXTERNALDEPS_CODE
+_EXTERNALDEPS_CODE.containing_type = _EXTERNALDEPS
+_DIFFAWARENESS.fields_by_name['code'].enum_type = _DIFFAWARENESS_CODE
+_DIFFAWARENESS_CODE.containing_type = _DIFFAWARENESS
 DESCRIPTOR.message_types_by_name['FailureDetailMetadata'] = _FAILUREDETAILMETADATA
 DESCRIPTOR.message_types_by_name['FailureDetail'] = _FAILUREDETAIL
 DESCRIPTOR.message_types_by_name['Interrupted'] = _INTERRUPTED
@@ -5665,435 +6510,451 @@ DESCRIPTOR.message_types_by_name['Analysis'] = _ANALYSIS
 DESCRIPTOR.message_types_by_name['PackageLoading'] = _PACKAGELOADING
 DESCRIPTOR.message_types_by_name['Toolchain'] = _TOOLCHAIN
 DESCRIPTOR.message_types_by_name['StarlarkLoading'] = _STARLARKLOADING
+DESCRIPTOR.message_types_by_name['ExternalDeps'] = _EXTERNALDEPS
+DESCRIPTOR.message_types_by_name['DiffAwareness'] = _DIFFAWARENESS
 DESCRIPTOR.extensions_by_name['metadata'] = metadata
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-FailureDetailMetadata = _reflection.GeneratedProtocolMessageType('FailureDetailMetadata', (_message.Message,), dict(
-  DESCRIPTOR = _FAILUREDETAILMETADATA,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+FailureDetailMetadata = _reflection.GeneratedProtocolMessageType('FailureDetailMetadata', (_message.Message,), {
+  'DESCRIPTOR' : _FAILUREDETAILMETADATA,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.FailureDetailMetadata)
-  ))
+  })
 _sym_db.RegisterMessage(FailureDetailMetadata)
 
-FailureDetail = _reflection.GeneratedProtocolMessageType('FailureDetail', (_message.Message,), dict(
-  DESCRIPTOR = _FAILUREDETAIL,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+FailureDetail = _reflection.GeneratedProtocolMessageType('FailureDetail', (_message.Message,), {
+  'DESCRIPTOR' : _FAILUREDETAIL,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.FailureDetail)
-  ))
+  })
 _sym_db.RegisterMessage(FailureDetail)
 
-Interrupted = _reflection.GeneratedProtocolMessageType('Interrupted', (_message.Message,), dict(
-  DESCRIPTOR = _INTERRUPTED,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Interrupted = _reflection.GeneratedProtocolMessageType('Interrupted', (_message.Message,), {
+  'DESCRIPTOR' : _INTERRUPTED,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Interrupted)
-  ))
+  })
 _sym_db.RegisterMessage(Interrupted)
 
-Spawn = _reflection.GeneratedProtocolMessageType('Spawn', (_message.Message,), dict(
-  DESCRIPTOR = _SPAWN,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Spawn = _reflection.GeneratedProtocolMessageType('Spawn', (_message.Message,), {
+  'DESCRIPTOR' : _SPAWN,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Spawn)
-  ))
+  })
 _sym_db.RegisterMessage(Spawn)
 
-ExternalRepository = _reflection.GeneratedProtocolMessageType('ExternalRepository', (_message.Message,), dict(
-  DESCRIPTOR = _EXTERNALREPOSITORY,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+ExternalRepository = _reflection.GeneratedProtocolMessageType('ExternalRepository', (_message.Message,), {
+  'DESCRIPTOR' : _EXTERNALREPOSITORY,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.ExternalRepository)
-  ))
+  })
 _sym_db.RegisterMessage(ExternalRepository)
 
-BuildProgress = _reflection.GeneratedProtocolMessageType('BuildProgress', (_message.Message,), dict(
-  DESCRIPTOR = _BUILDPROGRESS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+BuildProgress = _reflection.GeneratedProtocolMessageType('BuildProgress', (_message.Message,), {
+  'DESCRIPTOR' : _BUILDPROGRESS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.BuildProgress)
-  ))
+  })
 _sym_db.RegisterMessage(BuildProgress)
 
-RemoteOptions = _reflection.GeneratedProtocolMessageType('RemoteOptions', (_message.Message,), dict(
-  DESCRIPTOR = _REMOTEOPTIONS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+RemoteOptions = _reflection.GeneratedProtocolMessageType('RemoteOptions', (_message.Message,), {
+  'DESCRIPTOR' : _REMOTEOPTIONS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.RemoteOptions)
-  ))
+  })
 _sym_db.RegisterMessage(RemoteOptions)
 
-ClientEnvironment = _reflection.GeneratedProtocolMessageType('ClientEnvironment', (_message.Message,), dict(
-  DESCRIPTOR = _CLIENTENVIRONMENT,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+ClientEnvironment = _reflection.GeneratedProtocolMessageType('ClientEnvironment', (_message.Message,), {
+  'DESCRIPTOR' : _CLIENTENVIRONMENT,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.ClientEnvironment)
-  ))
+  })
 _sym_db.RegisterMessage(ClientEnvironment)
 
-Crash = _reflection.GeneratedProtocolMessageType('Crash', (_message.Message,), dict(
-  DESCRIPTOR = _CRASH,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Crash = _reflection.GeneratedProtocolMessageType('Crash', (_message.Message,), {
+  'DESCRIPTOR' : _CRASH,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Crash)
-  ))
+  })
 _sym_db.RegisterMessage(Crash)
 
-Throwable = _reflection.GeneratedProtocolMessageType('Throwable', (_message.Message,), dict(
-  DESCRIPTOR = _THROWABLE,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Throwable = _reflection.GeneratedProtocolMessageType('Throwable', (_message.Message,), {
+  'DESCRIPTOR' : _THROWABLE,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Throwable)
-  ))
+  })
 _sym_db.RegisterMessage(Throwable)
 
-SymlinkForest = _reflection.GeneratedProtocolMessageType('SymlinkForest', (_message.Message,), dict(
-  DESCRIPTOR = _SYMLINKFOREST,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+SymlinkForest = _reflection.GeneratedProtocolMessageType('SymlinkForest', (_message.Message,), {
+  'DESCRIPTOR' : _SYMLINKFOREST,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.SymlinkForest)
-  ))
+  })
 _sym_db.RegisterMessage(SymlinkForest)
 
-PackageOptions = _reflection.GeneratedProtocolMessageType('PackageOptions', (_message.Message,), dict(
-  DESCRIPTOR = _PACKAGEOPTIONS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+PackageOptions = _reflection.GeneratedProtocolMessageType('PackageOptions', (_message.Message,), {
+  'DESCRIPTOR' : _PACKAGEOPTIONS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.PackageOptions)
-  ))
+  })
 _sym_db.RegisterMessage(PackageOptions)
 
-RemoteExecution = _reflection.GeneratedProtocolMessageType('RemoteExecution', (_message.Message,), dict(
-  DESCRIPTOR = _REMOTEEXECUTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+RemoteExecution = _reflection.GeneratedProtocolMessageType('RemoteExecution', (_message.Message,), {
+  'DESCRIPTOR' : _REMOTEEXECUTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.RemoteExecution)
-  ))
+  })
 _sym_db.RegisterMessage(RemoteExecution)
 
-Execution = _reflection.GeneratedProtocolMessageType('Execution', (_message.Message,), dict(
-  DESCRIPTOR = _EXECUTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Execution = _reflection.GeneratedProtocolMessageType('Execution', (_message.Message,), {
+  'DESCRIPTOR' : _EXECUTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Execution)
-  ))
+  })
 _sym_db.RegisterMessage(Execution)
 
-Workspaces = _reflection.GeneratedProtocolMessageType('Workspaces', (_message.Message,), dict(
-  DESCRIPTOR = _WORKSPACES,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Workspaces = _reflection.GeneratedProtocolMessageType('Workspaces', (_message.Message,), {
+  'DESCRIPTOR' : _WORKSPACES,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Workspaces)
-  ))
+  })
 _sym_db.RegisterMessage(Workspaces)
 
-CrashOptions = _reflection.GeneratedProtocolMessageType('CrashOptions', (_message.Message,), dict(
-  DESCRIPTOR = _CRASHOPTIONS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+CrashOptions = _reflection.GeneratedProtocolMessageType('CrashOptions', (_message.Message,), {
+  'DESCRIPTOR' : _CRASHOPTIONS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.CrashOptions)
-  ))
+  })
 _sym_db.RegisterMessage(CrashOptions)
 
-Filesystem = _reflection.GeneratedProtocolMessageType('Filesystem', (_message.Message,), dict(
-  DESCRIPTOR = _FILESYSTEM,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Filesystem = _reflection.GeneratedProtocolMessageType('Filesystem', (_message.Message,), {
+  'DESCRIPTOR' : _FILESYSTEM,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Filesystem)
-  ))
+  })
 _sym_db.RegisterMessage(Filesystem)
 
-ExecutionOptions = _reflection.GeneratedProtocolMessageType('ExecutionOptions', (_message.Message,), dict(
-  DESCRIPTOR = _EXECUTIONOPTIONS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+ExecutionOptions = _reflection.GeneratedProtocolMessageType('ExecutionOptions', (_message.Message,), {
+  'DESCRIPTOR' : _EXECUTIONOPTIONS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.ExecutionOptions)
-  ))
+  })
 _sym_db.RegisterMessage(ExecutionOptions)
 
-Command = _reflection.GeneratedProtocolMessageType('Command', (_message.Message,), dict(
-  DESCRIPTOR = _COMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Command = _reflection.GeneratedProtocolMessageType('Command', (_message.Message,), {
+  'DESCRIPTOR' : _COMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Command)
-  ))
+  })
 _sym_db.RegisterMessage(Command)
 
-GrpcServer = _reflection.GeneratedProtocolMessageType('GrpcServer', (_message.Message,), dict(
-  DESCRIPTOR = _GRPCSERVER,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+GrpcServer = _reflection.GeneratedProtocolMessageType('GrpcServer', (_message.Message,), {
+  'DESCRIPTOR' : _GRPCSERVER,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.GrpcServer)
-  ))
+  })
 _sym_db.RegisterMessage(GrpcServer)
 
-CanonicalizeFlags = _reflection.GeneratedProtocolMessageType('CanonicalizeFlags', (_message.Message,), dict(
-  DESCRIPTOR = _CANONICALIZEFLAGS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+CanonicalizeFlags = _reflection.GeneratedProtocolMessageType('CanonicalizeFlags', (_message.Message,), {
+  'DESCRIPTOR' : _CANONICALIZEFLAGS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.CanonicalizeFlags)
-  ))
+  })
 _sym_db.RegisterMessage(CanonicalizeFlags)
 
-BuildConfiguration = _reflection.GeneratedProtocolMessageType('BuildConfiguration', (_message.Message,), dict(
-  DESCRIPTOR = _BUILDCONFIGURATION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+BuildConfiguration = _reflection.GeneratedProtocolMessageType('BuildConfiguration', (_message.Message,), {
+  'DESCRIPTOR' : _BUILDCONFIGURATION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.BuildConfiguration)
-  ))
+  })
 _sym_db.RegisterMessage(BuildConfiguration)
 
-InfoCommand = _reflection.GeneratedProtocolMessageType('InfoCommand', (_message.Message,), dict(
-  DESCRIPTOR = _INFOCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+InfoCommand = _reflection.GeneratedProtocolMessageType('InfoCommand', (_message.Message,), {
+  'DESCRIPTOR' : _INFOCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.InfoCommand)
-  ))
+  })
 _sym_db.RegisterMessage(InfoCommand)
 
-MemoryOptions = _reflection.GeneratedProtocolMessageType('MemoryOptions', (_message.Message,), dict(
-  DESCRIPTOR = _MEMORYOPTIONS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+MemoryOptions = _reflection.GeneratedProtocolMessageType('MemoryOptions', (_message.Message,), {
+  'DESCRIPTOR' : _MEMORYOPTIONS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.MemoryOptions)
-  ))
+  })
 _sym_db.RegisterMessage(MemoryOptions)
 
-Query = _reflection.GeneratedProtocolMessageType('Query', (_message.Message,), dict(
-  DESCRIPTOR = _QUERY,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Query = _reflection.GeneratedProtocolMessageType('Query', (_message.Message,), {
+  'DESCRIPTOR' : _QUERY,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Query)
-  ))
+  })
 _sym_db.RegisterMessage(Query)
 
-LocalExecution = _reflection.GeneratedProtocolMessageType('LocalExecution', (_message.Message,), dict(
-  DESCRIPTOR = _LOCALEXECUTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+LocalExecution = _reflection.GeneratedProtocolMessageType('LocalExecution', (_message.Message,), {
+  'DESCRIPTOR' : _LOCALEXECUTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.LocalExecution)
-  ))
+  })
 _sym_db.RegisterMessage(LocalExecution)
 
-ActionCache = _reflection.GeneratedProtocolMessageType('ActionCache', (_message.Message,), dict(
-  DESCRIPTOR = _ACTIONCACHE,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+ActionCache = _reflection.GeneratedProtocolMessageType('ActionCache', (_message.Message,), {
+  'DESCRIPTOR' : _ACTIONCACHE,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.ActionCache)
-  ))
+  })
 _sym_db.RegisterMessage(ActionCache)
 
-FetchCommand = _reflection.GeneratedProtocolMessageType('FetchCommand', (_message.Message,), dict(
-  DESCRIPTOR = _FETCHCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+FetchCommand = _reflection.GeneratedProtocolMessageType('FetchCommand', (_message.Message,), {
+  'DESCRIPTOR' : _FETCHCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.FetchCommand)
-  ))
+  })
 _sym_db.RegisterMessage(FetchCommand)
 
-SyncCommand = _reflection.GeneratedProtocolMessageType('SyncCommand', (_message.Message,), dict(
-  DESCRIPTOR = _SYNCCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+SyncCommand = _reflection.GeneratedProtocolMessageType('SyncCommand', (_message.Message,), {
+  'DESCRIPTOR' : _SYNCCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.SyncCommand)
-  ))
+  })
 _sym_db.RegisterMessage(SyncCommand)
 
-Sandbox = _reflection.GeneratedProtocolMessageType('Sandbox', (_message.Message,), dict(
-  DESCRIPTOR = _SANDBOX,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Sandbox = _reflection.GeneratedProtocolMessageType('Sandbox', (_message.Message,), {
+  'DESCRIPTOR' : _SANDBOX,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Sandbox)
-  ))
+  })
 _sym_db.RegisterMessage(Sandbox)
 
-IncludeScanning = _reflection.GeneratedProtocolMessageType('IncludeScanning', (_message.Message,), dict(
-  DESCRIPTOR = _INCLUDESCANNING,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+IncludeScanning = _reflection.GeneratedProtocolMessageType('IncludeScanning', (_message.Message,), {
+  'DESCRIPTOR' : _INCLUDESCANNING,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.IncludeScanning)
-  ))
+  })
 _sym_db.RegisterMessage(IncludeScanning)
 
-TestCommand = _reflection.GeneratedProtocolMessageType('TestCommand', (_message.Message,), dict(
-  DESCRIPTOR = _TESTCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+TestCommand = _reflection.GeneratedProtocolMessageType('TestCommand', (_message.Message,), {
+  'DESCRIPTOR' : _TESTCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.TestCommand)
-  ))
+  })
 _sym_db.RegisterMessage(TestCommand)
 
-ActionQuery = _reflection.GeneratedProtocolMessageType('ActionQuery', (_message.Message,), dict(
-  DESCRIPTOR = _ACTIONQUERY,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+ActionQuery = _reflection.GeneratedProtocolMessageType('ActionQuery', (_message.Message,), {
+  'DESCRIPTOR' : _ACTIONQUERY,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.ActionQuery)
-  ))
+  })
 _sym_db.RegisterMessage(ActionQuery)
 
-TargetPatterns = _reflection.GeneratedProtocolMessageType('TargetPatterns', (_message.Message,), dict(
-  DESCRIPTOR = _TARGETPATTERNS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+TargetPatterns = _reflection.GeneratedProtocolMessageType('TargetPatterns', (_message.Message,), {
+  'DESCRIPTOR' : _TARGETPATTERNS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.TargetPatterns)
-  ))
+  })
 _sym_db.RegisterMessage(TargetPatterns)
 
-CleanCommand = _reflection.GeneratedProtocolMessageType('CleanCommand', (_message.Message,), dict(
-  DESCRIPTOR = _CLEANCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+CleanCommand = _reflection.GeneratedProtocolMessageType('CleanCommand', (_message.Message,), {
+  'DESCRIPTOR' : _CLEANCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.CleanCommand)
-  ))
+  })
 _sym_db.RegisterMessage(CleanCommand)
 
-ConfigCommand = _reflection.GeneratedProtocolMessageType('ConfigCommand', (_message.Message,), dict(
-  DESCRIPTOR = _CONFIGCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+ConfigCommand = _reflection.GeneratedProtocolMessageType('ConfigCommand', (_message.Message,), {
+  'DESCRIPTOR' : _CONFIGCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.ConfigCommand)
-  ))
+  })
 _sym_db.RegisterMessage(ConfigCommand)
 
-ConfigurableQuery = _reflection.GeneratedProtocolMessageType('ConfigurableQuery', (_message.Message,), dict(
-  DESCRIPTOR = _CONFIGURABLEQUERY,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+ConfigurableQuery = _reflection.GeneratedProtocolMessageType('ConfigurableQuery', (_message.Message,), {
+  'DESCRIPTOR' : _CONFIGURABLEQUERY,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.ConfigurableQuery)
-  ))
+  })
 _sym_db.RegisterMessage(ConfigurableQuery)
 
-DumpCommand = _reflection.GeneratedProtocolMessageType('DumpCommand', (_message.Message,), dict(
-  DESCRIPTOR = _DUMPCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+DumpCommand = _reflection.GeneratedProtocolMessageType('DumpCommand', (_message.Message,), {
+  'DESCRIPTOR' : _DUMPCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.DumpCommand)
-  ))
+  })
 _sym_db.RegisterMessage(DumpCommand)
 
-HelpCommand = _reflection.GeneratedProtocolMessageType('HelpCommand', (_message.Message,), dict(
-  DESCRIPTOR = _HELPCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+HelpCommand = _reflection.GeneratedProtocolMessageType('HelpCommand', (_message.Message,), {
+  'DESCRIPTOR' : _HELPCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.HelpCommand)
-  ))
+  })
 _sym_db.RegisterMessage(HelpCommand)
 
-MobileInstall = _reflection.GeneratedProtocolMessageType('MobileInstall', (_message.Message,), dict(
-  DESCRIPTOR = _MOBILEINSTALL,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+MobileInstall = _reflection.GeneratedProtocolMessageType('MobileInstall', (_message.Message,), {
+  'DESCRIPTOR' : _MOBILEINSTALL,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.MobileInstall)
-  ))
+  })
 _sym_db.RegisterMessage(MobileInstall)
 
-ProfileCommand = _reflection.GeneratedProtocolMessageType('ProfileCommand', (_message.Message,), dict(
-  DESCRIPTOR = _PROFILECOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+ProfileCommand = _reflection.GeneratedProtocolMessageType('ProfileCommand', (_message.Message,), {
+  'DESCRIPTOR' : _PROFILECOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.ProfileCommand)
-  ))
+  })
 _sym_db.RegisterMessage(ProfileCommand)
 
-RunCommand = _reflection.GeneratedProtocolMessageType('RunCommand', (_message.Message,), dict(
-  DESCRIPTOR = _RUNCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+RunCommand = _reflection.GeneratedProtocolMessageType('RunCommand', (_message.Message,), {
+  'DESCRIPTOR' : _RUNCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.RunCommand)
-  ))
+  })
 _sym_db.RegisterMessage(RunCommand)
 
-VersionCommand = _reflection.GeneratedProtocolMessageType('VersionCommand', (_message.Message,), dict(
-  DESCRIPTOR = _VERSIONCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+VersionCommand = _reflection.GeneratedProtocolMessageType('VersionCommand', (_message.Message,), {
+  'DESCRIPTOR' : _VERSIONCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.VersionCommand)
-  ))
+  })
 _sym_db.RegisterMessage(VersionCommand)
 
-PrintActionCommand = _reflection.GeneratedProtocolMessageType('PrintActionCommand', (_message.Message,), dict(
-  DESCRIPTOR = _PRINTACTIONCOMMAND,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+PrintActionCommand = _reflection.GeneratedProtocolMessageType('PrintActionCommand', (_message.Message,), {
+  'DESCRIPTOR' : _PRINTACTIONCOMMAND,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.PrintActionCommand)
-  ))
+  })
 _sym_db.RegisterMessage(PrintActionCommand)
 
-WorkspaceStatus = _reflection.GeneratedProtocolMessageType('WorkspaceStatus', (_message.Message,), dict(
-  DESCRIPTOR = _WORKSPACESTATUS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+WorkspaceStatus = _reflection.GeneratedProtocolMessageType('WorkspaceStatus', (_message.Message,), {
+  'DESCRIPTOR' : _WORKSPACESTATUS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.WorkspaceStatus)
-  ))
+  })
 _sym_db.RegisterMessage(WorkspaceStatus)
 
-JavaCompile = _reflection.GeneratedProtocolMessageType('JavaCompile', (_message.Message,), dict(
-  DESCRIPTOR = _JAVACOMPILE,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+JavaCompile = _reflection.GeneratedProtocolMessageType('JavaCompile', (_message.Message,), {
+  'DESCRIPTOR' : _JAVACOMPILE,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.JavaCompile)
-  ))
+  })
 _sym_db.RegisterMessage(JavaCompile)
 
-ActionRewinding = _reflection.GeneratedProtocolMessageType('ActionRewinding', (_message.Message,), dict(
-  DESCRIPTOR = _ACTIONREWINDING,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+ActionRewinding = _reflection.GeneratedProtocolMessageType('ActionRewinding', (_message.Message,), {
+  'DESCRIPTOR' : _ACTIONREWINDING,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.ActionRewinding)
-  ))
+  })
 _sym_db.RegisterMessage(ActionRewinding)
 
-CppCompile = _reflection.GeneratedProtocolMessageType('CppCompile', (_message.Message,), dict(
-  DESCRIPTOR = _CPPCOMPILE,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+CppCompile = _reflection.GeneratedProtocolMessageType('CppCompile', (_message.Message,), {
+  'DESCRIPTOR' : _CPPCOMPILE,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.CppCompile)
-  ))
+  })
 _sym_db.RegisterMessage(CppCompile)
 
-StarlarkAction = _reflection.GeneratedProtocolMessageType('StarlarkAction', (_message.Message,), dict(
-  DESCRIPTOR = _STARLARKACTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+StarlarkAction = _reflection.GeneratedProtocolMessageType('StarlarkAction', (_message.Message,), {
+  'DESCRIPTOR' : _STARLARKACTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.StarlarkAction)
-  ))
+  })
 _sym_db.RegisterMessage(StarlarkAction)
 
-NinjaAction = _reflection.GeneratedProtocolMessageType('NinjaAction', (_message.Message,), dict(
-  DESCRIPTOR = _NINJAACTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+NinjaAction = _reflection.GeneratedProtocolMessageType('NinjaAction', (_message.Message,), {
+  'DESCRIPTOR' : _NINJAACTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.NinjaAction)
-  ))
+  })
 _sym_db.RegisterMessage(NinjaAction)
 
-DynamicExecution = _reflection.GeneratedProtocolMessageType('DynamicExecution', (_message.Message,), dict(
-  DESCRIPTOR = _DYNAMICEXECUTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+DynamicExecution = _reflection.GeneratedProtocolMessageType('DynamicExecution', (_message.Message,), {
+  'DESCRIPTOR' : _DYNAMICEXECUTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.DynamicExecution)
-  ))
+  })
 _sym_db.RegisterMessage(DynamicExecution)
 
-FailAction = _reflection.GeneratedProtocolMessageType('FailAction', (_message.Message,), dict(
-  DESCRIPTOR = _FAILACTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+FailAction = _reflection.GeneratedProtocolMessageType('FailAction', (_message.Message,), {
+  'DESCRIPTOR' : _FAILACTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.FailAction)
-  ))
+  })
 _sym_db.RegisterMessage(FailAction)
 
-SymlinkAction = _reflection.GeneratedProtocolMessageType('SymlinkAction', (_message.Message,), dict(
-  DESCRIPTOR = _SYMLINKACTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+SymlinkAction = _reflection.GeneratedProtocolMessageType('SymlinkAction', (_message.Message,), {
+  'DESCRIPTOR' : _SYMLINKACTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.SymlinkAction)
-  ))
+  })
 _sym_db.RegisterMessage(SymlinkAction)
 
-CppLink = _reflection.GeneratedProtocolMessageType('CppLink', (_message.Message,), dict(
-  DESCRIPTOR = _CPPLINK,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+CppLink = _reflection.GeneratedProtocolMessageType('CppLink', (_message.Message,), {
+  'DESCRIPTOR' : _CPPLINK,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.CppLink)
-  ))
+  })
 _sym_db.RegisterMessage(CppLink)
 
-LtoAction = _reflection.GeneratedProtocolMessageType('LtoAction', (_message.Message,), dict(
-  DESCRIPTOR = _LTOACTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+LtoAction = _reflection.GeneratedProtocolMessageType('LtoAction', (_message.Message,), {
+  'DESCRIPTOR' : _LTOACTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.LtoAction)
-  ))
+  })
 _sym_db.RegisterMessage(LtoAction)
 
-TestAction = _reflection.GeneratedProtocolMessageType('TestAction', (_message.Message,), dict(
-  DESCRIPTOR = _TESTACTION,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+TestAction = _reflection.GeneratedProtocolMessageType('TestAction', (_message.Message,), {
+  'DESCRIPTOR' : _TESTACTION,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.TestAction)
-  ))
+  })
 _sym_db.RegisterMessage(TestAction)
 
-Worker = _reflection.GeneratedProtocolMessageType('Worker', (_message.Message,), dict(
-  DESCRIPTOR = _WORKER,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Worker = _reflection.GeneratedProtocolMessageType('Worker', (_message.Message,), {
+  'DESCRIPTOR' : _WORKER,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Worker)
-  ))
+  })
 _sym_db.RegisterMessage(Worker)
 
-Analysis = _reflection.GeneratedProtocolMessageType('Analysis', (_message.Message,), dict(
-  DESCRIPTOR = _ANALYSIS,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Analysis = _reflection.GeneratedProtocolMessageType('Analysis', (_message.Message,), {
+  'DESCRIPTOR' : _ANALYSIS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Analysis)
-  ))
+  })
 _sym_db.RegisterMessage(Analysis)
 
-PackageLoading = _reflection.GeneratedProtocolMessageType('PackageLoading', (_message.Message,), dict(
-  DESCRIPTOR = _PACKAGELOADING,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+PackageLoading = _reflection.GeneratedProtocolMessageType('PackageLoading', (_message.Message,), {
+  'DESCRIPTOR' : _PACKAGELOADING,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.PackageLoading)
-  ))
+  })
 _sym_db.RegisterMessage(PackageLoading)
 
-Toolchain = _reflection.GeneratedProtocolMessageType('Toolchain', (_message.Message,), dict(
-  DESCRIPTOR = _TOOLCHAIN,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+Toolchain = _reflection.GeneratedProtocolMessageType('Toolchain', (_message.Message,), {
+  'DESCRIPTOR' : _TOOLCHAIN,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.Toolchain)
-  ))
+  })
 _sym_db.RegisterMessage(Toolchain)
 
-StarlarkLoading = _reflection.GeneratedProtocolMessageType('StarlarkLoading', (_message.Message,), dict(
-  DESCRIPTOR = _STARLARKLOADING,
-  __module__ = 'src.main.protobuf.failure_details_pb2'
+StarlarkLoading = _reflection.GeneratedProtocolMessageType('StarlarkLoading', (_message.Message,), {
+  'DESCRIPTOR' : _STARLARKLOADING,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
   # @@protoc_insertion_point(class_scope:failure_details.StarlarkLoading)
-  ))
+  })
 _sym_db.RegisterMessage(StarlarkLoading)
+
+ExternalDeps = _reflection.GeneratedProtocolMessageType('ExternalDeps', (_message.Message,), {
+  'DESCRIPTOR' : _EXTERNALDEPS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
+  # @@protoc_insertion_point(class_scope:failure_details.ExternalDeps)
+  })
+_sym_db.RegisterMessage(ExternalDeps)
+
+DiffAwareness = _reflection.GeneratedProtocolMessageType('DiffAwareness', (_message.Message,), {
+  'DESCRIPTOR' : _DIFFAWARENESS,
+  '__module__' : 'src.main.protobuf.failure_details_pb2'
+  # @@protoc_insertion_point(class_scope:failure_details.DiffAwareness)
+  })
+_sym_db.RegisterMessage(DiffAwareness)
 
 metadata.message_type = _FAILUREDETAILMETADATA
 google_dot_protobuf_dot_descriptor__pb2.EnumValueOptions.RegisterExtension(metadata)
@@ -6128,8 +6989,10 @@ _SPAWN_CODE.values_by_name["INVALID_TIMEOUT"]._options = None
 _SPAWN_CODE.values_by_name["INVALID_REMOTE_EXECUTION_PROPERTIES"]._options = None
 _SPAWN_CODE.values_by_name["NO_USABLE_STRATEGY_FOUND"]._options = None
 _SPAWN_CODE.values_by_name["UNSPECIFIED_EXECUTION_FAILURE"]._options = None
+_SPAWN_CODE.values_by_name["FORBIDDEN_INPUT"]._options = None
 _EXTERNALREPOSITORY_CODE.values_by_name["EXTERNAL_REPOSITORY_UNKNOWN"]._options = None
 _EXTERNALREPOSITORY_CODE.values_by_name["OVERRIDE_DISALLOWED_MANAGED_DIRECTORIES"]._options = None
+_EXTERNALREPOSITORY_CODE.values_by_name["BAD_DOWNLOADER_CONFIG"]._options = None
 _BUILDPROGRESS_CODE.values_by_name["BUILD_PROGRESS_UNKNOWN"]._options = None
 _BUILDPROGRESS_CODE.values_by_name["OUTPUT_INITIALIZATION"]._options = None
 _BUILDPROGRESS_CODE.values_by_name["BES_RUNS_PER_TEST_LIMIT_UNSUPPORTED"]._options = None
@@ -6145,6 +7008,7 @@ _BUILDPROGRESS_CODE.values_by_name["BES_UPLOAD_LOCAL_FILE_ERROR"]._options = Non
 _BUILDPROGRESS_CODE.values_by_name["BES_STREAM_NOT_RETRYING_FAILURE"]._options = None
 _BUILDPROGRESS_CODE.values_by_name["BES_STREAM_COMPLETED_WITH_UNACK_EVENTS_ERROR"]._options = None
 _BUILDPROGRESS_CODE.values_by_name["BES_STREAM_COMPLETED_WITH_UNSENT_EVENTS_ERROR"]._options = None
+_BUILDPROGRESS_CODE.values_by_name["BES_STREAM_COMPLETED_WITH_REMOTE_ERROR"]._options = None
 _BUILDPROGRESS_CODE.values_by_name["BES_UPLOAD_RETRY_LIMIT_EXCEEDED_FAILURE"]._options = None
 _REMOTEOPTIONS_CODE.values_by_name["REMOTE_OPTIONS_UNKNOWN"]._options = None
 _REMOTEOPTIONS_CODE.values_by_name["REMOTE_DEFAULT_EXEC_PROPERTIES_LOGIC_ERROR"]._options = None
@@ -6339,6 +7203,7 @@ _SANDBOX_CODE.values_by_name["MOUNT_SOURCE_DOES_NOT_EXIST"]._options = None
 _SANDBOX_CODE.values_by_name["MOUNT_SOURCE_TARGET_TYPE_MISMATCH"]._options = None
 _SANDBOX_CODE.values_by_name["MOUNT_TARGET_DOES_NOT_EXIST"]._options = None
 _SANDBOX_CODE.values_by_name["SUBPROCESS_START_FAILED"]._options = None
+_SANDBOX_CODE.values_by_name["FORBIDDEN_INPUT"]._options = None
 _INCLUDESCANNING_CODE.values_by_name["INCLUDE_SCANNING_UNKNOWN"]._options = None
 _INCLUDESCANNING_CODE.values_by_name["INITIALIZE_INCLUDE_HINTS_ERROR"]._options = None
 _INCLUDESCANNING_CODE.values_by_name["SCANNING_IO_EXCEPTION"]._options = None
@@ -6346,6 +7211,9 @@ _INCLUDESCANNING_CODE.values_by_name["INCLUDE_HINTS_FILE_NOT_IN_PACKAGE"]._optio
 _INCLUDESCANNING_CODE.values_by_name["INCLUDE_HINTS_READ_FAILURE"]._options = None
 _INCLUDESCANNING_CODE.values_by_name["ILLEGAL_ABSOLUTE_PATH"]._options = None
 _INCLUDESCANNING_CODE.values_by_name["PACKAGE_LOAD_FAILURE"]._options = None
+_INCLUDESCANNING_CODE.values_by_name["USER_PACKAGE_LOAD_FAILURE"]._options = None
+_INCLUDESCANNING_CODE.values_by_name["SYSTEM_PACKAGE_LOAD_FAILURE"]._options = None
+_INCLUDESCANNING_CODE.values_by_name["UNDIFFERENTIATED_PACKAGE_LOAD_FAILURE"]._options = None
 _TESTCOMMAND_CODE.values_by_name["TEST_COMMAND_UNKNOWN"]._options = None
 _TESTCOMMAND_CODE.values_by_name["NO_TEST_TARGETS"]._options = None
 _TESTCOMMAND_CODE.values_by_name["TEST_WITH_NOANALYZE"]._options = None
@@ -6491,6 +7359,7 @@ _DYNAMICEXECUTION_CODE.values_by_name["DYNAMIC_EXECUTION_UNKNOWN"]._options = No
 _DYNAMICEXECUTION_CODE.values_by_name["XCODE_RELATED_PREREQ_UNMET"]._options = None
 _DYNAMICEXECUTION_CODE.values_by_name["ACTION_LOG_MOVE_FAILURE"]._options = None
 _DYNAMICEXECUTION_CODE.values_by_name["RUN_FAILURE"]._options = None
+_DYNAMICEXECUTION_CODE.values_by_name["NO_USABLE_STRATEGY_FOUND"]._options = None
 _FAILACTION_CODE.values_by_name["FAIL_ACTION_UNKNOWN"]._options = None
 _FAILACTION_CODE.values_by_name["INTENTIONAL_FAILURE"]._options = None
 _FAILACTION_CODE.values_by_name["INCORRECT_PYTHON_VERSION"]._options = None
@@ -6532,6 +7401,7 @@ _WORKER_CODE.values_by_name["REQUEST_FAILURE"]._options = None
 _WORKER_CODE.values_by_name["PARSE_RESPONSE_FAILURE"]._options = None
 _WORKER_CODE.values_by_name["NO_RESPONSE"]._options = None
 _WORKER_CODE.values_by_name["FINISH_FAILURE"]._options = None
+_WORKER_CODE.values_by_name["FORBIDDEN_INPUT"]._options = None
 _ANALYSIS_CODE.values_by_name["ANALYSIS_UNKNOWN"]._options = None
 _ANALYSIS_CODE.values_by_name["LOAD_FAILURE"]._options = None
 _ANALYSIS_CODE.values_by_name["GENERIC_LOADING_PHASE_FAILURE"]._options = None
@@ -6581,6 +7451,8 @@ _PACKAGELOADING_CODE.values_by_name["LICENSE_PARSE_FAILURE"]._options = None
 _PACKAGELOADING_CODE.values_by_name["DISTRIBUTIONS_PARSE_FAILURE"]._options = None
 _PACKAGELOADING_CODE.values_by_name["LABEL_CROSSES_PACKAGE_BOUNDARY"]._options = None
 _PACKAGELOADING_CODE.values_by_name["BUILTINS_INJECTION_FAILURE"]._options = None
+_PACKAGELOADING_CODE.values_by_name["SYMLINK_CYCLE_OR_INFINITE_EXPANSION"]._options = None
+_PACKAGELOADING_CODE.values_by_name["OTHER_IO_EXCEPTION"]._options = None
 _TOOLCHAIN_CODE.values_by_name["TOOLCHAIN_UNKNOWN"]._options = None
 _TOOLCHAIN_CODE.values_by_name["MISSING_PROVIDER"]._options = None
 _TOOLCHAIN_CODE.values_by_name["INVALID_CONSTRAINT_VALUE"]._options = None
@@ -6599,4 +7471,12 @@ _STARLARKLOADING_CODE.values_by_name["PACKAGE_NOT_FOUND"]._options = None
 _STARLARKLOADING_CODE.values_by_name["IO_ERROR"]._options = None
 _STARLARKLOADING_CODE.values_by_name["LABEL_CROSSES_PACKAGE_BOUNDARY"]._options = None
 _STARLARKLOADING_CODE.values_by_name["BUILTINS_ERROR"]._options = None
+_EXTERNALDEPS_CODE.values_by_name["EXTERNAL_DEPS_UNKNOWN"]._options = None
+_EXTERNALDEPS_CODE.values_by_name["MODULE_NOT_FOUND"]._options = None
+_EXTERNALDEPS_CODE.values_by_name["BAD_MODULE"]._options = None
+_EXTERNALDEPS_CODE.values_by_name["VERSION_RESOLUTION_ERROR"]._options = None
+_EXTERNALDEPS_CODE.values_by_name["INVALID_REGISTRY_URL"]._options = None
+_EXTERNALDEPS_CODE.values_by_name["ERROR_ACCESSING_REGISTRY"]._options = None
+_DIFFAWARENESS_CODE.values_by_name["DIFF_AWARENESS_UNKNOWN"]._options = None
+_DIFFAWARENESS_CODE.values_by_name["DIFF_STAT_FAILED"]._options = None
 # @@protoc_insertion_point(module_scope)

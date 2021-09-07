@@ -17,8 +17,6 @@
 # pylint: skip-file
 # source: src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto
 
-import sys
-_b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
 from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
@@ -29,6 +27,8 @@ from google.protobuf import symbol_database as _symbol_database
 _sym_db = _symbol_database.Default()
 
 
+from google.protobuf import duration_pb2 as google_dot_protobuf_dot_duration__pb2
+from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 from . import command_line_pb2 as src_dot_main_dot_protobuf_dot_command__line__pb2
 from . import failure_details_pb2 as src_dot_main_dot_protobuf_dot_failure__details__pb2
 from . import invocation_policy_pb2 as src_dot_main_dot_protobuf_dot_invocation__policy__pb2
@@ -38,42 +38,49 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto',
   package='build_event_stream',
   syntax='proto3',
-  serialized_options=_b('\n.com.google.devtools.build.lib.buildeventstreamB\026BuildEventStreamProtos'),
-  serialized_pb=_b('\n[src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto\x12\x12\x62uild_event_stream\x1a$src/main/protobuf/command_line.proto\x1a\'src/main/protobuf/failure_details.proto\x1a)src/main/protobuf/invocation_policy.proto\"\x86\x1a\n\x0c\x42uildEventId\x12G\n\x07unknown\x18\x01 \x01(\x0b\x32\x34.build_event_stream.BuildEventId.UnknownBuildEventIdH\x00\x12?\n\x08progress\x18\x02 \x01(\x0b\x32+.build_event_stream.BuildEventId.ProgressIdH\x00\x12\x42\n\x07started\x18\x03 \x01(\x0b\x32/.build_event_stream.BuildEventId.BuildStartedIdH\x00\x12_\n\x19unstructured_command_line\x18\x0b \x01(\x0b\x32:.build_event_stream.BuildEventId.UnstructuredCommandLineIdH\x00\x12[\n\x17structured_command_line\x18\x12 \x01(\x0b\x32\x38.build_event_stream.BuildEventId.StructuredCommandLineIdH\x00\x12N\n\x10workspace_status\x18\x0e \x01(\x0b\x32\x32.build_event_stream.BuildEventId.WorkspaceStatusIdH\x00\x12J\n\x0eoptions_parsed\x18\x0c \x01(\x0b\x32\x30.build_event_stream.BuildEventId.OptionsParsedIdH\x00\x12\x39\n\x05\x66\x65tch\x18\x11 \x01(\x0b\x32(.build_event_stream.BuildEventId.FetchIdH\x00\x12I\n\rconfiguration\x18\x0f \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationIdH\x00\x12P\n\x11target_configured\x18\x10 \x01(\x0b\x32\x33.build_event_stream.BuildEventId.TargetConfiguredIdH\x00\x12\x45\n\x07pattern\x18\x04 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.PatternExpandedIdH\x00\x12M\n\x0fpattern_skipped\x18\n \x01(\x0b\x32\x32.build_event_stream.BuildEventId.PatternExpandedIdH\x00\x12G\n\tnamed_set\x18\r \x01(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesIdH\x00\x12N\n\x10target_completed\x18\x05 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.TargetCompletedIdH\x00\x12N\n\x10\x61\x63tion_completed\x18\x06 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.ActionCompletedIdH\x00\x12R\n\x12unconfigured_label\x18\x13 \x01(\x0b\x32\x34.build_event_stream.BuildEventId.UnconfiguredLabelIdH\x00\x12N\n\x10\x63onfigured_label\x18\x15 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.ConfiguredLabelIdH\x00\x12\x44\n\x0btest_result\x18\x08 \x01(\x0b\x32-.build_event_stream.BuildEventId.TestResultIdH\x00\x12\x46\n\x0ctest_summary\x18\x07 \x01(\x0b\x32..build_event_stream.BuildEventId.TestSummaryIdH\x00\x12J\n\x0etarget_summary\x18\x1a \x01(\x0b\x32\x30.build_event_stream.BuildEventId.TargetSummaryIdH\x00\x12J\n\x0e\x62uild_finished\x18\t \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildFinishedIdH\x00\x12K\n\x0f\x62uild_tool_logs\x18\x14 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildToolLogsIdH\x00\x12H\n\rbuild_metrics\x18\x16 \x01(\x0b\x32/.build_event_stream.BuildEventId.BuildMetricsIdH\x00\x12G\n\tworkspace\x18\x17 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.WorkspaceConfigIdH\x00\x12J\n\x0e\x62uild_metadata\x18\x18 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildMetadataIdH\x00\x12k\n\x1f\x63onvenience_symlinks_identified\x18\x19 \x01(\x0b\x32@.build_event_stream.BuildEventId.ConvenienceSymlinksIdentifiedIdH\x00\x1a&\n\x13UnknownBuildEventId\x12\x0f\n\x07\x64\x65tails\x18\x01 \x01(\t\x1a\"\n\nProgressId\x12\x14\n\x0copaque_count\x18\x01 \x01(\x05\x1a\x10\n\x0e\x42uildStartedId\x1a\x1b\n\x19UnstructuredCommandLineId\x1a\x35\n\x17StructuredCommandLineId\x12\x1a\n\x12\x63ommand_line_label\x18\x01 \x01(\t\x1a\x13\n\x11WorkspaceStatusId\x1a\x11\n\x0fOptionsParsedId\x1a\x16\n\x07\x46\x65tchId\x12\x0b\n\x03url\x18\x01 \x01(\t\x1a$\n\x11PatternExpandedId\x12\x0f\n\x07pattern\x18\x01 \x03(\t\x1a\x13\n\x11WorkspaceConfigId\x1a\x11\n\x0f\x42uildMetadataId\x1a\x33\n\x12TargetConfiguredId\x12\r\n\x05label\x18\x01 \x01(\t\x12\x0e\n\x06\x61spect\x18\x02 \x01(\t\x1a\x1f\n\x11NamedSetOfFilesId\x12\n\n\x02id\x18\x01 \x01(\t\x1a\x1d\n\x0f\x43onfigurationId\x12\n\n\x02id\x18\x01 \x01(\t\x1a{\n\x11TargetCompletedId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x03 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x12\x0e\n\x06\x61spect\x18\x02 \x01(\t\x1a\x83\x01\n\x11\x41\x63tionCompletedId\x12\x16\n\x0eprimary_output\x18\x01 \x01(\t\x12\r\n\x05label\x18\x02 \x01(\t\x12G\n\rconfiguration\x18\x03 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a$\n\x13UnconfiguredLabelId\x12\r\n\x05label\x18\x01 \x01(\t\x1ak\n\x11\x43onfiguredLabelId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a\x93\x01\n\x0cTestResultId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x05 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x12\x0b\n\x03run\x18\x02 \x01(\x05\x12\r\n\x05shard\x18\x03 \x01(\x05\x12\x0f\n\x07\x61ttempt\x18\x04 \x01(\x05\x1ag\n\rTestSummaryId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1ai\n\x0fTargetSummaryId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a\x11\n\x0f\x42uildFinishedId\x1a\x11\n\x0f\x42uildToolLogsId\x1a\x10\n\x0e\x42uildMetricsId\x1a!\n\x1f\x43onvenienceSymlinksIdentifiedIdB\x04\n\x02id\"*\n\x08Progress\x12\x0e\n\x06stdout\x18\x01 \x01(\t\x12\x0e\n\x06stderr\x18\x02 \x01(\t\"\xbf\x02\n\x07\x41\x62orted\x12\x37\n\x06reason\x18\x01 \x01(\x0e\x32\'.build_event_stream.Aborted.AbortReason\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"\xe5\x01\n\x0b\x41\x62ortReason\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x14\n\x10USER_INTERRUPTED\x10\x01\x12\x0e\n\nNO_ANALYZE\x10\x08\x12\x0c\n\x08NO_BUILD\x10\t\x12\x0c\n\x08TIME_OUT\x10\x02\x12\x1e\n\x1aREMOTE_ENVIRONMENT_FAILURE\x10\x03\x12\x0c\n\x08INTERNAL\x10\x04\x12\x13\n\x0fLOADING_FAILURE\x10\x05\x12\x14\n\x10\x41NALYSIS_FAILURE\x10\x06\x12\x0b\n\x07SKIPPED\x10\x07\x12\x0e\n\nINCOMPLETE\x10\n\x12\x11\n\rOUT_OF_MEMORY\x10\x0b\"\xcd\x01\n\x0c\x42uildStarted\x12\x0c\n\x04uuid\x18\x01 \x01(\t\x12\x19\n\x11start_time_millis\x18\x02 \x01(\x03\x12\x1a\n\x12\x62uild_tool_version\x18\x03 \x01(\t\x12\x1b\n\x13options_description\x18\x04 \x01(\t\x12\x0f\n\x07\x63ommand\x18\x05 \x01(\t\x12\x19\n\x11working_directory\x18\x06 \x01(\t\x12\x1b\n\x13workspace_directory\x18\x07 \x01(\t\x12\x12\n\nserver_pid\x18\x08 \x01(\x03\"*\n\x0fWorkspaceConfig\x12\x17\n\x0flocal_exec_root\x18\x01 \x01(\t\"\'\n\x17UnstructuredCommandLine\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\t\"\xcf\x01\n\rOptionsParsed\x12\x17\n\x0fstartup_options\x18\x01 \x03(\t\x12 \n\x18\x65xplicit_startup_options\x18\x02 \x03(\t\x12\x10\n\x08\x63md_line\x18\x03 \x03(\t\x12\x19\n\x11\x65xplicit_cmd_line\x18\x04 \x03(\t\x12\x44\n\x11invocation_policy\x18\x05 \x01(\x0b\x32).blaze.invocation_policy.InvocationPolicy\x12\x10\n\x08tool_tag\x18\x06 \x01(\t\"\x18\n\x05\x46\x65tch\x12\x0f\n\x07success\x18\x01 \x01(\x08\"m\n\x0fWorkspaceStatus\x12\x36\n\x04item\x18\x01 \x03(\x0b\x32(.build_event_stream.WorkspaceStatus.Item\x1a\"\n\x04Item\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x83\x01\n\rBuildMetadata\x12\x41\n\x08metadata\x18\x01 \x03(\x0b\x32/.build_event_stream.BuildMetadata.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xc6\x01\n\rConfiguration\x12\x10\n\x08mnemonic\x18\x01 \x01(\t\x12\x15\n\rplatform_name\x18\x02 \x01(\t\x12\x0b\n\x03\x63pu\x18\x03 \x01(\t\x12J\n\rmake_variable\x18\x04 \x03(\x0b\x32\x33.build_event_stream.Configuration.MakeVariableEntry\x1a\x33\n\x11MakeVariableEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xa8\x01\n\x0fPatternExpanded\x12U\n\x15test_suite_expansions\x18\x01 \x03(\x0b\x32\x36.build_event_stream.PatternExpanded.TestSuiteExpansion\x1a>\n\x12TestSuiteExpansion\x12\x13\n\x0bsuite_label\x18\x01 \x01(\t\x12\x13\n\x0btest_labels\x18\x02 \x03(\t\"e\n\x10TargetConfigured\x12\x13\n\x0btarget_kind\x18\x01 \x01(\t\x12/\n\ttest_size\x18\x02 \x01(\x0e\x32\x1c.build_event_stream.TestSize\x12\x0b\n\x03tag\x18\x03 \x03(\t\"T\n\x04\x46ile\x12\x13\n\x0bpath_prefix\x18\x04 \x03(\t\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x03uri\x18\x02 \x01(\tH\x00\x12\x12\n\x08\x63ontents\x18\x03 \x01(\x0cH\x00\x42\x06\n\x04\x66ile\"\x81\x01\n\x0fNamedSetOfFiles\x12\'\n\x05\x66iles\x18\x01 \x03(\x0b\x32\x18.build_event_stream.File\x12\x45\n\tfile_sets\x18\x02 \x03(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesId\"\xae\x03\n\x0e\x41\x63tionExecuted\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0c\n\x04type\x18\x08 \x01(\t\x12\x11\n\texit_code\x18\x02 \x01(\x05\x12(\n\x06stdout\x18\x03 \x01(\x0b\x32\x18.build_event_stream.File\x12(\n\x06stderr\x18\x04 \x01(\x0b\x32\x18.build_event_stream.File\x12\x11\n\x05label\x18\x05 \x01(\tB\x02\x18\x01\x12K\n\rconfiguration\x18\x07 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationIdB\x02\x18\x01\x12\x30\n\x0eprimary_output\x18\x06 \x01(\x0b\x32\x18.build_event_stream.File\x12\x14\n\x0c\x63ommand_line\x18\t \x03(\t\x12\x36\n\x14\x61\x63tion_metadata_logs\x18\n \x03(\x0b\x32\x18.build_event_stream.File\x12\x36\n\x0e\x66\x61ilure_detail\x18\x0b \x01(\x0b\x32\x1e.failure_details.FailureDetail\"h\n\x0bOutputGroup\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x45\n\tfile_sets\x18\x03 \x03(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesIdJ\x04\x08\x02\x10\x03\"\xf5\x02\n\x0eTargetComplete\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x17\n\x0btarget_kind\x18\x05 \x01(\tB\x02\x18\x01\x12\x33\n\ttest_size\x18\x06 \x01(\x0e\x32\x1c.build_event_stream.TestSizeB\x02\x18\x01\x12\x35\n\x0coutput_group\x18\x02 \x03(\x0b\x32\x1f.build_event_stream.OutputGroup\x12\x36\n\x10important_output\x18\x04 \x03(\x0b\x32\x18.build_event_stream.FileB\x02\x18\x01\x12\x32\n\x10\x64irectory_output\x18\x08 \x03(\x0b\x32\x18.build_event_stream.File\x12\x0b\n\x03tag\x18\x03 \x03(\t\x12\x1c\n\x14test_timeout_seconds\x18\x07 \x01(\x03\x12\x36\n\x0e\x66\x61ilure_detail\x18\t \x01(\x0b\x32\x1e.failure_details.FailureDetail\"\xab\x06\n\nTestResult\x12.\n\x06status\x18\x05 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\x12\x16\n\x0estatus_details\x18\t \x01(\t\x12\x16\n\x0e\x63\x61\x63hed_locally\x18\x04 \x01(\x08\x12\'\n\x1ftest_attempt_start_millis_epoch\x18\x06 \x01(\x03\x12$\n\x1ctest_attempt_duration_millis\x18\x03 \x01(\x03\x12\x34\n\x12test_action_output\x18\x02 \x03(\x0b\x32\x18.build_event_stream.File\x12\x0f\n\x07warning\x18\x07 \x03(\t\x12\x44\n\x0e\x65xecution_info\x18\x08 \x01(\x0b\x32,.build_event_stream.TestResult.ExecutionInfo\x1a\xda\x03\n\rExecutionInfo\x12\x1b\n\x0ftimeout_seconds\x18\x01 \x01(\x05\x42\x02\x18\x01\x12\x10\n\x08strategy\x18\x02 \x01(\t\x12\x17\n\x0f\x63\x61\x63hed_remotely\x18\x06 \x01(\x08\x12\x11\n\texit_code\x18\x07 \x01(\x05\x12\x10\n\x08hostname\x18\x03 \x01(\t\x12V\n\x10timing_breakdown\x18\x04 \x01(\x0b\x32<.build_event_stream.TestResult.ExecutionInfo.TimingBreakdown\x12R\n\x0eresource_usage\x18\x05 \x03(\x0b\x32:.build_event_stream.TestResult.ExecutionInfo.ResourceUsage\x1a\x81\x01\n\x0fTimingBreakdown\x12K\n\x05\x63hild\x18\x01 \x03(\x0b\x32<.build_event_stream.TestResult.ExecutionInfo.TimingBreakdown\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0btime_millis\x18\x03 \x01(\x03\x1a,\n\rResourceUsage\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03J\x04\x08\x01\x10\x02\"\xd7\x02\n\x0bTestSummary\x12\x36\n\x0eoverall_status\x18\x05 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\x12\x17\n\x0ftotal_run_count\x18\x01 \x01(\x05\x12\x11\n\trun_count\x18\n \x01(\x05\x12\x13\n\x0bshard_count\x18\x0b \x01(\x05\x12(\n\x06passed\x18\x03 \x03(\x0b\x32\x18.build_event_stream.File\x12(\n\x06\x66\x61iled\x18\x04 \x03(\x0b\x32\x18.build_event_stream.File\x12\x18\n\x10total_num_cached\x18\x06 \x01(\x05\x12\x1f\n\x17\x66irst_start_time_millis\x18\x07 \x01(\x03\x12\x1d\n\x15last_stop_time_millis\x18\x08 \x01(\x03\x12!\n\x19total_run_duration_millis\x18\t \x01(\x03\"k\n\rTargetSummary\x12\x1d\n\x15overall_build_success\x18\x01 \x01(\x08\x12;\n\x13overall_test_status\x18\x02 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\"\xa0\x02\n\rBuildFinished\x12\x1b\n\x0foverall_success\x18\x01 \x01(\x08\x42\x02\x18\x01\x12=\n\texit_code\x18\x03 \x01(\x0b\x32*.build_event_stream.BuildFinished.ExitCode\x12\x1a\n\x12\x66inish_time_millis\x18\x02 \x01(\x03\x12G\n\x0e\x61nomaly_report\x18\x04 \x01(\x0b\x32/.build_event_stream.BuildFinished.AnomalyReport\x1a&\n\x08\x45xitCode\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\x05\x1a&\n\rAnomalyReport\x12\x15\n\rwas_suspended\x18\x01 \x01(\x08\"\xc0\x0e\n\x0c\x42uildMetrics\x12\x46\n\x0e\x61\x63tion_summary\x18\x01 \x01(\x0b\x32..build_event_stream.BuildMetrics.ActionSummary\x12\x46\n\x0ememory_metrics\x18\x02 \x01(\x0b\x32..build_event_stream.BuildMetrics.MemoryMetrics\x12\x46\n\x0etarget_metrics\x18\x03 \x01(\x0b\x32..build_event_stream.BuildMetrics.TargetMetrics\x12H\n\x0fpackage_metrics\x18\x04 \x01(\x0b\x32/.build_event_stream.BuildMetrics.PackageMetrics\x12\x46\n\x0etiming_metrics\x18\x05 \x01(\x0b\x32..build_event_stream.BuildMetrics.TimingMetrics\x12N\n\x12\x63umulative_metrics\x18\x06 \x01(\x0b\x32\x32.build_event_stream.BuildMetrics.CumulativeMetrics\x12J\n\x10\x61rtifact_metrics\x18\x07 \x01(\x0b\x32\x30.build_event_stream.BuildMetrics.ArtifactMetrics\x12O\n\x13\x62uild_graph_metrics\x18\x08 \x01(\x0b\x32\x32.build_event_stream.BuildMetrics.BuildGraphMetrics\x1aq\n\rActionSummary\x12\x17\n\x0f\x61\x63tions_created\x18\x01 \x01(\x03\x12-\n%actions_created_not_including_aspects\x18\x03 \x01(\x03\x12\x18\n\x10\x61\x63tions_executed\x18\x02 \x01(\x03\x1aR\n\rMemoryMetrics\x12!\n\x19used_heap_size_post_build\x18\x01 \x01(\x03\x12\x1e\n\x16peak_post_gc_heap_size\x18\x02 \x01(\x03\x1au\n\rTargetMetrics\x12\x16\n\x0etargets_loaded\x18\x01 \x01(\x03\x12\x1a\n\x12targets_configured\x18\x02 \x01(\x03\x12\x30\n(targets_configured_not_including_aspects\x18\x03 \x01(\x03\x1a)\n\x0ePackageMetrics\x12\x17\n\x0fpackages_loaded\x18\x01 \x01(\x03\x1a\x63\n\rTimingMetrics\x12\x16\n\x0e\x63pu_time_in_ms\x18\x01 \x01(\x03\x12\x17\n\x0fwall_time_in_ms\x18\x02 \x01(\x03\x12!\n\x19\x61nalysis_phase_time_in_ms\x18\x03 \x01(\x03\x1a=\n\x11\x43umulativeMetrics\x12\x14\n\x0cnum_analyses\x18\x0b \x01(\x05\x12\x12\n\nnum_builds\x18\x0c \x01(\x05\x1a\xcb\x03\n\x0f\x41rtifactMetrics\x12[\n\x15source_artifacts_read\x18\x02 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12[\n\x15output_artifacts_seen\x18\x03 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12h\n\"output_artifacts_from_action_cache\x18\x04 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12Y\n\x13top_level_artifacts\x18\x05 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x1a\x33\n\x0b\x46ilesMetric\x12\x15\n\rsize_in_bytes\x18\x01 \x01(\x03\x12\r\n\x05\x63ount\x18\x02 \x01(\x05J\x04\x08\x01\x10\x02\x1a\xfd\x01\n\x11\x42uildGraphMetrics\x12!\n\x19\x61\x63tion_lookup_value_count\x18\x01 \x01(\x05\x12\x37\n/action_lookup_value_count_not_including_aspects\x18\x05 \x01(\x05\x12\x14\n\x0c\x61\x63tion_count\x18\x02 \x01(\x05\x12*\n\"action_count_not_including_aspects\x18\x06 \x01(\x05\x12\x1d\n\x15output_artifact_count\x18\x03 \x01(\x05\x12+\n#post_invocation_skyframe_node_count\x18\x04 \x01(\x05\"6\n\rBuildToolLogs\x12%\n\x03log\x18\x01 \x03(\x0b\x32\x18.build_event_stream.File\"e\n\x1d\x43onvenienceSymlinksIdentified\x12\x44\n\x14\x63onvenience_symlinks\x18\x01 \x03(\x0b\x32&.build_event_stream.ConvenienceSymlink\"\xa0\x01\n\x12\x43onvenienceSymlink\x12\x0c\n\x04path\x18\x01 \x01(\t\x12=\n\x06\x61\x63tion\x18\x02 \x01(\x0e\x32-.build_event_stream.ConvenienceSymlink.Action\x12\x0e\n\x06target\x18\x03 \x01(\t\"-\n\x06\x41\x63tion\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06\x43REATE\x10\x01\x12\n\n\x06\x44\x45LETE\x10\x02\"\x86\x0c\n\nBuildEvent\x12,\n\x02id\x18\x01 \x01(\x0b\x32 .build_event_stream.BuildEventId\x12\x32\n\x08\x63hildren\x18\x02 \x03(\x0b\x32 .build_event_stream.BuildEventId\x12\x14\n\x0clast_message\x18\x14 \x01(\x08\x12\x30\n\x08progress\x18\x03 \x01(\x0b\x32\x1c.build_event_stream.ProgressH\x00\x12.\n\x07\x61\x62orted\x18\x04 \x01(\x0b\x32\x1b.build_event_stream.AbortedH\x00\x12\x33\n\x07started\x18\x05 \x01(\x0b\x32 .build_event_stream.BuildStartedH\x00\x12P\n\x19unstructured_command_line\x18\x0c \x01(\x0b\x32+.build_event_stream.UnstructuredCommandLineH\x00\x12<\n\x17structured_command_line\x18\x16 \x01(\x0b\x32\x19.command_line.CommandLineH\x00\x12;\n\x0eoptions_parsed\x18\r \x01(\x0b\x32!.build_event_stream.OptionsParsedH\x00\x12?\n\x10workspace_status\x18\x10 \x01(\x0b\x32#.build_event_stream.WorkspaceStatusH\x00\x12*\n\x05\x66\x65tch\x18\x15 \x01(\x0b\x32\x19.build_event_stream.FetchH\x00\x12:\n\rconfiguration\x18\x11 \x01(\x0b\x32!.build_event_stream.ConfigurationH\x00\x12\x37\n\x08\x65xpanded\x18\x06 \x01(\x0b\x32#.build_event_stream.PatternExpandedH\x00\x12:\n\nconfigured\x18\x12 \x01(\x0b\x32$.build_event_stream.TargetConfiguredH\x00\x12\x34\n\x06\x61\x63tion\x18\x07 \x01(\x0b\x32\".build_event_stream.ActionExecutedH\x00\x12\x41\n\x12named_set_of_files\x18\x0f \x01(\x0b\x32#.build_event_stream.NamedSetOfFilesH\x00\x12\x37\n\tcompleted\x18\x08 \x01(\x0b\x32\".build_event_stream.TargetCompleteH\x00\x12\x35\n\x0btest_result\x18\n \x01(\x0b\x32\x1e.build_event_stream.TestResultH\x00\x12\x37\n\x0ctest_summary\x18\t \x01(\x0b\x32\x1f.build_event_stream.TestSummaryH\x00\x12;\n\x0etarget_summary\x18\x1c \x01(\x0b\x32!.build_event_stream.TargetSummaryH\x00\x12\x35\n\x08\x66inished\x18\x0e \x01(\x0b\x32!.build_event_stream.BuildFinishedH\x00\x12<\n\x0f\x62uild_tool_logs\x18\x17 \x01(\x0b\x32!.build_event_stream.BuildToolLogsH\x00\x12\x39\n\rbuild_metrics\x18\x18 \x01(\x0b\x32 .build_event_stream.BuildMetricsH\x00\x12=\n\x0eworkspace_info\x18\x19 \x01(\x0b\x32#.build_event_stream.WorkspaceConfigH\x00\x12;\n\x0e\x62uild_metadata\x18\x1a \x01(\x0b\x32!.build_event_stream.BuildMetadataH\x00\x12\\\n\x1f\x63onvenience_symlinks_identified\x18\x1b \x01(\x0b\x32\x31.build_event_stream.ConvenienceSymlinksIdentifiedH\x00\x42\t\n\x07payloadJ\x04\x08\x0b\x10\x0cJ\x04\x08\x13\x10\x14*G\n\x08TestSize\x12\x0b\n\x07UNKNOWN\x10\x00\x12\t\n\x05SMALL\x10\x01\x12\n\n\x06MEDIUM\x10\x02\x12\t\n\x05LARGE\x10\x03\x12\x0c\n\x08\x45NORMOUS\x10\x04*\xa4\x01\n\nTestStatus\x12\r\n\tNO_STATUS\x10\x00\x12\n\n\x06PASSED\x10\x01\x12\t\n\x05\x46LAKY\x10\x02\x12\x0b\n\x07TIMEOUT\x10\x03\x12\n\n\x06\x46\x41ILED\x10\x04\x12\x0e\n\nINCOMPLETE\x10\x05\x12\x12\n\x0eREMOTE_FAILURE\x10\x06\x12\x13\n\x0f\x46\x41ILED_TO_BUILD\x10\x07\x12\x1e\n\x1aTOOL_HALTED_BEFORE_TESTING\x10\x08\x42H\n.com.google.devtools.build.lib.buildeventstreamB\x16\x42uildEventStreamProtosb\x06proto3')
+  serialized_options=b'\n.com.google.devtools.build.lib.buildeventstreamB\026BuildEventStreamProtos',
+  create_key=_descriptor._internal_create_key,
+  serialized_pb=b'\n[src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto\x12\x12\x62uild_event_stream\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$src/main/protobuf/command_line.proto\x1a\'src/main/protobuf/failure_details.proto\x1a)src/main/protobuf/invocation_policy.proto\"\x86\x1a\n\x0c\x42uildEventId\x12G\n\x07unknown\x18\x01 \x01(\x0b\x32\x34.build_event_stream.BuildEventId.UnknownBuildEventIdH\x00\x12?\n\x08progress\x18\x02 \x01(\x0b\x32+.build_event_stream.BuildEventId.ProgressIdH\x00\x12\x42\n\x07started\x18\x03 \x01(\x0b\x32/.build_event_stream.BuildEventId.BuildStartedIdH\x00\x12_\n\x19unstructured_command_line\x18\x0b \x01(\x0b\x32:.build_event_stream.BuildEventId.UnstructuredCommandLineIdH\x00\x12[\n\x17structured_command_line\x18\x12 \x01(\x0b\x32\x38.build_event_stream.BuildEventId.StructuredCommandLineIdH\x00\x12N\n\x10workspace_status\x18\x0e \x01(\x0b\x32\x32.build_event_stream.BuildEventId.WorkspaceStatusIdH\x00\x12J\n\x0eoptions_parsed\x18\x0c \x01(\x0b\x32\x30.build_event_stream.BuildEventId.OptionsParsedIdH\x00\x12\x39\n\x05\x66\x65tch\x18\x11 \x01(\x0b\x32(.build_event_stream.BuildEventId.FetchIdH\x00\x12I\n\rconfiguration\x18\x0f \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationIdH\x00\x12P\n\x11target_configured\x18\x10 \x01(\x0b\x32\x33.build_event_stream.BuildEventId.TargetConfiguredIdH\x00\x12\x45\n\x07pattern\x18\x04 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.PatternExpandedIdH\x00\x12M\n\x0fpattern_skipped\x18\n \x01(\x0b\x32\x32.build_event_stream.BuildEventId.PatternExpandedIdH\x00\x12G\n\tnamed_set\x18\r \x01(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesIdH\x00\x12N\n\x10target_completed\x18\x05 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.TargetCompletedIdH\x00\x12N\n\x10\x61\x63tion_completed\x18\x06 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.ActionCompletedIdH\x00\x12R\n\x12unconfigured_label\x18\x13 \x01(\x0b\x32\x34.build_event_stream.BuildEventId.UnconfiguredLabelIdH\x00\x12N\n\x10\x63onfigured_label\x18\x15 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.ConfiguredLabelIdH\x00\x12\x44\n\x0btest_result\x18\x08 \x01(\x0b\x32-.build_event_stream.BuildEventId.TestResultIdH\x00\x12\x46\n\x0ctest_summary\x18\x07 \x01(\x0b\x32..build_event_stream.BuildEventId.TestSummaryIdH\x00\x12J\n\x0etarget_summary\x18\x1a \x01(\x0b\x32\x30.build_event_stream.BuildEventId.TargetSummaryIdH\x00\x12J\n\x0e\x62uild_finished\x18\t \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildFinishedIdH\x00\x12K\n\x0f\x62uild_tool_logs\x18\x14 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildToolLogsIdH\x00\x12H\n\rbuild_metrics\x18\x16 \x01(\x0b\x32/.build_event_stream.BuildEventId.BuildMetricsIdH\x00\x12G\n\tworkspace\x18\x17 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.WorkspaceConfigIdH\x00\x12J\n\x0e\x62uild_metadata\x18\x18 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildMetadataIdH\x00\x12k\n\x1f\x63onvenience_symlinks_identified\x18\x19 \x01(\x0b\x32@.build_event_stream.BuildEventId.ConvenienceSymlinksIdentifiedIdH\x00\x1a&\n\x13UnknownBuildEventId\x12\x0f\n\x07\x64\x65tails\x18\x01 \x01(\t\x1a\"\n\nProgressId\x12\x14\n\x0copaque_count\x18\x01 \x01(\x05\x1a\x10\n\x0e\x42uildStartedId\x1a\x1b\n\x19UnstructuredCommandLineId\x1a\x35\n\x17StructuredCommandLineId\x12\x1a\n\x12\x63ommand_line_label\x18\x01 \x01(\t\x1a\x13\n\x11WorkspaceStatusId\x1a\x11\n\x0fOptionsParsedId\x1a\x16\n\x07\x46\x65tchId\x12\x0b\n\x03url\x18\x01 \x01(\t\x1a$\n\x11PatternExpandedId\x12\x0f\n\x07pattern\x18\x01 \x03(\t\x1a\x13\n\x11WorkspaceConfigId\x1a\x11\n\x0f\x42uildMetadataId\x1a\x33\n\x12TargetConfiguredId\x12\r\n\x05label\x18\x01 \x01(\t\x12\x0e\n\x06\x61spect\x18\x02 \x01(\t\x1a\x1f\n\x11NamedSetOfFilesId\x12\n\n\x02id\x18\x01 \x01(\t\x1a\x1d\n\x0f\x43onfigurationId\x12\n\n\x02id\x18\x01 \x01(\t\x1a{\n\x11TargetCompletedId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x03 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x12\x0e\n\x06\x61spect\x18\x02 \x01(\t\x1a\x83\x01\n\x11\x41\x63tionCompletedId\x12\x16\n\x0eprimary_output\x18\x01 \x01(\t\x12\r\n\x05label\x18\x02 \x01(\t\x12G\n\rconfiguration\x18\x03 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a$\n\x13UnconfiguredLabelId\x12\r\n\x05label\x18\x01 \x01(\t\x1ak\n\x11\x43onfiguredLabelId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a\x93\x01\n\x0cTestResultId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x05 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x12\x0b\n\x03run\x18\x02 \x01(\x05\x12\r\n\x05shard\x18\x03 \x01(\x05\x12\x0f\n\x07\x61ttempt\x18\x04 \x01(\x05\x1ag\n\rTestSummaryId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1ai\n\x0fTargetSummaryId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a\x11\n\x0f\x42uildFinishedId\x1a\x11\n\x0f\x42uildToolLogsId\x1a\x10\n\x0e\x42uildMetricsId\x1a!\n\x1f\x43onvenienceSymlinksIdentifiedIdB\x04\n\x02id\"*\n\x08Progress\x12\x0e\n\x06stdout\x18\x01 \x01(\t\x12\x0e\n\x06stderr\x18\x02 \x01(\t\"\xbf\x02\n\x07\x41\x62orted\x12\x37\n\x06reason\x18\x01 \x01(\x0e\x32\'.build_event_stream.Aborted.AbortReason\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"\xe5\x01\n\x0b\x41\x62ortReason\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x14\n\x10USER_INTERRUPTED\x10\x01\x12\x0e\n\nNO_ANALYZE\x10\x08\x12\x0c\n\x08NO_BUILD\x10\t\x12\x0c\n\x08TIME_OUT\x10\x02\x12\x1e\n\x1aREMOTE_ENVIRONMENT_FAILURE\x10\x03\x12\x0c\n\x08INTERNAL\x10\x04\x12\x13\n\x0fLOADING_FAILURE\x10\x05\x12\x14\n\x10\x41NALYSIS_FAILURE\x10\x06\x12\x0b\n\x07SKIPPED\x10\x07\x12\x0e\n\nINCOMPLETE\x10\n\x12\x11\n\rOUT_OF_MEMORY\x10\x0b\"\x81\x02\n\x0c\x42uildStarted\x12\x0c\n\x04uuid\x18\x01 \x01(\t\x12\x1d\n\x11start_time_millis\x18\x02 \x01(\x03\x42\x02\x18\x01\x12.\n\nstart_time\x18\t \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x1a\n\x12\x62uild_tool_version\x18\x03 \x01(\t\x12\x1b\n\x13options_description\x18\x04 \x01(\t\x12\x0f\n\x07\x63ommand\x18\x05 \x01(\t\x12\x19\n\x11working_directory\x18\x06 \x01(\t\x12\x1b\n\x13workspace_directory\x18\x07 \x01(\t\x12\x12\n\nserver_pid\x18\x08 \x01(\x03\"*\n\x0fWorkspaceConfig\x12\x17\n\x0flocal_exec_root\x18\x01 \x01(\t\"\'\n\x17UnstructuredCommandLine\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\t\"\xcf\x01\n\rOptionsParsed\x12\x17\n\x0fstartup_options\x18\x01 \x03(\t\x12 \n\x18\x65xplicit_startup_options\x18\x02 \x03(\t\x12\x10\n\x08\x63md_line\x18\x03 \x03(\t\x12\x19\n\x11\x65xplicit_cmd_line\x18\x04 \x03(\t\x12\x44\n\x11invocation_policy\x18\x05 \x01(\x0b\x32).blaze.invocation_policy.InvocationPolicy\x12\x10\n\x08tool_tag\x18\x06 \x01(\t\"\x18\n\x05\x46\x65tch\x12\x0f\n\x07success\x18\x01 \x01(\x08\"m\n\x0fWorkspaceStatus\x12\x36\n\x04item\x18\x01 \x03(\x0b\x32(.build_event_stream.WorkspaceStatus.Item\x1a\"\n\x04Item\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x83\x01\n\rBuildMetadata\x12\x41\n\x08metadata\x18\x01 \x03(\x0b\x32/.build_event_stream.BuildMetadata.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xc6\x01\n\rConfiguration\x12\x10\n\x08mnemonic\x18\x01 \x01(\t\x12\x15\n\rplatform_name\x18\x02 \x01(\t\x12\x0b\n\x03\x63pu\x18\x03 \x01(\t\x12J\n\rmake_variable\x18\x04 \x03(\x0b\x32\x33.build_event_stream.Configuration.MakeVariableEntry\x1a\x33\n\x11MakeVariableEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xa8\x01\n\x0fPatternExpanded\x12U\n\x15test_suite_expansions\x18\x01 \x03(\x0b\x32\x36.build_event_stream.PatternExpanded.TestSuiteExpansion\x1a>\n\x12TestSuiteExpansion\x12\x13\n\x0bsuite_label\x18\x01 \x01(\t\x12\x13\n\x0btest_labels\x18\x02 \x03(\t\"e\n\x10TargetConfigured\x12\x13\n\x0btarget_kind\x18\x01 \x01(\t\x12/\n\ttest_size\x18\x02 \x01(\x0e\x32\x1c.build_event_stream.TestSize\x12\x0b\n\x03tag\x18\x03 \x03(\t\"T\n\x04\x46ile\x12\x13\n\x0bpath_prefix\x18\x04 \x03(\t\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x03uri\x18\x02 \x01(\tH\x00\x12\x12\n\x08\x63ontents\x18\x03 \x01(\x0cH\x00\x42\x06\n\x04\x66ile\"\x81\x01\n\x0fNamedSetOfFiles\x12\'\n\x05\x66iles\x18\x01 \x03(\x0b\x32\x18.build_event_stream.File\x12\x45\n\tfile_sets\x18\x02 \x03(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesId\"\xae\x03\n\x0e\x41\x63tionExecuted\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0c\n\x04type\x18\x08 \x01(\t\x12\x11\n\texit_code\x18\x02 \x01(\x05\x12(\n\x06stdout\x18\x03 \x01(\x0b\x32\x18.build_event_stream.File\x12(\n\x06stderr\x18\x04 \x01(\x0b\x32\x18.build_event_stream.File\x12\x11\n\x05label\x18\x05 \x01(\tB\x02\x18\x01\x12K\n\rconfiguration\x18\x07 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationIdB\x02\x18\x01\x12\x30\n\x0eprimary_output\x18\x06 \x01(\x0b\x32\x18.build_event_stream.File\x12\x14\n\x0c\x63ommand_line\x18\t \x03(\t\x12\x36\n\x14\x61\x63tion_metadata_logs\x18\n \x03(\x0b\x32\x18.build_event_stream.File\x12\x36\n\x0e\x66\x61ilure_detail\x18\x0b \x01(\x0b\x32\x1e.failure_details.FailureDetail\"|\n\x0bOutputGroup\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x45\n\tfile_sets\x18\x03 \x03(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesId\x12\x12\n\nincomplete\x18\x04 \x01(\x08J\x04\x08\x02\x10\x03\"\xaa\x03\n\x0eTargetComplete\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x17\n\x0btarget_kind\x18\x05 \x01(\tB\x02\x18\x01\x12\x33\n\ttest_size\x18\x06 \x01(\x0e\x32\x1c.build_event_stream.TestSizeB\x02\x18\x01\x12\x35\n\x0coutput_group\x18\x02 \x03(\x0b\x32\x1f.build_event_stream.OutputGroup\x12\x36\n\x10important_output\x18\x04 \x03(\x0b\x32\x18.build_event_stream.FileB\x02\x18\x01\x12\x32\n\x10\x64irectory_output\x18\x08 \x03(\x0b\x32\x18.build_event_stream.File\x12\x0b\n\x03tag\x18\x03 \x03(\t\x12 \n\x14test_timeout_seconds\x18\x07 \x01(\x03\x42\x02\x18\x01\x12/\n\x0ctest_timeout\x18\n \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x36\n\x0e\x66\x61ilure_detail\x18\t \x01(\x0b\x32\x1e.failure_details.FailureDetail\"\xd2\x07\n\nTestResult\x12.\n\x06status\x18\x05 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\x12\x16\n\x0estatus_details\x18\t \x01(\t\x12\x16\n\x0e\x63\x61\x63hed_locally\x18\x04 \x01(\x08\x12+\n\x1ftest_attempt_start_millis_epoch\x18\x06 \x01(\x03\x42\x02\x18\x01\x12\x36\n\x12test_attempt_start\x18\n \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x1ctest_attempt_duration_millis\x18\x03 \x01(\x03\x42\x02\x18\x01\x12\x38\n\x15test_attempt_duration\x18\x0b \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x34\n\x12test_action_output\x18\x02 \x03(\x0b\x32\x18.build_event_stream.File\x12\x0f\n\x07warning\x18\x07 \x03(\t\x12\x44\n\x0e\x65xecution_info\x18\x08 \x01(\x0b\x32,.build_event_stream.TestResult.ExecutionInfo\x1a\x87\x04\n\rExecutionInfo\x12\x1b\n\x0ftimeout_seconds\x18\x01 \x01(\x05\x42\x02\x18\x01\x12\x10\n\x08strategy\x18\x02 \x01(\t\x12\x17\n\x0f\x63\x61\x63hed_remotely\x18\x06 \x01(\x08\x12\x11\n\texit_code\x18\x07 \x01(\x05\x12\x10\n\x08hostname\x18\x03 \x01(\t\x12V\n\x10timing_breakdown\x18\x04 \x01(\x0b\x32<.build_event_stream.TestResult.ExecutionInfo.TimingBreakdown\x12R\n\x0eresource_usage\x18\x05 \x03(\x0b\x32:.build_event_stream.TestResult.ExecutionInfo.ResourceUsage\x1a\xae\x01\n\x0fTimingBreakdown\x12K\n\x05\x63hild\x18\x01 \x03(\x0b\x32<.build_event_stream.TestResult.ExecutionInfo.TimingBreakdown\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x17\n\x0btime_millis\x18\x03 \x01(\x03\x42\x02\x18\x01\x12\'\n\x04time\x18\x04 \x01(\x0b\x32\x19.google.protobuf.Duration\x1a,\n\rResourceUsage\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03J\x04\x08\x01\x10\x02\"\x9b\x04\n\x0bTestSummary\x12\x36\n\x0eoverall_status\x18\x05 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\x12\x17\n\x0ftotal_run_count\x18\x01 \x01(\x05\x12\x11\n\trun_count\x18\n \x01(\x05\x12\x15\n\rattempt_count\x18\x0f \x01(\x05\x12\x13\n\x0bshard_count\x18\x0b \x01(\x05\x12(\n\x06passed\x18\x03 \x03(\x0b\x32\x18.build_event_stream.File\x12(\n\x06\x66\x61iled\x18\x04 \x03(\x0b\x32\x18.build_event_stream.File\x12\x18\n\x10total_num_cached\x18\x06 \x01(\x05\x12#\n\x17\x66irst_start_time_millis\x18\x07 \x01(\x03\x42\x02\x18\x01\x12\x34\n\x10\x66irst_start_time\x18\r \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12!\n\x15last_stop_time_millis\x18\x08 \x01(\x03\x42\x02\x18\x01\x12\x32\n\x0elast_stop_time\x18\x0e \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12%\n\x19total_run_duration_millis\x18\t \x01(\x03\x42\x02\x18\x01\x12\x35\n\x12total_run_duration\x18\x0c \x01(\x0b\x32\x19.google.protobuf.Duration\"k\n\rTargetSummary\x12\x1d\n\x15overall_build_success\x18\x01 \x01(\x08\x12;\n\x13overall_test_status\x18\x02 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\"\xd5\x02\n\rBuildFinished\x12\x1b\n\x0foverall_success\x18\x01 \x01(\x08\x42\x02\x18\x01\x12=\n\texit_code\x18\x03 \x01(\x0b\x32*.build_event_stream.BuildFinished.ExitCode\x12\x1e\n\x12\x66inish_time_millis\x18\x02 \x01(\x03\x42\x02\x18\x01\x12/\n\x0b\x66inish_time\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12G\n\x0e\x61nomaly_report\x18\x04 \x01(\x0b\x32/.build_event_stream.BuildFinished.AnomalyReport\x1a&\n\x08\x45xitCode\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\x05\x1a&\n\rAnomalyReport\x12\x15\n\rwas_suspended\x18\x01 \x01(\x08\"\x99\x12\n\x0c\x42uildMetrics\x12\x46\n\x0e\x61\x63tion_summary\x18\x01 \x01(\x0b\x32..build_event_stream.BuildMetrics.ActionSummary\x12\x46\n\x0ememory_metrics\x18\x02 \x01(\x0b\x32..build_event_stream.BuildMetrics.MemoryMetrics\x12\x46\n\x0etarget_metrics\x18\x03 \x01(\x0b\x32..build_event_stream.BuildMetrics.TargetMetrics\x12H\n\x0fpackage_metrics\x18\x04 \x01(\x0b\x32/.build_event_stream.BuildMetrics.PackageMetrics\x12\x46\n\x0etiming_metrics\x18\x05 \x01(\x0b\x32..build_event_stream.BuildMetrics.TimingMetrics\x12N\n\x12\x63umulative_metrics\x18\x06 \x01(\x0b\x32\x32.build_event_stream.BuildMetrics.CumulativeMetrics\x12J\n\x10\x61rtifact_metrics\x18\x07 \x01(\x0b\x32\x30.build_event_stream.BuildMetrics.ArtifactMetrics\x12O\n\x13\x62uild_graph_metrics\x18\x08 \x01(\x0b\x32\x32.build_event_stream.BuildMetrics.BuildGraphMetrics\x1a\xc9\x03\n\rActionSummary\x12\x17\n\x0f\x61\x63tions_created\x18\x01 \x01(\x03\x12-\n%actions_created_not_including_aspects\x18\x03 \x01(\x03\x12\x18\n\x10\x61\x63tions_executed\x18\x02 \x01(\x03\x12N\n\x0b\x61\x63tion_data\x18\x04 \x03(\x0b\x32\x39.build_event_stream.BuildMetrics.ActionSummary.ActionData\x12\x1d\n\x11remote_cache_hits\x18\x05 \x01(\x03\x42\x02\x18\x01\x12P\n\x0crunner_count\x18\x06 \x03(\x0b\x32:.build_event_stream.BuildMetrics.ActionSummary.RunnerCount\x1ai\n\nActionData\x12\x10\n\x08mnemonic\x18\x01 \x01(\t\x12\x18\n\x10\x61\x63tions_executed\x18\x02 \x01(\x03\x12\x18\n\x10\x66irst_started_ms\x18\x03 \x01(\x03\x12\x15\n\rlast_ended_ms\x18\x04 \x01(\x03\x1a*\n\x0bRunnerCount\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x02 \x01(\x05\x1aR\n\rMemoryMetrics\x12!\n\x19used_heap_size_post_build\x18\x01 \x01(\x03\x12\x1e\n\x16peak_post_gc_heap_size\x18\x02 \x01(\x03\x1au\n\rTargetMetrics\x12\x16\n\x0etargets_loaded\x18\x01 \x01(\x03\x12\x1a\n\x12targets_configured\x18\x02 \x01(\x03\x12\x30\n(targets_configured_not_including_aspects\x18\x03 \x01(\x03\x1a)\n\x0ePackageMetrics\x12\x17\n\x0fpackages_loaded\x18\x01 \x01(\x03\x1a\x63\n\rTimingMetrics\x12\x16\n\x0e\x63pu_time_in_ms\x18\x01 \x01(\x03\x12\x17\n\x0fwall_time_in_ms\x18\x02 \x01(\x03\x12!\n\x19\x61nalysis_phase_time_in_ms\x18\x03 \x01(\x03\x1a=\n\x11\x43umulativeMetrics\x12\x14\n\x0cnum_analyses\x18\x0b \x01(\x05\x12\x12\n\nnum_builds\x18\x0c \x01(\x05\x1a\xcb\x03\n\x0f\x41rtifactMetrics\x12[\n\x15source_artifacts_read\x18\x02 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12[\n\x15output_artifacts_seen\x18\x03 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12h\n\"output_artifacts_from_action_cache\x18\x04 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12Y\n\x13top_level_artifacts\x18\x05 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x1a\x33\n\x0b\x46ilesMetric\x12\x15\n\rsize_in_bytes\x18\x01 \x01(\x03\x12\r\n\x05\x63ount\x18\x02 \x01(\x05J\x04\x08\x01\x10\x02\x1a\xfd\x02\n\x11\x42uildGraphMetrics\x12!\n\x19\x61\x63tion_lookup_value_count\x18\x01 \x01(\x05\x12\x37\n/action_lookup_value_count_not_including_aspects\x18\x05 \x01(\x05\x12\x14\n\x0c\x61\x63tion_count\x18\x02 \x01(\x05\x12*\n\"action_count_not_including_aspects\x18\x06 \x01(\x05\x12*\n\"input_file_configured_target_count\x18\x07 \x01(\x05\x12+\n#output_file_configured_target_count\x18\x08 \x01(\x05\x12%\n\x1dother_configured_target_count\x18\t \x01(\x05\x12\x1d\n\x15output_artifact_count\x18\x03 \x01(\x05\x12+\n#post_invocation_skyframe_node_count\x18\x04 \x01(\x05\"6\n\rBuildToolLogs\x12%\n\x03log\x18\x01 \x03(\x0b\x32\x18.build_event_stream.File\"e\n\x1d\x43onvenienceSymlinksIdentified\x12\x44\n\x14\x63onvenience_symlinks\x18\x01 \x03(\x0b\x32&.build_event_stream.ConvenienceSymlink\"\xa0\x01\n\x12\x43onvenienceSymlink\x12\x0c\n\x04path\x18\x01 \x01(\t\x12=\n\x06\x61\x63tion\x18\x02 \x01(\x0e\x32-.build_event_stream.ConvenienceSymlink.Action\x12\x0e\n\x06target\x18\x03 \x01(\t\"-\n\x06\x41\x63tion\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06\x43REATE\x10\x01\x12\n\n\x06\x44\x45LETE\x10\x02\"\x86\x0c\n\nBuildEvent\x12,\n\x02id\x18\x01 \x01(\x0b\x32 .build_event_stream.BuildEventId\x12\x32\n\x08\x63hildren\x18\x02 \x03(\x0b\x32 .build_event_stream.BuildEventId\x12\x14\n\x0clast_message\x18\x14 \x01(\x08\x12\x30\n\x08progress\x18\x03 \x01(\x0b\x32\x1c.build_event_stream.ProgressH\x00\x12.\n\x07\x61\x62orted\x18\x04 \x01(\x0b\x32\x1b.build_event_stream.AbortedH\x00\x12\x33\n\x07started\x18\x05 \x01(\x0b\x32 .build_event_stream.BuildStartedH\x00\x12P\n\x19unstructured_command_line\x18\x0c \x01(\x0b\x32+.build_event_stream.UnstructuredCommandLineH\x00\x12<\n\x17structured_command_line\x18\x16 \x01(\x0b\x32\x19.command_line.CommandLineH\x00\x12;\n\x0eoptions_parsed\x18\r \x01(\x0b\x32!.build_event_stream.OptionsParsedH\x00\x12?\n\x10workspace_status\x18\x10 \x01(\x0b\x32#.build_event_stream.WorkspaceStatusH\x00\x12*\n\x05\x66\x65tch\x18\x15 \x01(\x0b\x32\x19.build_event_stream.FetchH\x00\x12:\n\rconfiguration\x18\x11 \x01(\x0b\x32!.build_event_stream.ConfigurationH\x00\x12\x37\n\x08\x65xpanded\x18\x06 \x01(\x0b\x32#.build_event_stream.PatternExpandedH\x00\x12:\n\nconfigured\x18\x12 \x01(\x0b\x32$.build_event_stream.TargetConfiguredH\x00\x12\x34\n\x06\x61\x63tion\x18\x07 \x01(\x0b\x32\".build_event_stream.ActionExecutedH\x00\x12\x41\n\x12named_set_of_files\x18\x0f \x01(\x0b\x32#.build_event_stream.NamedSetOfFilesH\x00\x12\x37\n\tcompleted\x18\x08 \x01(\x0b\x32\".build_event_stream.TargetCompleteH\x00\x12\x35\n\x0btest_result\x18\n \x01(\x0b\x32\x1e.build_event_stream.TestResultH\x00\x12\x37\n\x0ctest_summary\x18\t \x01(\x0b\x32\x1f.build_event_stream.TestSummaryH\x00\x12;\n\x0etarget_summary\x18\x1c \x01(\x0b\x32!.build_event_stream.TargetSummaryH\x00\x12\x35\n\x08\x66inished\x18\x0e \x01(\x0b\x32!.build_event_stream.BuildFinishedH\x00\x12<\n\x0f\x62uild_tool_logs\x18\x17 \x01(\x0b\x32!.build_event_stream.BuildToolLogsH\x00\x12\x39\n\rbuild_metrics\x18\x18 \x01(\x0b\x32 .build_event_stream.BuildMetricsH\x00\x12=\n\x0eworkspace_info\x18\x19 \x01(\x0b\x32#.build_event_stream.WorkspaceConfigH\x00\x12;\n\x0e\x62uild_metadata\x18\x1a \x01(\x0b\x32!.build_event_stream.BuildMetadataH\x00\x12\\\n\x1f\x63onvenience_symlinks_identified\x18\x1b \x01(\x0b\x32\x31.build_event_stream.ConvenienceSymlinksIdentifiedH\x00\x42\t\n\x07payloadJ\x04\x08\x0b\x10\x0cJ\x04\x08\x13\x10\x14*G\n\x08TestSize\x12\x0b\n\x07UNKNOWN\x10\x00\x12\t\n\x05SMALL\x10\x01\x12\n\n\x06MEDIUM\x10\x02\x12\t\n\x05LARGE\x10\x03\x12\x0c\n\x08\x45NORMOUS\x10\x04*\xa4\x01\n\nTestStatus\x12\r\n\tNO_STATUS\x10\x00\x12\n\n\x06PASSED\x10\x01\x12\t\n\x05\x46LAKY\x10\x02\x12\x0b\n\x07TIMEOUT\x10\x03\x12\n\n\x06\x46\x41ILED\x10\x04\x12\x0e\n\nINCOMPLETE\x10\x05\x12\x12\n\x0eREMOTE_FAILURE\x10\x06\x12\x13\n\x0f\x46\x41ILED_TO_BUILD\x10\x07\x12\x1e\n\x1aTOOL_HALTED_BEFORE_TESTING\x10\x08\x42H\n.com.google.devtools.build.lib.buildeventstreamB\x16\x42uildEventStreamProtosb\x06proto3'
   ,
-  dependencies=[src_dot_main_dot_protobuf_dot_command__line__pb2.DESCRIPTOR,src_dot_main_dot_protobuf_dot_failure__details__pb2.DESCRIPTOR,src_dot_main_dot_protobuf_dot_invocation__policy__pb2.DESCRIPTOR,])
+  dependencies=[google_dot_protobuf_dot_duration__pb2.DESCRIPTOR,google_dot_protobuf_dot_timestamp__pb2.DESCRIPTOR,src_dot_main_dot_protobuf_dot_command__line__pb2.DESCRIPTOR,src_dot_main_dot_protobuf_dot_failure__details__pb2.DESCRIPTOR,src_dot_main_dot_protobuf_dot_invocation__policy__pb2.DESCRIPTOR,])
 
 _TESTSIZE = _descriptor.EnumDescriptor(
   name='TestSize',
   full_name='build_event_stream.TestSize',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='UNKNOWN', index=0, number=0,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SMALL', index=1, number=1,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='MEDIUM', index=2, number=2,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LARGE', index=3, number=3,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ENORMOUS', index=4, number=4,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=11608,
-  serialized_end=11679,
+  serialized_start=12687,
+  serialized_end=12758,
 )
 _sym_db.RegisterEnumDescriptor(_TESTSIZE)
 
@@ -83,48 +90,58 @@ _TESTSTATUS = _descriptor.EnumDescriptor(
   full_name='build_event_stream.TestStatus',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='NO_STATUS', index=0, number=0,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='PASSED', index=1, number=1,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FLAKY', index=2, number=2,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TIMEOUT', index=3, number=3,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FAILED', index=4, number=4,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCOMPLETE', index=5, number=5,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REMOTE_FAILURE', index=6, number=6,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='FAILED_TO_BUILD', index=7, number=7,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TOOL_HALTED_BEFORE_TESTING', index=8, number=8,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=11682,
-  serialized_end=11846,
+  serialized_start=12761,
+  serialized_end=12925,
 )
 _sym_db.RegisterEnumDescriptor(_TESTSTATUS)
 
@@ -150,60 +167,73 @@ _ABORTED_ABORTREASON = _descriptor.EnumDescriptor(
   full_name='build_event_stream.Aborted.AbortReason',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='UNKNOWN', index=0, number=0,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='USER_INTERRUPTED', index=1, number=1,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_ANALYZE', index=2, number=8,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='NO_BUILD', index=3, number=9,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='TIME_OUT', index=4, number=2,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='REMOTE_ENVIRONMENT_FAILURE', index=5, number=3,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INTERNAL', index=6, number=4,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='LOADING_FAILURE', index=7, number=5,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='ANALYSIS_FAILURE', index=8, number=6,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='SKIPPED', index=9, number=7,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='INCOMPLETE', index=10, number=10,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='OUT_OF_MEMORY', index=11, number=11,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=3709,
-  serialized_end=3938,
+  serialized_start=3774,
+  serialized_end=4003,
 )
 _sym_db.RegisterEnumDescriptor(_ABORTED_ABORTREASON)
 
@@ -212,24 +242,28 @@ _CONVENIENCESYMLINK_ACTION = _descriptor.EnumDescriptor(
   full_name='build_event_stream.ConvenienceSymlink.Action',
   filename=None,
   file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
   values=[
     _descriptor.EnumValueDescriptor(
       name='UNKNOWN', index=0, number=0,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='CREATE', index=1, number=1,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
     _descriptor.EnumValueDescriptor(
       name='DELETE', index=2, number=2,
       serialized_options=None,
-      type=None),
+      type=None,
+      create_key=_descriptor._internal_create_key),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=10016,
-  serialized_end=10061,
+  serialized_start=11095,
+  serialized_end=11140,
 )
 _sym_db.RegisterEnumDescriptor(_CONVENIENCESYMLINK_ACTION)
 
@@ -240,14 +274,15 @@ _BUILDEVENTID_UNKNOWNBUILDEVENTID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='details', full_name='build_event_stream.BuildEventId.UnknownBuildEventId.details', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -260,8 +295,8 @@ _BUILDEVENTID_UNKNOWNBUILDEVENTID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2272,
-  serialized_end=2310,
+  serialized_start=2337,
+  serialized_end=2375,
 )
 
 _BUILDEVENTID_PROGRESSID = _descriptor.Descriptor(
@@ -270,6 +305,7 @@ _BUILDEVENTID_PROGRESSID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='opaque_count', full_name='build_event_stream.BuildEventId.ProgressId.opaque_count', index=0,
@@ -277,7 +313,7 @@ _BUILDEVENTID_PROGRESSID = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -290,8 +326,8 @@ _BUILDEVENTID_PROGRESSID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2312,
-  serialized_end=2346,
+  serialized_start=2377,
+  serialized_end=2411,
 )
 
 _BUILDEVENTID_BUILDSTARTEDID = _descriptor.Descriptor(
@@ -300,6 +336,7 @@ _BUILDEVENTID_BUILDSTARTEDID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -313,8 +350,8 @@ _BUILDEVENTID_BUILDSTARTEDID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2348,
-  serialized_end=2364,
+  serialized_start=2413,
+  serialized_end=2429,
 )
 
 _BUILDEVENTID_UNSTRUCTUREDCOMMANDLINEID = _descriptor.Descriptor(
@@ -323,6 +360,7 @@ _BUILDEVENTID_UNSTRUCTUREDCOMMANDLINEID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -336,8 +374,8 @@ _BUILDEVENTID_UNSTRUCTUREDCOMMANDLINEID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2366,
-  serialized_end=2393,
+  serialized_start=2431,
+  serialized_end=2458,
 )
 
 _BUILDEVENTID_STRUCTUREDCOMMANDLINEID = _descriptor.Descriptor(
@@ -346,14 +384,15 @@ _BUILDEVENTID_STRUCTUREDCOMMANDLINEID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='command_line_label', full_name='build_event_stream.BuildEventId.StructuredCommandLineId.command_line_label', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -366,8 +405,8 @@ _BUILDEVENTID_STRUCTUREDCOMMANDLINEID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2395,
-  serialized_end=2448,
+  serialized_start=2460,
+  serialized_end=2513,
 )
 
 _BUILDEVENTID_WORKSPACESTATUSID = _descriptor.Descriptor(
@@ -376,6 +415,7 @@ _BUILDEVENTID_WORKSPACESTATUSID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -389,8 +429,8 @@ _BUILDEVENTID_WORKSPACESTATUSID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2450,
-  serialized_end=2469,
+  serialized_start=2515,
+  serialized_end=2534,
 )
 
 _BUILDEVENTID_OPTIONSPARSEDID = _descriptor.Descriptor(
@@ -399,6 +439,7 @@ _BUILDEVENTID_OPTIONSPARSEDID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -412,8 +453,8 @@ _BUILDEVENTID_OPTIONSPARSEDID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2471,
-  serialized_end=2488,
+  serialized_start=2536,
+  serialized_end=2553,
 )
 
 _BUILDEVENTID_FETCHID = _descriptor.Descriptor(
@@ -422,14 +463,15 @@ _BUILDEVENTID_FETCHID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='url', full_name='build_event_stream.BuildEventId.FetchId.url', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -442,8 +484,8 @@ _BUILDEVENTID_FETCHID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2490,
-  serialized_end=2512,
+  serialized_start=2555,
+  serialized_end=2577,
 )
 
 _BUILDEVENTID_PATTERNEXPANDEDID = _descriptor.Descriptor(
@@ -452,6 +494,7 @@ _BUILDEVENTID_PATTERNEXPANDEDID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='pattern', full_name='build_event_stream.BuildEventId.PatternExpandedId.pattern', index=0,
@@ -459,7 +502,7 @@ _BUILDEVENTID_PATTERNEXPANDEDID = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -472,8 +515,8 @@ _BUILDEVENTID_PATTERNEXPANDEDID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2514,
-  serialized_end=2550,
+  serialized_start=2579,
+  serialized_end=2615,
 )
 
 _BUILDEVENTID_WORKSPACECONFIGID = _descriptor.Descriptor(
@@ -482,6 +525,7 @@ _BUILDEVENTID_WORKSPACECONFIGID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -495,8 +539,8 @@ _BUILDEVENTID_WORKSPACECONFIGID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2552,
-  serialized_end=2571,
+  serialized_start=2617,
+  serialized_end=2636,
 )
 
 _BUILDEVENTID_BUILDMETADATAID = _descriptor.Descriptor(
@@ -505,6 +549,7 @@ _BUILDEVENTID_BUILDMETADATAID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -518,8 +563,8 @@ _BUILDEVENTID_BUILDMETADATAID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2573,
-  serialized_end=2590,
+  serialized_start=2638,
+  serialized_end=2655,
 )
 
 _BUILDEVENTID_TARGETCONFIGUREDID = _descriptor.Descriptor(
@@ -528,21 +573,22 @@ _BUILDEVENTID_TARGETCONFIGUREDID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='label', full_name='build_event_stream.BuildEventId.TargetConfiguredId.label', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='aspect', full_name='build_event_stream.BuildEventId.TargetConfiguredId.aspect', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -555,8 +601,8 @@ _BUILDEVENTID_TARGETCONFIGUREDID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2592,
-  serialized_end=2643,
+  serialized_start=2657,
+  serialized_end=2708,
 )
 
 _BUILDEVENTID_NAMEDSETOFFILESID = _descriptor.Descriptor(
@@ -565,14 +611,15 @@ _BUILDEVENTID_NAMEDSETOFFILESID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='id', full_name='build_event_stream.BuildEventId.NamedSetOfFilesId.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -585,8 +632,8 @@ _BUILDEVENTID_NAMEDSETOFFILESID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2645,
-  serialized_end=2676,
+  serialized_start=2710,
+  serialized_end=2741,
 )
 
 _BUILDEVENTID_CONFIGURATIONID = _descriptor.Descriptor(
@@ -595,14 +642,15 @@ _BUILDEVENTID_CONFIGURATIONID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='id', full_name='build_event_stream.BuildEventId.ConfigurationId.id', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -615,8 +663,8 @@ _BUILDEVENTID_CONFIGURATIONID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2678,
-  serialized_end=2707,
+  serialized_start=2743,
+  serialized_end=2772,
 )
 
 _BUILDEVENTID_TARGETCOMPLETEDID = _descriptor.Descriptor(
@@ -625,28 +673,29 @@ _BUILDEVENTID_TARGETCOMPLETEDID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='label', full_name='build_event_stream.BuildEventId.TargetCompletedId.label', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configuration', full_name='build_event_stream.BuildEventId.TargetCompletedId.configuration', index=1,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='aspect', full_name='build_event_stream.BuildEventId.TargetCompletedId.aspect', index=2,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -659,8 +708,8 @@ _BUILDEVENTID_TARGETCOMPLETEDID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2709,
-  serialized_end=2832,
+  serialized_start=2774,
+  serialized_end=2897,
 )
 
 _BUILDEVENTID_ACTIONCOMPLETEDID = _descriptor.Descriptor(
@@ -669,28 +718,29 @@ _BUILDEVENTID_ACTIONCOMPLETEDID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='primary_output', full_name='build_event_stream.BuildEventId.ActionCompletedId.primary_output', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='label', full_name='build_event_stream.BuildEventId.ActionCompletedId.label', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configuration', full_name='build_event_stream.BuildEventId.ActionCompletedId.configuration', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -703,8 +753,8 @@ _BUILDEVENTID_ACTIONCOMPLETEDID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2835,
-  serialized_end=2966,
+  serialized_start=2900,
+  serialized_end=3031,
 )
 
 _BUILDEVENTID_UNCONFIGUREDLABELID = _descriptor.Descriptor(
@@ -713,14 +763,15 @@ _BUILDEVENTID_UNCONFIGUREDLABELID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='label', full_name='build_event_stream.BuildEventId.UnconfiguredLabelId.label', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -733,8 +784,8 @@ _BUILDEVENTID_UNCONFIGUREDLABELID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=2968,
-  serialized_end=3004,
+  serialized_start=3033,
+  serialized_end=3069,
 )
 
 _BUILDEVENTID_CONFIGUREDLABELID = _descriptor.Descriptor(
@@ -743,21 +794,22 @@ _BUILDEVENTID_CONFIGUREDLABELID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='label', full_name='build_event_stream.BuildEventId.ConfiguredLabelId.label', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configuration', full_name='build_event_stream.BuildEventId.ConfiguredLabelId.configuration', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -770,8 +822,8 @@ _BUILDEVENTID_CONFIGUREDLABELID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3006,
-  serialized_end=3113,
+  serialized_start=3071,
+  serialized_end=3178,
 )
 
 _BUILDEVENTID_TESTRESULTID = _descriptor.Descriptor(
@@ -780,42 +832,43 @@ _BUILDEVENTID_TESTRESULTID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='label', full_name='build_event_stream.BuildEventId.TestResultId.label', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configuration', full_name='build_event_stream.BuildEventId.TestResultId.configuration', index=1,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='run', full_name='build_event_stream.BuildEventId.TestResultId.run', index=2,
       number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='shard', full_name='build_event_stream.BuildEventId.TestResultId.shard', index=3,
       number=3, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='attempt', full_name='build_event_stream.BuildEventId.TestResultId.attempt', index=4,
       number=4, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -828,8 +881,8 @@ _BUILDEVENTID_TESTRESULTID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3116,
-  serialized_end=3263,
+  serialized_start=3181,
+  serialized_end=3328,
 )
 
 _BUILDEVENTID_TESTSUMMARYID = _descriptor.Descriptor(
@@ -838,21 +891,22 @@ _BUILDEVENTID_TESTSUMMARYID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='label', full_name='build_event_stream.BuildEventId.TestSummaryId.label', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configuration', full_name='build_event_stream.BuildEventId.TestSummaryId.configuration', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -865,8 +919,8 @@ _BUILDEVENTID_TESTSUMMARYID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3265,
-  serialized_end=3368,
+  serialized_start=3330,
+  serialized_end=3433,
 )
 
 _BUILDEVENTID_TARGETSUMMARYID = _descriptor.Descriptor(
@@ -875,21 +929,22 @@ _BUILDEVENTID_TARGETSUMMARYID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='label', full_name='build_event_stream.BuildEventId.TargetSummaryId.label', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configuration', full_name='build_event_stream.BuildEventId.TargetSummaryId.configuration', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -902,8 +957,8 @@ _BUILDEVENTID_TARGETSUMMARYID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3370,
-  serialized_end=3475,
+  serialized_start=3435,
+  serialized_end=3540,
 )
 
 _BUILDEVENTID_BUILDFINISHEDID = _descriptor.Descriptor(
@@ -912,6 +967,7 @@ _BUILDEVENTID_BUILDFINISHEDID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -925,8 +981,8 @@ _BUILDEVENTID_BUILDFINISHEDID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3477,
-  serialized_end=3494,
+  serialized_start=3542,
+  serialized_end=3559,
 )
 
 _BUILDEVENTID_BUILDTOOLLOGSID = _descriptor.Descriptor(
@@ -935,6 +991,7 @@ _BUILDEVENTID_BUILDTOOLLOGSID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -948,8 +1005,8 @@ _BUILDEVENTID_BUILDTOOLLOGSID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3496,
-  serialized_end=3513,
+  serialized_start=3561,
+  serialized_end=3578,
 )
 
 _BUILDEVENTID_BUILDMETRICSID = _descriptor.Descriptor(
@@ -958,6 +1015,7 @@ _BUILDEVENTID_BUILDMETRICSID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -971,8 +1029,8 @@ _BUILDEVENTID_BUILDMETRICSID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3515,
-  serialized_end=3531,
+  serialized_start=3580,
+  serialized_end=3596,
 )
 
 _BUILDEVENTID_CONVENIENCESYMLINKSIDENTIFIEDID = _descriptor.Descriptor(
@@ -981,6 +1039,7 @@ _BUILDEVENTID_CONVENIENCESYMLINKSIDENTIFIEDID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -994,8 +1053,8 @@ _BUILDEVENTID_CONVENIENCESYMLINKSIDENTIFIEDID = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3533,
-  serialized_end=3566,
+  serialized_start=3598,
+  serialized_end=3631,
 )
 
 _BUILDEVENTID = _descriptor.Descriptor(
@@ -1004,6 +1063,7 @@ _BUILDEVENTID = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='unknown', full_name='build_event_stream.BuildEventId.unknown', index=0,
@@ -1011,182 +1071,182 @@ _BUILDEVENTID = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='progress', full_name='build_event_stream.BuildEventId.progress', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='started', full_name='build_event_stream.BuildEventId.started', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='unstructured_command_line', full_name='build_event_stream.BuildEventId.unstructured_command_line', index=3,
       number=11, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='structured_command_line', full_name='build_event_stream.BuildEventId.structured_command_line', index=4,
       number=18, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='workspace_status', full_name='build_event_stream.BuildEventId.workspace_status', index=5,
       number=14, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='options_parsed', full_name='build_event_stream.BuildEventId.options_parsed', index=6,
       number=12, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='fetch', full_name='build_event_stream.BuildEventId.fetch', index=7,
       number=17, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configuration', full_name='build_event_stream.BuildEventId.configuration', index=8,
       number=15, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='target_configured', full_name='build_event_stream.BuildEventId.target_configured', index=9,
       number=16, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='pattern', full_name='build_event_stream.BuildEventId.pattern', index=10,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='pattern_skipped', full_name='build_event_stream.BuildEventId.pattern_skipped', index=11,
       number=10, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='named_set', full_name='build_event_stream.BuildEventId.named_set', index=12,
       number=13, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='target_completed', full_name='build_event_stream.BuildEventId.target_completed', index=13,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action_completed', full_name='build_event_stream.BuildEventId.action_completed', index=14,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='unconfigured_label', full_name='build_event_stream.BuildEventId.unconfigured_label', index=15,
       number=19, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configured_label', full_name='build_event_stream.BuildEventId.configured_label', index=16,
       number=21, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_result', full_name='build_event_stream.BuildEventId.test_result', index=17,
       number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_summary', full_name='build_event_stream.BuildEventId.test_summary', index=18,
       number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='target_summary', full_name='build_event_stream.BuildEventId.target_summary', index=19,
       number=26, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_finished', full_name='build_event_stream.BuildEventId.build_finished', index=20,
       number=9, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_tool_logs', full_name='build_event_stream.BuildEventId.build_tool_logs', index=21,
       number=20, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_metrics', full_name='build_event_stream.BuildEventId.build_metrics', index=22,
       number=22, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='workspace', full_name='build_event_stream.BuildEventId.workspace', index=23,
       number=23, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_metadata', full_name='build_event_stream.BuildEventId.build_metadata', index=24,
       number=24, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='convenience_symlinks_identified', full_name='build_event_stream.BuildEventId.convenience_symlinks_identified', index=25,
       number=25, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1200,10 +1260,12 @@ _BUILDEVENTID = _descriptor.Descriptor(
   oneofs=[
     _descriptor.OneofDescriptor(
       name='id', full_name='build_event_stream.BuildEventId.id',
-      index=0, containing_type=None, fields=[]),
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
   ],
-  serialized_start=238,
-  serialized_end=3572,
+  serialized_start=303,
+  serialized_end=3637,
 )
 
 
@@ -1213,21 +1275,22 @@ _PROGRESS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='stdout', full_name='build_event_stream.Progress.stdout', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='stderr', full_name='build_event_stream.Progress.stderr', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1240,8 +1303,8 @@ _PROGRESS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3574,
-  serialized_end=3616,
+  serialized_start=3639,
+  serialized_end=3681,
 )
 
 
@@ -1251,6 +1314,7 @@ _ABORTED = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='reason', full_name='build_event_stream.Aborted.reason', index=0,
@@ -1258,14 +1322,14 @@ _ABORTED = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='description', full_name='build_event_stream.Aborted.description', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1279,8 +1343,8 @@ _ABORTED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3619,
-  serialized_end=3938,
+  serialized_start=3684,
+  serialized_end=4003,
 )
 
 
@@ -1290,63 +1354,71 @@ _BUILDSTARTED = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='uuid', full_name='build_event_stream.BuildStarted.uuid', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='start_time_millis', full_name='build_event_stream.BuildStarted.start_time_millis', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='build_tool_version', full_name='build_event_stream.BuildStarted.build_tool_version', index=2,
+      name='start_time', full_name='build_event_stream.BuildStarted.start_time', index=2,
+      number=9, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='build_tool_version', full_name='build_event_stream.BuildStarted.build_tool_version', index=3,
       number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='options_description', full_name='build_event_stream.BuildStarted.options_description', index=3,
+      name='options_description', full_name='build_event_stream.BuildStarted.options_description', index=4,
       number=4, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='command', full_name='build_event_stream.BuildStarted.command', index=4,
+      name='command', full_name='build_event_stream.BuildStarted.command', index=5,
       number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='working_directory', full_name='build_event_stream.BuildStarted.working_directory', index=5,
+      name='working_directory', full_name='build_event_stream.BuildStarted.working_directory', index=6,
       number=6, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='workspace_directory', full_name='build_event_stream.BuildStarted.workspace_directory', index=6,
+      name='workspace_directory', full_name='build_event_stream.BuildStarted.workspace_directory', index=7,
       number=7, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='server_pid', full_name='build_event_stream.BuildStarted.server_pid', index=7,
+      name='server_pid', full_name='build_event_stream.BuildStarted.server_pid', index=8,
       number=8, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1359,8 +1431,8 @@ _BUILDSTARTED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=3941,
-  serialized_end=4146,
+  serialized_start=4006,
+  serialized_end=4263,
 )
 
 
@@ -1370,14 +1442,15 @@ _WORKSPACECONFIG = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='local_exec_root', full_name='build_event_stream.WorkspaceConfig.local_exec_root', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1390,8 +1463,8 @@ _WORKSPACECONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4148,
-  serialized_end=4190,
+  serialized_start=4265,
+  serialized_end=4307,
 )
 
 
@@ -1401,6 +1474,7 @@ _UNSTRUCTUREDCOMMANDLINE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='args', full_name='build_event_stream.UnstructuredCommandLine.args', index=0,
@@ -1408,7 +1482,7 @@ _UNSTRUCTUREDCOMMANDLINE = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1421,8 +1495,8 @@ _UNSTRUCTUREDCOMMANDLINE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4192,
-  serialized_end=4231,
+  serialized_start=4309,
+  serialized_end=4348,
 )
 
 
@@ -1432,6 +1506,7 @@ _OPTIONSPARSED = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='startup_options', full_name='build_event_stream.OptionsParsed.startup_options', index=0,
@@ -1439,42 +1514,42 @@ _OPTIONSPARSED = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='explicit_startup_options', full_name='build_event_stream.OptionsParsed.explicit_startup_options', index=1,
       number=2, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='cmd_line', full_name='build_event_stream.OptionsParsed.cmd_line', index=2,
       number=3, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='explicit_cmd_line', full_name='build_event_stream.OptionsParsed.explicit_cmd_line', index=3,
       number=4, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='invocation_policy', full_name='build_event_stream.OptionsParsed.invocation_policy', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='tool_tag', full_name='build_event_stream.OptionsParsed.tool_tag', index=5,
       number=6, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1487,8 +1562,8 @@ _OPTIONSPARSED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4234,
-  serialized_end=4441,
+  serialized_start=4351,
+  serialized_end=4558,
 )
 
 
@@ -1498,6 +1573,7 @@ _FETCH = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='success', full_name='build_event_stream.Fetch.success', index=0,
@@ -1505,7 +1581,7 @@ _FETCH = _descriptor.Descriptor(
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1518,8 +1594,8 @@ _FETCH = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4443,
-  serialized_end=4467,
+  serialized_start=4560,
+  serialized_end=4584,
 )
 
 
@@ -1529,21 +1605,22 @@ _WORKSPACESTATUS_ITEM = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='key', full_name='build_event_stream.WorkspaceStatus.Item.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='value', full_name='build_event_stream.WorkspaceStatus.Item.value', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1556,8 +1633,8 @@ _WORKSPACESTATUS_ITEM = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4544,
-  serialized_end=4578,
+  serialized_start=4661,
+  serialized_end=4695,
 )
 
 _WORKSPACESTATUS = _descriptor.Descriptor(
@@ -1566,6 +1643,7 @@ _WORKSPACESTATUS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='item', full_name='build_event_stream.WorkspaceStatus.item', index=0,
@@ -1573,7 +1651,7 @@ _WORKSPACESTATUS = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1586,8 +1664,8 @@ _WORKSPACESTATUS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4469,
-  serialized_end=4578,
+  serialized_start=4586,
+  serialized_end=4695,
 )
 
 
@@ -1597,35 +1675,36 @@ _BUILDMETADATA_METADATAENTRY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='key', full_name='build_event_stream.BuildMetadata.MetadataEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='value', full_name='build_event_stream.BuildMetadata.MetadataEntry.value', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=_b('8\001'),
+  serialized_options=b'8\001',
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4665,
-  serialized_end=4712,
+  serialized_start=4782,
+  serialized_end=4829,
 )
 
 _BUILDMETADATA = _descriptor.Descriptor(
@@ -1634,6 +1713,7 @@ _BUILDMETADATA = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='metadata', full_name='build_event_stream.BuildMetadata.metadata', index=0,
@@ -1641,7 +1721,7 @@ _BUILDMETADATA = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1654,8 +1734,8 @@ _BUILDMETADATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4581,
-  serialized_end=4712,
+  serialized_start=4698,
+  serialized_end=4829,
 )
 
 
@@ -1665,35 +1745,36 @@ _CONFIGURATION_MAKEVARIABLEENTRY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='key', full_name='build_event_stream.Configuration.MakeVariableEntry.key', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='value', full_name='build_event_stream.Configuration.MakeVariableEntry.value', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
   ],
-  serialized_options=_b('8\001'),
+  serialized_options=b'8\001',
   is_extendable=False,
   syntax='proto3',
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4862,
-  serialized_end=4913,
+  serialized_start=4979,
+  serialized_end=5030,
 )
 
 _CONFIGURATION = _descriptor.Descriptor(
@@ -1702,35 +1783,36 @@ _CONFIGURATION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='mnemonic', full_name='build_event_stream.Configuration.mnemonic', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='platform_name', full_name='build_event_stream.Configuration.platform_name', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='cpu', full_name='build_event_stream.Configuration.cpu', index=2,
       number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='make_variable', full_name='build_event_stream.Configuration.make_variable', index=3,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1743,8 +1825,8 @@ _CONFIGURATION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4715,
-  serialized_end=4913,
+  serialized_start=4832,
+  serialized_end=5030,
 )
 
 
@@ -1754,21 +1836,22 @@ _PATTERNEXPANDED_TESTSUITEEXPANSION = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='suite_label', full_name='build_event_stream.PatternExpanded.TestSuiteExpansion.suite_label', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_labels', full_name='build_event_stream.PatternExpanded.TestSuiteExpansion.test_labels', index=1,
       number=2, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1781,8 +1864,8 @@ _PATTERNEXPANDED_TESTSUITEEXPANSION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5022,
-  serialized_end=5084,
+  serialized_start=5139,
+  serialized_end=5201,
 )
 
 _PATTERNEXPANDED = _descriptor.Descriptor(
@@ -1791,6 +1874,7 @@ _PATTERNEXPANDED = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='test_suite_expansions', full_name='build_event_stream.PatternExpanded.test_suite_expansions', index=0,
@@ -1798,7 +1882,7 @@ _PATTERNEXPANDED = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1811,8 +1895,8 @@ _PATTERNEXPANDED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=4916,
-  serialized_end=5084,
+  serialized_start=5033,
+  serialized_end=5201,
 )
 
 
@@ -1822,28 +1906,29 @@ _TARGETCONFIGURED = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='target_kind', full_name='build_event_stream.TargetConfigured.target_kind', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_size', full_name='build_event_stream.TargetConfigured.test_size', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='tag', full_name='build_event_stream.TargetConfigured.tag', index=2,
       number=3, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1856,8 +1941,8 @@ _TARGETCONFIGURED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5086,
-  serialized_end=5187,
+  serialized_start=5203,
+  serialized_end=5304,
 )
 
 
@@ -1867,6 +1952,7 @@ _FILE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='path_prefix', full_name='build_event_stream.File.path_prefix', index=0,
@@ -1874,28 +1960,28 @@ _FILE = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='name', full_name='build_event_stream.File.name', index=1,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='uri', full_name='build_event_stream.File.uri', index=2,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='contents', full_name='build_event_stream.File.contents', index=3,
       number=3, type=12, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b(""),
+      has_default_value=False, default_value=b"",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1909,10 +1995,12 @@ _FILE = _descriptor.Descriptor(
   oneofs=[
     _descriptor.OneofDescriptor(
       name='file', full_name='build_event_stream.File.file',
-      index=0, containing_type=None, fields=[]),
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
   ],
-  serialized_start=5189,
-  serialized_end=5273,
+  serialized_start=5306,
+  serialized_end=5390,
 )
 
 
@@ -1922,6 +2010,7 @@ _NAMEDSETOFFILES = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='files', full_name='build_event_stream.NamedSetOfFiles.files', index=0,
@@ -1929,14 +2018,14 @@ _NAMEDSETOFFILES = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='file_sets', full_name='build_event_stream.NamedSetOfFiles.file_sets', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -1949,8 +2038,8 @@ _NAMEDSETOFFILES = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5276,
-  serialized_end=5405,
+  serialized_start=5393,
+  serialized_end=5522,
 )
 
 
@@ -1960,6 +2049,7 @@ _ACTIONEXECUTED = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='success', full_name='build_event_stream.ActionExecuted.success', index=0,
@@ -1967,77 +2057,77 @@ _ACTIONEXECUTED = _descriptor.Descriptor(
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='type', full_name='build_event_stream.ActionExecuted.type', index=1,
       number=8, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='exit_code', full_name='build_event_stream.ActionExecuted.exit_code', index=2,
       number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='stdout', full_name='build_event_stream.ActionExecuted.stdout', index=3,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='stderr', full_name='build_event_stream.ActionExecuted.stderr', index=4,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='label', full_name='build_event_stream.ActionExecuted.label', index=5,
       number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\030\001'), file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configuration', full_name='build_event_stream.ActionExecuted.configuration', index=6,
       number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\030\001'), file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='primary_output', full_name='build_event_stream.ActionExecuted.primary_output', index=7,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='command_line', full_name='build_event_stream.ActionExecuted.command_line', index=8,
       number=9, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action_metadata_logs', full_name='build_event_stream.ActionExecuted.action_metadata_logs', index=9,
       number=10, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='failure_detail', full_name='build_event_stream.ActionExecuted.failure_detail', index=10,
       number=11, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2050,8 +2140,8 @@ _ACTIONEXECUTED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5408,
-  serialized_end=5838,
+  serialized_start=5525,
+  serialized_end=5955,
 )
 
 
@@ -2061,21 +2151,29 @@ _OUTPUTGROUP = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='name', full_name='build_event_stream.OutputGroup.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='file_sets', full_name='build_event_stream.OutputGroup.file_sets', index=1,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='incomplete', full_name='build_event_stream.OutputGroup.incomplete', index=2,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2088,8 +2186,8 @@ _OUTPUTGROUP = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5840,
-  serialized_end=5944,
+  serialized_start=5957,
+  serialized_end=6081,
 )
 
 
@@ -2099,6 +2197,7 @@ _TARGETCOMPLETE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='success', full_name='build_event_stream.TargetComplete.success', index=0,
@@ -2106,63 +2205,70 @@ _TARGETCOMPLETE = _descriptor.Descriptor(
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='target_kind', full_name='build_event_stream.TargetComplete.target_kind', index=1,
       number=5, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\030\001'), file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_size', full_name='build_event_stream.TargetComplete.test_size', index=2,
       number=6, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\030\001'), file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='output_group', full_name='build_event_stream.TargetComplete.output_group', index=3,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='important_output', full_name='build_event_stream.TargetComplete.important_output', index=4,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\030\001'), file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='directory_output', full_name='build_event_stream.TargetComplete.directory_output', index=5,
       number=8, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='tag', full_name='build_event_stream.TargetComplete.tag', index=6,
       number=3, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_timeout_seconds', full_name='build_event_stream.TargetComplete.test_timeout_seconds', index=7,
       number=7, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='failure_detail', full_name='build_event_stream.TargetComplete.failure_detail', index=8,
+      name='test_timeout', full_name='build_event_stream.TargetComplete.test_timeout', index=8,
+      number=10, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='failure_detail', full_name='build_event_stream.TargetComplete.failure_detail', index=9,
       number=9, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2175,8 +2281,8 @@ _TARGETCOMPLETE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=5947,
-  serialized_end=6320,
+  serialized_start=6084,
+  serialized_end=6510,
 )
 
 
@@ -2186,6 +2292,7 @@ _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='child', full_name='build_event_stream.TestResult.ExecutionInfo.TimingBreakdown.child', index=0,
@@ -2193,21 +2300,28 @@ _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='name', full_name='build_event_stream.TestResult.ExecutionInfo.TimingBreakdown.name', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='time_millis', full_name='build_event_stream.TestResult.ExecutionInfo.TimingBreakdown.time_millis', index=2,
       number=3, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='time', full_name='build_event_stream.TestResult.ExecutionInfo.TimingBreakdown.time', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2220,8 +2334,8 @@ _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6953,
-  serialized_end=7082,
+  serialized_start=7265,
+  serialized_end=7439,
 )
 
 _TESTRESULT_EXECUTIONINFO_RESOURCEUSAGE = _descriptor.Descriptor(
@@ -2230,21 +2344,22 @@ _TESTRESULT_EXECUTIONINFO_RESOURCEUSAGE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='name', full_name='build_event_stream.TestResult.ExecutionInfo.ResourceUsage.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='value', full_name='build_event_stream.TestResult.ExecutionInfo.ResourceUsage.value', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2257,8 +2372,8 @@ _TESTRESULT_EXECUTIONINFO_RESOURCEUSAGE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7084,
-  serialized_end=7128,
+  serialized_start=7441,
+  serialized_end=7485,
 )
 
 _TESTRESULT_EXECUTIONINFO = _descriptor.Descriptor(
@@ -2267,6 +2382,7 @@ _TESTRESULT_EXECUTIONINFO = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='timeout_seconds', full_name='build_event_stream.TestResult.ExecutionInfo.timeout_seconds', index=0,
@@ -2274,49 +2390,49 @@ _TESTRESULT_EXECUTIONINFO = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\030\001'), file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='strategy', full_name='build_event_stream.TestResult.ExecutionInfo.strategy', index=1,
       number=2, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='cached_remotely', full_name='build_event_stream.TestResult.ExecutionInfo.cached_remotely', index=2,
       number=6, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='exit_code', full_name='build_event_stream.TestResult.ExecutionInfo.exit_code', index=3,
       number=7, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='hostname', full_name='build_event_stream.TestResult.ExecutionInfo.hostname', index=4,
       number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='timing_breakdown', full_name='build_event_stream.TestResult.ExecutionInfo.timing_breakdown', index=5,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='resource_usage', full_name='build_event_stream.TestResult.ExecutionInfo.resource_usage', index=6,
       number=5, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2329,8 +2445,8 @@ _TESTRESULT_EXECUTIONINFO = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6654,
-  serialized_end=7128,
+  serialized_start=6966,
+  serialized_end=7485,
 )
 
 _TESTRESULT = _descriptor.Descriptor(
@@ -2339,6 +2455,7 @@ _TESTRESULT = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='status', full_name='build_event_stream.TestResult.status', index=0,
@@ -2346,56 +2463,70 @@ _TESTRESULT = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='status_details', full_name='build_event_stream.TestResult.status_details', index=1,
       number=9, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='cached_locally', full_name='build_event_stream.TestResult.cached_locally', index=2,
       number=4, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_attempt_start_millis_epoch', full_name='build_event_stream.TestResult.test_attempt_start_millis_epoch', index=3,
       number=6, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='test_attempt_duration_millis', full_name='build_event_stream.TestResult.test_attempt_duration_millis', index=4,
+      name='test_attempt_start', full_name='build_event_stream.TestResult.test_attempt_start', index=4,
+      number=10, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='test_attempt_duration_millis', full_name='build_event_stream.TestResult.test_attempt_duration_millis', index=5,
       number=3, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='test_action_output', full_name='build_event_stream.TestResult.test_action_output', index=5,
+      name='test_attempt_duration', full_name='build_event_stream.TestResult.test_attempt_duration', index=6,
+      number=11, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='test_action_output', full_name='build_event_stream.TestResult.test_action_output', index=7,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='warning', full_name='build_event_stream.TestResult.warning', index=6,
+      name='warning', full_name='build_event_stream.TestResult.warning', index=8,
       number=7, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='execution_info', full_name='build_event_stream.TestResult.execution_info', index=7,
+      name='execution_info', full_name='build_event_stream.TestResult.execution_info', index=9,
       number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2408,8 +2539,8 @@ _TESTRESULT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=6323,
-  serialized_end=7134,
+  serialized_start=6513,
+  serialized_end=7491,
 )
 
 
@@ -2419,6 +2550,7 @@ _TESTSUMMARY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='overall_status', full_name='build_event_stream.TestSummary.overall_status', index=0,
@@ -2426,70 +2558,98 @@ _TESTSUMMARY = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='total_run_count', full_name='build_event_stream.TestSummary.total_run_count', index=1,
       number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='run_count', full_name='build_event_stream.TestSummary.run_count', index=2,
       number=10, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='shard_count', full_name='build_event_stream.TestSummary.shard_count', index=3,
+      name='attempt_count', full_name='build_event_stream.TestSummary.attempt_count', index=3,
+      number=15, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='shard_count', full_name='build_event_stream.TestSummary.shard_count', index=4,
       number=11, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='passed', full_name='build_event_stream.TestSummary.passed', index=4,
+      name='passed', full_name='build_event_stream.TestSummary.passed', index=5,
       number=3, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='failed', full_name='build_event_stream.TestSummary.failed', index=5,
+      name='failed', full_name='build_event_stream.TestSummary.failed', index=6,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='total_num_cached', full_name='build_event_stream.TestSummary.total_num_cached', index=6,
+      name='total_num_cached', full_name='build_event_stream.TestSummary.total_num_cached', index=7,
       number=6, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='first_start_time_millis', full_name='build_event_stream.TestSummary.first_start_time_millis', index=7,
+      name='first_start_time_millis', full_name='build_event_stream.TestSummary.first_start_time_millis', index=8,
       number=7, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='last_stop_time_millis', full_name='build_event_stream.TestSummary.last_stop_time_millis', index=8,
+      name='first_start_time', full_name='build_event_stream.TestSummary.first_start_time', index=9,
+      number=13, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='last_stop_time_millis', full_name='build_event_stream.TestSummary.last_stop_time_millis', index=10,
       number=8, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='total_run_duration_millis', full_name='build_event_stream.TestSummary.total_run_duration_millis', index=9,
+      name='last_stop_time', full_name='build_event_stream.TestSummary.last_stop_time', index=11,
+      number=14, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='total_run_duration_millis', full_name='build_event_stream.TestSummary.total_run_duration_millis', index=12,
       number=9, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='total_run_duration', full_name='build_event_stream.TestSummary.total_run_duration', index=13,
+      number=12, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2502,8 +2662,8 @@ _TESTSUMMARY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7137,
-  serialized_end=7480,
+  serialized_start=7494,
+  serialized_end=8033,
 )
 
 
@@ -2513,6 +2673,7 @@ _TARGETSUMMARY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='overall_build_success', full_name='build_event_stream.TargetSummary.overall_build_success', index=0,
@@ -2520,14 +2681,14 @@ _TARGETSUMMARY = _descriptor.Descriptor(
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='overall_test_status', full_name='build_event_stream.TargetSummary.overall_test_status', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2540,8 +2701,8 @@ _TARGETSUMMARY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7482,
-  serialized_end=7589,
+  serialized_start=8035,
+  serialized_end=8142,
 )
 
 
@@ -2551,21 +2712,22 @@ _BUILDFINISHED_EXITCODE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='name', full_name='build_event_stream.BuildFinished.ExitCode.name', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='code', full_name='build_event_stream.BuildFinished.ExitCode.code', index=1,
       number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2578,8 +2740,8 @@ _BUILDFINISHED_EXITCODE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7802,
-  serialized_end=7840,
+  serialized_start=8408,
+  serialized_end=8446,
 )
 
 _BUILDFINISHED_ANOMALYREPORT = _descriptor.Descriptor(
@@ -2588,6 +2750,7 @@ _BUILDFINISHED_ANOMALYREPORT = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='was_suspended', full_name='build_event_stream.BuildFinished.AnomalyReport.was_suspended', index=0,
@@ -2595,7 +2758,7 @@ _BUILDFINISHED_ANOMALYREPORT = _descriptor.Descriptor(
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2608,8 +2771,8 @@ _BUILDFINISHED_ANOMALYREPORT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7842,
-  serialized_end=7880,
+  serialized_start=8448,
+  serialized_end=8486,
 )
 
 _BUILDFINISHED = _descriptor.Descriptor(
@@ -2618,6 +2781,7 @@ _BUILDFINISHED = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='overall_success', full_name='build_event_stream.BuildFinished.overall_success', index=0,
@@ -2625,28 +2789,35 @@ _BUILDFINISHED = _descriptor.Descriptor(
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=_b('\030\001'), file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='exit_code', full_name='build_event_stream.BuildFinished.exit_code', index=1,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='finish_time_millis', full_name='build_event_stream.BuildFinished.finish_time_millis', index=2,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='anomaly_report', full_name='build_event_stream.BuildFinished.anomaly_report', index=3,
+      name='finish_time', full_name='build_event_stream.BuildFinished.finish_time', index=3,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='anomaly_report', full_name='build_event_stream.BuildFinished.anomaly_report', index=4,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2659,39 +2830,47 @@ _BUILDFINISHED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7592,
-  serialized_end=7880,
+  serialized_start=8145,
+  serialized_end=8486,
 )
 
 
-_BUILDMETRICS_ACTIONSUMMARY = _descriptor.Descriptor(
-  name='ActionSummary',
-  full_name='build_event_stream.BuildMetrics.ActionSummary',
+_BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA = _descriptor.Descriptor(
+  name='ActionData',
+  full_name='build_event_stream.BuildMetrics.ActionSummary.ActionData',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='actions_created', full_name='build_event_stream.BuildMetrics.ActionSummary.actions_created', index=0,
-      number=1, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
+      name='mnemonic', full_name='build_event_stream.BuildMetrics.ActionSummary.ActionData.mnemonic', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='actions_created_not_including_aspects', full_name='build_event_stream.BuildMetrics.ActionSummary.actions_created_not_including_aspects', index=1,
-      number=3, type=3, cpp_type=2, label=1,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
-    _descriptor.FieldDescriptor(
-      name='actions_executed', full_name='build_event_stream.BuildMetrics.ActionSummary.actions_executed', index=2,
+      name='actions_executed', full_name='build_event_stream.BuildMetrics.ActionSummary.ActionData.actions_executed', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='first_started_ms', full_name='build_event_stream.BuildMetrics.ActionSummary.ActionData.first_started_ms', index=2,
+      number=3, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='last_ended_ms', full_name='build_event_stream.BuildMetrics.ActionSummary.ActionData.last_ended_ms', index=3,
+      number=4, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2704,8 +2883,112 @@ _BUILDMETRICS_ACTIONSUMMARY = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8498,
-  serialized_end=8611,
+  serialized_start=9413,
+  serialized_end=9518,
+)
+
+_BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT = _descriptor.Descriptor(
+  name='RunnerCount',
+  full_name='build_event_stream.BuildMetrics.ActionSummary.RunnerCount',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='name', full_name='build_event_stream.BuildMetrics.ActionSummary.RunnerCount.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=b"".decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='count', full_name='build_event_stream.BuildMetrics.ActionSummary.RunnerCount.count', index=1,
+      number=2, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=9520,
+  serialized_end=9562,
+)
+
+_BUILDMETRICS_ACTIONSUMMARY = _descriptor.Descriptor(
+  name='ActionSummary',
+  full_name='build_event_stream.BuildMetrics.ActionSummary',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  create_key=_descriptor._internal_create_key,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='actions_created', full_name='build_event_stream.BuildMetrics.ActionSummary.actions_created', index=0,
+      number=1, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='actions_created_not_including_aspects', full_name='build_event_stream.BuildMetrics.ActionSummary.actions_created_not_including_aspects', index=1,
+      number=3, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='actions_executed', full_name='build_event_stream.BuildMetrics.ActionSummary.actions_executed', index=2,
+      number=2, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='action_data', full_name='build_event_stream.BuildMetrics.ActionSummary.action_data', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='remote_cache_hits', full_name='build_event_stream.BuildMetrics.ActionSummary.remote_cache_hits', index=4,
+      number=5, type=3, cpp_type=2, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=b'\030\001', file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='runner_count', full_name='build_event_stream.BuildMetrics.ActionSummary.runner_count', index=5,
+      number=6, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+  ],
+  extensions=[
+  ],
+  nested_types=[_BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA, _BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT, ],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=9105,
+  serialized_end=9562,
 )
 
 _BUILDMETRICS_MEMORYMETRICS = _descriptor.Descriptor(
@@ -2714,6 +2997,7 @@ _BUILDMETRICS_MEMORYMETRICS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='used_heap_size_post_build', full_name='build_event_stream.BuildMetrics.MemoryMetrics.used_heap_size_post_build', index=0,
@@ -2721,14 +3005,14 @@ _BUILDMETRICS_MEMORYMETRICS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='peak_post_gc_heap_size', full_name='build_event_stream.BuildMetrics.MemoryMetrics.peak_post_gc_heap_size', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2741,8 +3025,8 @@ _BUILDMETRICS_MEMORYMETRICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8613,
-  serialized_end=8695,
+  serialized_start=9564,
+  serialized_end=9646,
 )
 
 _BUILDMETRICS_TARGETMETRICS = _descriptor.Descriptor(
@@ -2751,6 +3035,7 @@ _BUILDMETRICS_TARGETMETRICS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='targets_loaded', full_name='build_event_stream.BuildMetrics.TargetMetrics.targets_loaded', index=0,
@@ -2758,21 +3043,21 @@ _BUILDMETRICS_TARGETMETRICS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='targets_configured', full_name='build_event_stream.BuildMetrics.TargetMetrics.targets_configured', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='targets_configured_not_including_aspects', full_name='build_event_stream.BuildMetrics.TargetMetrics.targets_configured_not_including_aspects', index=2,
       number=3, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2785,8 +3070,8 @@ _BUILDMETRICS_TARGETMETRICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8697,
-  serialized_end=8814,
+  serialized_start=9648,
+  serialized_end=9765,
 )
 
 _BUILDMETRICS_PACKAGEMETRICS = _descriptor.Descriptor(
@@ -2795,6 +3080,7 @@ _BUILDMETRICS_PACKAGEMETRICS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='packages_loaded', full_name='build_event_stream.BuildMetrics.PackageMetrics.packages_loaded', index=0,
@@ -2802,7 +3088,7 @@ _BUILDMETRICS_PACKAGEMETRICS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2815,8 +3101,8 @@ _BUILDMETRICS_PACKAGEMETRICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8816,
-  serialized_end=8857,
+  serialized_start=9767,
+  serialized_end=9808,
 )
 
 _BUILDMETRICS_TIMINGMETRICS = _descriptor.Descriptor(
@@ -2825,6 +3111,7 @@ _BUILDMETRICS_TIMINGMETRICS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='cpu_time_in_ms', full_name='build_event_stream.BuildMetrics.TimingMetrics.cpu_time_in_ms', index=0,
@@ -2832,21 +3119,21 @@ _BUILDMETRICS_TIMINGMETRICS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='wall_time_in_ms', full_name='build_event_stream.BuildMetrics.TimingMetrics.wall_time_in_ms', index=1,
       number=2, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='analysis_phase_time_in_ms', full_name='build_event_stream.BuildMetrics.TimingMetrics.analysis_phase_time_in_ms', index=2,
       number=3, type=3, cpp_type=2, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2859,8 +3146,8 @@ _BUILDMETRICS_TIMINGMETRICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8859,
-  serialized_end=8958,
+  serialized_start=9810,
+  serialized_end=9909,
 )
 
 _BUILDMETRICS_CUMULATIVEMETRICS = _descriptor.Descriptor(
@@ -2869,6 +3156,7 @@ _BUILDMETRICS_CUMULATIVEMETRICS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='num_analyses', full_name='build_event_stream.BuildMetrics.CumulativeMetrics.num_analyses', index=0,
@@ -2876,14 +3164,14 @@ _BUILDMETRICS_CUMULATIVEMETRICS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='num_builds', full_name='build_event_stream.BuildMetrics.CumulativeMetrics.num_builds', index=1,
       number=12, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2896,8 +3184,8 @@ _BUILDMETRICS_CUMULATIVEMETRICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=8960,
-  serialized_end=9021,
+  serialized_start=9911,
+  serialized_end=9972,
 )
 
 _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC = _descriptor.Descriptor(
@@ -2906,6 +3194,7 @@ _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='size_in_bytes', full_name='build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric.size_in_bytes', index=0,
@@ -2913,14 +3202,14 @@ _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='count', full_name='build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric.count', index=1,
       number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2933,8 +3222,8 @@ _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9426,
-  serialized_end=9477,
+  serialized_start=10377,
+  serialized_end=10428,
 )
 
 _BUILDMETRICS_ARTIFACTMETRICS = _descriptor.Descriptor(
@@ -2943,6 +3232,7 @@ _BUILDMETRICS_ARTIFACTMETRICS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='source_artifacts_read', full_name='build_event_stream.BuildMetrics.ArtifactMetrics.source_artifacts_read', index=0,
@@ -2950,28 +3240,28 @@ _BUILDMETRICS_ARTIFACTMETRICS = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='output_artifacts_seen', full_name='build_event_stream.BuildMetrics.ArtifactMetrics.output_artifacts_seen', index=1,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='output_artifacts_from_action_cache', full_name='build_event_stream.BuildMetrics.ArtifactMetrics.output_artifacts_from_action_cache', index=2,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='top_level_artifacts', full_name='build_event_stream.BuildMetrics.ArtifactMetrics.top_level_artifacts', index=3,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -2984,8 +3274,8 @@ _BUILDMETRICS_ARTIFACTMETRICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9024,
-  serialized_end=9483,
+  serialized_start=9975,
+  serialized_end=10434,
 )
 
 _BUILDMETRICS_BUILDGRAPHMETRICS = _descriptor.Descriptor(
@@ -2994,6 +3284,7 @@ _BUILDMETRICS_BUILDGRAPHMETRICS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='action_lookup_value_count', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.action_lookup_value_count', index=0,
@@ -3001,42 +3292,63 @@ _BUILDMETRICS_BUILDGRAPHMETRICS = _descriptor.Descriptor(
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action_lookup_value_count_not_including_aspects', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.action_lookup_value_count_not_including_aspects', index=1,
       number=5, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action_count', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.action_count', index=2,
       number=2, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action_count_not_including_aspects', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.action_count_not_including_aspects', index=3,
       number=6, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='output_artifact_count', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.output_artifact_count', index=4,
+      name='input_file_configured_target_count', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.input_file_configured_target_count', index=4,
+      number=7, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='output_file_configured_target_count', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.output_file_configured_target_count', index=5,
+      number=8, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='other_configured_target_count', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.other_configured_target_count', index=6,
+      number=9, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='output_artifact_count', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.output_artifact_count', index=7,
       number=3, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='post_invocation_skyframe_node_count', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.post_invocation_skyframe_node_count', index=5,
+      name='post_invocation_skyframe_node_count', full_name='build_event_stream.BuildMetrics.BuildGraphMetrics.post_invocation_skyframe_node_count', index=8,
       number=4, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3049,8 +3361,8 @@ _BUILDMETRICS_BUILDGRAPHMETRICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9486,
-  serialized_end=9739,
+  serialized_start=10437,
+  serialized_end=10818,
 )
 
 _BUILDMETRICS = _descriptor.Descriptor(
@@ -3059,6 +3371,7 @@ _BUILDMETRICS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='action_summary', full_name='build_event_stream.BuildMetrics.action_summary', index=0,
@@ -3066,56 +3379,56 @@ _BUILDMETRICS = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='memory_metrics', full_name='build_event_stream.BuildMetrics.memory_metrics', index=1,
       number=2, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='target_metrics', full_name='build_event_stream.BuildMetrics.target_metrics', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='package_metrics', full_name='build_event_stream.BuildMetrics.package_metrics', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='timing_metrics', full_name='build_event_stream.BuildMetrics.timing_metrics', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='cumulative_metrics', full_name='build_event_stream.BuildMetrics.cumulative_metrics', index=5,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='artifact_metrics', full_name='build_event_stream.BuildMetrics.artifact_metrics', index=6,
       number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_graph_metrics', full_name='build_event_stream.BuildMetrics.build_graph_metrics', index=7,
       number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3128,8 +3441,8 @@ _BUILDMETRICS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=7883,
-  serialized_end=9739,
+  serialized_start=8489,
+  serialized_end=10818,
 )
 
 
@@ -3139,6 +3452,7 @@ _BUILDTOOLLOGS = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='log', full_name='build_event_stream.BuildToolLogs.log', index=0,
@@ -3146,7 +3460,7 @@ _BUILDTOOLLOGS = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3159,8 +3473,8 @@ _BUILDTOOLLOGS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9741,
-  serialized_end=9795,
+  serialized_start=10820,
+  serialized_end=10874,
 )
 
 
@@ -3170,6 +3484,7 @@ _CONVENIENCESYMLINKSIDENTIFIED = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='convenience_symlinks', full_name='build_event_stream.ConvenienceSymlinksIdentified.convenience_symlinks', index=0,
@@ -3177,7 +3492,7 @@ _CONVENIENCESYMLINKSIDENTIFIED = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3190,8 +3505,8 @@ _CONVENIENCESYMLINKSIDENTIFIED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9797,
-  serialized_end=9898,
+  serialized_start=10876,
+  serialized_end=10977,
 )
 
 
@@ -3201,28 +3516,29 @@ _CONVENIENCESYMLINK = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='path', full_name='build_event_stream.ConvenienceSymlink.path', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action', full_name='build_event_stream.ConvenienceSymlink.action', index=1,
       number=2, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='target', full_name='build_event_stream.ConvenienceSymlink.target', index=2,
       number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3236,8 +3552,8 @@ _CONVENIENCESYMLINK = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=9901,
-  serialized_end=10061,
+  serialized_start=10980,
+  serialized_end=11140,
 )
 
 
@@ -3247,6 +3563,7 @@ _BUILDEVENT = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='id', full_name='build_event_stream.BuildEvent.id', index=0,
@@ -3254,182 +3571,182 @@ _BUILDEVENT = _descriptor.Descriptor(
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='children', full_name='build_event_stream.BuildEvent.children', index=1,
       number=2, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='last_message', full_name='build_event_stream.BuildEvent.last_message', index=2,
       number=20, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='progress', full_name='build_event_stream.BuildEvent.progress', index=3,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='aborted', full_name='build_event_stream.BuildEvent.aborted', index=4,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='started', full_name='build_event_stream.BuildEvent.started', index=5,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='unstructured_command_line', full_name='build_event_stream.BuildEvent.unstructured_command_line', index=6,
       number=12, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='structured_command_line', full_name='build_event_stream.BuildEvent.structured_command_line', index=7,
       number=22, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='options_parsed', full_name='build_event_stream.BuildEvent.options_parsed', index=8,
       number=13, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='workspace_status', full_name='build_event_stream.BuildEvent.workspace_status', index=9,
       number=16, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='fetch', full_name='build_event_stream.BuildEvent.fetch', index=10,
       number=21, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configuration', full_name='build_event_stream.BuildEvent.configuration', index=11,
       number=17, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='expanded', full_name='build_event_stream.BuildEvent.expanded', index=12,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='configured', full_name='build_event_stream.BuildEvent.configured', index=13,
       number=18, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='action', full_name='build_event_stream.BuildEvent.action', index=14,
       number=7, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='named_set_of_files', full_name='build_event_stream.BuildEvent.named_set_of_files', index=15,
       number=15, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='completed', full_name='build_event_stream.BuildEvent.completed', index=16,
       number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_result', full_name='build_event_stream.BuildEvent.test_result', index=17,
       number=10, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='test_summary', full_name='build_event_stream.BuildEvent.test_summary', index=18,
       number=9, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='target_summary', full_name='build_event_stream.BuildEvent.target_summary', index=19,
       number=28, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='finished', full_name='build_event_stream.BuildEvent.finished', index=20,
       number=14, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_tool_logs', full_name='build_event_stream.BuildEvent.build_tool_logs', index=21,
       number=23, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_metrics', full_name='build_event_stream.BuildEvent.build_metrics', index=22,
       number=24, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='workspace_info', full_name='build_event_stream.BuildEvent.workspace_info', index=23,
       number=25, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='build_metadata', full_name='build_event_stream.BuildEvent.build_metadata', index=24,
       number=26, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='convenience_symlinks_identified', full_name='build_event_stream.BuildEvent.convenience_symlinks_identified', index=25,
       number=27, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -3443,10 +3760,12 @@ _BUILDEVENT = _descriptor.Descriptor(
   oneofs=[
     _descriptor.OneofDescriptor(
       name='payload', full_name='build_event_stream.BuildEvent.payload',
-      index=0, containing_type=None, fields=[]),
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
   ],
-  serialized_start=10064,
-  serialized_end=11606,
+  serialized_start=11143,
+  serialized_end=12685,
 )
 
 _BUILDEVENTID_UNKNOWNBUILDEVENTID.containing_type = _BUILDEVENTID
@@ -3586,6 +3905,7 @@ _BUILDEVENTID.oneofs_by_name['id'].fields.append(
 _BUILDEVENTID.fields_by_name['convenience_symlinks_identified'].containing_oneof = _BUILDEVENTID.oneofs_by_name['id']
 _ABORTED.fields_by_name['reason'].enum_type = _ABORTED_ABORTREASON
 _ABORTED_ABORTREASON.containing_type = _ABORTED
+_BUILDSTARTED.fields_by_name['start_time'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _OPTIONSPARSED.fields_by_name['invocation_policy'].message_type = src_dot_main_dot_protobuf_dot_invocation__policy__pb2._INVOCATIONPOLICY
 _WORKSPACESTATUS_ITEM.containing_type = _WORKSPACESTATUS
 _WORKSPACESTATUS.fields_by_name['item'].message_type = _WORKSPACESTATUS_ITEM
@@ -3615,24 +3935,36 @@ _TARGETCOMPLETE.fields_by_name['test_size'].enum_type = _TESTSIZE
 _TARGETCOMPLETE.fields_by_name['output_group'].message_type = _OUTPUTGROUP
 _TARGETCOMPLETE.fields_by_name['important_output'].message_type = _FILE
 _TARGETCOMPLETE.fields_by_name['directory_output'].message_type = _FILE
+_TARGETCOMPLETE.fields_by_name['test_timeout'].message_type = google_dot_protobuf_dot_duration__pb2._DURATION
 _TARGETCOMPLETE.fields_by_name['failure_detail'].message_type = src_dot_main_dot_protobuf_dot_failure__details__pb2._FAILUREDETAIL
 _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN.fields_by_name['child'].message_type = _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN
+_TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN.fields_by_name['time'].message_type = google_dot_protobuf_dot_duration__pb2._DURATION
 _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN.containing_type = _TESTRESULT_EXECUTIONINFO
 _TESTRESULT_EXECUTIONINFO_RESOURCEUSAGE.containing_type = _TESTRESULT_EXECUTIONINFO
 _TESTRESULT_EXECUTIONINFO.fields_by_name['timing_breakdown'].message_type = _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN
 _TESTRESULT_EXECUTIONINFO.fields_by_name['resource_usage'].message_type = _TESTRESULT_EXECUTIONINFO_RESOURCEUSAGE
 _TESTRESULT_EXECUTIONINFO.containing_type = _TESTRESULT
 _TESTRESULT.fields_by_name['status'].enum_type = _TESTSTATUS
+_TESTRESULT.fields_by_name['test_attempt_start'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
+_TESTRESULT.fields_by_name['test_attempt_duration'].message_type = google_dot_protobuf_dot_duration__pb2._DURATION
 _TESTRESULT.fields_by_name['test_action_output'].message_type = _FILE
 _TESTRESULT.fields_by_name['execution_info'].message_type = _TESTRESULT_EXECUTIONINFO
 _TESTSUMMARY.fields_by_name['overall_status'].enum_type = _TESTSTATUS
 _TESTSUMMARY.fields_by_name['passed'].message_type = _FILE
 _TESTSUMMARY.fields_by_name['failed'].message_type = _FILE
+_TESTSUMMARY.fields_by_name['first_start_time'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
+_TESTSUMMARY.fields_by_name['last_stop_time'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
+_TESTSUMMARY.fields_by_name['total_run_duration'].message_type = google_dot_protobuf_dot_duration__pb2._DURATION
 _TARGETSUMMARY.fields_by_name['overall_test_status'].enum_type = _TESTSTATUS
 _BUILDFINISHED_EXITCODE.containing_type = _BUILDFINISHED
 _BUILDFINISHED_ANOMALYREPORT.containing_type = _BUILDFINISHED
 _BUILDFINISHED.fields_by_name['exit_code'].message_type = _BUILDFINISHED_EXITCODE
+_BUILDFINISHED.fields_by_name['finish_time'].message_type = google_dot_protobuf_dot_timestamp__pb2._TIMESTAMP
 _BUILDFINISHED.fields_by_name['anomaly_report'].message_type = _BUILDFINISHED_ANOMALYREPORT
+_BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA.containing_type = _BUILDMETRICS_ACTIONSUMMARY
+_BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT.containing_type = _BUILDMETRICS_ACTIONSUMMARY
+_BUILDMETRICS_ACTIONSUMMARY.fields_by_name['action_data'].message_type = _BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA
+_BUILDMETRICS_ACTIONSUMMARY.fields_by_name['runner_count'].message_type = _BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT
 _BUILDMETRICS_ACTIONSUMMARY.containing_type = _BUILDMETRICS
 _BUILDMETRICS_MEMORYMETRICS.containing_type = _BUILDMETRICS
 _BUILDMETRICS_TARGETMETRICS.containing_type = _BUILDMETRICS
@@ -3783,186 +4115,186 @@ DESCRIPTOR.enum_types_by_name['TestSize'] = _TESTSIZE
 DESCRIPTOR.enum_types_by_name['TestStatus'] = _TESTSTATUS
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-BuildEventId = _reflection.GeneratedProtocolMessageType('BuildEventId', (_message.Message,), dict(
+BuildEventId = _reflection.GeneratedProtocolMessageType('BuildEventId', (_message.Message,), {
 
-  UnknownBuildEventId = _reflection.GeneratedProtocolMessageType('UnknownBuildEventId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_UNKNOWNBUILDEVENTID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'UnknownBuildEventId' : _reflection.GeneratedProtocolMessageType('UnknownBuildEventId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_UNKNOWNBUILDEVENTID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.UnknownBuildEventId)
-    ))
+    })
   ,
 
-  ProgressId = _reflection.GeneratedProtocolMessageType('ProgressId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_PROGRESSID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'ProgressId' : _reflection.GeneratedProtocolMessageType('ProgressId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_PROGRESSID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ProgressId)
-    ))
+    })
   ,
 
-  BuildStartedId = _reflection.GeneratedProtocolMessageType('BuildStartedId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_BUILDSTARTEDID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'BuildStartedId' : _reflection.GeneratedProtocolMessageType('BuildStartedId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_BUILDSTARTEDID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildStartedId)
-    ))
+    })
   ,
 
-  UnstructuredCommandLineId = _reflection.GeneratedProtocolMessageType('UnstructuredCommandLineId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_UNSTRUCTUREDCOMMANDLINEID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'UnstructuredCommandLineId' : _reflection.GeneratedProtocolMessageType('UnstructuredCommandLineId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_UNSTRUCTUREDCOMMANDLINEID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.UnstructuredCommandLineId)
-    ))
+    })
   ,
 
-  StructuredCommandLineId = _reflection.GeneratedProtocolMessageType('StructuredCommandLineId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_STRUCTUREDCOMMANDLINEID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'StructuredCommandLineId' : _reflection.GeneratedProtocolMessageType('StructuredCommandLineId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_STRUCTUREDCOMMANDLINEID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.StructuredCommandLineId)
-    ))
+    })
   ,
 
-  WorkspaceStatusId = _reflection.GeneratedProtocolMessageType('WorkspaceStatusId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_WORKSPACESTATUSID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'WorkspaceStatusId' : _reflection.GeneratedProtocolMessageType('WorkspaceStatusId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_WORKSPACESTATUSID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.WorkspaceStatusId)
-    ))
+    })
   ,
 
-  OptionsParsedId = _reflection.GeneratedProtocolMessageType('OptionsParsedId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_OPTIONSPARSEDID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'OptionsParsedId' : _reflection.GeneratedProtocolMessageType('OptionsParsedId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_OPTIONSPARSEDID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.OptionsParsedId)
-    ))
+    })
   ,
 
-  FetchId = _reflection.GeneratedProtocolMessageType('FetchId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_FETCHID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'FetchId' : _reflection.GeneratedProtocolMessageType('FetchId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_FETCHID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.FetchId)
-    ))
+    })
   ,
 
-  PatternExpandedId = _reflection.GeneratedProtocolMessageType('PatternExpandedId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_PATTERNEXPANDEDID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'PatternExpandedId' : _reflection.GeneratedProtocolMessageType('PatternExpandedId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_PATTERNEXPANDEDID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.PatternExpandedId)
-    ))
+    })
   ,
 
-  WorkspaceConfigId = _reflection.GeneratedProtocolMessageType('WorkspaceConfigId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_WORKSPACECONFIGID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'WorkspaceConfigId' : _reflection.GeneratedProtocolMessageType('WorkspaceConfigId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_WORKSPACECONFIGID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.WorkspaceConfigId)
-    ))
+    })
   ,
 
-  BuildMetadataId = _reflection.GeneratedProtocolMessageType('BuildMetadataId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_BUILDMETADATAID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'BuildMetadataId' : _reflection.GeneratedProtocolMessageType('BuildMetadataId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_BUILDMETADATAID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildMetadataId)
-    ))
+    })
   ,
 
-  TargetConfiguredId = _reflection.GeneratedProtocolMessageType('TargetConfiguredId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_TARGETCONFIGUREDID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'TargetConfiguredId' : _reflection.GeneratedProtocolMessageType('TargetConfiguredId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_TARGETCONFIGUREDID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TargetConfiguredId)
-    ))
+    })
   ,
 
-  NamedSetOfFilesId = _reflection.GeneratedProtocolMessageType('NamedSetOfFilesId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_NAMEDSETOFFILESID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'NamedSetOfFilesId' : _reflection.GeneratedProtocolMessageType('NamedSetOfFilesId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_NAMEDSETOFFILESID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.NamedSetOfFilesId)
-    ))
+    })
   ,
 
-  ConfigurationId = _reflection.GeneratedProtocolMessageType('ConfigurationId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_CONFIGURATIONID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'ConfigurationId' : _reflection.GeneratedProtocolMessageType('ConfigurationId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_CONFIGURATIONID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ConfigurationId)
-    ))
+    })
   ,
 
-  TargetCompletedId = _reflection.GeneratedProtocolMessageType('TargetCompletedId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_TARGETCOMPLETEDID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'TargetCompletedId' : _reflection.GeneratedProtocolMessageType('TargetCompletedId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_TARGETCOMPLETEDID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TargetCompletedId)
-    ))
+    })
   ,
 
-  ActionCompletedId = _reflection.GeneratedProtocolMessageType('ActionCompletedId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_ACTIONCOMPLETEDID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'ActionCompletedId' : _reflection.GeneratedProtocolMessageType('ActionCompletedId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_ACTIONCOMPLETEDID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ActionCompletedId)
-    ))
+    })
   ,
 
-  UnconfiguredLabelId = _reflection.GeneratedProtocolMessageType('UnconfiguredLabelId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_UNCONFIGUREDLABELID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'UnconfiguredLabelId' : _reflection.GeneratedProtocolMessageType('UnconfiguredLabelId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_UNCONFIGUREDLABELID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.UnconfiguredLabelId)
-    ))
+    })
   ,
 
-  ConfiguredLabelId = _reflection.GeneratedProtocolMessageType('ConfiguredLabelId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_CONFIGUREDLABELID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'ConfiguredLabelId' : _reflection.GeneratedProtocolMessageType('ConfiguredLabelId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_CONFIGUREDLABELID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ConfiguredLabelId)
-    ))
+    })
   ,
 
-  TestResultId = _reflection.GeneratedProtocolMessageType('TestResultId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_TESTRESULTID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'TestResultId' : _reflection.GeneratedProtocolMessageType('TestResultId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_TESTRESULTID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TestResultId)
-    ))
+    })
   ,
 
-  TestSummaryId = _reflection.GeneratedProtocolMessageType('TestSummaryId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_TESTSUMMARYID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'TestSummaryId' : _reflection.GeneratedProtocolMessageType('TestSummaryId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_TESTSUMMARYID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TestSummaryId)
-    ))
+    })
   ,
 
-  TargetSummaryId = _reflection.GeneratedProtocolMessageType('TargetSummaryId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_TARGETSUMMARYID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'TargetSummaryId' : _reflection.GeneratedProtocolMessageType('TargetSummaryId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_TARGETSUMMARYID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TargetSummaryId)
-    ))
+    })
   ,
 
-  BuildFinishedId = _reflection.GeneratedProtocolMessageType('BuildFinishedId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_BUILDFINISHEDID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'BuildFinishedId' : _reflection.GeneratedProtocolMessageType('BuildFinishedId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_BUILDFINISHEDID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildFinishedId)
-    ))
+    })
   ,
 
-  BuildToolLogsId = _reflection.GeneratedProtocolMessageType('BuildToolLogsId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_BUILDTOOLLOGSID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'BuildToolLogsId' : _reflection.GeneratedProtocolMessageType('BuildToolLogsId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_BUILDTOOLLOGSID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildToolLogsId)
-    ))
+    })
   ,
 
-  BuildMetricsId = _reflection.GeneratedProtocolMessageType('BuildMetricsId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_BUILDMETRICSID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'BuildMetricsId' : _reflection.GeneratedProtocolMessageType('BuildMetricsId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_BUILDMETRICSID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildMetricsId)
-    ))
+    })
   ,
 
-  ConvenienceSymlinksIdentifiedId = _reflection.GeneratedProtocolMessageType('ConvenienceSymlinksIdentifiedId', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDEVENTID_CONVENIENCESYMLINKSIDENTIFIEDID,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'ConvenienceSymlinksIdentifiedId' : _reflection.GeneratedProtocolMessageType('ConvenienceSymlinksIdentifiedId', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDEVENTID_CONVENIENCESYMLINKSIDENTIFIEDID,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ConvenienceSymlinksIdentifiedId)
-    ))
+    })
   ,
-  DESCRIPTOR = _BUILDEVENTID,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'DESCRIPTOR' : _BUILDEVENTID,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId)
-  ))
+  })
 _sym_db.RegisterMessage(BuildEventId)
 _sym_db.RegisterMessage(BuildEventId.UnknownBuildEventId)
 _sym_db.RegisterMessage(BuildEventId.ProgressId)
@@ -3990,295 +4322,311 @@ _sym_db.RegisterMessage(BuildEventId.BuildToolLogsId)
 _sym_db.RegisterMessage(BuildEventId.BuildMetricsId)
 _sym_db.RegisterMessage(BuildEventId.ConvenienceSymlinksIdentifiedId)
 
-Progress = _reflection.GeneratedProtocolMessageType('Progress', (_message.Message,), dict(
-  DESCRIPTOR = _PROGRESS,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+Progress = _reflection.GeneratedProtocolMessageType('Progress', (_message.Message,), {
+  'DESCRIPTOR' : _PROGRESS,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.Progress)
-  ))
+  })
 _sym_db.RegisterMessage(Progress)
 
-Aborted = _reflection.GeneratedProtocolMessageType('Aborted', (_message.Message,), dict(
-  DESCRIPTOR = _ABORTED,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+Aborted = _reflection.GeneratedProtocolMessageType('Aborted', (_message.Message,), {
+  'DESCRIPTOR' : _ABORTED,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.Aborted)
-  ))
+  })
 _sym_db.RegisterMessage(Aborted)
 
-BuildStarted = _reflection.GeneratedProtocolMessageType('BuildStarted', (_message.Message,), dict(
-  DESCRIPTOR = _BUILDSTARTED,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+BuildStarted = _reflection.GeneratedProtocolMessageType('BuildStarted', (_message.Message,), {
+  'DESCRIPTOR' : _BUILDSTARTED,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.BuildStarted)
-  ))
+  })
 _sym_db.RegisterMessage(BuildStarted)
 
-WorkspaceConfig = _reflection.GeneratedProtocolMessageType('WorkspaceConfig', (_message.Message,), dict(
-  DESCRIPTOR = _WORKSPACECONFIG,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+WorkspaceConfig = _reflection.GeneratedProtocolMessageType('WorkspaceConfig', (_message.Message,), {
+  'DESCRIPTOR' : _WORKSPACECONFIG,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.WorkspaceConfig)
-  ))
+  })
 _sym_db.RegisterMessage(WorkspaceConfig)
 
-UnstructuredCommandLine = _reflection.GeneratedProtocolMessageType('UnstructuredCommandLine', (_message.Message,), dict(
-  DESCRIPTOR = _UNSTRUCTUREDCOMMANDLINE,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+UnstructuredCommandLine = _reflection.GeneratedProtocolMessageType('UnstructuredCommandLine', (_message.Message,), {
+  'DESCRIPTOR' : _UNSTRUCTUREDCOMMANDLINE,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.UnstructuredCommandLine)
-  ))
+  })
 _sym_db.RegisterMessage(UnstructuredCommandLine)
 
-OptionsParsed = _reflection.GeneratedProtocolMessageType('OptionsParsed', (_message.Message,), dict(
-  DESCRIPTOR = _OPTIONSPARSED,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+OptionsParsed = _reflection.GeneratedProtocolMessageType('OptionsParsed', (_message.Message,), {
+  'DESCRIPTOR' : _OPTIONSPARSED,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.OptionsParsed)
-  ))
+  })
 _sym_db.RegisterMessage(OptionsParsed)
 
-Fetch = _reflection.GeneratedProtocolMessageType('Fetch', (_message.Message,), dict(
-  DESCRIPTOR = _FETCH,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+Fetch = _reflection.GeneratedProtocolMessageType('Fetch', (_message.Message,), {
+  'DESCRIPTOR' : _FETCH,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.Fetch)
-  ))
+  })
 _sym_db.RegisterMessage(Fetch)
 
-WorkspaceStatus = _reflection.GeneratedProtocolMessageType('WorkspaceStatus', (_message.Message,), dict(
+WorkspaceStatus = _reflection.GeneratedProtocolMessageType('WorkspaceStatus', (_message.Message,), {
 
-  Item = _reflection.GeneratedProtocolMessageType('Item', (_message.Message,), dict(
-    DESCRIPTOR = _WORKSPACESTATUS_ITEM,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'Item' : _reflection.GeneratedProtocolMessageType('Item', (_message.Message,), {
+    'DESCRIPTOR' : _WORKSPACESTATUS_ITEM,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.WorkspaceStatus.Item)
-    ))
+    })
   ,
-  DESCRIPTOR = _WORKSPACESTATUS,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'DESCRIPTOR' : _WORKSPACESTATUS,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.WorkspaceStatus)
-  ))
+  })
 _sym_db.RegisterMessage(WorkspaceStatus)
 _sym_db.RegisterMessage(WorkspaceStatus.Item)
 
-BuildMetadata = _reflection.GeneratedProtocolMessageType('BuildMetadata', (_message.Message,), dict(
+BuildMetadata = _reflection.GeneratedProtocolMessageType('BuildMetadata', (_message.Message,), {
 
-  MetadataEntry = _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDMETADATA_METADATAENTRY,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'MetadataEntry' : _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDMETADATA_METADATAENTRY,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetadata.MetadataEntry)
-    ))
+    })
   ,
-  DESCRIPTOR = _BUILDMETADATA,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'DESCRIPTOR' : _BUILDMETADATA,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetadata)
-  ))
+  })
 _sym_db.RegisterMessage(BuildMetadata)
 _sym_db.RegisterMessage(BuildMetadata.MetadataEntry)
 
-Configuration = _reflection.GeneratedProtocolMessageType('Configuration', (_message.Message,), dict(
+Configuration = _reflection.GeneratedProtocolMessageType('Configuration', (_message.Message,), {
 
-  MakeVariableEntry = _reflection.GeneratedProtocolMessageType('MakeVariableEntry', (_message.Message,), dict(
-    DESCRIPTOR = _CONFIGURATION_MAKEVARIABLEENTRY,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'MakeVariableEntry' : _reflection.GeneratedProtocolMessageType('MakeVariableEntry', (_message.Message,), {
+    'DESCRIPTOR' : _CONFIGURATION_MAKEVARIABLEENTRY,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.Configuration.MakeVariableEntry)
-    ))
+    })
   ,
-  DESCRIPTOR = _CONFIGURATION,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'DESCRIPTOR' : _CONFIGURATION,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.Configuration)
-  ))
+  })
 _sym_db.RegisterMessage(Configuration)
 _sym_db.RegisterMessage(Configuration.MakeVariableEntry)
 
-PatternExpanded = _reflection.GeneratedProtocolMessageType('PatternExpanded', (_message.Message,), dict(
+PatternExpanded = _reflection.GeneratedProtocolMessageType('PatternExpanded', (_message.Message,), {
 
-  TestSuiteExpansion = _reflection.GeneratedProtocolMessageType('TestSuiteExpansion', (_message.Message,), dict(
-    DESCRIPTOR = _PATTERNEXPANDED_TESTSUITEEXPANSION,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'TestSuiteExpansion' : _reflection.GeneratedProtocolMessageType('TestSuiteExpansion', (_message.Message,), {
+    'DESCRIPTOR' : _PATTERNEXPANDED_TESTSUITEEXPANSION,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.PatternExpanded.TestSuiteExpansion)
-    ))
+    })
   ,
-  DESCRIPTOR = _PATTERNEXPANDED,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'DESCRIPTOR' : _PATTERNEXPANDED,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.PatternExpanded)
-  ))
+  })
 _sym_db.RegisterMessage(PatternExpanded)
 _sym_db.RegisterMessage(PatternExpanded.TestSuiteExpansion)
 
-TargetConfigured = _reflection.GeneratedProtocolMessageType('TargetConfigured', (_message.Message,), dict(
-  DESCRIPTOR = _TARGETCONFIGURED,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+TargetConfigured = _reflection.GeneratedProtocolMessageType('TargetConfigured', (_message.Message,), {
+  'DESCRIPTOR' : _TARGETCONFIGURED,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.TargetConfigured)
-  ))
+  })
 _sym_db.RegisterMessage(TargetConfigured)
 
-File = _reflection.GeneratedProtocolMessageType('File', (_message.Message,), dict(
-  DESCRIPTOR = _FILE,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+File = _reflection.GeneratedProtocolMessageType('File', (_message.Message,), {
+  'DESCRIPTOR' : _FILE,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.File)
-  ))
+  })
 _sym_db.RegisterMessage(File)
 
-NamedSetOfFiles = _reflection.GeneratedProtocolMessageType('NamedSetOfFiles', (_message.Message,), dict(
-  DESCRIPTOR = _NAMEDSETOFFILES,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+NamedSetOfFiles = _reflection.GeneratedProtocolMessageType('NamedSetOfFiles', (_message.Message,), {
+  'DESCRIPTOR' : _NAMEDSETOFFILES,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.NamedSetOfFiles)
-  ))
+  })
 _sym_db.RegisterMessage(NamedSetOfFiles)
 
-ActionExecuted = _reflection.GeneratedProtocolMessageType('ActionExecuted', (_message.Message,), dict(
-  DESCRIPTOR = _ACTIONEXECUTED,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+ActionExecuted = _reflection.GeneratedProtocolMessageType('ActionExecuted', (_message.Message,), {
+  'DESCRIPTOR' : _ACTIONEXECUTED,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.ActionExecuted)
-  ))
+  })
 _sym_db.RegisterMessage(ActionExecuted)
 
-OutputGroup = _reflection.GeneratedProtocolMessageType('OutputGroup', (_message.Message,), dict(
-  DESCRIPTOR = _OUTPUTGROUP,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+OutputGroup = _reflection.GeneratedProtocolMessageType('OutputGroup', (_message.Message,), {
+  'DESCRIPTOR' : _OUTPUTGROUP,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.OutputGroup)
-  ))
+  })
 _sym_db.RegisterMessage(OutputGroup)
 
-TargetComplete = _reflection.GeneratedProtocolMessageType('TargetComplete', (_message.Message,), dict(
-  DESCRIPTOR = _TARGETCOMPLETE,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+TargetComplete = _reflection.GeneratedProtocolMessageType('TargetComplete', (_message.Message,), {
+  'DESCRIPTOR' : _TARGETCOMPLETE,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.TargetComplete)
-  ))
+  })
 _sym_db.RegisterMessage(TargetComplete)
 
-TestResult = _reflection.GeneratedProtocolMessageType('TestResult', (_message.Message,), dict(
+TestResult = _reflection.GeneratedProtocolMessageType('TestResult', (_message.Message,), {
 
-  ExecutionInfo = _reflection.GeneratedProtocolMessageType('ExecutionInfo', (_message.Message,), dict(
+  'ExecutionInfo' : _reflection.GeneratedProtocolMessageType('ExecutionInfo', (_message.Message,), {
 
-    TimingBreakdown = _reflection.GeneratedProtocolMessageType('TimingBreakdown', (_message.Message,), dict(
-      DESCRIPTOR = _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN,
-      __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    'TimingBreakdown' : _reflection.GeneratedProtocolMessageType('TimingBreakdown', (_message.Message,), {
+      'DESCRIPTOR' : _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN,
+      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
       # @@protoc_insertion_point(class_scope:build_event_stream.TestResult.ExecutionInfo.TimingBreakdown)
-      ))
+      })
     ,
 
-    ResourceUsage = _reflection.GeneratedProtocolMessageType('ResourceUsage', (_message.Message,), dict(
-      DESCRIPTOR = _TESTRESULT_EXECUTIONINFO_RESOURCEUSAGE,
-      __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    'ResourceUsage' : _reflection.GeneratedProtocolMessageType('ResourceUsage', (_message.Message,), {
+      'DESCRIPTOR' : _TESTRESULT_EXECUTIONINFO_RESOURCEUSAGE,
+      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
       # @@protoc_insertion_point(class_scope:build_event_stream.TestResult.ExecutionInfo.ResourceUsage)
-      ))
+      })
     ,
-    DESCRIPTOR = _TESTRESULT_EXECUTIONINFO,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    'DESCRIPTOR' : _TESTRESULT_EXECUTIONINFO,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.TestResult.ExecutionInfo)
-    ))
+    })
   ,
-  DESCRIPTOR = _TESTRESULT,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'DESCRIPTOR' : _TESTRESULT,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.TestResult)
-  ))
+  })
 _sym_db.RegisterMessage(TestResult)
 _sym_db.RegisterMessage(TestResult.ExecutionInfo)
 _sym_db.RegisterMessage(TestResult.ExecutionInfo.TimingBreakdown)
 _sym_db.RegisterMessage(TestResult.ExecutionInfo.ResourceUsage)
 
-TestSummary = _reflection.GeneratedProtocolMessageType('TestSummary', (_message.Message,), dict(
-  DESCRIPTOR = _TESTSUMMARY,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+TestSummary = _reflection.GeneratedProtocolMessageType('TestSummary', (_message.Message,), {
+  'DESCRIPTOR' : _TESTSUMMARY,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.TestSummary)
-  ))
+  })
 _sym_db.RegisterMessage(TestSummary)
 
-TargetSummary = _reflection.GeneratedProtocolMessageType('TargetSummary', (_message.Message,), dict(
-  DESCRIPTOR = _TARGETSUMMARY,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+TargetSummary = _reflection.GeneratedProtocolMessageType('TargetSummary', (_message.Message,), {
+  'DESCRIPTOR' : _TARGETSUMMARY,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.TargetSummary)
-  ))
+  })
 _sym_db.RegisterMessage(TargetSummary)
 
-BuildFinished = _reflection.GeneratedProtocolMessageType('BuildFinished', (_message.Message,), dict(
+BuildFinished = _reflection.GeneratedProtocolMessageType('BuildFinished', (_message.Message,), {
 
-  ExitCode = _reflection.GeneratedProtocolMessageType('ExitCode', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDFINISHED_EXITCODE,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'ExitCode' : _reflection.GeneratedProtocolMessageType('ExitCode', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDFINISHED_EXITCODE,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildFinished.ExitCode)
-    ))
+    })
   ,
 
-  AnomalyReport = _reflection.GeneratedProtocolMessageType('AnomalyReport', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDFINISHED_ANOMALYREPORT,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'AnomalyReport' : _reflection.GeneratedProtocolMessageType('AnomalyReport', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDFINISHED_ANOMALYREPORT,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
     # @@protoc_insertion_point(class_scope:build_event_stream.BuildFinished.AnomalyReport)
-    ))
+    })
   ,
-  DESCRIPTOR = _BUILDFINISHED,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+  'DESCRIPTOR' : _BUILDFINISHED,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.BuildFinished)
-  ))
+  })
 _sym_db.RegisterMessage(BuildFinished)
 _sym_db.RegisterMessage(BuildFinished.ExitCode)
 _sym_db.RegisterMessage(BuildFinished.AnomalyReport)
 
-BuildMetrics = _reflection.GeneratedProtocolMessageType('BuildMetrics', (_message.Message,), dict(
+BuildMetrics = _reflection.GeneratedProtocolMessageType('BuildMetrics', (_message.Message,), {
 
-  ActionSummary = _reflection.GeneratedProtocolMessageType('ActionSummary', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDMETRICS_ACTIONSUMMARY,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ActionSummary)
-    ))
-  ,
+  'ActionSummary' : _reflection.GeneratedProtocolMessageType('ActionSummary', (_message.Message,), {
 
-  MemoryMetrics = _reflection.GeneratedProtocolMessageType('MemoryMetrics', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDMETRICS_MEMORYMETRICS,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.MemoryMetrics)
-    ))
-  ,
-
-  TargetMetrics = _reflection.GeneratedProtocolMessageType('TargetMetrics', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDMETRICS_TARGETMETRICS,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.TargetMetrics)
-    ))
-  ,
-
-  PackageMetrics = _reflection.GeneratedProtocolMessageType('PackageMetrics', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDMETRICS_PACKAGEMETRICS,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.PackageMetrics)
-    ))
-  ,
-
-  TimingMetrics = _reflection.GeneratedProtocolMessageType('TimingMetrics', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDMETRICS_TIMINGMETRICS,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.TimingMetrics)
-    ))
-  ,
-
-  CumulativeMetrics = _reflection.GeneratedProtocolMessageType('CumulativeMetrics', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDMETRICS_CUMULATIVEMETRICS,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.CumulativeMetrics)
-    ))
-  ,
-
-  ArtifactMetrics = _reflection.GeneratedProtocolMessageType('ArtifactMetrics', (_message.Message,), dict(
-
-    FilesMetric = _reflection.GeneratedProtocolMessageType('FilesMetric', (_message.Message,), dict(
-      DESCRIPTOR = _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC,
-      __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-      # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric)
-      ))
+    'ActionData' : _reflection.GeneratedProtocolMessageType('ActionData', (_message.Message,), {
+      'DESCRIPTOR' : _BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA,
+      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+      # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ActionSummary.ActionData)
+      })
     ,
-    DESCRIPTOR = _BUILDMETRICS_ARTIFACTMETRICS,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ArtifactMetrics)
-    ))
+
+    'RunnerCount' : _reflection.GeneratedProtocolMessageType('RunnerCount', (_message.Message,), {
+      'DESCRIPTOR' : _BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT,
+      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+      # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ActionSummary.RunnerCount)
+      })
+    ,
+    'DESCRIPTOR' : _BUILDMETRICS_ACTIONSUMMARY,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ActionSummary)
+    })
   ,
 
-  BuildGraphMetrics = _reflection.GeneratedProtocolMessageType('BuildGraphMetrics', (_message.Message,), dict(
-    DESCRIPTOR = _BUILDMETRICS_BUILDGRAPHMETRICS,
-    __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.BuildGraphMetrics)
-    ))
+  'MemoryMetrics' : _reflection.GeneratedProtocolMessageType('MemoryMetrics', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDMETRICS_MEMORYMETRICS,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.MemoryMetrics)
+    })
   ,
-  DESCRIPTOR = _BUILDMETRICS,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+
+  'TargetMetrics' : _reflection.GeneratedProtocolMessageType('TargetMetrics', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDMETRICS_TARGETMETRICS,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.TargetMetrics)
+    })
+  ,
+
+  'PackageMetrics' : _reflection.GeneratedProtocolMessageType('PackageMetrics', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDMETRICS_PACKAGEMETRICS,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.PackageMetrics)
+    })
+  ,
+
+  'TimingMetrics' : _reflection.GeneratedProtocolMessageType('TimingMetrics', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDMETRICS_TIMINGMETRICS,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.TimingMetrics)
+    })
+  ,
+
+  'CumulativeMetrics' : _reflection.GeneratedProtocolMessageType('CumulativeMetrics', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDMETRICS_CUMULATIVEMETRICS,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.CumulativeMetrics)
+    })
+  ,
+
+  'ArtifactMetrics' : _reflection.GeneratedProtocolMessageType('ArtifactMetrics', (_message.Message,), {
+
+    'FilesMetric' : _reflection.GeneratedProtocolMessageType('FilesMetric', (_message.Message,), {
+      'DESCRIPTOR' : _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC,
+      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+      # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric)
+      })
+    ,
+    'DESCRIPTOR' : _BUILDMETRICS_ARTIFACTMETRICS,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ArtifactMetrics)
+    })
+  ,
+
+  'BuildGraphMetrics' : _reflection.GeneratedProtocolMessageType('BuildGraphMetrics', (_message.Message,), {
+    'DESCRIPTOR' : _BUILDMETRICS_BUILDGRAPHMETRICS,
+    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.BuildGraphMetrics)
+    })
+  ,
+  'DESCRIPTOR' : _BUILDMETRICS,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics)
-  ))
+  })
 _sym_db.RegisterMessage(BuildMetrics)
 _sym_db.RegisterMessage(BuildMetrics.ActionSummary)
+_sym_db.RegisterMessage(BuildMetrics.ActionSummary.ActionData)
+_sym_db.RegisterMessage(BuildMetrics.ActionSummary.RunnerCount)
 _sym_db.RegisterMessage(BuildMetrics.MemoryMetrics)
 _sym_db.RegisterMessage(BuildMetrics.TargetMetrics)
 _sym_db.RegisterMessage(BuildMetrics.PackageMetrics)
@@ -4288,36 +4636,37 @@ _sym_db.RegisterMessage(BuildMetrics.ArtifactMetrics)
 _sym_db.RegisterMessage(BuildMetrics.ArtifactMetrics.FilesMetric)
 _sym_db.RegisterMessage(BuildMetrics.BuildGraphMetrics)
 
-BuildToolLogs = _reflection.GeneratedProtocolMessageType('BuildToolLogs', (_message.Message,), dict(
-  DESCRIPTOR = _BUILDTOOLLOGS,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+BuildToolLogs = _reflection.GeneratedProtocolMessageType('BuildToolLogs', (_message.Message,), {
+  'DESCRIPTOR' : _BUILDTOOLLOGS,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.BuildToolLogs)
-  ))
+  })
 _sym_db.RegisterMessage(BuildToolLogs)
 
-ConvenienceSymlinksIdentified = _reflection.GeneratedProtocolMessageType('ConvenienceSymlinksIdentified', (_message.Message,), dict(
-  DESCRIPTOR = _CONVENIENCESYMLINKSIDENTIFIED,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+ConvenienceSymlinksIdentified = _reflection.GeneratedProtocolMessageType('ConvenienceSymlinksIdentified', (_message.Message,), {
+  'DESCRIPTOR' : _CONVENIENCESYMLINKSIDENTIFIED,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.ConvenienceSymlinksIdentified)
-  ))
+  })
 _sym_db.RegisterMessage(ConvenienceSymlinksIdentified)
 
-ConvenienceSymlink = _reflection.GeneratedProtocolMessageType('ConvenienceSymlink', (_message.Message,), dict(
-  DESCRIPTOR = _CONVENIENCESYMLINK,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+ConvenienceSymlink = _reflection.GeneratedProtocolMessageType('ConvenienceSymlink', (_message.Message,), {
+  'DESCRIPTOR' : _CONVENIENCESYMLINK,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.ConvenienceSymlink)
-  ))
+  })
 _sym_db.RegisterMessage(ConvenienceSymlink)
 
-BuildEvent = _reflection.GeneratedProtocolMessageType('BuildEvent', (_message.Message,), dict(
-  DESCRIPTOR = _BUILDEVENT,
-  __module__ = 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
+BuildEvent = _reflection.GeneratedProtocolMessageType('BuildEvent', (_message.Message,), {
+  'DESCRIPTOR' : _BUILDEVENT,
+  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
   # @@protoc_insertion_point(class_scope:build_event_stream.BuildEvent)
-  ))
+  })
 _sym_db.RegisterMessage(BuildEvent)
 
 
 DESCRIPTOR._options = None
+_BUILDSTARTED.fields_by_name['start_time_millis']._options = None
 _BUILDMETADATA_METADATAENTRY._options = None
 _CONFIGURATION_MAKEVARIABLEENTRY._options = None
 _ACTIONEXECUTED.fields_by_name['label']._options = None
@@ -4325,6 +4674,15 @@ _ACTIONEXECUTED.fields_by_name['configuration']._options = None
 _TARGETCOMPLETE.fields_by_name['target_kind']._options = None
 _TARGETCOMPLETE.fields_by_name['test_size']._options = None
 _TARGETCOMPLETE.fields_by_name['important_output']._options = None
+_TARGETCOMPLETE.fields_by_name['test_timeout_seconds']._options = None
+_TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN.fields_by_name['time_millis']._options = None
 _TESTRESULT_EXECUTIONINFO.fields_by_name['timeout_seconds']._options = None
+_TESTRESULT.fields_by_name['test_attempt_start_millis_epoch']._options = None
+_TESTRESULT.fields_by_name['test_attempt_duration_millis']._options = None
+_TESTSUMMARY.fields_by_name['first_start_time_millis']._options = None
+_TESTSUMMARY.fields_by_name['last_stop_time_millis']._options = None
+_TESTSUMMARY.fields_by_name['total_run_duration_millis']._options = None
 _BUILDFINISHED.fields_by_name['overall_success']._options = None
+_BUILDFINISHED.fields_by_name['finish_time_millis']._options = None
+_BUILDMETRICS_ACTIONSUMMARY.fields_by_name['remote_cache_hits']._options = None
 # @@protoc_insertion_point(module_scope)

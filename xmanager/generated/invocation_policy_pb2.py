@@ -17,8 +17,6 @@
 # pylint: skip-file
 # source: src/main/protobuf/invocation_policy.proto
 
-import sys
-_b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -34,11 +32,47 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='src/main/protobuf/invocation_policy.proto',
   package='blaze.invocation_policy',
   syntax='proto2',
-  serialized_options=_b('\n+com.google.devtools.build.lib.runtime.proto'),
-  serialized_pb=_b('\n)src/main/protobuf/invocation_policy.proto\x12\x17\x62laze.invocation_policy\"N\n\x10InvocationPolicy\x12:\n\rflag_policies\x18\x01 \x03(\x0b\x32#.blaze.invocation_policy.FlagPolicy\"\xb4\x02\n\nFlagPolicy\x12\x11\n\tflag_name\x18\x01 \x01(\t\x12\x10\n\x08\x63ommands\x18\x02 \x03(\t\x12\x36\n\tset_value\x18\x03 \x01(\x0b\x32!.blaze.invocation_policy.SetValueH\x00\x12:\n\x0buse_default\x18\x04 \x01(\x0b\x32#.blaze.invocation_policy.UseDefaultH\x00\x12\x42\n\x0f\x64isallow_values\x18\x05 \x01(\x0b\x32\'.blaze.invocation_policy.DisallowValuesH\x00\x12<\n\x0c\x61llow_values\x18\x06 \x01(\x0b\x32$.blaze.invocation_policy.AllowValuesH\x00\x42\x0b\n\toperation\"C\n\x08SetValue\x12\x12\n\nflag_value\x18\x01 \x03(\t\x12\x13\n\x0boverridable\x18\x02 \x01(\x08\x12\x0e\n\x06\x61ppend\x18\x03 \x01(\x08\"\x0c\n\nUseDefault\"\x97\x01\n\x0e\x44isallowValues\x12\x19\n\x11\x64isallowed_values\x18\x01 \x03(\t\x12\x13\n\tnew_value\x18\x03 \x01(\tH\x00\x12:\n\x0buse_default\x18\x04 \x01(\x0b\x32#.blaze.invocation_policy.UseDefaultH\x00\x42\x13\n\x11replacement_valueJ\x04\x08\x02\x10\x03\"\x91\x01\n\x0b\x41llowValues\x12\x16\n\x0e\x61llowed_values\x18\x01 \x03(\t\x12\x13\n\tnew_value\x18\x03 \x01(\tH\x00\x12:\n\x0buse_default\x18\x04 \x01(\x0b\x32#.blaze.invocation_policy.UseDefaultH\x00\x42\x13\n\x11replacement_valueJ\x04\x08\x02\x10\x03\x42-\n+com.google.devtools.build.lib.runtime.proto')
+  serialized_options=b'\n+com.google.devtools.build.lib.runtime.proto',
+  create_key=_descriptor._internal_create_key,
+  serialized_pb=b'\n)src/main/protobuf/invocation_policy.proto\x12\x17\x62laze.invocation_policy\"N\n\x10InvocationPolicy\x12:\n\rflag_policies\x18\x01 \x03(\x0b\x32#.blaze.invocation_policy.FlagPolicy\"\xb4\x02\n\nFlagPolicy\x12\x11\n\tflag_name\x18\x01 \x01(\t\x12\x10\n\x08\x63ommands\x18\x02 \x03(\t\x12\x36\n\tset_value\x18\x03 \x01(\x0b\x32!.blaze.invocation_policy.SetValueH\x00\x12:\n\x0buse_default\x18\x04 \x01(\x0b\x32#.blaze.invocation_policy.UseDefaultH\x00\x12\x42\n\x0f\x64isallow_values\x18\x05 \x01(\x0b\x32\'.blaze.invocation_policy.DisallowValuesH\x00\x12<\n\x0c\x61llow_values\x18\x06 \x01(\x0b\x32$.blaze.invocation_policy.AllowValuesH\x00\x42\x0b\n\toperation\"\xdf\x01\n\x08SetValue\x12\x12\n\nflag_value\x18\x01 \x03(\t\x12\x13\n\x0boverridable\x18\x02 \x01(\x08\x12\x0e\n\x06\x61ppend\x18\x03 \x01(\x08\x12<\n\x08\x62\x65havior\x18\x04 \x01(\x0e\x32*.blaze.invocation_policy.SetValue.Behavior\"\\\n\x08\x42\x65havior\x12\r\n\tUNDEFINED\x10\x00\x12\x13\n\x0f\x41LLOW_OVERRIDES\x10\x01\x12\n\n\x06\x41PPEND\x10\x02\x12 \n\x1c\x46INAL_VALUE_IGNORE_OVERRIDES\x10\x03\"\x0c\n\nUseDefault\"\x97\x01\n\x0e\x44isallowValues\x12\x19\n\x11\x64isallowed_values\x18\x01 \x03(\t\x12\x13\n\tnew_value\x18\x03 \x01(\tH\x00\x12:\n\x0buse_default\x18\x04 \x01(\x0b\x32#.blaze.invocation_policy.UseDefaultH\x00\x42\x13\n\x11replacement_valueJ\x04\x08\x02\x10\x03\"\x91\x01\n\x0b\x41llowValues\x12\x16\n\x0e\x61llowed_values\x18\x01 \x03(\t\x12\x13\n\tnew_value\x18\x03 \x01(\tH\x00\x12:\n\x0buse_default\x18\x04 \x01(\x0b\x32#.blaze.invocation_policy.UseDefaultH\x00\x42\x13\n\x11replacement_valueJ\x04\x08\x02\x10\x03\x42-\n+com.google.devtools.build.lib.runtime.proto'
 )
 
 
+
+_SETVALUE_BEHAVIOR = _descriptor.EnumDescriptor(
+  name='Behavior',
+  full_name='blaze.invocation_policy.SetValue.Behavior',
+  filename=None,
+  file=DESCRIPTOR,
+  create_key=_descriptor._internal_create_key,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='UNDEFINED', index=0, number=0,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='ALLOW_OVERRIDES', index=1, number=1,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='APPEND', index=2, number=2,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+    _descriptor.EnumValueDescriptor(
+      name='FINAL_VALUE_IGNORE_OVERRIDES', index=3, number=3,
+      serialized_options=None,
+      type=None,
+      create_key=_descriptor._internal_create_key),
+  ],
+  containing_type=None,
+  serialized_options=None,
+  serialized_start=593,
+  serialized_end=685,
+)
+_sym_db.RegisterEnumDescriptor(_SETVALUE_BEHAVIOR)
 
 
 _INVOCATIONPOLICY = _descriptor.Descriptor(
@@ -47,6 +81,7 @@ _INVOCATIONPOLICY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='flag_policies', full_name='blaze.invocation_policy.InvocationPolicy.flag_policies', index=0,
@@ -54,7 +89,7 @@ _INVOCATIONPOLICY = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -78,49 +113,50 @@ _FLAGPOLICY = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='flag_name', full_name='blaze.invocation_policy.FlagPolicy.flag_name', index=0,
       number=1, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='commands', full_name='blaze.invocation_policy.FlagPolicy.commands', index=1,
       number=2, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='set_value', full_name='blaze.invocation_policy.FlagPolicy.set_value', index=2,
       number=3, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='use_default', full_name='blaze.invocation_policy.FlagPolicy.use_default', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='disallow_values', full_name='blaze.invocation_policy.FlagPolicy.disallow_values', index=4,
       number=5, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='allow_values', full_name='blaze.invocation_policy.FlagPolicy.allow_values', index=5,
       number=6, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -134,7 +170,9 @@ _FLAGPOLICY = _descriptor.Descriptor(
   oneofs=[
     _descriptor.OneofDescriptor(
       name='operation', full_name='blaze.invocation_policy.FlagPolicy.operation',
-      index=0, containing_type=None, fields=[]),
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
   ],
   serialized_start=151,
   serialized_end=459,
@@ -147,6 +185,7 @@ _SETVALUE = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='flag_value', full_name='blaze.invocation_policy.SetValue.flag_value', index=0,
@@ -154,26 +193,34 @@ _SETVALUE = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='overridable', full_name='blaze.invocation_policy.SetValue.overridable', index=1,
       number=2, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='append', full_name='blaze.invocation_policy.SetValue.append', index=2,
       number=3, type=8, cpp_type=7, label=1,
       has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='behavior', full_name='blaze.invocation_policy.SetValue.behavior', index=3,
+      number=4, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
   nested_types=[],
   enum_types=[
+    _SETVALUE_BEHAVIOR,
   ],
   serialized_options=None,
   is_extendable=False,
@@ -181,8 +228,8 @@ _SETVALUE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=461,
-  serialized_end=528,
+  serialized_start=462,
+  serialized_end=685,
 )
 
 
@@ -192,6 +239,7 @@ _USEDEFAULT = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
   ],
   extensions=[
@@ -205,8 +253,8 @@ _USEDEFAULT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=530,
-  serialized_end=542,
+  serialized_start=687,
+  serialized_end=699,
 )
 
 
@@ -216,6 +264,7 @@ _DISALLOWVALUES = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='disallowed_values', full_name='blaze.invocation_policy.DisallowValues.disallowed_values', index=0,
@@ -223,21 +272,21 @@ _DISALLOWVALUES = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='new_value', full_name='blaze.invocation_policy.DisallowValues.new_value', index=1,
       number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='use_default', full_name='blaze.invocation_policy.DisallowValues.use_default', index=2,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -251,10 +300,12 @@ _DISALLOWVALUES = _descriptor.Descriptor(
   oneofs=[
     _descriptor.OneofDescriptor(
       name='replacement_value', full_name='blaze.invocation_policy.DisallowValues.replacement_value',
-      index=0, containing_type=None, fields=[]),
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
   ],
-  serialized_start=545,
-  serialized_end=696,
+  serialized_start=702,
+  serialized_end=853,
 )
 
 
@@ -264,6 +315,7 @@ _ALLOWVALUES = _descriptor.Descriptor(
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
+  create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
       name='allowed_values', full_name='blaze.invocation_policy.AllowValues.allowed_values', index=0,
@@ -271,21 +323,21 @@ _ALLOWVALUES = _descriptor.Descriptor(
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='new_value', full_name='blaze.invocation_policy.AllowValues.new_value', index=1,
       number=3, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
+      has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
       name='use_default', full_name='blaze.invocation_policy.AllowValues.use_default', index=2,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR),
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -299,10 +351,12 @@ _ALLOWVALUES = _descriptor.Descriptor(
   oneofs=[
     _descriptor.OneofDescriptor(
       name='replacement_value', full_name='blaze.invocation_policy.AllowValues.replacement_value',
-      index=0, containing_type=None, fields=[]),
+      index=0, containing_type=None,
+      create_key=_descriptor._internal_create_key,
+    fields=[]),
   ],
-  serialized_start=699,
-  serialized_end=844,
+  serialized_start=856,
+  serialized_end=1001,
 )
 
 _INVOCATIONPOLICY.fields_by_name['flag_policies'].message_type = _FLAGPOLICY
@@ -322,6 +376,8 @@ _FLAGPOLICY.fields_by_name['disallow_values'].containing_oneof = _FLAGPOLICY.one
 _FLAGPOLICY.oneofs_by_name['operation'].fields.append(
   _FLAGPOLICY.fields_by_name['allow_values'])
 _FLAGPOLICY.fields_by_name['allow_values'].containing_oneof = _FLAGPOLICY.oneofs_by_name['operation']
+_SETVALUE.fields_by_name['behavior'].enum_type = _SETVALUE_BEHAVIOR
+_SETVALUE_BEHAVIOR.containing_type = _SETVALUE
 _DISALLOWVALUES.fields_by_name['use_default'].message_type = _USEDEFAULT
 _DISALLOWVALUES.oneofs_by_name['replacement_value'].fields.append(
   _DISALLOWVALUES.fields_by_name['new_value'])
@@ -344,46 +400,46 @@ DESCRIPTOR.message_types_by_name['DisallowValues'] = _DISALLOWVALUES
 DESCRIPTOR.message_types_by_name['AllowValues'] = _ALLOWVALUES
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-InvocationPolicy = _reflection.GeneratedProtocolMessageType('InvocationPolicy', (_message.Message,), dict(
-  DESCRIPTOR = _INVOCATIONPOLICY,
-  __module__ = 'src.main.protobuf.invocation_policy_pb2'
+InvocationPolicy = _reflection.GeneratedProtocolMessageType('InvocationPolicy', (_message.Message,), {
+  'DESCRIPTOR' : _INVOCATIONPOLICY,
+  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
   # @@protoc_insertion_point(class_scope:blaze.invocation_policy.InvocationPolicy)
-  ))
+  })
 _sym_db.RegisterMessage(InvocationPolicy)
 
-FlagPolicy = _reflection.GeneratedProtocolMessageType('FlagPolicy', (_message.Message,), dict(
-  DESCRIPTOR = _FLAGPOLICY,
-  __module__ = 'src.main.protobuf.invocation_policy_pb2'
+FlagPolicy = _reflection.GeneratedProtocolMessageType('FlagPolicy', (_message.Message,), {
+  'DESCRIPTOR' : _FLAGPOLICY,
+  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
   # @@protoc_insertion_point(class_scope:blaze.invocation_policy.FlagPolicy)
-  ))
+  })
 _sym_db.RegisterMessage(FlagPolicy)
 
-SetValue = _reflection.GeneratedProtocolMessageType('SetValue', (_message.Message,), dict(
-  DESCRIPTOR = _SETVALUE,
-  __module__ = 'src.main.protobuf.invocation_policy_pb2'
+SetValue = _reflection.GeneratedProtocolMessageType('SetValue', (_message.Message,), {
+  'DESCRIPTOR' : _SETVALUE,
+  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
   # @@protoc_insertion_point(class_scope:blaze.invocation_policy.SetValue)
-  ))
+  })
 _sym_db.RegisterMessage(SetValue)
 
-UseDefault = _reflection.GeneratedProtocolMessageType('UseDefault', (_message.Message,), dict(
-  DESCRIPTOR = _USEDEFAULT,
-  __module__ = 'src.main.protobuf.invocation_policy_pb2'
+UseDefault = _reflection.GeneratedProtocolMessageType('UseDefault', (_message.Message,), {
+  'DESCRIPTOR' : _USEDEFAULT,
+  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
   # @@protoc_insertion_point(class_scope:blaze.invocation_policy.UseDefault)
-  ))
+  })
 _sym_db.RegisterMessage(UseDefault)
 
-DisallowValues = _reflection.GeneratedProtocolMessageType('DisallowValues', (_message.Message,), dict(
-  DESCRIPTOR = _DISALLOWVALUES,
-  __module__ = 'src.main.protobuf.invocation_policy_pb2'
+DisallowValues = _reflection.GeneratedProtocolMessageType('DisallowValues', (_message.Message,), {
+  'DESCRIPTOR' : _DISALLOWVALUES,
+  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
   # @@protoc_insertion_point(class_scope:blaze.invocation_policy.DisallowValues)
-  ))
+  })
 _sym_db.RegisterMessage(DisallowValues)
 
-AllowValues = _reflection.GeneratedProtocolMessageType('AllowValues', (_message.Message,), dict(
-  DESCRIPTOR = _ALLOWVALUES,
-  __module__ = 'src.main.protobuf.invocation_policy_pb2'
+AllowValues = _reflection.GeneratedProtocolMessageType('AllowValues', (_message.Message,), {
+  'DESCRIPTOR' : _ALLOWVALUES,
+  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
   # @@protoc_insertion_point(class_scope:blaze.invocation_policy.AllowValues)
-  ))
+  })
 _sym_db.RegisterMessage(AllowValues)
 
 
