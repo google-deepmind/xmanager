@@ -33,6 +33,10 @@ class JobBlocksTest(unittest.TestCase):
 
     self.assertEqual(args.to_list(str), ['1', '2', '3'])
 
+  def test_from_none(self):
+    args = job_blocks.SequentialArgs.from_collection(None)
+    self.assertEqual(args.to_list(str), [])
+
   def test_merge(self):
     args = job_blocks.SequentialArgs.merge(
         map(job_blocks.SequentialArgs.from_collection, [[1], {

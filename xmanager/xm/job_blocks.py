@@ -79,9 +79,11 @@ class SequentialArgs:
     return result
 
   @staticmethod
-  def from_collection(collection: UserArgs) -> 'SequentialArgs':
+  def from_collection(collection: Optional[UserArgs]) -> 'SequentialArgs':
     """Populates a new instance from a given collection."""
     result = SequentialArgs()
+    if collection is None:
+      return result
 
     def import_sequential_args(args: SequentialArgs) -> None:
       result._merge_from(args)  # pylint: disable=protected-access
