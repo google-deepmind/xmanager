@@ -217,7 +217,7 @@ def default_steps(directory: str, use_deep_module: bool) -> List[str]:
       'ENV LANG=C.UTF-8',
       # Updating and installing on the same line causes cache-busting.
       # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
-      'RUN apt-get update && apt-get install -y git',
+      'RUN apt-get update && apt-get install -y git netcat',
       'RUN python -m pip install --upgrade pip setuptools',
       f'COPY {directory}/requirements.txt {project_dir}/requirements.txt',
       f'RUN python -m pip install -r {directory}/requirements.txt',
