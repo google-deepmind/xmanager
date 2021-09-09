@@ -19,6 +19,7 @@ import subprocess
 from typing import List, Sequence
 
 from absl import flags
+import attr
 from xmanager.bazel import file_utils
 
 from google.protobuf.internal.decoder import _DecodeVarint32
@@ -190,3 +191,10 @@ class BazelService(abc.ABC):
       For each label returns a list of its important outputs.
     """
     raise NotImplementedError
+
+
+@attr.s(auto_attribs=True)
+class BazelTarget:
+  """Represents a Bazel target to be built."""
+  label: str
+  bazel_args: List[str]
