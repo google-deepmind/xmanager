@@ -18,6 +18,7 @@ This module is private and can only be used by the API itself, but not by users.
 
 import abc
 import asyncio
+import enum
 import functools
 import inspect
 import os
@@ -49,6 +50,7 @@ class ShellSafeArg(SpecialArg):
 
 ARG_ESCAPER = pattern_matching.match(
     pattern_matching.Case([ShellSafeArg], lambda v: v.arg),
+    pattern_matching.Case([enum.Enum], lambda v: shlex.quote(str(v.name))),
     pattern_matching.Case([Any], lambda v: shlex.quote(str(v))),
 )
 
