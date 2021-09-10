@@ -381,3 +381,22 @@ class JobRequirements:
     if replicas is not None and self.accelerator in TpuType:
       raise ValueError('Replicated jobs are not supported for TPUs.')
     self.replicas = replicas or 1
+
+  def __repr__(self) -> str:
+    """Returns string representation of the requirements."""
+    args = []
+
+    for resource, value in self.task_requirements.items():
+      if resource in TpuType:
+        args.append(f'{resource.name.lower()}={self.topology!r}')
+      else:
+        args.append(f'{resource.name.lower()}={value!r}')
+
+    if self.location:
+      args.append(f'location={self.location!r}')
+    if self.service_tier != ServiceTier.PROD:
+      args.append(f'service_tier=xm.{self.service_tier}')
+    if self.replicas != 1:
+      args.append(f'replicas={self.replicas}')
+
+    return f'xm.JobRequirements({", ".join(args)})'

@@ -118,6 +118,26 @@ class JobRequirementsTest(parameterized.TestCase):
     with self.assertRaises(ValueError):
       resources.JobRequirements(replicas=2, tpu_v3='1x1')
 
+  def test_str(self):
+    self.assertEqual(
+        repr(
+            resources.JobRequirements(
+                cpu=1,
+                location='lon_r7',
+                service_tier=resources.ServiceTier.BATCH,
+                replicas=2)),
+        "xm.JobRequirements(cpu=1.0, location='lon_r7', service_tier=xm.ServiceTier.BATCH, replicas=2)"
+    )
+
+  def test_str_topology_is_used_for_tpus(self):
+    self.assertEqual(
+        repr(resources.JobRequirements(tpu_v3='4x4')),
+        "xm.JobRequirements(dragonfish=xm.Topology('4x4'))")
+
+  def test_str_omits_empty_fields(self):
+    self.assertEqual(
+        repr(resources.JobRequirements(cpu=1)), 'xm.JobRequirements(cpu=1.0)')
+
 
 class EnumSubsetTest(parameterized.TestCase):
 
