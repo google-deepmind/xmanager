@@ -61,10 +61,16 @@ class CaipTest(unittest.TestCase):
             requirements=xm.JobRequirements(tpu_v3=8)),
         args={})
     machine_spec = caip.get_machine_spec(job)
+    # TPU_V2 and TPU_V3 removed in
+    # https://github.com/googleapis/python-aiplatform/commit/f3a3d03c8509dc49c24139155a572dacbe954f66
+    # When TPU enums are restored, replace
+    #   'accelerator_type': 7,
+    # with
+    #   'accelerator_type': caip.aip_v1.AcceleratorType.TPU_V3,
     self.assertDictEqual(
         machine_spec, {
             'machine_type': 'n1-standard-4',
-            'accelerator_type': caip.aip_v1.AcceleratorType.TPU_V3,
+            'accelerator_type': 7,
             'accelerator_count': 8,
         })
 
