@@ -33,7 +33,7 @@ class LocalWorkUnitStatusEnum(enum.Enum):
 
 
 @attr.s(auto_attribs=True)
-class LocalWorkUnitStatus(xm.WorkUnitStatus):
+class LocalWorkUnitStatus(xm.ExperimentUnitStatus):
   """Status of a local experiment job."""
 
   status: LocalWorkUnitStatusEnum

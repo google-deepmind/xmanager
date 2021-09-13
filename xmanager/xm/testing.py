@@ -33,9 +33,10 @@ class TestWorkUnit(core.WorkUnit):
       launched_jobs_args: List[Mapping[str, Any]],
       args: Mapping[str, Any],
   ) -> None:
-    super().__init__(experiment, work_unit_id_predictor, create_task, args)
+    super().__init__(experiment, create_task, args, core.WorkUnitRole())
     self._launched_jobs = launched_jobs
     self._launched_jobs_args = launched_jobs_args
+    self._work_unit_id = work_unit_id_predictor.reserve_id()
 
   async def _wait_until_complete(self) -> None:
     """Test work unit is immediately complete."""
@@ -45,6 +46,14 @@ class TestWorkUnit(core.WorkUnit):
     """Appends the job group to the launched_jobs list."""
     self._launched_jobs.extend(job_group.jobs.values())
     self._launched_jobs_args.append(args)
+
+  @property
+  def work_unit_id(self) -> int:
+    return self._work_unit_id
+
+  @property
+  def experiment_unit_name(self) -> str:
+    return f'{self.experiment_id}_{self._work_unit_id}'
 
 
 class TestExperiment(core.Experiment):
@@ -65,7 +74,8 @@ class TestExperiment(core.Experiment):
     """Packages executable specs into executables based on the executor specs."""
     raise NotImplementedError
 
-  def _create_work_unit(self, args: Mapping[str, Any]) -> TestWorkUnit:
+  def _create_experiment_unit(self, args,
+                              role=core.WorkUnitRole()) -> TestWorkUnit:
     """Creates a new WorkUnit instance for the experiment."""
     work_unit = TestWorkUnit(self, self._work_unit_id_predictor,
                              self._create_task, self.launched_jobs,

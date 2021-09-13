@@ -122,7 +122,7 @@ class WorkUnitVizierUpdater:
     self._work_unit = work_unit
     self._trial = trial
 
-  def work_unit_status(self) -> xm.WorkUnitStatus:
+  def work_unit_status(self) -> xm.ExperimentUnitStatus:
     return self._work_unit.get_status()
 
   def check_for_completion(self) -> None:

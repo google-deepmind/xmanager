@@ -29,8 +29,9 @@ import functools
 import inspect
 import queue
 import threading
-from typing import Any, Awaitable, Callable, Dict, Mapping, Sequence
+from typing import Any, Awaitable, Callable, Dict, Mapping, overload, Sequence
 
+import attr
 import immutabledict
 
 from xmanager.xm import id_predictor
@@ -61,8 +62,8 @@ _apply_args = pattern_matching.match(
                           lambda other, args: None))
 
 
-class WorkUnitStatus(abc.ABC):
-  """The status of a work unit."""
+class ExperimentUnitStatus(abc.ABC):
+  """The status of an experiment unit."""
 
   @abc.abstractmethod
   def is_running(self) -> bool:
@@ -86,16 +87,16 @@ class WorkUnitStatus(abc.ABC):
     raise NotImplementedError
 
 
-class WorkUnitError(RuntimeError):
-  """Work unit could not be completed."""
+class ExperimentUnitError(RuntimeError):
+  """Experiment unit could not be completed."""
 
 
-class WorkUnitFailedError(WorkUnitError):
-  """A job running in a work unit has failed."""
+class ExperimentUnitFailedError(ExperimentUnitError):
+  """A job running in an experiment unit has failed."""
 
 
-class WorkUnitNotCompletedError(WorkUnitError):
-  """Work unit is neither running nor completed.
+class ExperimentUnitNotCompletedError(ExperimentUnitError):
+  """Experiment unit is neither running nor completed.
 
   For example it may be stopped by a user.
   """
@@ -153,27 +154,30 @@ def _work_unit_arguments(
   return deduce_args(job)
 
 
-class WorkUnit(abc.ABC):
-  """WorkUnit is a collection of semantically associated `Job`s."""
+class ExperimentUnitRole(abc.ABC):
+  """The role of an experiment unit within the experiment structure."""
+  pass
+
+
+class ExperimentUnit(abc.ABC):
+  """ExperimentUnit is a collection of semantically associated `Job`s."""
 
   def __init__(self, experiment: 'Experiment',
-               work_unit_id_predictor: id_predictor.Predictor,
                create_task: Callable[[Awaitable[Any]], futures.Future],
-               args: Mapping[str, Any]) -> None:
-    """Initializes a `WorkUnit` instance.
+               args: Mapping[str, Any], role: ExperimentUnitRole) -> None:
+    """Initializes an `ExperimentUnit` instance.
 
     Args:
-      experiment: An experiment this work unit belongs to.
-      work_unit_id_predictor: The experiment's ID predictor.
+      experiment: An experiment this unit belongs to.
       create_task: A callback to register a new asynchronous task.
-      args: Work unit agruments. Represent hyperparameter sweep element
-        corresponding to this work unit.
+      args: Arguments to this experiment unit. Most commonly used to represent
+        the hyperparameter sweep trial corresponding to a work unit.
+      role: The role of this unit in the experiment structure.
     """
-    self._work_unit_id_predictor = work_unit_id_predictor
-    self.work_unit_id = self._work_unit_id_predictor.reserve_id()
     self._experiment = experiment
     self._create_task = create_task
     self._args = args
+    self._role = role
 
     self._launched_error = None
 
@@ -185,7 +189,7 @@ class WorkUnit(abc.ABC):
   @property
   @functools.lru_cache()
   def _launched_event(self) -> asyncio.Event:
-    """Event to be set when the work unit is launched."""
+    """Event to be set when the experiment unit is launched."""
     # In Python < 3.8 `Event` must be created within the event loop. We defer
     # the initialization because the constructor is not run in the loop. Note
     # that after migration to Python >= 3.8 this code can be moved to the
@@ -198,10 +202,10 @@ class WorkUnit(abc.ABC):
       args: Mapping[str, Any] = immutabledict.immutabledict()
   ) -> Awaitable[None]:
     # pyformat: disable
-    """Adds a Job / JobGroup to the work unit.
+    """Adds a Job / JobGroup to the experiment unit.
 
-    Only one JobGroup can be added to a WorkUnit. This limitation may be lifted
-    in future versions.
+    Only one JobGroup can be added to an ExperimentUnit. This limitation may be
+    lifted in future versions.
 
     Args:
       job: A job or job group to add.
@@ -250,7 +254,7 @@ class WorkUnit(abc.ABC):
       try:
         await job_awaitable
       except Exception as e:
-        self._launched_error = WorkUnitError(e)
+        self._launched_error = ExperimentUnitError(e)
         raise
       finally:
         # Note that the current implementation reuses `_launched_event`: imagine
@@ -264,10 +268,10 @@ class WorkUnit(abc.ABC):
     return asyncio.wrap_future(self._create_task(launch()))
 
   async def wait_until_complete(self):
-    """Waits until the work unit is in a final state: completed/failed/stopped.
+    """Waits until the unit is in a final state: completed/failed/stopped.
 
     Raises:
-      WorkUnitError: Exception if the work unit couldn't complete.
+      ExperimentUnitError: Exception if the unit couldn't complete.
     """
     await self._launched_event.wait()
     if self._launched_error:
@@ -276,39 +280,40 @@ class WorkUnit(abc.ABC):
 
   async def _launch_job_group(self, job_group: job_blocks.JobGroup,
                               args_view: Mapping[str, Any]) -> None:
-    """Launches a given job group as part of the work unit."""
+    """Launches a given job group as part of the unit."""
     raise NotImplementedError
 
   async def _wait_until_complete(self) -> None:
-    """Waits until the work unit is in a final state: completed/failed/stopped.
+    """Waits until the unit is in a final state: completed/failed/stopped.
 
-    Child classes need to implement this method to support awaiting work units.
+    Child classes need to implement this method to support awaiting units.
 
-    Unlike wait_until_complete this method asumes that work unit has been fully
+    Unlike wait_until_complete this method asumes that unit has been fully
     created. This method is only invoked if somebody has requested to monitor
-    work unit.
+    unit.
     """
     raise NotImplementedError
 
   def stop(self) -> None:
-    """Initiate the process to stop the work unit from running.
+    """Initiate the process to stop the unit from running.
 
-    This method will synchronously make a request for the work unit to stop.
-    However, the method does not actually wait for the work unit to be in a
+    This method will synchronously make a request for the unit to stop.
+    However, the method does not actually wait for the unit to be in a
     terminal state.
 
-    Use self.wait_until_complete() after self.stop() to guarantee the work unit
+    Use self.wait_until_complete() after self.stop() to guarantee the unit
     is stopped.
     """
     raise NotImplementedError
 
-  def get_status(self) -> WorkUnitStatus:
-    """Gets the status of this work unit."""
+  def get_status(self) -> ExperimentUnitStatus:
+    """Gets the status of this unit."""
     raise NotImplementedError
 
   @property
-  def work_unit_name(self) -> str:
-    return f'{self.experiment_id}_{self.work_unit_id}'
+  @abc.abstractmethod
+  def experiment_unit_name(self) -> str:
+    raise NotImplementedError
 
   def get_full_job_name(self, job_name: str) -> str:
     """Given `Job.name` constructs its full name.
@@ -322,13 +327,48 @@ class WorkUnit(abc.ABC):
     Returns:
         Full name of the job.
     """
-    return f'{self.work_unit_name}_{job_name}'
+    return f'{self.experiment_unit_name}_{job_name}'
 
   @property
   def context(self) -> metadata_context.MetadataContext:
-    """Returns metadata context for a work unit."""
+    """Returns metadata context for a unit."""
     return metadata_context.MetadataContext(
         annotations=metadata_context.ContextAnnotations())
+
+
+@attr.s(auto_attribs=True)
+class WorkUnitRole(ExperimentUnitRole):
+  """An experiment unit with this role is a work unit.
+
+  Work units contain jobs that are often run as trials as part of an
+  experiment's hyper-parameter search. The status of a work unit is used to
+  determine the status of the experiment.
+  """
+
+
+class WorkUnit(ExperimentUnit):
+  """Work units are experiment units with the work unit role."""
+
+  @property
+  @abc.abstractmethod
+  def work_unit_id(self) -> int:
+    raise NotImplementedError
+
+
+@attr.s(auto_attribs=True)
+class AuxiliaryUnitRole(ExperimentUnitRole):
+  """An experiment unit with this role is an auxiliary unit.
+
+  Auxiliary units contain jobs that are not part of the trials of a
+  hyper-parameter search. The status of an auxiliary unit is not used to
+  determine the status of the experiment. e.g. Tensorboard
+
+  Attributes:
+      termination_delay_secs: How long to keep AUX unit running after experiment
+        completion.
+  """
+
+  termination_delay_secs: int
 
 
 class Experiment(abc.ABC):
@@ -400,15 +440,34 @@ class Experiment(abc.ABC):
     """Packages executable specs into executables based on the executor specs."""
     raise NotImplementedError
 
+  @overload
+  def add(self,
+          job: job_blocks.JobType,
+          args: Mapping[str, Any] = ...,
+          role: WorkUnitRole = ...) -> Awaitable[WorkUnit]:
+    ...
+
+  @overload
+  def add(self, job: job_blocks.JobType, args: Mapping[str, Any],
+          role: ExperimentUnitRole) -> Awaitable[ExperimentUnit]:
+    ...
+
+  @overload
   def add(
       self,
       job: job_blocks.JobType,
-      args: Mapping[str, Any] = immutabledict.immutabledict()
-  ) -> Awaitable[WorkUnit]:
+      args: Mapping[str, Any] = ...,
+      *,  # parameters after “*” are keyword-only parameters
+      role: ExperimentUnitRole
+  ) -> Awaitable[ExperimentUnit]:
+    ...
+
+  # The ExecutableUnit return type is determined by the role.
+  def add(self, job, args=immutabledict.immutabledict(), role=WorkUnitRole()):
     # pyformat: disable
     """Adds a Job / JobGroup to the experiment.
 
-    A new WorkUnit is created to run the job.
+    A new Experiment Unit is created to run the job.
 
     Args:
       job: A Job or JobGroup to add.
@@ -423,22 +482,24 @@ class Experiment(abc.ABC):
         ```
 
         would update `args` field of a job `agent` in the group.
+      role: The role of this unit in the experiment structure.
 
     Returns:
       An awaitable that would be fulfilled when the job is launched.
     """
     # pyformat: enable
-    work_unit = self._create_work_unit(args)
+    experiment_unit = self._create_experiment_unit(args, role)
 
     async def launch():
-      await work_unit.add(job, args)
-      return work_unit
+      await experiment_unit.add(job, args)
+      return experiment_unit
 
     return asyncio.wrap_future(self._create_task(launch()))
 
-  def _create_work_unit(self, args: Mapping[str, Any]) -> WorkUnit:
-    """Creates a new WorkUnit instance for the experiment."""
-    return WorkUnit(self, self._work_unit_id_predictor, self._create_task, args)
+  @abc.abstractmethod
+  def _create_experiment_unit(self, args: Mapping[str, Any],
+                              role: ExperimentUnitRole) -> ExperimentUnit:
+    raise NotImplementedError
 
   def _create_task(self, task: Awaitable[Any]) -> futures.Future:
     future = asyncio.run_coroutine_threadsafe(task, loop=self._event_loop)
@@ -471,5 +532,5 @@ def create_experiment() -> Experiment:
 
 @abc.abstractmethod
 def get_experiment(experiment_id: int) -> Experiment:
-  """Returns a Experiment instance associated with this experiment id."""
+  """Returns an Experiment instance associated with this experiment id."""
   raise NotImplementedError

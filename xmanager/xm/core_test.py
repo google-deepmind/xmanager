@@ -195,7 +195,7 @@ class ExperimentTest(unittest.TestCase):
     with self.assertRaises(TestError):
       async with experiment:
         experiment.add(failing_job_generator)
-        with self.assertRaises(core.WorkUnitError):
+        with self.assertRaises(core.ExperimentUnitError):
           await experiment.work_units[0].wait_until_complete()
 
   @utils.run_in_asyncio_loop
