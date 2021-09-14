@@ -26,6 +26,7 @@ import abc
 import asyncio
 from concurrent import futures
 import functools
+import getpass
 import inspect
 import queue
 import threading
@@ -333,6 +334,7 @@ class ExperimentUnit(abc.ABC):
   def context(self) -> metadata_context.MetadataContext:
     """Returns metadata context for a unit."""
     return metadata_context.MetadataContext(
+        creator=getpass.getuser(),
         annotations=metadata_context.ContextAnnotations())
 
 
@@ -520,6 +522,7 @@ class Experiment(abc.ABC):
   def context(self) -> metadata_context.MetadataContext:
     """Returns metadata context for a work unit."""
     return metadata_context.MetadataContext(
+        creator=getpass.getuser(),
         annotations=metadata_context.ContextAnnotations())
 
 

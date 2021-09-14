@@ -47,6 +47,12 @@ class MetadataContext:
   """Interface for managing metadata.
 
   The metadata context could be attached to an experiment or a work unit.
+
+
+  Attributes:
+    creator: The username of the creator of this context.
+    annotations: User-modifiable annotations.
   """
 
+  creator: str
   annotations: ContextAnnotations
