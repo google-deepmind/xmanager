@@ -16,7 +16,7 @@
 import abc
 import os
 import subprocess
-from typing import List, Sequence
+from typing import List, Sequence, Tuple
 
 from absl import flags
 import attr
@@ -193,8 +193,9 @@ class BazelService(abc.ABC):
     raise NotImplementedError
 
 
-@attr.s(auto_attribs=True)
+@attr.s(auto_attribs=True, frozen=True)
 class BazelTarget:
-  """Represents a Bazel target to be built."""
+  """A Bazel target to be built."""
+
   label: str
-  bazel_args: List[str]
+  bazel_args: Tuple[str, ...]
