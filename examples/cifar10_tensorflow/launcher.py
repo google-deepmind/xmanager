@@ -16,7 +16,7 @@ r"""XManager launcher for CIFAR10.
 Usage:
 
 xmanager launch examples/cifar10_tensorflow/launcher.py -- \
-  --wrap_late_bindings [--image_path=gcr.io/path/to/image/tag]
+  --xm_wrap_late_bindings [--image_path=gcr.io/path/to/image/tag]
 """
 import asyncio
 import itertools

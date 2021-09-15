@@ -84,11 +84,11 @@ Run a launch script, e.g.
 xmanager launch ./xmanager/examples/cifar10/launcher.py
 ```
 
-In order to run multi-job experiments, a `--wrap_late_bindings` flag might be
+In order to run multi-job experiments, a `--xm_wrap_late_bindings` flag might be
 required:
 
 ```bash
-xmanager launch ./xmanager/examples/cifar10/launcher.py -- --wrap_late_bindings
+xmanager launch ./xmanager/examples/cifar10/launcher.py -- --xm_wrap_late_bindings
 ```
 
 ## Writing XM launch scripts

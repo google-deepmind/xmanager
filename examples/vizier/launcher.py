@@ -16,7 +16,7 @@ r"""XManager launcher for Polynomial.
 Usage:
 
 xmanager launch examples/vizier/launcher.py -- \
-    --wrap_late_bindings
+    --xm_wrap_late_bindings
 """
 
 from absl import app
