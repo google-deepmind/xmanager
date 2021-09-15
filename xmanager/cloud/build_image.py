@@ -31,17 +31,16 @@ from xmanager.cloud import docker_lib
 from xmanager.docker import docker_adapter
 from xmanager.xm import utils
 
-FLAGS = flags.FLAGS
-flags.DEFINE_boolean(
-    'build_image_locally', True,
-    'Use local docker to build images instead of remote Google Cloud Build. '
+_BUILD_IMAGE_LOCALLY = flags.DEFINE_boolean(
+    'xm_build_image_locally', True,
+    'Use local Docker to build images instead of remote Google Cloud Build. '
     'This is usually a lot faster but requires docker to be installed.')
-flags.DEFINE_boolean(
-    'use_docker_build_subprocess', True,
+_USE_DOCKER_BUILD_SUBPROCESS = flags.DEFINE_boolean(
+    'xm_use_docker_build_subprocess', True,
     'Call "docker build" in a subprocess rather than using Python docker '
     'client library when building the docker image locally. This provies a '
     'much nicer output for interactive use.')
-flags.DEFINE_boolean(
+_WRAP_LATE_BINDING = flags.DEFINE_boolean(
     'wrap_late_bindings', False,
     'Feature flag to wrap and unwrap late bindings for network addresses. '
     'ONLY works with PythonContainer with default instructions or simple '
@@ -94,7 +93,7 @@ def build(py_executable: xm.PythonContainer,
   entrypoint = _create_entrypoint(py_executable)
   dirname = os.path.basename(py_executable.path)
   path = py_executable.path
-  if FLAGS.wrap_late_bindings:
+  if _WRAP_LATE_BINDING.value:
     path, dockerfile = _wrap_late_bindings(path, dockerfile)
   docker_directory = docker_lib.prepare_directory(path, dirname, entrypoint,
                                                   dockerfile)
@@ -121,7 +120,7 @@ def build_dockerfile(path: str,
     The name of the built image.
   """
   print('Building Docker image, please wait...')
-  if FLAGS.build_image_locally:
+  if _BUILD_IMAGE_LOCALLY.value:
     try:
       docker_client = docker.from_env()
       logging.info('Local docker: %s', docker_client.version())
@@ -143,7 +142,7 @@ def build_dockerfile(path: str,
           image_name,
           path,
           dockerfile,
-          docker_subprocess=FLAGS.use_docker_build_subprocess)
+          docker_subprocess=_USE_DOCKER_BUILD_SUBPROCESS.value)
 
   # If Dockerfile is not a direct child of path, then create a temp directory
   # that contains both the contents of path and Dockerfile.
@@ -233,9 +232,11 @@ def default_steps(directory: str, use_deep_module: bool) -> List[str]:
   ] + workdir_setup_suffix
 
 
-def _create_dockerfile(py_executable: xm.PythonContainer,
-                       args: xm.SequentialArgs, env_vars: Dict[str,
-                                                               str]) -> str:
+def _create_dockerfile(
+    py_executable: xm.PythonContainer,
+    args: xm.SequentialArgs,
+    env_vars: Dict[str, str],
+) -> str:
   """Creates a Dockerfile from a project executable."""
   base_image = _get_base_image(py_executable)
   instructions = _create_instructions(py_executable, env_vars)
@@ -269,7 +270,7 @@ def _create_entrypoint(py_executable: xm.PythonContainer) -> str:
 def _create_entrypoint_cmd(args: xm.SequentialArgs) -> str:
   """Create the entrypoint command with optional args."""
   entrypoint_args = ['./entrypoint.sh']
-  entrypoint_args += args.to_list(utils.ARG_ESCAPER)
+  entrypoint_args.extend(args.to_list(utils.ARG_ESCAPER))
   entrypoint = ', '.join([f'"{arg}"' for arg in entrypoint_args])
   return f'ENTRYPOINT [{entrypoint}]'
 
@@ -315,12 +316,12 @@ def _wrap_late_bindings(path: str, dockerfile: str) -> Tuple[str, str]:
   ]
   with open(dockerfile) as f:
     contents = f.read()
-    contents = contents.replace('ENTRYPOINT',
-                                '\n'.join(insert_instructions + ['ENTRYPOINT']))
-    contents = contents.replace('ENTRYPOINT ["./entrypoint.sh',
-                                'ENTRYPOINT ["./wrapped_entrypoint.sh')
-    with open(new_dockerfile.name, 'w') as f:
-      f.write(contents)
+  contents = contents.replace('ENTRYPOINT',
+                              '\n'.join(insert_instructions + ['ENTRYPOINT']))
+  contents = contents.replace('ENTRYPOINT ["./entrypoint.sh',
+                              'ENTRYPOINT ["./wrapped_entrypoint.sh')
+  with open(new_dockerfile.name, 'w') as f:
+    f.write(contents)
   print()
 
   return new_path.name, new_dockerfile.name
