@@ -193,9 +193,14 @@ class BazelService(abc.ABC):
     raise NotImplementedError
 
 
+def _to_tuple(sequence: Sequence[str]) -> Tuple[str, ...]:
+  """A standalone function to satisfy PyType."""
+  return tuple(sequence)
+
+
 @attr.s(auto_attribs=True, frozen=True)
 class BazelTarget:
   """A Bazel target to be built."""
 
   label: str
-  bazel_args: Tuple[str, ...]
+  bazel_args: Tuple[str, ...] = attr.ib(converter=_to_tuple)
