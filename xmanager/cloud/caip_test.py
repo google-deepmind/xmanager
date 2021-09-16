@@ -12,10 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests for xmanager.cloud.caip."""
-
+import os
 import unittest
+from unittest import mock
+
+from google import auth
+from google.auth import credentials
+from google.cloud import aiplatform
+from google.cloud import aiplatform_v1 as aip_v1
+from google.cloud.aiplatform import utils as aip_utils
 
 from xmanager import xm
+from xmanager.cloud import auth as xm_auth
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import executors as local_executors
 
@@ -23,6 +31,64 @@ from xmanager.cloud import caip  # pylint: disable=g-bad-import-order
 
 
 class CaipTest(unittest.TestCase):
+
+  @mock.patch.object(xm_auth, 'get_service_account')
+  @mock.patch.object(auth, 'default')
+  def test_launch(self, mock_creds, mock_sa):
+    os.environ['GOOGLE_CLOUD_BUCKET_NAME'] = 'test-bucket'
+    creds = credentials.AnonymousCredentials()
+    mock_creds.return_value = (creds, 'test-project')
+    mock_sa.return_value = 'test-sa'
+
+    client = caip.Client('test-project', 'us-central1')
+    job = xm.Job(
+        name='test-job',
+        executable=local_executables.GoogleContainerRegistryImage(
+            name='test-image',
+            image_path='image-path',
+            args=xm.SequentialArgs.from_collection({'a': 1}),
+        ),
+        executor=local_executors.Caip(xm.JobRequirements(cpu=1, ram=1, t4=2)),
+        args={
+            'b': 2,
+            'c': 3
+        },
+    )
+
+    expected_call = {
+        'parent':
+            'projects/test-project/locations/us-central1',
+        'custom_job':
+            aip_v1.CustomJob(
+                display_name='test-experiment',
+                job_spec=aip_v1.CustomJobSpec(
+                    worker_pool_specs=[
+                        aip_v1.WorkerPoolSpec(
+                            machine_spec=aip_v1.MachineSpec(
+                                machine_type='n1-highmem-2',
+                                accelerator_type='NVIDIA_TESLA_T4',
+                                accelerator_count=2,
+                            ),
+                            replica_count=1,
+                            container_spec=aip_v1.ContainerSpec(
+                                image_uri='image-path',
+                                args=['--a', '1', '--b', '2', '--c', '3'],
+                            ))
+                    ],
+                    service_account='test-sa',
+                    base_output_directory=aip_v1.GcsDestination(
+                        output_uri_prefix='gs://test-bucket',),
+                ),
+            ),
+    }
+
+    with mock.patch.object(aip_utils.ClientWithOverride, 'WrappedClient') as job_client, \
+         mock.patch.object(aiplatform.CustomJob, 'resource_name', new_callable=mock.PropertyMock) as name, \
+         mock.patch.object(aiplatform.CustomJob, '_dashboard_uri'):
+      name.return_value = 'test-resource-name'
+      client.launch('test-experiment', [job])
+      job_client.return_value.create_custom_job.assert_called_once_with(
+          **expected_call)
 
   def test_get_machine_spec_default(self):
     job = xm.Job(

@@ -67,9 +67,12 @@ class Client:
       api_client = k8s_client.ApiClient()
     self.api_client = api_client
 
-  def launch(self, experiment_name: str, get_full_job_name: Callable[[str],
-                                                                     str],
-             jobs: Sequence[xm.Job]) -> List[k8s_client.V1Job]:
+  def launch(
+      self,
+      experiment_name: str,
+      get_full_job_name: Callable[[str], str],
+      jobs: Sequence[xm.Job],
+  ) -> List[k8s_client.V1Job]:
     """Launches jobs on Kubernetes."""
     batch_jobs = []
     service = convert_to_valid_label('exp-' + experiment_name)
@@ -86,18 +89,14 @@ class Client:
         raise ValueError('Executable {} has type {}. Executable must be of '
                          'type GoogleContainerRegistryImage.'.format(
                              executable, type(executable)))
-      env = [
-          k8s_client.V1EnvVar(k, v) for k, v in {
-              **executable.env_vars,
-              **job.env_vars
-          }.items()
-      ]
+      all_env_vars = {**executable.env_vars, **job.env_vars}
+      env = [k8s_client.V1EnvVar(k, v) for k, v in all_env_vars.items()]
       env.append(k8s_client.V1EnvVar('CLUSTER_SPEC', specs[i]))
       job_name = convert_to_valid_label(get_full_job_name(job.name))
       container = k8s_client.V1Container(
           name=job_name,
           image=executable.image_path,
-          requirements=requirements_from_executor(executor),
+          resources=requirements_from_executor(executor),
           args=xm.merge_args(executable.args,
                              job.args).to_list(utils.ARG_ESCAPER),
           env=env)

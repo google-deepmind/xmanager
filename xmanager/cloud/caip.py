@@ -27,8 +27,6 @@ import attr
 from google.cloud import aiplatform
 from google.cloud import aiplatform_v1 as aip_v1
 from google.cloud import aiplatform_v1beta1 as aip_v1beta
-import immutabledict
-
 from xmanager import xm
 from xmanager.cloud import auth
 from xmanager.xm import utils
@@ -62,7 +60,12 @@ _MACHINE_TYPE_TO_CPU_RAM = {
     'n1-highcpu-96': (96, 86 * xm.GiB),
 }
 
-_STATE_TO_STATUS_MAP = {
+_CLOUD_TPU_ACCELERATOR_TYPES = {
+    xm.ResourceType.TPU_V2: 'TPU_V2',
+    xm.ResourceType.TPU_V3: 'TPU_V3',
+}
+
+_STATE_TO_STATUS = {
     aip_v1.JobState.JOB_STATE_SUCCEEDED:
         local_status.LocalWorkUnitStatusEnum.COMPLETED,
     aip_v1.JobState.JOB_STATE_CANCELLED:
@@ -246,12 +249,6 @@ class Client:
     return aiplatform.CustomJob.get(job_name).state
 
 
-_CLOUD_TPU_ACCELERATOR_TYPES = immutabledict.immutabledict({
-    xm.ResourceType.TPU_V2: 'TPU_V2',
-    xm.ResourceType.TPU_V3: 'TPU_V3',
-})
-
-
 def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   """Get the GCP machine type that best matches the Job's requirements."""
   assert isinstance(job.executor, local_executors.Caip)
@@ -291,7 +288,7 @@ class CaipHandle(local_execution.ExecutionHandle):
 
   def get_status(self) -> local_status.LocalWorkUnitStatus:
     state = client().get_state(self.job_name)
-    status = _STATE_TO_STATUS_MAP[state]
+    status = _STATE_TO_STATUS[state]
     return local_status.LocalWorkUnitStatus(status=status)
 
 

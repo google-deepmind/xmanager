@@ -12,15 +12,102 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests for xmanager.cloud.kubernetes."""
-
+import json
 import unittest
+from unittest import mock
+
+from kubernetes import client as k8s_client
 
 from xmanager import xm
 from xmanager.cloud import kubernetes
+from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import executors as local_executors
 
 
 class KubernetesTest(unittest.TestCase):
+
+  def test_launch(self):
+    fake_client = mock.Mock()
+    client = kubernetes.Client(fake_client)
+
+    job = xm.Job(
+        name='test-job',
+        executable=local_executables.GoogleContainerRegistryImage(
+            name='test-image',
+            image_path='image-path',
+            args=xm.SequentialArgs.from_collection({'a': 1}),
+        ),
+        executor=local_executors.Kubernetes(
+            xm.JobRequirements(cpu=1, ram=1, t4=2)),
+        args={
+            'b': 2,
+            'c': 3
+        },
+    )
+    expected_service = k8s_client.V1Service(
+        metadata=k8s_client.V1ObjectMeta(name='exp-test-experiment'),
+        spec=k8s_client.V1ServiceSpec(
+            selector={'experiment': 'exp-test-experiment'},
+            cluster_ip='None',
+        ),
+    )
+    cluster_spec = json.dumps({
+        'cluster': {
+            'workerpool0': [
+                'workerpool0.exp-test-experiment.default.svc.cluster.local:2222'
+            ]
+        },
+        'task': {
+            'type': 'workerpool0',
+            'index': 0
+        }
+    })
+    expected_job = k8s_client.V1Job(
+        metadata=k8s_client.V1ObjectMeta(name='test-job'),
+        spec=k8s_client.V1JobSpec(
+            template=k8s_client.V1PodTemplateSpec(
+                metadata=k8s_client.V1ObjectMeta(
+                    labels={'experiment': 'exp-test-experiment'},
+                    annotations={},
+                ),
+                spec=k8s_client.V1PodSpec(
+                    hostname='workerpool0',
+                    subdomain='exp-test-experiment',
+                    restart_policy='Never',
+                    containers=[
+                        k8s_client.V1Container(
+                            name='test-job',
+                            image='image-path',
+                            resources=k8s_client.V1ResourceRequirements(
+                                limits={
+                                    'cpu': '1',
+                                    'memory': '1',
+                                    'nvidia.com/gpu': '2',
+                                },),
+                            args=['--a', '1', '--b', '2', '--c', '3'],
+                            env=[
+                                k8s_client.V1EnvVar(
+                                    'CLUSTER_SPEC',
+                                    cluster_spec,
+                                )
+                            ],
+                        )
+                    ],
+                    node_selector={
+                        'cloud.google.com/gke-accelerator': 'nvidia-tesla-t4',
+                    },
+                ),
+            ),
+            backoff_limit=0,
+        ),
+    )
+
+    client.launch('test-experiment', lambda x: x, [job])
+    [service_call, job_call] = fake_client.call_api.call_args_list
+    _, service_kwargs = service_call
+    self.assertEqual(service_kwargs['body'], expected_service)
+    _, job_kwargs = job_call
+    self.assertEqual(job_kwargs['body'], expected_job)
 
   def test_requirements_from_executor(self):
     executor = local_executors.Kubernetes(
