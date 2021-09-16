@@ -187,8 +187,8 @@ class Executable(abc.ABC):
   executable.
 
   Attributes:
-      name: An automatically populated name for the executable. Used for
-        assigning default names to `Job`s.
+    name: An automatically populated name for the executable. Used for assigning
+      default names to `Job`s.
   """
 
   name: str
@@ -222,10 +222,11 @@ class Constraint(abc.ABC):
   """Constraint describes the requirements for where a job group can run.
 
   Some examples of constraints include:
-   * same virtual machine
-   * same virtual private cloud subnetwork
-   * same network fabric
-   * same geographic location
+
+    * same virtual machine;
+    * same virtual private Cloud subnetwork;
+    * same network fabric;
+    * same geographic location.
   """
 
 
@@ -277,7 +278,7 @@ class JobGroup:
   JobGroup(
       learner=Job(tpu_learner_executable, executor),
       preprocessor=Job(preprocessor_executable, executor),
-      constraints=[xm.SameMachine()],
+      constraints=[xm_impl.SameMachine()],
   )
   ```
 
@@ -289,7 +290,7 @@ class JobGroup:
       colocated_learner_and_actor=JobGroup(
           learner=Job(tpu_learner_executable, executor),
           actor=Job(actor_executable, executor),
-          constraints=[xm.SameMachine()],
+          constraints=[xm_impl.SameMachine()],
       ),
   )
   ```
