@@ -113,7 +113,8 @@ async def _launch_loaded_container_image(
     executable: executables.LoadedContainerImage,
 ) -> LocalExecutionHandle:
   """Launches a preloaded image as a detached container."""
-  assert isinstance(job.executor, executors.Local)
+  if not isinstance(job.executor, executors.Local):
+    raise TypeError(f'Expected {job!r} to have the Local executor')
   executor = cast(executors.Local, job.executor)
   instance = docker_adapter.instance()
 
@@ -176,7 +177,8 @@ async def _launch_local_binary(
 ) -> LocalExecutionHandle:
   """Launches a local binary as a detached process."""
   del get_full_job_name  # Unused.
-  assert isinstance(job.executor, executors.Local)
+  if not isinstance(job.executor, executors.Local):
+    raise TypeError(f'Expected {job!r} to have the Local executor')
 
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
   env_vars = {**executable.env_vars, **job.env_vars}
