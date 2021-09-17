@@ -27,11 +27,11 @@ import termcolor
 from xmanager.cloud import auth
 
 _CLOUD_BUILD_TIMEOUT_SECONDS = flags.DEFINE_integer(
-    'cloud_build_timeout_seconds', 1200,
+    'xm_cloud_build_timeout_seconds', 1200,
     'The amount of time that builds should be allowed to run, '
     'to second granularity.')
 _USE_CLOUD_BUILD_CACHE = flags.DEFINE_boolean(
-    'use_cloud_build_cache',
+    'xm_use_cloud_build_cache',
     False,
     'Use cloud build cache to speed up the docker build. '
     'An image with the same name tagged as :latest should exist.'
@@ -39,9 +39,9 @@ _USE_CLOUD_BUILD_CACHE = flags.DEFINE_boolean(
 )
 
 _USE_KANIKO = flags.DEFINE_boolean(
-    'use_kaniko', True,
+    'xm_use_kaniko', True,
     'Use kaniko backend for Cloud Build and enable caching.')
-_KANIKO_CACHE_TTL = flags.DEFINE_string('kaniko_cache_ttl', '336h',
+_KANIKO_CACHE_TTL = flags.DEFINE_string('xm_kaniko_cache_ttl', '336h',
                                         'Cache ttl to use for kaniko builds.')
 
 

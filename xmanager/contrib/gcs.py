@@ -30,7 +30,7 @@ from absl import app
 from absl import flags
 
 _GCS_PATH = flags.DEFINE_string(
-    'gcs_path', None, 'A GCS directory within a bucket to store output '
+    'xm_gcs_path', None, 'A GCS directory within a bucket to store output '
     '(in gs://bucket/directory format).')
 
 _GS_PREFIX = 'gs://'

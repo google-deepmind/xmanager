@@ -42,13 +42,13 @@ class GcsTest(parameterized.TestCase):
       gcs.get_gcs_path_or_fail('xcloud')
 
   def test_gcs_path_correct_value(self):
-    with flagsaver.flagsaver(gcs_path='gs://bucket/dir'):
+    with flagsaver.flagsaver(xm_gcs_path='gs://bucket/dir'):
       self.assertEqual(
           gcs.get_gcs_path_or_suggestion('xcloud'), 'gs://bucket/dir')
       self.assertEqual(gcs.get_gcs_path_or_fail('xcloud'), 'gs://bucket/dir')
 
   def test_gcs_path_incorrect_value(self):
-    with flagsaver.flagsaver(gcs_path='file://dir'):
+    with flagsaver.flagsaver(xm_gcs_path='file://dir'):
       with self.assertRaisesRegex(app.UsageError, _GCS_PATH_ERROR):
         gcs.get_gcs_path_or_suggestion('xcloud')
         gcs.get_gcs_path_or_fail('xcloud')

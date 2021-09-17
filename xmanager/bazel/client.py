@@ -25,9 +25,8 @@ from xmanager.bazel import file_utils
 from google.protobuf.internal.decoder import _DecodeVarint32
 from xmanager.generated import build_event_stream_pb2 as bes_pb2
 
-FLAGS = flags.FLAGS
-
-flags.DEFINE_string('bazel_command', 'bazel', 'A command that runs Bazel.')
+_BAZEL_COMMAND = flags.DEFINE_string('xm_bazel_command', 'bazel',
+                                     'A command that runs Bazel.')
 
 
 def _get_important_output(events: Sequence[bes_pb2.BuildEvent],
@@ -93,7 +92,7 @@ def _root_absolute_path() -> str:
   # get the root of the workspace where the build was initiated. If the launch
   # script is run with the CLI, query Bazel to find out.
   return os.getenv('BUILD_WORKSPACE_DIRECTORY') or subprocess.run(
-      [FLAGS.bazel_command, 'info', 'workspace'],
+      [_BAZEL_COMMAND, 'info', 'workspace'],
       check=True,
       stdout=subprocess.PIPE,
       stderr=subprocess.PIPE,
@@ -111,7 +110,7 @@ def _should_wrap_in_par(label: str) -> bool:
   # For example:
   # py_library rule //third_party/py/xmanager/xm:__init__
   output = subprocess.run(
-      [FLAGS.bazel_command, 'query', label, '--output', 'label_kind'],
+      [_BAZEL_COMMAND, 'query', label, '--output', 'label_kind'],
       check=True,
       stdout=subprocess.PIPE,
       stderr=subprocess.PIPE,
@@ -142,7 +141,7 @@ def build_single_target(label: str, tail_args: Sequence[str] = ()) -> List[str]:
   with file_utils.TemporaryFilePath() as bep_path:
     subprocess.run(
         [
-            FLAGS.bazel_command,
+            _BAZEL_COMMAND,
             'build',
             f'--build_event_binary_file={bep_path}',
             # Forces a GC at the end of the build and publishes value to BEP.
