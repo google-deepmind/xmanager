@@ -129,11 +129,6 @@ class JobRequirementsTest(parameterized.TestCase):
         "xm.JobRequirements(cpu=1.0, location='lon_r7', service_tier=xm.ServiceTier.BATCH, replicas=2)"
     )
 
-  def test_str_topology_is_used_for_tpus(self):
-    self.assertEqual(
-        repr(resources.JobRequirements(tpu_v3='4x4')),
-        "xm.JobRequirements(dragonfish=xm.Topology('4x4'))")
-
   def test_str_omits_empty_fields(self):
     self.assertEqual(
         repr(resources.JobRequirements(cpu=1)), 'xm.JobRequirements(cpu=1.0)')
