@@ -26,23 +26,23 @@ import termcolor
 
 from xmanager.cloud import auth
 
-FLAGS = flags.FLAGS
-flags.DEFINE_integer(
+_CLOUD_BUILD_TIMEOUT_SECONDS = flags.DEFINE_integer(
     'cloud_build_timeout_seconds', 1200,
     'The amount of time that builds should be allowed to run, '
     'to second granularity.')
-flags.DEFINE_boolean(
+_USE_CLOUD_BUILD_CACHE = flags.DEFINE_boolean(
     'use_cloud_build_cache',
     False,
     'Use cloud build cache to speed up the docker build. '
-    'An image with the same name taged as :latest should exist.'
+    'An image with the same name tagged as :latest should exist.'
     'More details at https://cloud.google.com/cloud-build/docs/speeding-up-builds#using_a_cached_docker_image'  # pylint:disable=g-line-too-long
 )
 
-flags.DEFINE_boolean('use_kaniko', True,
-                     'Use kaniko backend for Cloud Build and enable caching.')
-flags.DEFINE_string('kaniko_cache_ttl', '336h',
-                    'Cache ttl to use for kaniko builds.')
+_USE_KANIKO = flags.DEFINE_boolean(
+    'use_kaniko', True,
+    'Use kaniko backend for Cloud Build and enable caching.')
+_KANIKO_CACHE_TTL = flags.DEFINE_string('kaniko_cache_ttl', '336h',
+                                        'Cache ttl to use for kaniko builds.')
 
 
 class Client:
@@ -71,16 +71,16 @@ class Client:
     self.bucket = bucket or auth.get_bucket()
     self.credentials = credentials or auth.get_creds()
     if cloud_build_timeout_seconds is None:
-      cloud_build_timeout_seconds = FLAGS.cloud_build_timeout_seconds
+      cloud_build_timeout_seconds = _CLOUD_BUILD_TIMEOUT_SECONDS.value
     self.cloud_build_timeout_seconds = cloud_build_timeout_seconds
     if use_cloud_build_cache is None:
-      use_cloud_build_cache = FLAGS.use_cloud_build_cache
+      use_cloud_build_cache = _USE_CLOUD_BUILD_CACHE.value
     self.use_cloud_build_cache = use_cloud_build_cache
     if use_kaniko is None:
-      use_kaniko = FLAGS.use_kaniko
+      use_kaniko = _USE_KANIKO.value
     self.use_kaniko = use_kaniko
     if kaniko_cache_ttl is None:
-      kaniko_cache_ttl = FLAGS.kaniko_cache_ttl
+      kaniko_cache_ttl = _KANIKO_CACHE_TTL.value
     self.kaniko_cache_ttl = kaniko_cache_ttl
     self.cloudbuild_api = None  # discovery CloudBuild v1 client
 
