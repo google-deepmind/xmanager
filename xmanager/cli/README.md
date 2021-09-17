@@ -2,7 +2,9 @@
 
 This directory contains the command-line interface for XManager.
 
-Currently, there's only one command for XManager which is the launch command:
+## `launch`
+
+Runs a given launch script.
 
 ```
 xmanager launch path/to/launch/script.py
@@ -26,7 +28,7 @@ This command is equivalent to running `caliban cluster create`.
 To delete this cluster:
 
 ```
-xmanager cluster create
+xmanager cluster delete
 ```
 
 This command is equivalent to running `caliban cluster delete`.
