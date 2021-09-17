@@ -44,7 +44,7 @@ async def main(_):
       spec = xm.PythonContainer(
           # Package the current directory that this script is in.
           path='.',
-          base_image='gcr.io/deeplearning-platform-release/pytorch-gpu.1-6',
+          base_image='gcr.io/deeplearning-platform-release/pytorch-gpu.1-9',
           entrypoint=xm.ModuleName('cifar10'),
       )
 

@@ -37,7 +37,7 @@ def main(_):
     spec = xm.PythonContainer(
         # Package the current directory that this script is in.
         path='.',
-        base_image='gcr.io/deeplearning-platform-release/tf2-gpu.2-1',
+        base_image='gcr.io/deeplearning-platform-release/tf2-gpu.2-6',
         entrypoint=xm.ModuleName('cifar10'),
     )
 
