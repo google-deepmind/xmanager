@@ -42,6 +42,6 @@ setup(
         'termcolor',
     ],
     entry_points={
-        'console_scripts': ['xmanager = xmanager.cli.cli:Entrypoint',],
+        'console_scripts': ['xmanager = xmanager.cli.cli:entrypoint',],
     },
 )

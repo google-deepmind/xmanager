@@ -59,7 +59,7 @@ def main(argv):
     raise app.UsageError(f'Command `{cmd}` is not a supported command')
 
 
-def Entrypoint():
+def entrypoint():
   app.run(main)
 
 
