@@ -13,6 +13,7 @@
 # limitations under the License.
 """Xmanager command-line interface."""
 
+import errno
 import importlib
 import os
 import sys
@@ -30,8 +31,7 @@ def main(argv):
   if cmd == 'launch':
     launch_script = argv[2]
     if not os.path.exists(launch_script):
-      print('File not found: {}'.format(launch_script))
-      return
+      raise OSError(errno.ENOENT, f'File not found: {launch_script}')
     sys.path.insert(0, os.path.abspath(os.path.dirname(launch_script)))
     launch_module, _ = os.path.splitext(os.path.basename(launch_script))
     m = importlib.import_module(launch_module)
