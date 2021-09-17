@@ -38,8 +38,8 @@ def prepare_directory(project_path: str, project_name: str,
   if size > 200 * 10**6:
     print(
         termcolor.colored(
-            'Your trying to pack over 200MB into the Docker image. '
-            'Large images negatively impact build times.',
+            'You are trying to pack over 200MB into a Docker image. '
+            'Large images negatively impact build times',
             color='magenta'))
   directory = tempfile.mkdtemp()
   shutil.copytree(project_path, os.path.join(directory, project_name))
@@ -103,9 +103,9 @@ def _run_docker_build(client: docker.DockerClient, path: str, image: str,
   """Builds a Docker image by calling the Docker Python client."""
   try:
     _, logs = client.images.build(path=path, tag=image, dockerfile=dockerfile)
-  except docker.errors.BuildError as e:
-    for l in e.build_log:
-      print(l.get('stream', ''), end='')
-    raise e
-  for l in logs:
-    print(l.get('stream', ''), end='')
+  except docker.errors.BuildError as error:
+    for log in error.build_log:
+      print(log.get('stream', ''), end='')
+    raise error
+  for log in logs:
+    print(log.get('stream', ''), end='')
