@@ -97,16 +97,16 @@ def build(py_executable: xm.PythonContainer,
     path, dockerfile = _wrap_late_bindings(path, dockerfile)
   docker_directory = docker_lib.prepare_directory(path, dirname, entrypoint,
                                                   dockerfile)
-  return build_dockerfile(docker_directory,
-                          os.path.join(docker_directory, 'Dockerfile'),
-                          image_name, project, bucket)
+  return build_by_dockerfile(docker_directory,
+                             os.path.join(docker_directory, 'Dockerfile'),
+                             image_name, project, bucket)
 
 
-def build_dockerfile(path: str,
-                     dockerfile: str,
-                     image_name: str,
-                     project: Optional[str] = None,
-                     bucket: Optional[str] = None):
+def build_by_dockerfile(path: str,
+                        dockerfile: str,
+                        image_name: str,
+                        project: Optional[str] = None,
+                        bucket: Optional[str] = None):
   """Build a Docker image from a Docker directory.
 
   Args:

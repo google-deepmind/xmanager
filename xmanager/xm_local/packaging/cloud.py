@@ -109,8 +109,8 @@ def _package_dockerfile(packageable: xm.Packageable, dockerfile: xm.Dockerfile):
     push_image_tag = f'{gcr_project_prefix}/{dockerfile.name}:latest'
 
   build_image.push(
-      build_image.build_dockerfile(dockerfile.path, dockerfile.dockerfile,
-                                   push_image_tag))
+      build_image.build_by_dockerfile(dockerfile.path, dockerfile.dockerfile,
+                                      push_image_tag))
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
       image_path=push_image_tag,
