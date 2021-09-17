@@ -16,7 +16,7 @@
 import json
 import os
 import re
-from typing import List, Tuple
+from typing import List, Sequence, Tuple
 import urllib.request
 
 from google.cloud import storage
@@ -58,7 +58,7 @@ def get_world_size_rank() -> Tuple[int, int]:
   return world_size, rank
 
 
-def create_cluster_specs(workers: List[str]) -> List[str]:
+def create_cluster_specs(workers: Sequence[str]) -> List[str]:
   """Takes a list of domain names and constructs a CLUSTER_SPEC for each."""
   cluster = {}
   for i, domain in enumerate(workers):
@@ -83,7 +83,7 @@ def get_workerpool_address(workerpool: str) -> str:
 
 def map_workerpool_address_args(args: List[str]) -> List[str]:
   """Maps late-binding to workerpool addresses at runtime."""
-  cluster_spec = os.environ.get('CLUSTER_SPEC', None)
+  cluster_spec = os.environ.get('CLUSTER_SPEC')
   if cluster_spec is None:
     return args
 
