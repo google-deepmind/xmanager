@@ -92,7 +92,7 @@ def _root_absolute_path() -> str:
   # get the root of the workspace where the build was initiated. If the launch
   # script is run with the CLI, query Bazel to find out.
   return os.getenv('BUILD_WORKSPACE_DIRECTORY') or subprocess.run(
-      [_BAZEL_COMMAND, 'info', 'workspace'],
+      [_BAZEL_COMMAND.value, 'info', 'workspace'],
       check=True,
       stdout=subprocess.PIPE,
       stderr=subprocess.PIPE,
@@ -110,7 +110,7 @@ def _should_wrap_in_par(label: str) -> bool:
   # For example:
   # py_library rule //third_party/py/xmanager/xm:__init__
   output = subprocess.run(
-      [_BAZEL_COMMAND, 'query', label, '--output', 'label_kind'],
+      [_BAZEL_COMMAND.value, 'query', label, '--output', 'label_kind'],
       check=True,
       stdout=subprocess.PIPE,
       stderr=subprocess.PIPE,
@@ -141,7 +141,7 @@ def build_single_target(label: str, tail_args: Sequence[str] = ()) -> List[str]:
   with file_utils.TemporaryFilePath() as bep_path:
     subprocess.run(
         [
-            _BAZEL_COMMAND,
+            _BAZEL_COMMAND.value,
             'build',
             f'--build_event_binary_file={bep_path}',
             # Forces a GC at the end of the build and publishes value to BEP.
