@@ -11,13 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""An utility to predict IDs that would be asigned upon object creation.
+"""A utility to predict IDs that would be assigned upon object creation.
 
-This class helps to untie chicken and egg problem. Sometimes to create an object
-(for example WorkUnit) one may need to know its ID beforehand (for example to
-generate a checkpoint path). But the ID would only be assigned by a backend upon
-object creation. In ideal world we would rewrite the backend to allow ID
-reservation. This module provides a temporary solution which does the
+This class helps to untie this chicken and egg problem. Sometimes to create an
+object (for example WorkUnit) one may need to know its ID beforehand (for
+example to generate a checkpoint path). But the ID would only be assigned by a
+backend upon object creation. In ideal world we would rewrite the backend to
+allow ID reservation. This module provides a temporary solution which does the
 reservation on client-side. Following assumptions are made:
   * Ids are assigned sequentially by the backend, starting from some number.
   * Only one process at a time creates the objects. Any races are resolved only
