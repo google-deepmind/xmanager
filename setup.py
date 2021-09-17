@@ -18,7 +18,7 @@ from setuptools import setup
 
 setup(
     name='xmanager',
-    version='1.0.0',
+    version='0.1.0',
     description='A framework for managing experiments',
     author='DeepMind Technologies Limited',
     packages=find_namespace_packages(),
