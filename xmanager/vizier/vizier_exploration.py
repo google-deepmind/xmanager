@@ -72,14 +72,14 @@ class VizierExploration:
 
     Args:
       experiment: the experiment who does the exploration.
-      job: a function that returns the job with given hyperparameters.
+      job: a job to run.
       study_factory: the VizierStudyFactory used to create or load the study.
       num_trials_total: total number of trials the experiment want to explore.
       num_parallel_trial_runs: number of parallel runs evaluating the trials.
     """
 
     # TODO: Reconsider to make functions async instead of
-    # using get_event_loop()
+    # using get_event_loop().
     def work_unit_generator(vizier_params: Dict[str, Any]) -> xm.WorkUnit:
       return asyncio.get_event_loop().run_until_complete(
           experiment.add(job, self._to_job_params(vizier_params)))
