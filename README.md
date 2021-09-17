@@ -7,26 +7,29 @@
 If you use `xmanager.xm.PythonDocker` to run XManager experiments,
 you need to install Docker.
 
-1. Follow the steps to install Docker here: https://docs.docker.com/engine/install/#supported-platforms
+1. Follow [the steps](https://docs.docker.com/engine/install/#supported-platforms)
+   to install Docker.
 
-2. And if you are a Linux user, follow the steps to enable sudoless Docker here: https://docs.docker.com/engine/install/linux-postinstall/
+2. And if you are a Linux user, follow [the steps](https://docs.docker.com/engine/install/linux-postinstall/)
+   to enable sudoless Docker.
 
 ### Install Bazel
 
 If you use `xmanager.xm_local.BazelContainer` or `xmanager.xm_local.BazelBinary`
 to run XManager experiments, you need to install Bazel.
 
-1. Follow the steps to install Bazel here: https://docs.bazel.build/versions/master/install.html
+1. Follow [the steps](https://docs.bazel.build/versions/master/install.html) to
+   install Bazel.
 
 ### Create a Google Cloud Platform (GCP) project
 
-If you use `xm_local.Caip` to run XManager experiments, you need
-to have a GCP project in order to be able to access Cloud AI Platform to run
-jobs.
+If you use `xm_local.Caip` ([Cloud AI Platform](https://cloud.google.com/ai-platform))
+to run XManager experiments, you need to have a GCP project in order to be able
+to access CAIP to run jobs.
 
-1. Create a GCP project here: https://console.cloud.google.com/
+1. [Create](https://console.cloud.google.com/) a GCP project.
 
-2. Install `gcloud` here: https://cloud.google.com/sdk/docs/install
+2. [Install](https://cloud.google.com/sdk/docs/install) `gcloud`.
 
 3. Associate your Google Account (Gmail account) with your GCP project by
    running:
@@ -46,11 +49,14 @@ jobs.
 
 5. Enable Google Cloud Platform APIs.
 
-   * Enable IAM here: https://console.cloud.google.com/apis/library/iam.googleapis.com
+   * [Enable](https://console.cloud.google.com/apis/library/iam.googleapis.com)
+     IAM.
 
-   * Enable the 'Cloud AI Platfrom' here: https://console.cloud.google.com/apis/library/aiplatform.googleapis.com
+   * [Enable](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com)
+     the 'Cloud AI Platfrom'.
 
-   * Enable the 'Container Registry' here: https://console.cloud.google.com/apis/library/containerregistry.googleapis.com
+   * [Enable](https://console.cloud.google.com/apis/library/containerregistry.googleapis.com)
+     the 'Container Registry'.
 
 6. Create a staging bucket in us-central1 if you do not already have one. This
    bucket should be used to save experiment artifacts like Tensorflow log files,
@@ -71,10 +77,8 @@ jobs.
 ## Install XManager
 
 ```bash
-pip install ./xmanager
+pip install git+https://github.com/deepmind/xmanager.git
 ```
-
-WARNING: Do not do `python setup.py install` instead, it leads to errors.
 
 ## Run XManager
 
