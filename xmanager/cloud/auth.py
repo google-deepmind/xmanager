@@ -48,7 +48,7 @@ def get_creds(scopes: Iterable[str] = _DEFAULT_SCOPES):
 @functools.lru_cache()
 def enable_apis():
   """Enables APIs on the GCP Project."""
-  su = discovery.build('serviceusage', 'v1')
+  resource = discovery.build('serviceusage', 'v1')
   body = {
       'serviceIds': [
           'aiplatform.googleapis.com',
@@ -63,7 +63,7 @@ def enable_apis():
           'tpu.googleapis.com',
       ]
   }
-  su.services().batchEnable(
+  resource.services().batchEnable(
       parent=f'projects/{get_project_number()}', body=body).execute()
 
 
@@ -155,4 +155,4 @@ def get_bucket() -> str:
       '`export GOOGLE_CLOUD_BUCKET_NAME=<bucket-name>`, '
       'replacing <bucket-name> with a Google Cloud Storage bucket. '
       'You can create a bucket with '
-      '`gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME`.')
+      '`gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME`')
