@@ -33,14 +33,14 @@ _GCS_PATH = flags.DEFINE_string(
     'gcs_path', None, 'A GCS directory within a bucket to store output '
     '(in gs://bucket/directory format).')
 
-_GS = 'gs://'
-_GCS = '/gcs/'
+_GS_PREFIX = 'gs://'
+_GCS_PREFIX = '/gcs/'
 
 
 def suggestion(project_name: str) -> str:
   """Returns a suggested GCS dir name for the given @project_name."""
   return os.path.join(
-      _GS, 'xcloud_public_bucket', getpass.getuser(),
+      _GS_PREFIX, 'xcloud_public_bucket', getpass.getuser(),
       project_name + '-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
 
 
@@ -93,7 +93,7 @@ def is_gs_path(path: str) -> bool:
   Returns:
     True iff a path starts with the 'gs://' prefix.
   """
-  return path.startswith(_GS)
+  return path.startswith(_GS_PREFIX)
 
 
 def is_gcs_fuse_path(path: str) -> bool:
@@ -105,7 +105,7 @@ def is_gcs_fuse_path(path: str) -> bool:
   Returns:
     True iff a path starts with the '/gcs/' prefix.
   """
-  return path.startswith(_GCS)
+  return path.startswith(_GCS_PREFIX)
 
 
 def is_gcs_path(path: str) -> bool:
@@ -130,9 +130,9 @@ def _gcs_path_no_prefix(path: str) -> str:
     Path without 'gs://' prefix.
   """
   if is_gs_path(path):
-    return path[len(_GS):]
+    return path[len(_GS_PREFIX):]
   if is_gcs_fuse_path(path):
-    return path[len(_GCS):]
+    return path[len(_GCS_PREFIX):]
   raise ValueError(
       f'Path not in gs://bucket/directory or /gcs/path format: {path}')
 
@@ -165,7 +165,7 @@ def get_gcs_fuse_path(path: str) -> str:
   Returns:
     Path in the /gcs/bucket/directory format.
   """
-  return _GCS + _gcs_path_no_prefix(path)
+  return _GCS_PREFIX + _gcs_path_no_prefix(path)
 
 
 def get_gs_path(path: str) -> str:
@@ -179,4 +179,4 @@ def get_gs_path(path: str) -> str:
   Returns:
     Path in the gs://bucket/directory format.
   """
-  return _GS + _gcs_path_no_prefix(path)
+  return _GS_PREFIX + _gcs_path_no_prefix(path)
