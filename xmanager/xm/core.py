@@ -66,18 +66,41 @@ _apply_args = pattern_matching.match(
 class ExperimentUnitStatus(abc.ABC):
   """The status of an experiment unit."""
 
+  @property
   @abc.abstractmethod
-  def is_running(self) -> bool:
+  def is_active(self) -> bool:
+    """Returns whether the unit is not in terminal state.
+
+    It may be actively running or queued. The unit may produce more results.
+    If the unit is stopped by a user it will be neither active, completed
+    nor failed.
+    """
     raise NotImplementedError
 
+  @property
   @abc.abstractmethod
-  def is_succeeded(self) -> bool:
+  def is_completed(self) -> bool:
+    """Returns whether the unit has completed without failures.
+
+    This is a terminal state. The unit has produced all the intended results.
+    But it still may be restarted by an explicit request.
+    """
     raise NotImplementedError
 
+  @property
   @abc.abstractmethod
   def is_failed(self) -> bool:
+    """Returns whether the unit has failed.
+
+    This is a terminal state. Experiment unit will enter this state on any
+    fatal failure, such as process exiting with non-zero code, cloud rejecting
+    to schedule/queue the job or exceptions in JobGenerator. The unit will stay
+    in this state unless explicitly restarted.
+    Intermediate failures do not result in this state.
+    """
     raise NotImplementedError
 
+  @property
   @abc.abstractmethod
   def message(self) -> str:
     """An optional human-readable message providing context for the status.

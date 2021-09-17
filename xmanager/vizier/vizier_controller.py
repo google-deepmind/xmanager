@@ -76,7 +76,7 @@ class VizierController:
     num_existing_work_units = len(self._work_unit_updaters)
     num_running_work_units = len([
         wuu for wuu in self._work_unit_updaters
-        if wuu.work_unit_status().is_running()
+        if wuu.work_unit_status().is_active
     ])
     num_work_units_to_create_total = self._num_work_units_total - num_existing_work_units
     num_work_units_to_create_next = min(
@@ -135,7 +135,7 @@ class WorkUnitVizierUpdater:
     )
 
     # TODO: Add infeasible_reason when available.
-    if not self.work_unit_status().is_running():
+    if not self.work_unit_status().is_active:
       self._complete_trial(self._trial)
       self.completed = True
     elif self._vz_client.check_trial_early_stopping_state(

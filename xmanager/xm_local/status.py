@@ -14,8 +14,6 @@
 """Implementation of local work unit statuses."""
 import enum
 
-import attr
-
 from xmanager import xm
 
 
@@ -32,21 +30,28 @@ class LocalWorkUnitStatusEnum(enum.Enum):
   CANCELLED = 4
 
 
-@attr.s(auto_attribs=True)
 class LocalWorkUnitStatus(xm.ExperimentUnitStatus):
   """Status of a local experiment job."""
 
-  status: LocalWorkUnitStatusEnum
-  message: str = ''
+  def __init__(self,
+               status: LocalWorkUnitStatusEnum,
+               message: str = '') -> None:
+    super().__init__()
+    self._status = status
+    self._message = message
 
-  def is_running(self) -> bool:
-    return self.status == LocalWorkUnitStatusEnum.RUNNING
+  @property
+  def is_active(self) -> bool:
+    return self._status == LocalWorkUnitStatusEnum.RUNNING
 
-  def is_succeeded(self) -> bool:
-    return self.status == LocalWorkUnitStatusEnum.COMPLETED
+  @property
+  def is_completed(self) -> bool:
+    return self._status == LocalWorkUnitStatusEnum.COMPLETED
 
+  @property
   def is_failed(self) -> bool:
-    return self.status == LocalWorkUnitStatusEnum.FAILED
+    return self._status == LocalWorkUnitStatusEnum.FAILED
 
-  def error(self) -> str:
-    return self.message
+  @property
+  def message(self) -> str:
+    return self._message
