@@ -19,6 +19,7 @@ import re
 from typing import List, Sequence, Tuple
 import urllib.request
 
+from absl import logging
 from google.cloud import storage
 
 
@@ -155,4 +156,5 @@ def get_closest_bucket(bucket_names: List[str]) -> str:
     # Only works for REGIONAL and MULT_REGIONAL.
     if region.startswith(b.location.lower()):
       return name
-  return bucket_names[0]  # None of the buckets are close. Pick a random one.
+  logging.info('None of the buckets are close. Picking a random one.')
+  return bucket_names[0]
