@@ -126,6 +126,10 @@ class ExperimentUnitNotCompletedError(ExperimentUnitError):
   """
 
 
+class NotFoundError(KeyError):
+  """Experiment/Work Unit/etc. has not been found."""
+
+
 def _work_unit_arguments(
     job: job_blocks.JobType,
     args: Mapping[str, Any],
@@ -558,5 +562,12 @@ def create_experiment() -> Experiment:
 
 @abc.abstractmethod
 def get_experiment(experiment_id: int) -> Experiment:
-  """Returns an Experiment instance associated with this experiment id."""
+  """Returns an Experiment instance associated with this experiment id.
+
+  Args:
+    experiment_id: An ID of an experiment to get.
+
+  Raises:
+    NotFoundError: If experiment is not found.
+  """
   raise NotImplementedError
