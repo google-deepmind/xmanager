@@ -32,7 +32,7 @@ def get_master_address_port() -> Tuple[str, str]:
     address string and port string
   """
   cluster_spec = os.environ.get('CLUSTER_SPEC', None)
-  print('CLUSTER_SPEC:', cluster_spec)
+  logging.info('CLUSTER_SPEC: %s', cluster_spec)
   if not cluster_spec:
     return '127.0.0.1', '29500'
 
@@ -55,7 +55,7 @@ def get_world_size_rank() -> Tuple[int, int]:
       rank = world_size + cluster_spec['task']['index']
     world_size += len(cluster_spec['cluster'][pool])
 
-  print('WORLD SIZE,', world_size, '; RANK', rank)
+  logging.info('WORLD SIZE: %d; RANK: %d', world_size, rank)
   return world_size, rank
 
 
@@ -105,6 +105,8 @@ def map_workerpool_address_args(args: List[str]) -> List[str]:
 
 
 def print_workerpool_address_args(argv: List[str]) -> None:
+  # Note that this is method is called by
+  # third_party/py/xmanager/cloud/data/wrapped_entrypoint.sh
   for arg in map_workerpool_address_args(argv[1:]):
     print(arg,)
 
