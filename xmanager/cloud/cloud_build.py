@@ -170,9 +170,7 @@ class Client:
       })
     return body
 
-  def wait_for_build(self,
-                     build_id: str,
-                     kaniko_image: Optional[str] = None) -> str:
+  def wait_for_build(self, build_id: str, kaniko_image: str) -> str:
     """Waits for build to finish and return the image URI of the result."""
     backoff = 30  # seconds
     while True:
@@ -183,9 +181,8 @@ class Client:
       print('Cloud Build status:', status)
 
       if status == 'SUCCESS':
-        if self.use_kaniko:
-          image_uri = kaniko_image
-        else:
+        image_uri = kaniko_image
+        if not self.use_kaniko:
           # Note: Not sure if this is needed. Could we always use the uri above?
           image = result['results']['images'][0]
           image_uri = f'{image["name"]}@{image["digest"]}'
@@ -207,5 +204,4 @@ class Client:
     print('Your image URI is:', termcolor.colored(image_uri, color='blue'))
     print('You can run your image locally via:\n' +
           termcolor.colored('docker run ' + image_uri, color='green'))
-    assert isinstance(image_uri, str)
     return image_uri
