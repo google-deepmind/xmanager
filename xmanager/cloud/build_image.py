@@ -40,6 +40,9 @@ _USE_DOCKER_BUILD_SUBPROCESS = flags.DEFINE_boolean(
     'Call "docker build" in a subprocess rather than using Python docker '
     'client library when building the docker image locally. This provies a '
     'much nicer output for interactive use.')
+_SHOW_DOCKER_BUILD_SUBPROCESS_PROGRESS = flags.DEFINE_boolean(
+    'xm_show_docker_build_subprocess_progress', False,
+    'Show container output during the subprocess docker build.')
 _WRAP_LATE_BINDING = flags.DEFINE_boolean(
     'xm_wrap_late_bindings', False,
     'Feature flag to wrap and unwrap late bindings for network addresses. '
@@ -142,7 +145,9 @@ def build_by_dockerfile(path: str,
           image_name,
           path,
           dockerfile,
-          docker_subprocess=_USE_DOCKER_BUILD_SUBPROCESS.value)
+          docker_subprocess=_USE_DOCKER_BUILD_SUBPROCESS.value,
+          docker_subprocess_progress=_SHOW_DOCKER_BUILD_SUBPROCESS_PROGRESS
+          .value)
 
   # If Dockerfile is not a direct child of path, then create a temp directory
   # that contains both the contents of path and Dockerfile.

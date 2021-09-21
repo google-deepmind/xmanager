@@ -51,14 +51,16 @@ def prepare_directory(project_path: str, project_name: str,
 def build_docker_image(image: str,
                        directory: str,
                        dockerfile: Optional[str] = None,
-                       docker_subprocess: bool = True) -> str:
+                       docker_subprocess: bool = True,
+                       docker_subprocess_progress: bool = False) -> str:
   """Builds a Docker image locally."""
   logging.info('Building Docker image locally')
   docker_client = docker.from_env()
   if not dockerfile:
     dockerfile = os.path.join(directory, 'Dockerfile')
   if docker_subprocess:
-    _run_docker_build_in_subprocess(directory, image, dockerfile)
+    _run_docker_build_in_subprocess(directory, image, dockerfile,
+                                    docker_subprocess_progress)
   else:
     _run_docker_build(docker_client, directory, image, dockerfile)
   logging.info('Building docker image locally: Done')
@@ -79,8 +81,10 @@ def push_docker_image(image: str) -> str:
   return image
 
 
-def _run_docker_build_in_subprocess(path: str, image: str,
-                                    dockerfile: str) -> None:
+def _run_docker_build_in_subprocess(path: str,
+                                    image: str,
+                                    dockerfile: str,
+                                    progress: bool = False) -> None:
   """Builds a Docker image by calling `docker build` within a subprocess."""
   # "Pre-pulling" the image in Dockerfile so that the docker build subprocess
   # (next command) can pull from cache.
@@ -93,9 +97,15 @@ def _run_docker_build_in_subprocess(path: str, image: str,
         docker_adapter.instance().pull_image(raw_image_name)
         break
 
-  subprocess.run(['docker', 'build', '-t', image, '-f', dockerfile, path],
-                 check=True,
-                 env={'DOCKER_BUILDKIT': '1'})
+  command = ['docker', 'build', '-t', image, '-f', dockerfile, path]
+
+  # Adding flags to show progress and disabling cache.
+  # Caching prevents actual commands in layer from executing.
+  # This is turn makes displaying progress redundant.
+  if progress:
+    command[2:2] = ['--progress', 'plain', '--no-cache']
+
+  subprocess.run(command, check=True, env={'DOCKER_BUILDKIT': '1'})
 
 
 def _run_docker_build(client: docker.DockerClient, path: str, image: str,
