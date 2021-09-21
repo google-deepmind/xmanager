@@ -33,7 +33,7 @@ _CLOUD_BUILD_TIMEOUT_SECONDS = flags.DEFINE_integer(
 _USE_CLOUD_BUILD_CACHE = flags.DEFINE_boolean(
     'xm_use_cloud_build_cache',
     False,
-    'Use cloud build cache to speed up the docker build. '
+    'Use Cloud Build cache to speed up the Docker build. '
     'An image with the same name tagged as :latest should exist.'
     'More details at https://cloud.google.com/cloud-build/docs/speeding-up-builds#using_a_cached_docker_image'  # pylint:disable=g-line-too-long
 )
@@ -59,13 +59,23 @@ class Client:
     """Create the Cloud Build Client.
 
     Args:
-      project:
-      bucket:
-      credentials:
-      cloud_build_timeout_seconds:
-      use_cloud_build_cache:
-      use_kaniko:
-      kaniko_cache_ttl:
+      project: Name of the GCP project to use for Cloud Build calls and for
+        storing the data passed to Cloud Build. If not specified the project of
+        the default credentials for the current environment is used.
+      bucket: Bucket used to store data passed to Cloud Build. If not specified
+        uses the value from the GOOGLE_CLOUD_BUCKET_NAME environment variable.
+      credentials: OAuth2 Credentials to use for Cloud Build & storage calls. If
+        None gets the default credentials for the current environment.
+      cloud_build_timeout_seconds: The amount of time that builds should be
+        allowed to run. If None defaults to `--xm_cloud_build_timeout_seconds.
+      use_cloud_build_cache: Whether to use Cloud Build cache to speed up the
+        Docker build. If None defaults to `--xm_use_cloud_build_cache`. An image
+        with the same name tagged as :latest should exist. More details at
+          https://cloud.google.com/cloud-build/docs/speeding-up-builds#using_a_cached_docker_image
+      use_kaniko: Use kaniko backend for Cloud Build and enable caching. If None
+        defaults to `--xm_use_kaniko`.
+      kaniko_cache_ttl: Cache ttl to use for kaniko builds. If None defaults to
+        `--xm_kaniko_cache_ttl`.
     """
     self.project = project or auth.get_project_name()
     self.bucket = bucket or auth.get_bucket()
