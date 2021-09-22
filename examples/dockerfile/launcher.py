@@ -23,7 +23,8 @@ from xmanager import xm_local
 def main(argv: Sequence[str]) -> None:
   del argv
 
-  with xm_local.create_experiment(experiment_title='dockerfile') as experiment:
+  with xm_local.create_experiment(
+      experiment_title='Example using Dockefile()') as experiment:
     executable_spec = xm.Dockerfile()
     [executable] = experiment.package([
         xm.Packageable(

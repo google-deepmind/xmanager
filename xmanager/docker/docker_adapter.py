@@ -22,6 +22,8 @@ from docker import errors
 from docker.models import containers
 from docker.utils import utils
 
+Ports = Dict[Union[int, str], Union[None, int, Tuple[str, int], List[int]]]
+
 
 @functools.lru_cache()
 def instance() -> 'DockerAdapter':
@@ -31,9 +33,6 @@ def instance() -> 'DockerAdapter':
   focus on a concrete small subset of required actions.
   """
   return DockerAdapter(docker.from_env())
-
-
-Ports = Dict[Union[int, str], Union[None, int, Tuple[str, int], List[int]]]
 
 
 class DockerAdapter(object):
@@ -58,15 +57,15 @@ class DockerAdapter(object):
     except errors.NotFound:
       return False
 
-  def split_tag(self, label: str) -> Tuple[str, str]:
-    repository, tag = utils.parse_repository_tag(label)
-    return repository, tag or 'latest'
+  def split_tag(self, tag: str) -> Tuple[str, str]:
+    repository, version = utils.parse_repository_tag(tag)
+    return repository, version or 'latest'
 
-  def pull_image(self, label: str) -> str:
-    repository, tag = self.split_tag(label)
+  def pull_image(self, tag: str) -> str:
+    repository, version = self.split_tag(tag)
     # Without a tag, Docker will try to pull every image instead of latest.
     # From docker>=4.4.0, use `client.image.pull(*args, all_tags=False)`.
-    return self._client.images.pull(repository, tag=tag).id
+    return self._client.images.pull(repository, tag=version).id
 
   def load_image(self, path: str) -> str:
     with open(path, 'rb') as data:
@@ -104,4 +103,6 @@ class DockerAdapter(object):
     try:
       self._client.containers.get(container_id).stop()
     except docker.errors.NotFound:
-      logging.warning('Container %s is already stopped.', container_id)
+      logging.warning(
+          'Container %s could not be stopped as it was not found '
+          '(it may already have been stopped).', container_id)
