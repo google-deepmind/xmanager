@@ -12,17 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Run Job as a Vizier worker to manager WorkUnit Vizier interaction."""
-
+import re
 from typing import Dict, Optional
 
 from absl import logging
 from google.cloud import aiplatform_v1beta1 as aip
+
+_TRIAL_NAME_REGEX = r'projects\/[^\/]+\/locations\/[^\/]+\/studies\/[^\/]+\/trials\/[^\/]+'
 
 
 class VizierWorker:
   """Worker that manage interaction between job and Vizier."""
 
   def __init__(self, trial_name: str) -> None:
+    if not re.match(_TRIAL_NAME_REGEX, trial_name):
+      raise Exception('The trial_name must be in the form: '
+                      'projects/{project}/locations/{location}/'
+                      'studies/{study}/trials/{trial}')
+
     self._trial_name = trial_name
 
     location = trial_name.split('/')[3]
