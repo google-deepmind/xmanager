@@ -2,6 +2,8 @@
 
 ## Prerequisites
 
+The codebase assumes Python 3.7+.
+
 ### Install Docker
 
 If you use `xmanager.xm.PythonDocker` to run XManager experiments,
@@ -327,7 +329,7 @@ xm_local.Caip(
 )
 ```
 
-As of June 2021, the valid accelerator types are:
+As of June 2021, the currently supported accelerator types are:
 
 * `P100`
 * `V100`
@@ -337,8 +339,8 @@ As of June 2021, the valid accelerator types are:
 * `TPU_V2`
 * `TPU_V3`
 
-IMPORTANT: Note that for `TPU_V2` and `TPU_V3` the only valid count is currently
-8.
+IMPORTANT: Note that for `TPU_V2` and `TPU_V3` the only currently supported
+count is 8.
 
 ##### Caip Specification
 
