@@ -170,6 +170,9 @@ class ExecutableSpec(abc.ABC):
 
   An executable spec must turned into an executable using package() in order
   to be used in a Job.
+
+  WARNING: `ExecutableSpec`s are supposed to be implementation-agnostic. That
+  means there should be no backend-specific class inheriting `ExecutableSpec`.
   """
 
   @property
