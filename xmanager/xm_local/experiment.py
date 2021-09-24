@@ -16,8 +16,9 @@
 import asyncio
 from concurrent import futures
 import time
-from typing import Any, Awaitable, Callable, List, Mapping, Optional, Sequence
+from typing import Any, Awaitable, Callable, List, Mapping, Sequence
 
+import attr
 from xmanager import xm
 from xmanager.cloud import caip
 from xmanager.cloud import kubernetes
@@ -50,79 +51,54 @@ def _validate_job_group(job_group: xm.JobGroup) -> None:
     _EXECUTOR_VALIDATOR(job, job.executor)
 
 
-# LocalExperimentUnit inherits WorkUnit so unit.work_unit_id will type-check.
-class LocalExperimentUnit(xm.WorkUnit):
+@attr.s(auto_attribs=True)
+class _LaunchResult:
+  caip_handles: List[caip.CaipHandle]
+  k8s_handles: List[kubernetes.KubernetesHandle]
+  local_handles: List[local_execution.LocalExecutionHandle]
+
+
+class LocalExperimentUnit(xm.ExperimentUnit):
   """Experiment unit operated by the local backend."""
 
-  def __init__(
-      self, experiment: 'LocalExperiment', experiment_title: str,
-      create_task: Callable[[Awaitable[Any]], futures.Future],
-      args: Mapping[str, Any], role: xm.ExperimentUnitRole,
-      work_unit_id_predictor: Optional[id_predictor.Predictor]) -> None:
+  def __init__(self, experiment: 'LocalExperiment', experiment_title: str,
+               create_task: Callable[[Awaitable[Any]], futures.Future],
+               args: Mapping[str, Any], role: xm.ExperimentUnitRole) -> None:
     super().__init__(experiment, create_task, args, role)
     self._experiment_title = experiment_title
-    self._work_unit_id_predictor = work_unit_id_predictor
-    if self._work_unit_id_predictor:
-      self._work_unit_id = self._work_unit_id_predictor.reserve_id()
     self._local_execution_handles: List[
         local_execution.LocalExecutionHandle] = []
     self._non_local_execution_handles: List[
         local_execution.ExecutionHandle] = []
 
-  async def _launch_job_group(self, job_group: xm.JobGroup,
-                              args_view: Mapping[str, Any]) -> None:
-    del args_view  # Unused.
-    _validate_job_group(job_group)
+  async def _submit_jobs_for_execution(self,
+                                       job_group: xm.JobGroup) -> _LaunchResult:
+    # We are delegating the traversal of the job group to modules.
+    # That improves modularity, but sacrifices the ability to make
+    # cross-executor decisions.
+    caip_handles = caip.launch(self._experiment_title,
+                               self.experiment_unit_name, job_group)
+    k8s_handles = kubernetes.launch(
+        str(self.experiment_id), self.get_full_job_name, job_group)
+    local_handles = await local_execution.launch(self.get_full_job_name,
+                                                 job_group)
+    return _LaunchResult(
+        caip_handles=caip_handles,
+        k8s_handles=k8s_handles,
+        local_handles=local_handles,
+    )
 
-    async def launch():
-      # We are delegating the traversal of the job group to modules.
-      # That improves modularity, but sacrifices the ability to make
-      # cross-executor decisions.
-      caip_handles = caip.launch(self._experiment_title,
-                                 self.experiment_unit_name, job_group)
-      k8s_handles = kubernetes.launch(
-          str(self.experiment_id), self.get_full_job_name, job_group)
-      self._non_local_execution_handles.extend(caip_handles + k8s_handles)
-      if self._work_unit_id_predictor:
-        self._save_handles_to_storage(caip_handles + k8s_handles)
-      # TODO: Save the local jobs to database.
-      local_handles = await local_execution.launch(self.get_full_job_name,
-                                                   job_group)
-      for handle in local_handles:
-        self._create_task(handle.monitor())
-      self._local_execution_handles.extend(local_handles)
+  def _ingest_execution_handles(self, launch_result: _LaunchResult) -> None:
+    self._non_local_execution_handles.extend(launch_result.caip_handles +
+                                             launch_result.k8s_handles)
+    self._local_execution_handles.extend(launch_result.local_handles)
 
-    if self._work_unit_id_predictor:
-      async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
-        await launch()
-    else:
-      await launch()
-
-  def _save_handles_to_storage(
-      self, handles: Sequence[local_execution.ExecutionHandle]) -> None:
-    """Saves jobs present in the handlers."""
-
-    def save_caip_handle(caip_handle: caip.CaipHandle) -> None:
-      database.database().insert_caip_job(self.experiment_id, self.work_unit_id,
-                                          self.experiment_unit_name,
-                                          caip_handle.job_name)
-
-    def save_k8s_handle(k8s_handle: kubernetes.KubernetesHandle) -> None:
-      for job in k8s_handle.jobs:
-        namespace = job.metadata.namespace or 'default'
-        name = job.metadata.name
-        database.database().insert_kubernetes_job(self.experiment_id,
-                                                  self.work_unit_id,
-                                                  self.experiment_unit_name,
-                                                  namespace, name)
-
-    def throw_on_unknown_handle(handle: Any) -> None:
-      raise TypeError(f'Unsupported handle: {handle}')
-
-    for handle in handles:
-      pattern_matching.match(save_caip_handle, save_k8s_handle,
-                             throw_on_unknown_handle)(
-                                 handle)
+  def _monitor_local_jobs(
+      self,
+      local_execution_handles: Sequence[local_execution.LocalExecutionHandle]
+  ) -> None:
+    for handle in local_execution_handles:
+      self._create_task(handle.monitor())
 
   async def _wait_until_complete(self) -> None:
     try:
@@ -159,21 +135,84 @@ class LocalExperimentUnit(xm.WorkUnit):
         'Status aggregation for work units with multiple jobs is not '
         'implemented yet.')
 
+
+class LocalWorkUnit(LocalExperimentUnit):
+  """A work unit operated by the local backend."""
+
+  def __init__(self, experiment: 'LocalExperiment', experiment_title: str,
+               create_task: Callable[[Awaitable[Any]], futures.Future],
+               args: Mapping[str, Any], role: xm.ExperimentUnitRole,
+               work_unit_id_predictor: id_predictor.Predictor) -> None:
+    super().__init__(experiment, experiment_title, create_task, args, role)
+    self._work_unit_id_predictor = work_unit_id_predictor
+    self._work_unit_id = self._work_unit_id_predictor.reserve_id()
+
+  def _save_handles_to_storage(
+      self, handles: Sequence[local_execution.ExecutionHandle]) -> None:
+    """Saves jobs present in the handlers."""
+
+    def save_caip_handle(caip_handle: caip.CaipHandle) -> None:
+      database.database().insert_caip_job(self.experiment_id, self.work_unit_id,
+                                          self.experiment_unit_name,
+                                          caip_handle.job_name)
+
+    def save_k8s_handle(k8s_handle: kubernetes.KubernetesHandle) -> None:
+      for job in k8s_handle.jobs:
+        namespace = job.metadata.namespace or 'default'
+        name = job.metadata.name
+        database.database().insert_kubernetes_job(self.experiment_id,
+                                                  self.work_unit_id,
+                                                  self.experiment_unit_name,
+                                                  namespace, name)
+
+    def throw_on_unknown_handle(handle: Any) -> None:
+      raise TypeError(f'Unsupported handle: {handle!r}')
+
+    handle_saver = pattern_matching.match(
+        save_caip_handle,
+        save_k8s_handle,
+        throw_on_unknown_handle,
+    )
+    for handle in handles:
+      handle_saver(handle)
+
+  async def _launch_job_group(self, job_group: xm.JobGroup,
+                              args_view: Mapping[str, Any]) -> None:
+    del args_view  # Unused.
+    _validate_job_group(job_group)
+
+    async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
+      launch_result = await self._submit_jobs_for_execution(job_group)
+      self._ingest_execution_handles(launch_result)
+      # TODO: Save the local jobs to the database as well.
+      self._save_handles_to_storage(launch_result.caip_handles +
+                                    launch_result.k8s_handles)
+      self._monitor_local_jobs(launch_result.local_handles)
+
   @property
   def experiment_unit_name(self) -> str:
-
-    def work_unit_name(_: xm.WorkUnitRole) -> str:
-      return f'{self.experiment_id}_{self._work_unit_id}'
-
-    def auxiliary_unit_name(_: xm.AuxiliaryUnitRole) -> str:
-      return f'{self.experiment_id}_auxiliary'
-
-    return pattern_matching.match(work_unit_name, auxiliary_unit_name)(
-        self._role)
+    return f'{self.experiment_id}_{self._work_unit_id}'
 
   @property
   def work_unit_id(self) -> int:
     return self._work_unit_id
+
+
+class LocalAuxiliaryUnit(LocalExperimentUnit):
+  """An auxiliary unit operated by the local backend."""
+
+  async def _launch_job_group(self, job_group: xm.JobGroup,
+                              args_view: Mapping[str, Any]) -> None:
+    del args_view  # Unused.
+    _validate_job_group(job_group)
+
+    launch_result = await self._submit_jobs_for_execution(job_group)
+    self._ingest_execution_handles(launch_result)
+    self._monitor_local_jobs(launch_result.local_handles)
+
+  @property
+  def experiment_unit_name(self) -> str:
+    return f'{self.experiment_id}_auxiliary'
 
 
 class LocalExperiment(xm.Experiment):
@@ -181,14 +220,16 @@ class LocalExperiment(xm.Experiment):
 
   _id: int
   _experiment_title: str
-  _work_units: List[LocalExperimentUnit]
+  _experiment_units: List[LocalExperimentUnit]
+  _work_unit_count: int
 
   def __init__(self, experiment_title: str) -> None:
     super().__init__()
-    # To distinguish local job names until we have a local database.
+    # To distinguish local job names until we use a local database generator.
     self._id = int(time.time() * 10**3)
     self._experiment_title = experiment_title
-    self._work_units = []
+    self._experiment_units = []
+    self._work_unit_count = 0
 
   @classmethod
   def package(
@@ -201,23 +242,42 @@ class LocalExperiment(xm.Experiment):
     """Creates a new WorkUnit instance for the experiment."""
 
     def create_work_unit(role: xm.WorkUnitRole):
-      return LocalExperimentUnit(self, self._experiment_title,
-                                 self._create_task, args, role,
-                                 self._work_unit_id_predictor)
+      work_unit = LocalWorkUnit(
+          self,
+          self._experiment_title,
+          self._create_task,
+          args,
+          role,
+          self._work_unit_id_predictor,
+      )
+      self._experiment_units.append(work_unit)
+      self._work_unit_count += 1
+      database.database().insert_work_unit(
+          self.experiment_id,
+          work_unit.work_unit_id,
+      )
+      return work_unit
 
-    # TODO: role.termination_delay_secs is not being used.
+    # TODO: Support `role.termination_delay_secs`.
     def create_auxiliary_unit(role: xm.AuxiliaryUnitRole):
-      return LocalExperimentUnit(self, self._experiment_title,
-                                 self._create_task, args, role, None)
+      auxiliary_unit = LocalAuxiliaryUnit(
+          self,
+          self._experiment_title,
+          self._create_task,
+          args,
+          role,
+      )
+      self._experiment_units.append(auxiliary_unit)
+      return auxiliary_unit
 
     return pattern_matching.match(create_work_unit, create_auxiliary_unit)(role)
 
   def _wait_for_local_jobs(self, is_exit_abrupt: bool):
-    if self._work_units:
-      print('Waiting for local jobs to complete.'
-            ' Press Ctrl+C to terminate them and exit')
-    for work_unit in self._work_units:
-      self._create_task(work_unit.wait_for_local_jobs(is_exit_abrupt))
+    if self._experiment_units:
+      print('Waiting for local jobs to complete. '
+            'Press Ctrl+C to terminate them and exit')
+    for unit in self._experiment_units:
+      self._create_task(unit.wait_for_local_jobs(is_exit_abrupt))
 
   def __exit__(self, exc_type, exc_value, traceback):
     # Flush `.add` calls.
@@ -237,7 +297,7 @@ class LocalExperiment(xm.Experiment):
 
   @property
   def work_unit_count(self) -> int:
-    return len(self._work_units)
+    return self._work_unit_count
 
   @property
   def work_units(self) -> Mapping[int, LocalExperimentUnit]:
