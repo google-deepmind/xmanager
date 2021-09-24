@@ -11,5 +11,5 @@ result.
 
 1. Clone the repository and install XManager via `pip install ./xmanager`.
 2. Install Bazelisk via `npm install -g @bazel/bazelisk`.
-3. Get into this directory and run `xmanager launch launcher.py -- --bazel_command=bazelisk`.
+3. Get into this directory and run `xmanager launch launcher.py -- --xm_bazel_command=bazelisk`.
 4. Once it is idling, open `http://localhost:8080/increment` in the browser.
