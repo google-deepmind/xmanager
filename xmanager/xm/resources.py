@@ -157,6 +157,7 @@ TpuType = _enum_subset(
     ],
 )
 
+
 GpuType = _enum_subset(
     'GpuType',
     [
@@ -165,6 +166,15 @@ GpuType = _enum_subset(
         ResourceType.P100,
         ResourceType.V100,
         ResourceType.A100,
+    ],
+)
+
+
+_AcceleratorType = _enum_subset(
+    '_AcceleratorType',
+    [
+        *list(TpuType),
+        *list(GpuType),
     ],
 )
 
@@ -360,7 +370,7 @@ class JobRequirements:
           pm.Case([ResourceType], lambda r: r))(
               resource_name)
 
-      if resource in TpuType or resource in GpuType:
+      if resource in _AcceleratorType:
         if self.accelerator is not None:
           raise ValueError('Accelerator already set.')
         self.accelerator = resource
