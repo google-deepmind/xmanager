@@ -21,7 +21,6 @@ API is not final.
 """
 
 import inspect
-import sys
 from typing import Any, Callable, Iterable, Generic, Tuple, Type, TypeVar, Union
 
 R = TypeVar('R')
@@ -48,19 +47,8 @@ class Case(Generic[R]):
       kind: A tuple of types to match. One for each callable argument.
       handler: A handler to be called in case of a match.
     """
-    # Assume that we already using Python 3+ as part of python_requires.
-    if sys.version_info.major == 3 and sys.version_info.minor <= 6:
-      # Function arguments type annotations are likely to have parameterized
-      # generics, such as List[int]. In fact, lint would raise an error if a
-      # bare List or Dict is used. Unfortunately isinstance can't handle
-      # parameterized generics. So we strip parameters by accessing
-      # `__extra__` type property. List[int].__extra__ is just List.
-      attribute = '__extra__'
-    else:
-      # In python 3.7+, access `__origin__` instead of `__extra__`.
-      attribute = '__origin__'
     self.kind = tuple(
-        getattr(arg_type, attribute, arg_type) for arg_type in kind)
+        getattr(arg_type, '__origin__', arg_type) for arg_type in kind)
     self.handle = handler
 
   def matches(self, *values: Any) -> bool:
