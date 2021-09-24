@@ -69,9 +69,9 @@ class DockerAdapter(object):
 
   def load_image(self, path: str) -> str:
     with open(path, 'rb') as data:
-      images = self._client.images.load(data.read())
+      images = self._client.images.load(data)
       if len(images) != 1:
-        raise ValueError('{} must contain precisely one image.'.format(path))
+        raise ValueError(f'{path} must contain precisely one image')
       return images[0].id
 
   def run_container(
@@ -105,4 +105,4 @@ class DockerAdapter(object):
     except docker.errors.NotFound:
       logging.warning(
           'Container %s could not be stopped as it was not found '
-          '(it may already have been stopped).', container_id)
+          '(it may already have been stopped)', container_id)
