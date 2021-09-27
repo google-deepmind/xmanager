@@ -51,18 +51,18 @@ def prepare_directory(project_path: str, project_name: str,
 def build_docker_image(tag: str,
                        directory: str,
                        dockerfile: Optional[str] = None,
-                       docker_subprocess: bool = True,
-                       docker_subprocess_progress: bool = False) -> str:
+                       use_docker_command: bool = True,
+                       show_docker_command_progress: bool = False) -> str:
   """Builds a Docker image locally."""
   logging.info('Building Docker image')
   docker_client = docker.from_env()
   if not dockerfile:
     dockerfile = os.path.join(directory, 'Dockerfile')
-  if docker_subprocess:
-    _run_docker_build_in_subprocess(directory, tag, dockerfile,
-                                    docker_subprocess_progress)
+  if use_docker_command:
+    _build_image_with_docker_command(directory, tag, dockerfile,
+                                     show_docker_command_progress)
   else:
-    _run_docker_build(docker_client, directory, tag, dockerfile)
+    _build_image_with_python_client(docker_client, directory, tag, dockerfile)
   logging.info('Building docker image: Done')
   return tag
 
@@ -81,10 +81,10 @@ def push_docker_image(image: str) -> str:
   return image
 
 
-def _run_docker_build_in_subprocess(path: str,
-                                    tag: str,
-                                    dockerfile: str,
-                                    progress: bool = False) -> None:
+def _build_image_with_docker_command(path: str,
+                                     tag: str,
+                                     dockerfile: str,
+                                     progress: bool = False) -> None:
   """Builds a Docker image by calling `docker build` within a subprocess."""
   # "Pre-pulling" the image in Dockerfile so that the docker build subprocess
   # (next command) can pull from cache.
@@ -108,8 +108,8 @@ def _run_docker_build_in_subprocess(path: str,
   subprocess.run(command, check=True, env={'DOCKER_BUILDKIT': '1'})
 
 
-def _run_docker_build(client: docker.DockerClient, path: str, tag: str,
-                      dockerfile: str) -> None:
+def _build_image_with_python_client(client: docker.DockerClient, path: str,
+                                    tag: str, dockerfile: str) -> None:
   """Builds a Docker image by calling the Docker Python client."""
   try:
     _, logs = client.images.build(path=path, tag=tag, dockerfile=dockerfile)
