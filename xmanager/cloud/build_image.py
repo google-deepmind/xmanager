@@ -158,8 +158,8 @@ def build_by_dockerfile(path: str,
     path = new_path
 
   cloud_build_client = cloud_build.Client(project=project, bucket=bucket)
-  image, _ = docker_utils.parse_repository_tag(image_name)
-  upload_name = image.split('/')[-1]
+  repository, _ = docker_utils.parse_repository_tag(image_name)
+  upload_name = repository.split('/')[-1]
   cloud_build_client.build_docker_image(image_name, path, upload_name)
   docker_adapter.instance().pull_image(image_name)
   return image_name

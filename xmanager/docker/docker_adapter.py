@@ -57,15 +57,15 @@ class DockerAdapter(object):
     except errors.NotFound:
       return False
 
-  def split_tag(self, tag: str) -> Tuple[str, str]:
-    repository, version = utils.parse_repository_tag(tag)
-    return repository, version or 'latest'
+  def split_tag(self, image_tag: str) -> Tuple[str, str]:
+    repository, tag = utils.parse_repository_tag(image_tag)
+    return repository, tag or 'latest'
 
-  def pull_image(self, tag: str) -> str:
-    repository, version = self.split_tag(tag)
+  def pull_image(self, image_tag: str) -> str:
+    repository, tag = self.split_tag(image_tag)
     # Without a tag, Docker will try to pull every image instead of latest.
     # From docker>=4.4.0, use `client.image.pull(*args, all_tags=False)`.
-    return self._client.images.pull(repository, tag=version).id
+    return self._client.images.pull(repository, tag=tag).id
 
   def load_image(self, path: str) -> str:
     with open(path, 'rb') as data:

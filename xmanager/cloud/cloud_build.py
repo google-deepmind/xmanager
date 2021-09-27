@@ -101,10 +101,10 @@ class Client:
     blob = bucket.blob(destination_name)
     blob.upload_from_filename(archive_path)
 
-  def build_docker_image(self, image_name: str, directory: str,
+  def build_docker_image(self, image: str, directory: str,
                          upload_name: str) -> str:
     """Create a Docker image via Cloud Build and push to Cloud Repository."""
-    image, tag = docker_utils.parse_repository_tag(image_name)
+    repository, tag = docker_utils.parse_repository_tag(image)
     if not tag:
       tag = datetime.datetime.now().strftime('%Y%m%d-%H%M%S_%f')
 
@@ -113,7 +113,7 @@ class Client:
       tar.add(directory, '/')
     destination_name = f'{upload_name}-{tag}.tar.gz'
     self.upload_tar_to_storage(archive_path, destination_name)
-    build_body = self._build_request_body(destination_name, image, tag)
+    build_body = self._build_request_body(destination_name, repository, tag)
     # Note: On GCP cache_discovery=True (the default) leads to ugly error
     # messages as file_cache is unavailable.
     if not self.cloudbuild_api:
@@ -128,9 +128,9 @@ class Client:
     print('Cloud Build link:', termcolor.colored(log_url, color='blue'))
 
     build_id = create_op['metadata']['build']['id']
-    return self.wait_for_build(build_id, f'{image}:{tag}')
+    return self.wait_for_build(build_id, f'{repository}:{tag}')
 
-  def _build_request_body(self, bucket_path, image, tag) -> Dict[str, Any]:
+  def _build_request_body(self, bucket_path, repository, tag) -> Dict[str, Any]:
     """Builds the Cloud Build create_build_request body."""
     body = {
         'source': {
@@ -147,26 +147,27 @@ class Client:
               'name':
                   'gcr.io/kaniko-project/executor:latest',
               'args': [
-                  f'--destination={image}:{tag}', '--cache=true',
+                  f'--destination={repository}:{tag}', '--cache=true',
                   f'--cache-ttl={self.kaniko_cache_ttl}'
               ],
           }]
       })
     else:
-      args_for_cached_image = (['--cache-from', f'{image}:latest']
+      args_for_cached_image = (['--cache-from', f'{repository}:latest']
                                if self.use_cloud_build_cache else [])
       body.update({
           'steps': [{
               'name':
                   'gcr.io/cloud-builders/docker',
-              'args':
-                  ['build', '-t', f'{image}:{tag}', '-t', f'{image}:latest'] +
-                  args_for_cached_image + ['.'],
+              'args': [
+                  'build', '-t', f'{repository}:{tag}', '-t',
+                  f'{repository}:latest'
+              ] + args_for_cached_image + ['.'],
           }],
           'options': {
               'machineType': 'E2_HIGHCPU_32'
           },
-          'images': [image]
+          'images': [repository]
       })
     return body
 

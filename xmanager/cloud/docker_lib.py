@@ -22,6 +22,7 @@ from typing import Optional
 
 from absl import logging
 import docker
+from docker.utils import utils as docker_utils
 import humanize
 import termcolor
 
@@ -48,7 +49,7 @@ def prepare_directory(project_path: str, project_name: str,
   return directory
 
 
-def build_docker_image(tag: str,
+def build_docker_image(image: str,
                        directory: str,
                        dockerfile: Optional[str] = None,
                        use_docker_command: bool = True,
@@ -59,18 +60,19 @@ def build_docker_image(tag: str,
   if not dockerfile:
     dockerfile = os.path.join(directory, 'Dockerfile')
   if use_docker_command:
-    _build_image_with_docker_command(directory, tag, dockerfile,
+    _build_image_with_docker_command(directory, image, dockerfile,
                                      show_docker_command_progress)
   else:
-    _build_image_with_python_client(docker_client, directory, tag, dockerfile)
+    _build_image_with_python_client(docker_client, directory, image, dockerfile)
   logging.info('Building docker image: Done')
-  return tag
+  return image
 
 
 def push_docker_image(image: str) -> str:
   """Pushes a Docker image to the designated repository."""
   docker_client = docker.from_env()
-  push = docker_client.images.push(repository=image)
+  repository, tag = docker_utils.parse_repository_tag(image)
+  push = docker_client.images.push(repository=repository, tag=tag)
   logging.info(push)
   if not isinstance(push, str) or '"Digest":' not in push:
     raise RuntimeError(
@@ -82,7 +84,7 @@ def push_docker_image(image: str) -> str:
 
 
 def _build_image_with_docker_command(path: str,
-                                     tag: str,
+                                     image_tag: str,
                                      dockerfile: str,
                                      progress: bool = False) -> None:
   """Builds a Docker image by calling `docker build` within a subprocess."""
@@ -97,7 +99,7 @@ def _build_image_with_docker_command(path: str,
         docker_adapter.instance().pull_image(raw_image_name)
         break
 
-  command = ['docker', 'build', '-t', tag, '-f', dockerfile, path]
+  command = ['docker', 'build', '-t', image_tag, '-f', dockerfile, path]
 
   # Adding flags to show progress and disabling cache.
   # Caching prevents actual commands in layer from executing.
@@ -109,10 +111,12 @@ def _build_image_with_docker_command(path: str,
 
 
 def _build_image_with_python_client(client: docker.DockerClient, path: str,
-                                    tag: str, dockerfile: str) -> None:
+                                    image_tag: str, dockerfile: str) -> None:
   """Builds a Docker image by calling the Docker Python client."""
   try:
-    _, logs = client.images.build(path=path, tag=tag, dockerfile=dockerfile)
+    # The `tag=` arg refers to the full repository:tag image name.
+    _, logs = client.images.build(
+        path=path, tag=image_tag, dockerfile=dockerfile)
   except docker.errors.BuildError as error:
     for log in error.build_log:
       print(log.get('stream', ''), end='')
