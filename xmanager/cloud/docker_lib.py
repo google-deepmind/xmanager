@@ -27,8 +27,6 @@ from docker.utils import utils as docker_utils
 import humanize
 import termcolor
 
-from xmanager.docker import docker_adapter
-
 
 def prepare_directory(project_path: str, project_name: str,
                       entrypoint_file: str, dockerfile: str) -> str:
@@ -89,18 +87,10 @@ def _build_image_with_docker_command(path: str,
                                      dockerfile: str,
                                      progress: bool = False) -> None:
   """Builds a Docker image by calling `docker build` within a subprocess."""
-  # "Pre-pulling" the image in Dockerfile so that the docker build subprocess
-  # (next command) can pull from cache.
-  with open(os.path.join(path, dockerfile), 'r') as f:
-    for line in f:
-      if 'FROM' in line:
-        line = line.strip()
-        raw_image_name = line.split(' ', 1)[1]
-        print(f'Pulling {raw_image_name}...')
-        docker_adapter.instance().pull_image(raw_image_name)
-        break
-
-  command = ['docker', 'build', '-t', image_tag, '-f', dockerfile, path]
+  # docker buildx requires docker 20.10.
+  command = [
+      'docker', 'buildx', 'build', '-t', image_tag, '-f', dockerfile, path
+  ]
 
   # Adding flags to show progress and disabling cache.
   # Caching prevents actual commands in layer from executing.
