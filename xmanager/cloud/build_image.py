@@ -16,7 +16,7 @@
 import os
 import shutil
 import tempfile
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 from absl import flags
 from absl import logging
@@ -43,11 +43,11 @@ _USE_DOCKER_COMMAND = flags.DEFINE_boolean(
 _SHOW_DOCKER_COMMAND_PROGRESS = flags.DEFINE_boolean(
     'xm_show_docker_command_progress', False,
     'Show container output during the "docker build".')
-_WRAP_LATE_BINDING = flags.DEFINE_boolean(
+_WRAP_LATE_BINDINGS = flags.DEFINE_boolean(
     'xm_wrap_late_bindings', False,
     'Feature flag to wrap and unwrap late bindings for network addresses. '
     'ONLY works with PythonContainer with default instructions or simple '
-    'instructions that do not modify the file directory.'
+    'instructions that do not modify the file directory. '
     'REQUIRES ./entrypoint.sh to be the ENTRYPOINT.')
 
 # TODO: Find a master image than is compatible with every
@@ -95,14 +95,19 @@ def build(py_executable: xm.PythonContainer,
   dockerfile = _create_dockerfile(py_executable, args, env_vars)
   entrypoint = _create_entrypoint(py_executable)
   dirname = os.path.basename(py_executable.path)
-  path = py_executable.path
-  if _WRAP_LATE_BINDING.value:
-    path, dockerfile = _wrap_late_bindings(path, dockerfile)
-  docker_directory = docker_lib.prepare_directory(path, dirname, entrypoint,
-                                                  dockerfile)
-  return build_by_dockerfile(docker_directory,
-                             os.path.join(docker_directory, 'Dockerfile'),
-                             image_name, project, bucket)
+  python_path = py_executable.path
+
+  with tempfile.TemporaryDirectory() as wrapped_directory:
+    if _WRAP_LATE_BINDINGS.value:
+      _wrap_late_bindings(wrapped_directory, python_path, dockerfile)
+      python_path = wrapped_directory
+      dockerfile = os.path.join(python_path, 'Dockerfile')
+
+    with tempfile.TemporaryDirectory() as staging:
+      docker_lib.prepare_directory(staging, python_path, dirname, entrypoint,
+                                   dockerfile)
+      return build_by_dockerfile(staging, os.path.join(staging, 'Dockerfile'),
+                                 image_name, project, bucket)
 
 
 def build_by_dockerfile(path: str,
@@ -150,19 +155,19 @@ def build_by_dockerfile(path: str,
 
   # If Dockerfile is not a direct child of path, then create a temp directory
   # that contains both the contents of path and Dockerfile.
-  if os.path.dirname(dockerfile) != path:
-    tempdir = tempfile.mkdtemp()
-    new_path = os.path.join(tempdir, os.path.basename(path))
-    shutil.copytree(path, new_path)
-    shutil.copyfile(dockerfile, os.path.join(path, 'Dockerfile'))
-    path = new_path
+  with tempfile.TemporaryDirectory() as tempdir:
+    if os.path.dirname(dockerfile) != path:
+      new_path = os.path.join(tempdir, os.path.basename(path))
+      shutil.copytree(path, new_path)
+      shutil.copyfile(dockerfile, os.path.join(path, 'Dockerfile'))
+      path = new_path
 
-  cloud_build_client = cloud_build.Client(project=project, bucket=bucket)
-  repository, _ = docker_utils.parse_repository_tag(image_name)
-  upload_name = repository.split('/')[-1]
-  cloud_build_client.build_docker_image(image_name, path, upload_name)
-  docker_adapter.instance().pull_image(image_name)
-  return image_name
+    cloud_build_client = cloud_build.Client(project=project, bucket=bucket)
+    repository, _ = docker_utils.parse_repository_tag(image_name)
+    upload_name = repository.split('/')[-1]
+    cloud_build_client.build_docker_image(image_name, path, upload_name)
+    docker_adapter.instance().pull_image(image_name)
+    return image_name
 
 
 def push(image: str) -> str:
@@ -279,7 +284,7 @@ def _create_entrypoint_cmd(args: xm.SequentialArgs) -> str:
   return f'ENTRYPOINT [{entrypoint}]'
 
 
-def _wrap_late_bindings(path: str, dockerfile: str) -> Tuple[str, str]:
+def _wrap_late_bindings(destination: str, path: str, dockerfile: str) -> None:
   """Create a new path and dockerfile to wrap/unwrap late-bindings.
 
   TODO: Rather than only working PythonContainer, this method can
@@ -291,30 +296,28 @@ def _wrap_late_bindings(path: str, dockerfile: str) -> Tuple[str, str]:
   which is only known at runtime and cannot be statically defined.
 
   Args:
+    destination: An empty destination to contain the new project path
+      and the new dockerfile will be destination/Dockerfile.
+      The current contents of destination will be deleted.
     path: The current project path to build.
-    dockerfile: The current dockerfile path to use to build.
-
-  Returns:
-    A project path to build and a new dockerfile path to build with.
+    dockerfile: The current dockerfile path needed to build the project.
   """
-  new_path = tempfile.TemporaryDirectory()
-  # In Python 3.6 shutil.copytree, the destination must not exist.
-  new_path.cleanup()
-  shutil.copytree(path, new_path.name)
+  shutil.rmtree(destination)
+  shutil.copytree(path, destination)
 
   root_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
   shutil.copyfile(
       os.path.join(root_dir, 'cloud', 'data', 'wrapped_entrypoint.sh'),
-      os.path.join(new_path.name, 'wrapped_entrypoint.sh'))
+      os.path.join(destination, 'wrapped_entrypoint.sh'))
   shutil.copyfile(
       os.path.join(root_dir, 'cloud', 'utils.py'),
-      os.path.join(new_path.name, 'caip_utils.py'))
+      os.path.join(destination, 'caip_utils.py'))
   shutil.copyfile(
       os.path.join(root_dir, 'vizier', 'vizier_worker.py'),
-      os.path.join(new_path.name, 'vizier_worker.py'))
+      os.path.join(destination, 'vizier_worker.py'))
 
-  new_dockerfile = tempfile.NamedTemporaryFile(delete=False)
+  new_dockerfile = os.path.join(destination, 'Dockerfile')
   insert_instructions = [
       'RUN chmod +x ./wrapped_entrypoint.sh',
   ]
@@ -324,8 +327,5 @@ def _wrap_late_bindings(path: str, dockerfile: str) -> Tuple[str, str]:
                               '\n'.join(insert_instructions + ['ENTRYPOINT']))
   contents = contents.replace('ENTRYPOINT ["./entrypoint.sh',
                               'ENTRYPOINT ["./wrapped_entrypoint.sh')
-  with open(new_dockerfile.name, 'w') as f:
+  with open(new_dockerfile, 'w') as f:
     f.write(contents)
-  print()
-
-  return new_path.name, new_dockerfile.name

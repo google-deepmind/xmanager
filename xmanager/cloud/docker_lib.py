@@ -12,13 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Utility functions for building Docker images."""
-
 import os
 import pathlib
 import shutil
 import subprocess
 import sys
-import tempfile
 from typing import Optional
 
 from absl import logging
@@ -28,12 +26,21 @@ import humanize
 import termcolor
 
 
-def prepare_directory(project_path: str, project_name: str,
-                      entrypoint_file: str, dockerfile: str) -> str:
-  """Stage all inputs into a new temporary directory."""
-  project_directory = pathlib.Path(project_path)
-  size = sum(
-      f.stat().st_size for f in project_directory.glob('**/*') if f.is_file())
+def prepare_directory(destination_directory: str, source_directory: str,
+                      project_name: str, entrypoint_file: str,
+                      dockerfile: str) -> None:
+  """Stage all inputs into the destination directory.
+
+  Args:
+    destination_directory: The directory to copy files to.
+    source_directory: The directory to copy files from.
+    project_name: The name of the folder inside destination_directory/ that
+      source_directory/ files will be copied to.
+    entrypoint_file: The file path of entrypoint.sh.
+    dockerfile: The file path of Dockerfile.
+  """
+  source_path = pathlib.Path(source_directory)
+  size = sum(f.stat().st_size for f in source_path.glob('**/*') if f.is_file())
   print(f'Size of Docker input: {humanize.naturalsize(size)}')
   if size > 200 * 10**6:
     print(
@@ -41,11 +48,11 @@ def prepare_directory(project_path: str, project_name: str,
             'You are trying to pack over 200MB into a Docker image. '
             'Large images negatively impact build times',
             color='magenta'))
-  directory = tempfile.mkdtemp()
-  shutil.copytree(project_path, os.path.join(directory, project_name))
-  shutil.copyfile(dockerfile, os.path.join(directory, 'Dockerfile'))
-  shutil.copyfile(entrypoint_file, os.path.join(directory, 'entrypoint.sh'))
-  return directory
+  shutil.copytree(source_directory,
+                  os.path.join(destination_directory, project_name))
+  shutil.copyfile(dockerfile, os.path.join(destination_directory, 'Dockerfile'))
+  shutil.copyfile(entrypoint_file,
+                  os.path.join(destination_directory, 'entrypoint.sh'))
 
 
 def build_docker_image(image: str,
