@@ -22,6 +22,7 @@ import attr
 from xmanager import xm
 from xmanager.cloud import caip
 from xmanager.cloud import kubernetes
+from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
 from xmanager.xm import job_operators
 from xmanager.xm import pattern_matching
@@ -222,6 +223,7 @@ class LocalExperiment(xm.Experiment):
   _experiment_title: str
   _experiment_units: List[LocalExperimentUnit]
   _work_unit_count: int
+  _async_packager = async_packager.AsyncPackager(packaging_router.package)
 
   def __init__(self, experiment_title: str) -> None:
     super().__init__()
@@ -230,12 +232,6 @@ class LocalExperiment(xm.Experiment):
     self._experiment_title = experiment_title
     self._experiment_units = []
     self._work_unit_count = 0
-
-  @classmethod
-  def package(
-      cls, packageables: Sequence[xm.Packageable]) -> Sequence[xm.Executable]:
-    """Packages executable specs into executables based on the executor specs."""
-    return packaging_router.package(packageables)
 
   def _create_experiment_unit(self, args: Mapping[str, Any],
                               role: xm.ExperimentUnitRole) -> xm.ExperimentUnit:

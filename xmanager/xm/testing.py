@@ -14,7 +14,7 @@
 """Utilities for testing core objects."""
 
 from concurrent import futures
-from typing import Any, Awaitable, Callable, Iterable, List, Mapping
+from typing import Any, Awaitable, Callable, List, Mapping
 
 from xmanager.xm import core
 from xmanager.xm import id_predictor
@@ -66,13 +66,6 @@ class TestExperiment(core.Experiment):
     self.launched_jobs = []
     self.launched_jobs_args = []
     self._work_units = []
-
-  @classmethod
-  def package(
-      cls, packageables: Iterable[job_blocks.Packageable]
-  ) -> Iterable[job_blocks.Executable]:
-    """Packages executable specs into executables based on the executor specs."""
-    raise NotImplementedError
 
   def _create_experiment_unit(self, args,
                               role=core.WorkUnitRole()) -> TestWorkUnit:

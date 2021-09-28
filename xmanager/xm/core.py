@@ -35,6 +35,7 @@ from typing import Any, Awaitable, Callable, Dict, Mapping, overload, Sequence
 import attr
 import immutabledict
 
+from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
 from xmanager.xm import job_operators
@@ -414,6 +415,8 @@ class Experiment(abc.ABC):
   _running_tasks: queue.Queue
   # Work unit ID predictor.
   _work_unit_id_predictor: id_predictor.Predictor
+  # A class variable for batching packaging requests.
+  _async_packager: async_packager.AsyncPackager
 
   @property
   def experiment_id(self) -> int:
@@ -462,12 +465,56 @@ class Experiment(abc.ABC):
     await self._await_for_tasks()
 
   @classmethod
-  @abc.abstractmethod
   def package(
-      cls, packageables: Sequence[job_blocks.Packageable]
+      cls, packageables: Sequence[job_blocks.Packageable] = ()
   ) -> Sequence[job_blocks.Executable]:
-    """Packages executable specs into executables based on the executor specs."""
-    raise NotImplementedError
+    """Packages executable specs into executables based on the executor specs.
+
+    Builds all given executables specs in parallel. While calling package()
+    multiple times is allowed, that would result in slow sequential build,
+    even if invoked from concurrent threads.
+
+    Args:
+      packageables: A sequence of packageables to build.
+
+    Returns:
+      A sequence of packaging results. Order corresponds to the order of input
+      packageables.
+    """
+    return cls._async_packager.package(packageables)
+
+  @classmethod
+  def package_async(
+      cls,
+      packageable: job_blocks.Packageable) -> Awaitable[job_blocks.Executable]:
+    """Queues executable spec to be packaged into executable.
+
+    If gathering all packageables for a single `package()` call is inconvenient,
+    one may request packaging with `package_async` and later trigger the build
+    for the whole batch with `package()`.
+
+    Usage:
+
+      if eval:
+        eval_executable = experiment.package_async(xm.blaze_binary(...))
+      if train:
+        train_executable = experiment.package_async(xm.blaze_binary(...))
+
+      experiment.package()  # Explicitly trigger packaging.
+
+      jobs = {}
+      if eval:
+        jobs['eval'] = xm.job(await eval_executable, ...)
+      if train:
+        jobs['train'] = xm.job(await train_executable, ...)
+
+    Args:
+      packageable: Executable spec to package.
+
+    Returns:
+      An awaitable for the packaging result.
+    """
+    return cls._async_packager.add(packageable)
 
   @overload
   def add(self,
