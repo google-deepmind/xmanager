@@ -17,6 +17,7 @@ import os
 import pathlib
 import shutil
 import subprocess
+import sys
 import tempfile
 from typing import Optional
 
@@ -119,7 +120,7 @@ def _build_image_with_python_client(client: docker.DockerClient, path: str,
         path=path, tag=image_tag, dockerfile=dockerfile)
   except docker.errors.BuildError as error:
     for log in error.build_log:
-      print(log.get('stream', ''), end='')
+      print(log.get('stream', ''), end='', file=sys.stderr)
     raise error
   for log in logs:
     print(log.get('stream', ''), end='')
