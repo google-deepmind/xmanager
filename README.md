@@ -87,15 +87,17 @@ pip install git+https://github.com/deepmind/xmanager.git
 Run a launch script, e.g.
 
 ```bash
-xmanager launch ./xmanager/examples/cifar10/launcher.py
+xmanager launch ./xmanager/examples/cifar10_tensorflow/launcher.py
 ```
 
 In order to run multi-job experiments, a `--xm_wrap_late_bindings` flag might be
 required:
 
 ```bash
-xmanager launch ./xmanager/examples/cifar10/launcher.py -- --xm_wrap_late_bindings
+xmanager launch ./xmanager/examples/cifar10_tensorflow/launcher.py -- --xm_wrap_late_bindings
 ```
+
+TODO: Elaborate why that is necessary.
 
 ## Writing XM launch scripts
 
