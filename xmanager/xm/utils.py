@@ -20,14 +20,19 @@ import abc
 import asyncio
 import enum
 import functools
-import inspect
 import os
 import shlex
+import sys
 from typing import Any, Callable, TypeVar
 
+from absl import flags
 import attr
-
 from xmanager.xm import pattern_matching
+
+FLAGS = flags.FLAGS
+flags.DEFINE_string(
+   'xm_launch_script', None, 'Path to the launch script that is using '
+   'XManager Launch API')
 
 ReturnType = TypeVar('ReturnType')
 
@@ -97,25 +102,50 @@ def run_in_asyncio_loop(
   return decorated
 
 
-def get_absolute_path(path: str) -> str:
-  """Gets the abspath when relative paths are used in the launcher script.
+@functools.lru_cache()
+def find_launch_script_path() -> str:
+  """Finds the launch script path."""
+  # We can get the launch script if it's provided explicitly, or when it's run
+  # using a Python interpreter.
+  launch_script_path = FLAGS.xm_launch_script or sys.argv[0]
+  if not launch_script_path.endswith('.py'):
+    # If the launch script is built with subpar we are interested in the name
+    # of the main module, rather than subpar binary.
+    main_file_path = getattr(sys.modules['__main__'], '__file__', None)
+    if (main_file_path and os.access(main_file_path, os.R_OK)):
+      launch_script_path = main_file_path
 
-  A launcher script can refer to its own directory or parent directory via
-  `.` and `..`.
+  if not launch_script_path:
+    return ''
+
+  # The path may be relative, especially if it comes from sys.argv[0].
+  return os.path.abspath(launch_script_path)
+
+
+def resolve_path_relative_to_launcher(path: str) -> str:
+  """Get the absolute assuming paths are relative to the launcher script file.
+
+  Using this method a launcher script can refer to its own directory or parent
+  directory via `.` and `..`.
 
   Args:
-    path: Path that may contain relative paths relative to the launcher script.
+    path: Path that may be relative to the launch script.
 
   Returns:
     Absolute path.
+
+  Raises:
+    RuntimeError: If unable to determine the launch script path.
   """
   if os.path.isabs(path):
     return path
 
-  # WARNING: This line assumes that the call stack looks like:
-  # [0] utils.py
-  # [1] executables.py
-  # [2] launcher.py
-  caller_filename = os.path.realpath(inspect.stack()[2].filename)
-  caller_dir = os.path.dirname(caller_filename)
+  launch_script_path = find_launch_script_path()
+  if not os.access(launch_script_path, os.R_OK):
+    raise RuntimeError(f'Unable to determine launch script path. '
+                       f'The script is not present at {launch_script_path!r}. '
+                       'This may happen if launch script changes the '
+                       'working directory.')
+  caller_file_path = os.path.realpath(launch_script_path)
+  caller_dir = os.path.dirname(caller_file_path)
   return os.path.realpath(os.path.join(caller_dir, path))

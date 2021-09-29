@@ -53,12 +53,13 @@ class Dockerfile(job_blocks.ExecutableSpec):
         script.
   """
 
-  path: str = attr.ib(converter=utils.get_absolute_path, default='.')
+  path: str = attr.ib(
+      converter=utils.resolve_path_relative_to_launcher, default='.')
   # None is default instead of './Dockerfile' because the default behavior is
   # to use '{path}/Dockerfile'. If './Dockerfile' were used, that would be
   # equivalent to '{os.path.dir(launcher.py)}/Dockerfile'.
   dockerfile: str = attr.ib(
-      converter=utils.get_absolute_path,
+      converter=utils.resolve_path_relative_to_launcher,
       default=attr.Factory(
           lambda self: os.path.join(self.path, 'Dockerfile'), takes_self=True))
 
@@ -112,7 +113,8 @@ class PythonContainer(job_blocks.ExecutableSpec):
   """
 
   entrypoint: Union[ModuleName, CommandList]
-  path: str = attr.ib(converter=utils.get_absolute_path, default='.')
+  path: str = attr.ib(
+      converter=utils.resolve_path_relative_to_launcher, default='.')
   base_image: Optional[str] = None
   docker_instructions: Optional[List[str]] = None
   use_deep_module: bool = False

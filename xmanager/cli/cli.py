@@ -36,6 +36,8 @@ def main(argv):
     launch_module, _ = os.path.splitext(os.path.basename(launch_script))
     m = importlib.import_module(launch_module)
     sys.path.pop(0)
+    argv = [launch_script, '--xm_launch_script={}'.format(launch_script)
+           ] + argv[3:]
     app.run(m.main, argv=argv)
   elif cmd == 'cluster':
     caliban_gke = importlib.import_module('caliban.platform.gke.cli')
