@@ -66,8 +66,8 @@ def build_docker_image(image: str,
   if not dockerfile:
     dockerfile = os.path.join(directory, 'Dockerfile')
   if use_docker_command:
-    _build_image_with_docker_command(directory, image, dockerfile,
-                                     show_docker_command_progress)
+    _build_image_with_docker_command(docker_client, directory, image,
+                                     dockerfile, show_docker_command_progress)
   else:
     _build_image_with_python_client(docker_client, directory, image, dockerfile)
   logging.info('Building docker image: Done')
@@ -89,12 +89,17 @@ def push_docker_image(image: str) -> str:
   return image
 
 
-def _build_image_with_docker_command(path: str,
+def _build_image_with_docker_command(client: docker.DockerClient,
+                                     path: str,
                                      image_tag: str,
                                      dockerfile: str,
                                      progress: bool = False) -> None:
   """Builds a Docker image by calling `docker build` within a subprocess."""
-  # docker buildx requires docker 20.10.
+  version = client.version()['Version']
+  [major, minor] = version.split('.')[:2]
+  if float(f'{major}.{minor}') < 20.10:
+    # docker buildx requires docker 20.10.
+    raise RuntimeError('XCloud requires Docker Engine version 20.10+.')
   command = [
       'docker', 'buildx', 'build', '-t', image_tag, '-f', dockerfile, path
   ]
