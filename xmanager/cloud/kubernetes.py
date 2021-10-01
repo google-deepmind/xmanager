@@ -69,13 +69,12 @@ class Client:
 
   def launch(
       self,
-      experiment_name: str,
       get_full_job_name: Callable[[str], str],
       jobs: Sequence[xm.Job],
   ) -> List[k8s_client.V1Job]:
     """Launches jobs on Kubernetes."""
     batch_jobs = []
-    service = convert_to_valid_label('exp-' + experiment_name)
+    service = 'experiments'
     hostnames = [f'workerpool{i}' for i in range(len(jobs))]
     domains = [
         f'{host}.{service}.default.svc.cluster.local:2222' for host in hostnames
@@ -105,7 +104,7 @@ class Client:
       k8s_job.spec = k8s_client.V1JobSpec(
           template=k8s_client.V1PodTemplateSpec(
               metadata=k8s_client.V1ObjectMeta(
-                  labels={'experiment': service},
+                  labels={'service': service},
                   annotations=annotations_from_executor(executor),
               ),
               spec=k8s_client.V1PodSpec(
@@ -127,15 +126,20 @@ class Client:
     return batch_jobs
 
   def _create_service(self, service: str) -> None:
-    """Creates a K8s service with an `experiment: service` selector."""
+    """Creates a K8s service with an `service: {service}` selector."""
+    core_api = k8s_client.CoreV1Api(self.api_client)
     body = k8s_client.V1Service(
         metadata=k8s_client.V1ObjectMeta(name=service),
         spec=k8s_client.V1ServiceSpec(
-            selector={'experiment': service},
+            selector={'service': service},
             cluster_ip='None',
         ),
     )
-    core_api = k8s_client.CoreV1Api(self.api_client)
+    response = core_api.list_namespaced_service(namespace='default')
+    for item in response.items:
+      # service already exists
+      if item.metadata.name == service:
+        return
     core_api.create_namespaced_service(namespace='default', body=body)
 
   async def wait_for_job(self, job: k8s_client.V1Job) -> None:
@@ -163,7 +167,7 @@ class KubernetesHandle(local_execution.ExecutionHandle):
 
 
 # Must act on all jobs with `local_executors.Kubernetes` executor.
-def launch(experiment_name: str, get_full_job_name: Callable[[str], str],
+def launch(get_full_job_name: Callable[[str], str],
            job_group: xm.JobGroup) -> List[KubernetesHandle]:
   """Launch K8s jobs in the job_group and return a handler."""
   jobs = xm.job_operators.collect_jobs_by_filter(job_group,
@@ -172,7 +176,6 @@ def launch(experiment_name: str, get_full_job_name: Callable[[str], str],
   if not jobs:
     return []
   k8_jobs = client().launch(
-      experiment_name=experiment_name,
       get_full_job_name=get_full_job_name,
       jobs=jobs,
   )

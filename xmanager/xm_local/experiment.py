@@ -81,8 +81,7 @@ class LocalExperimentUnit(xm.ExperimentUnit):
     # cross-executor decisions.
     caip_handles = caip.launch(self._experiment_title,
                                self.experiment_unit_name, job_group)
-    k8s_handles = kubernetes.launch(
-        str(self.experiment_id), self.get_full_job_name, job_group)
+    k8s_handles = kubernetes.launch(self.get_full_job_name, job_group)
     local_handles = await local_execution.launch(self.get_full_job_name,
                                                  job_group)
     return _LaunchResult(

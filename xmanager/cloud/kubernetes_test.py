@@ -24,10 +24,15 @@ from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import executors as local_executors
 
 
+class CallAPIResponse:
+  items = []
+
+
 class KubernetesTest(unittest.TestCase):
 
   def test_launch(self):
     fake_client = mock.Mock()
+    fake_client.call_api.return_value = CallAPIResponse()
     client = kubernetes.Client(fake_client)
 
     job = xm.Job(
@@ -45,16 +50,16 @@ class KubernetesTest(unittest.TestCase):
         },
     )
     expected_service = k8s_client.V1Service(
-        metadata=k8s_client.V1ObjectMeta(name='exp-test-experiment'),
+        metadata=k8s_client.V1ObjectMeta(name='experiments'),
         spec=k8s_client.V1ServiceSpec(
-            selector={'experiment': 'exp-test-experiment'},
+            selector={'service': 'experiments'},
             cluster_ip='None',
         ),
     )
     cluster_spec = json.dumps({
         'cluster': {
             'workerpool0': [
-                'workerpool0.exp-test-experiment.default.svc.cluster.local:2222'
+                'workerpool0.experiments.default.svc.cluster.local:2222'
             ]
         },
         'task': {
@@ -67,12 +72,12 @@ class KubernetesTest(unittest.TestCase):
         spec=k8s_client.V1JobSpec(
             template=k8s_client.V1PodTemplateSpec(
                 metadata=k8s_client.V1ObjectMeta(
-                    labels={'experiment': 'exp-test-experiment'},
+                    labels={'service': 'experiments'},
                     annotations={},
                 ),
                 spec=k8s_client.V1PodSpec(
                     hostname='workerpool0',
-                    subdomain='exp-test-experiment',
+                    subdomain='experiments',
                     restart_policy='Never',
                     containers=[
                         k8s_client.V1Container(
@@ -102,8 +107,8 @@ class KubernetesTest(unittest.TestCase):
         ),
     )
 
-    client.launch('test-experiment', lambda x: x, [job])
-    [service_call, job_call] = fake_client.call_api.call_args_list
+    client.launch(lambda x: x, [job])
+    [_, service_call, job_call] = fake_client.call_api.call_args_list
     _, service_kwargs = service_call
     self.assertEqual(service_kwargs['body'], expected_service)
     _, job_kwargs = job_call
