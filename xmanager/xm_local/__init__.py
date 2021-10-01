@@ -17,3 +17,5 @@ from xmanager.xm_local import experiment
 from xmanager.xm_local.executors import *
 
 create_experiment = experiment.create_experiment
+get_experiment = experiment.get_experiment
+list_experiments = experiment.list_experiments

@@ -18,7 +18,9 @@ from concurrent import futures
 import time
 from typing import Any, Awaitable, Callable, List, Mapping, Sequence
 
+from absl import logging
 import attr
+from kubernetes import client as k8s_client
 from xmanager import xm
 from xmanager.cloud import caip
 from xmanager.cloud import kubernetes
@@ -310,10 +312,41 @@ def create_experiment(experiment_title: str) -> xm.Experiment:
 
 
 def get_experiment(experiment_id: int) -> xm.Experiment:
-  """Returns a Experiment instance associated with this experiment id."""
-  raise NotImplementedError
+  """Returns an Experiment instance associated with this experiment id."""
+  # pylint: disable=protected-access
+  experiment_result = database.database().get_experiment(experiment_id)
+  experiment = LocalExperiment(experiment_result.experiment_title)
+  experiment._id = experiment_id
+  experiment._work_unit_id_predictor = id_predictor.Predictor(1)
+  for work_unit_result in experiment_result.work_units:
+    work_unit = LocalWorkUnit(experiment, experiment_result.experiment_title,
+                              lambda _: None, {}, xm.WorkUnitRole(),
+                              experiment._work_unit_id_predictor)
+    work_unit._work_unit_id = work_unit_result.work_unit_id
+    non_local_handles = []
+    kubernetes_jobs = []
+    for _, data in work_unit_result.jobs.items():
+      if data.HasField('local'):
+        logging.warning(
+            '[Experiment id: %s, work unit id: %s] '
+            'Loading local experiment units from storage is not implemented.',
+            experiment_id, work_unit_result.work_unit_id)
+      elif data.HasField('caip'):
+        non_local_handles = [caip.CaipHandle(data.caip.resource_name)]
+      elif data.HasField('kubernetes'):
+        job = k8s_client.V1Job()
+        job.metadata = k8s_client.V1ObjectMeta(
+            namespace=data.kubernetes.namespace, name=data.kubernetes.job_name)
+        kubernetes_jobs.append(job)
+        non_local_handles = [kubernetes.KubernetesHandle(kubernetes_jobs)]
+    work_unit._non_local_execution_handles = non_local_handles
+    experiment._experiment_units.append(work_unit)
+    experiment._work_unit_count += 1
+  return experiment
+  # pylint: enable=protected-access
 
 
 def list_experiments() -> Sequence[xm.Experiment]:
   """Yields a list of Experiment instances that have been created thus far."""
-  raise NotImplementedError
+  experiment_ids = database.database().list_experiment_ids()
+  return [get_experiment(experiment_id) for experiment_id in experiment_ids]
