@@ -1,4 +1,15 @@
-# XManager: A framework for managing experiments
+# XManager: A framework for managing machine learning experiments
+
+XManager is a platform for packaging, running and keeping track of machine
+learning experiments. It currently enables one to launch experiments locally or
+on [Google Cloud Platform (GCP)](https://cloud.google.com/). Interaction with
+experiments is done via XManager's APIs through Python *launch scripts*.
+
+To get started, install [the prerequisites](#prerequisites), [XManager
+itself](#install-xmanager) and follow [the tutorial](#writing-xm-launch-scripts)
+to create and run a launch script.
+
+<!-- TODO: Split the documentation into proper wiki pages. -->
 
 ## Prerequisites
 
@@ -23,7 +34,7 @@ to run XManager experiments, you need to install Bazel.
 1. Follow [the steps](https://docs.bazel.build/versions/master/install.html) to
    install Bazel.
 
-### Create a Google Cloud Platform (GCP) project
+### Create a GCP project
 
 If you use `xm_local.Caip` ([Cloud AI Platform](https://cloud.google.com/ai-platform))
 to run XManager experiments, you need to have a GCP project in order to be able
@@ -61,8 +72,8 @@ to access CAIP to run jobs.
      the 'Container Registry'.
 
 6. Create a staging bucket in us-central1 if you do not already have one. This
-   bucket should be used to save experiment artifacts like Tensorflow log files,
-   which can be read by Tensorboard. This bucket may also be used to stage files
+   bucket should be used to save experiment artifacts like TensorFlow log files,
+   which can be read by TensorBoard. This bucket may also be used to stage files
    to build your Docker image if you build your images remotely.
 
    ```bash
@@ -70,7 +81,7 @@ to access CAIP to run jobs.
    gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME
    ```
 
-   Add the GOOGLE_CLOUD_BUCKET_NAME to your environment variables or your .bashrc:
+   Add `GOOGLE_CLOUD_BUCKET_NAME` to the environment variables or your .bashrc:
 
    ```bash
    export GOOGLE_CLOUD_BUCKET_NAME=<GOOGLE_CLOUD_BUCKET_NAME>
@@ -82,29 +93,75 @@ to access CAIP to run jobs.
 pip install git+https://github.com/deepmind/xmanager.git
 ```
 
-## Run XManager
+## Writing XManager launch scripts
 
-Run a launch script, e.g.
+<details>
+  <summary>
+    A snippet for the impatient
+  </summary>
 
-```bash
-xmanager launch ./xmanager/examples/cifar10_tensorflow/launcher.py
+```python
+# Contains core primitives and APIs.
+from xmanager import xm
+# Implementation of those core concepts for what we call 'the local backend',
+# which means all executables are sent for execution from this machine,
+# independently of whether they are actually executed on our machine or on GCP.
+from xmanager import xm_local
+#
+# Creates an experiment context and saves its metadata to the database, which we
+# can reuse later via `xm_local.list_experiments`, for example. Note that
+# `experiment` has tracking properties such as `id`.
+with xm_local.create_experiment(experiment_title='cifar10') as experiment:
+  # Packaging prepares a given *executable spec* for running with a concrete
+  # *executor spec*: depending on the combination, that may involve building
+  # steps and / or copying the results somewhere. For example, a
+  # `xm.python_container` designed to run on `Kubernetes` will be built via
+  #`docker build`, and the new image will be uploaded to the container registry.
+  # But for our simple case where we have a prebuilt Linux binary designed to
+  # run locally only some validations are performed -- for example, that the
+  # file exists.
+  #
+  # `executable` contains all the necessary information needed to launch the
+  # packaged blob via `.add`, see below.
+  [executable] = experiment.package([
+      xm.binary(
+          # What we are going to run.
+          path='/home/user/project/a.out',
+          # Where we are going to run it.
+          executor_spec=xm_local.Local.Spec(),
+      )
+  ])
+  #
+  # Let's find out which `batch_size` is best -- presumably our jobs write the
+  # results somewhere.
+  for batch_size in [64, 1024]:
+    # `add` creates a new *experiment unit*, which is usually a collection of
+    # semantically united jobs, and sends them for execution. To pass an actual
+    # collection one may want to use `JobGroup`s (more about it later in the
+    # documentation, but for our purposes we are going to pass just one job.
+    experiment.add(xm.Job(
+        # The `a.out` we packaged earlier.
+        executable=executable,
+        # We are using the default settings here, but executors have plenty of
+        # arguments available to control execution.
+        executor=xm_local.Local(),
+        # Time to pass the batch size as a command-line argument!
+        args={'batch_size': batch_size},
+        # We can also pass environment variables.
+        env_vars={'HEAPPROFILE': '/tmp/a_out.hprof'},
+    ))
+  #
+  # The context will wait for locally run things (but not for remote things such
+  # as jobs sent to GCP, although they can be explicitly awaited via
+  # `wait_for_completion`).
 ```
 
-In order to run multi-job experiments, a `--xm_wrap_late_bindings` flag might be
-required:
-
-```bash
-xmanager launch ./xmanager/examples/cifar10_tensorflow/launcher.py -- --xm_wrap_late_bindings
-```
-
-TODO: Elaborate why that is necessary.
-
-## Writing XM launch scripts
+</details>
 
 The basic structure of an XManager launch script can be summarized by these
 steps:
 
-1. Define your experiment context.
+1. Create an experiment and acquire its context.
 
     ```python
     from xmanager import xm
@@ -164,6 +221,26 @@ steps:
           args=hyperparameters,
         ))
     ```
+
+Now we should be ready [to run](#run-xmanager) the launch script.
+
+To learn more about different *executables* and *executors* follow
+['Components'](#components).
+
+## Run XManager
+
+```bash
+xmanager launch ./xmanager/examples/cifar10_tensorflow/launcher.py
+```
+
+In order to run multi-job experiments, the `--xm_wrap_late_bindings` flag might
+be required:
+
+```bash
+xmanager launch ./xmanager/examples/cifar10_tensorflow/launcher.py -- --xm_wrap_late_bindings
+```
+
+<!-- TODO: Elaborate on why that is necessary. -->
 
 ## Components
 
@@ -307,7 +384,8 @@ specification should be prepared and packaged.
 
 #### Cloud AI Platform (CAIP)
 
-The Caip executor declares that an executable will be run on the CAIP platform.
+The `Caip` executor declares that an executable will be run on the CAIP
+platform.
 
 The Caip executor takes in a resource requirements object.
 
@@ -362,7 +440,7 @@ from which the launch script is invoked.
 #### Kubernetes (experimental)
 
 The Kubernetes executor declares that an executable will be run on a Kubernetes
-cluster. As of March 2021, Kubernetes is not fully supported.
+cluster. As of October 2021, Kubernetes is not fully supported.
 
 The Kubernetes executor pulls from your local `kubeconfig`. The XManager
 command-line has helpers to set up a Google Kubernetes Engine (GKE) cluster.
@@ -393,18 +471,17 @@ xm_local.Kubernetes.Spec(
 
 ### Job / JobGroup
 
-Each Job and JobGroup objects defines a specific run and can not be run multiple
-times. While a job defines a single run of a single executable, a JobGroup
-defines a single run of nested Jobs containing many executables of the same type
-or different types. JobGroups provide the gang scheduling concept: Jobs inside
-them are scheduled / descheduled simultaneously.
+A `Job` represents a single executable on a particular executor, while a
+`JobGroup` unites a group of `Job`s providing a gang scheduling concept:
+`Job`s inside them are scheduled / descheduled simultaneously. Same `Job`
+and `JobGroup` instances can be `add`ed multiple times.
 
 #### Job
 
 A Job accepts an executable and an executor along with hyperparameters which can
 either be command-line arguments or environment variables.
 
-Command-line arguements can be passed in list form, `[arg1, arg2, arg3]`:
+Command-line arguments can be passed in list form, `[arg1, arg2, arg3]`:
 
 ```bash
 binary arg1 arg2 arg3
@@ -443,8 +520,8 @@ xm.Job(
 
 #### JobGroup
 
-A JobGroup accepts jobs in a keyword form. The keyword can be any valid Python
-keyword. For example, you can call your jobs 'agent' and 'observer'.
+A JobGroup accepts jobs in a kwargs form. The keyword can be any valid Python
+identifier. For example, you can call your jobs 'agent' and 'observer'.
 
 ```python
 agent_job = xm.Job(...)

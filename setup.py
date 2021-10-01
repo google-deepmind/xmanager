@@ -19,7 +19,7 @@ from setuptools import setup
 setup(
     name='xmanager',
     version='0.1.0',
-    description='A framework for managing experiments',
+    description='A framework for managing machine learning experiments',
     author='DeepMind Technologies Limited',
     packages=find_namespace_packages(exclude=['examples.*']),
     include_package_data=True,
