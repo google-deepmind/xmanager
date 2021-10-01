@@ -15,6 +15,7 @@
 import abc
 import functools
 import os
+from typing import Dict, List
 
 import attr
 import sqlalchemy
@@ -22,6 +23,22 @@ import sqlite3
 from xmanager.generated import data_pb2
 
 from google.protobuf import text_format
+
+
+@attr.s(auto_attribs=True)
+class WorkUnitResult:
+  """Result of a WorkUnit database query."""
+  work_unit_id: int
+  jobs: Dict[str, data_pb2.Job]
+
+
+@attr.s(auto_attribs=True)
+class ExperimentResult:
+  """Result of an Experiment database query."""
+  experiment_id: int
+  experiment_title: str
+  work_units: List[WorkUnitResult]
+
 
 Engine = sqlalchemy.engine.Engine
 
@@ -131,3 +148,42 @@ class Database:
         work_unit_id=work_unit_id,
         name=name,
         data=data)
+
+  def list_experiment_ids(self) -> List[int]:
+    """Lists all the experiment ids from local database."""
+    query = ('SELECT Id FROM Experiment')
+    rows = self.engine.execute(query)
+    return [r['Id'] for r in rows]
+
+  def get_experiment(self, experiment_id: int) -> ExperimentResult:
+    """Gets an experiment from local database."""
+    query = ('SELECT Title FROM Experiment WHERE Id=:experiment_id')
+    rows = self.engine.execute(query, experiment_id=experiment_id)
+    title = None
+    for r in rows:
+      title = r['Title']
+      break
+    if title is None:
+      raise ValueError(f'Experiment Id {experiment_id} doesn\'t exist.')
+    return ExperimentResult(experiment_id, title,
+                            self.list_work_units(experiment_id))
+
+  def list_work_units(self, experiment_id: int) -> List[WorkUnitResult]:
+    """Lists an experiment's work unit ids from local database."""
+    query = ('SELECT WorkUnitId '
+             'FROM WorkUnit WHERE ExperimentId=:experiment_id')
+    rows = self.engine.execute(query, experiment_id=experiment_id)
+    return [self.get_work_unit(experiment_id, r['WorkUnitId']) for r in rows]
+
+  def get_work_unit(self, experiment_id: int,
+                    work_unit_id: int) -> WorkUnitResult:
+    """Gets a work unit from local database."""
+    query = ('SELECT Name, Data FROM Job '
+             'WHERE ExperimentId=:experiment_id AND WorkUnitID=:work_unit_id')
+    rows = self.engine.execute(
+        query, experiment_id=experiment_id, work_unit_id=work_unit_id)
+    jobs = {}
+    for r in rows:
+      job = data_pb2.Job()
+      jobs[r['Name']] = text_format.Parse(r['Data'], job)
+    return WorkUnitResult(work_unit_id, jobs)
