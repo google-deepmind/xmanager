@@ -1,4 +1,4 @@
-# XManager: A framework for managing machine learning experiments
+# XManager: A framework for managing machine learning experiments 🧑‍🔬
 
 XManager is a platform for packaging, running and keeping track of machine
 learning experiments. It currently enables one to launch experiments locally or
@@ -97,7 +97,7 @@ pip install git+https://github.com/deepmind/xmanager.git
 
 <details>
   <summary>
-    A snippet for the impatient
+    A snippet for the impatient 🙂
   </summary>
 
 ```python
