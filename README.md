@@ -6,8 +6,8 @@ on [Google Cloud Platform (GCP)](https://cloud.google.com/). Interaction with
 experiments is done via XManager's APIs through Python *launch scripts*.
 
 To get started, install [the prerequisites](#prerequisites), [XManager
-itself](#install-xmanager) and follow [the tutorial](#writing-xm-launch-scripts)
-to create and run a launch script.
+itself](#install-xmanager) and follow [the
+tutorial](#writing-xmanager-launch-scripts) to create and run a launch script.
 
 <!-- TODO: Split the documentation into proper wiki pages. -->
 
