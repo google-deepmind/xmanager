@@ -35,7 +35,10 @@ class _CaseInsensetiveEnumMeta(enum.EnumMeta):
   """
 
   def __getitem__(cls, resource_name: str) -> 'ResourceType':
-    return super().__getitem__(resource_name.upper())
+    try:
+      return super().__getitem__(resource_name.upper())
+    except KeyError:
+      raise KeyError(f'Unknown {cls.__name__} {resource_name!r}')
 
 
 class ResourceType(enum.Enum, metaclass=_CaseInsensetiveEnumMeta):
