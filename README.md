@@ -9,6 +9,8 @@ To get started, install [the prerequisites](#prerequisites), [XManager
 itself](#install-xmanager) and follow [the
 tutorial](#writing-xmanager-launch-scripts) to create and run a launch script.
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidance on contributions.
+
 <!-- TODO: Split the documentation into proper wiki pages. -->
 
 ## Prerequisites

@@ -1,7 +1,7 @@
-# How to Contribute
+# How to contribute
 
-We'd love to accept your patches and contributions to this project. There are
-just a few small guidelines you need to follow.
+The project currently does not accept pull requests, but we'd be more than happy
+to get your feedback via [issues](https://github.com/deepmind/xmanager/issues)!
 
 ## Contributor License Agreement
 
@@ -15,13 +15,6 @@ to sign a new one.
 You generally only need to submit a CLA once, so if you've already submitted one
 (even if it was for a different project), you probably don't need to do it
 again.
-
-## Code Reviews
-
-All submissions, including submissions by project members, require review. We
-use GitHub pull requests for this purpose. Consult
-[GitHub Help](https://help.github.com/articles/about-pull-requests/) for more
-information on using pull requests.
 
 ## Community Guidelines
 
