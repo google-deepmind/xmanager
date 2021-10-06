@@ -191,8 +191,6 @@ steps:
 3. Package your executables.
 
     ```python
-    from xmanager import xm_local
-
     [executable] = experiment.package([
       xm.Packageable(
         executable_spec=spec,
