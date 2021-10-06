@@ -95,6 +95,13 @@ to access CAIP to run jobs.
 pip install git+https://github.com/deepmind/xmanager.git
 ```
 
+Or, alternatively, [a PyPI project](https://pypi.org/project/xmanager/) is also
+available.
+
+```bash
+pip install xmanager
+```
+
 ## Writing XManager launch scripts
 
 <details>
