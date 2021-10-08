@@ -45,42 +45,42 @@ def suggestion(project_name: str) -> str:
 
 
 def get_gcs_path_or_suggestion(project_name: str) -> str:
-  """Returns a value passed in the --gcs_path flag or a suggested valid path.
+  """Returns a value passed in the --xm_gcs_path flag or a suggested valid path.
 
   Args:
     project_name: a project name used to generate suggested GCS path.
 
   Returns:
-    If the --gcs_path flag is empty, returns a reasonable suggestion.
-    If the --gcs_path contains invalid value, raise an error.
+    If the --xm_gcs_path flag is empty, returns a reasonable suggestion.
+    If the --xm_gcs_path contains invalid value, raise an error.
     Otherwise, returns a flag value.
   """
   if not _GCS_PATH.value:
     return suggestion(project_name)
   elif not is_gcs_path(_GCS_PATH.value):
     raise app.UsageError(
-        '--gcs_path not in gs://bucket/directory or /gcs/path format. ' +
-        f'Suggestion: --gcs_path={suggestion(project_name)}')
+        '--xm_gcs_path not in gs://bucket/directory or /gcs/path format. ' +
+        f'Suggestion: --xm_gcs_path={suggestion(project_name)}')
   return str(_GCS_PATH.value)
 
 
 def get_gcs_path_or_fail(project_name: str) -> str:
-  """Returns a value passed in the --gcs_path flag; fails if nothing is passed.
+  """Returns value passed in the --xm_gcs_path flag; fails if nothing is passed.
 
   Args:
     project_name: a project name used to generate suggested GCS path.
 
   Returns:
-    If the --gcs_path flag is empty, or contains invalid value, raise an error.
-    Otherwise, returns a flag value.
+    If the --xm_gcs_path flag is empty, or contains invalid value, raise an
+    error. Otherwise, returns a flag value.
   """
   if not _GCS_PATH.value:
-    raise app.UsageError('--gcs_path is missing. Suggestion: ' +
-                         f'--gcs_path={suggestion(project_name)}')
+    raise app.UsageError('--xm_gcs_path is missing. Suggestion: ' +
+                         f'--xm_gcs_path={suggestion(project_name)}')
   elif not is_gcs_path(_GCS_PATH.value):
     raise app.UsageError(
-        '--gcs_path not in gs://bucket/directory or /gcs/path format. ' +
-        f'Suggestion: --gcs_path={suggestion(project_name)}')
+        '--xm_gcs_path not in gs://bucket/directory or /gcs/path format. ' +
+        f'Suggestion: --xm_gcs_path={suggestion(project_name)}')
   return str(_GCS_PATH.value)
 
 

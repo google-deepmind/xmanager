@@ -22,7 +22,8 @@ from absl.testing import parameterized
 from xmanager.contrib import gcs
 
 # Error patterns.
-_GCS_PATH_ERROR = '--gcs_path not in gs://bucket/directory or /gcs/path format.'
+_GCS_PATH_ERROR = ('--xm_gcs_path not in gs://bucket/directory or /gcs/path '
+                   'format.')
 _PATH_ERROR = 'Path not in gs://bucket/directory or /gcs/path format'
 
 
@@ -38,7 +39,7 @@ class GcsTest(parameterized.TestCase):
   def test_gcs_path_empty_flag(self):
     self.assertEqual(
         gcs.get_gcs_path_or_suggestion('xcloud'), gcs.suggestion('xcloud'))
-    with self.assertRaisesRegex(app.UsageError, '--gcs_path is missing'):
+    with self.assertRaisesRegex(app.UsageError, '--xm_gcs_path is missing'):
       gcs.get_gcs_path_or_fail('xcloud')
 
   def test_gcs_path_correct_value(self):
