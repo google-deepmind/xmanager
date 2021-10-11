@@ -255,7 +255,7 @@ xmanager launch ./xmanager/examples/cifar10_tensorflow/launcher.py -- --xm_wrap_
 
 XManager executable specifications define what should be packaged in the form of
 binaries, source files, and other input dependencies required for job execution.
-Executable specifications are reusable are generally platform-independent.
+Executable specifications are reusable and generally platform-independent.
 
 #### Container
 
