@@ -15,8 +15,9 @@
 
 import copy
 import itertools
-from typing import Any, Callable, List, Sequence
+from typing import Any, Callable, List, Sequence, Tuple
 
+import attr
 from xmanager.xm import job_blocks
 from xmanager.xm import pattern_matching
 
@@ -78,6 +79,52 @@ def collect_jobs_by_filter(
 
   job_collector = pattern_matching.match(match_job_group, match_job)
   return job_collector(job_group)
+
+
+@attr.s(auto_attribs=True)
+class ConstraintClique:
+  """A constraint with the list of jobs it applies to."""
+
+  constraint: job_blocks.Constraint
+  jobs: List[job_blocks.Job]
+
+
+def aggregate_constraint_cliques(
+    job_group: job_blocks.JobGroup) -> List[ConstraintClique]:
+  """Forms constraint cliques.
+
+  For each constraint met, collects all job names it applies to.
+
+  Args:
+    job_group: A job group to aggregate on.
+
+  Returns:
+    A set of cliques.
+  """
+
+  def match_job(
+      job: job_blocks.Job
+  ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
+    return [], [job]
+
+  def match_job_group(
+      job_group: job_blocks.JobGroup
+  ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
+    cliques: List[ConstraintClique] = []
+    jobs: List[job_blocks.Job] = []
+    for job in job_group.jobs.values():
+      subcliques, subjobs = matcher(job)
+      cliques += subcliques
+      jobs += subjobs
+    cliques = [
+        ConstraintClique(constraint, jobs)
+        for constraint in job_group.constraints
+    ] + cliques
+    return cliques, jobs
+
+  matcher = pattern_matching.match(match_job, match_job_group)
+  result, _ = matcher(job_group)
+  return result
 
 
 def flatten_jobs(job_group: job_blocks.JobGroup) -> List[job_blocks.Job]:

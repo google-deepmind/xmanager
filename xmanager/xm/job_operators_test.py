@@ -56,6 +56,41 @@ class JobOperatorsTest(unittest.TestCase):
         [foo, baz],
     )
 
+  def test_aggregate_constraint_cliques(self):
+    outer_1 = construct_job('outer_1')
+    inner_1 = construct_job('inner_1')
+    inner_2 = construct_job('inner_2')
+    constraint_a = testing.TestConstraint('A')
+    constraint_b = testing.TestConstraint('B')
+    constraint_c = testing.TestConstraint('C')
+    job_group = job_blocks.JobGroup(
+        outer_1=outer_1,
+        outer_2=job_blocks.JobGroup(
+            inner_1=inner_1,
+            inner_2=inner_2,
+            constraints=[constraint_b, constraint_c],
+        ),
+        constraints=[constraint_a],
+    )
+
+    self.assertEqual(
+        job_operators.aggregate_constraint_cliques(job_group),
+        [
+            job_operators.ConstraintClique(
+                constraint=constraint_a,
+                jobs=[outer_1, inner_1, inner_2],
+            ),
+            job_operators.ConstraintClique(
+                constraint=constraint_b,
+                jobs=[inner_1, inner_2],
+            ),
+            job_operators.ConstraintClique(
+                constraint=constraint_c,
+                jobs=[inner_1, inner_2],
+            ),
+        ],
+    )
+
 
 if __name__ == '__main__':
   unittest.main()

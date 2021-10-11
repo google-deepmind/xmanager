@@ -16,6 +16,7 @@
 from concurrent import futures
 from typing import Any, Awaitable, Callable, List, Mapping
 
+import attr
 from xmanager.xm import core
 from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
@@ -102,3 +103,8 @@ class TestExecutor(job_blocks.Executor):
   """A test version of Executor with abstract methods implemented."""
 
   Spec = job_blocks.ExecutorSpec  # pylint: disable=invalid-name
+
+
+@attr.s(auto_attribs=True)
+class TestConstraint(job_blocks.Constraint):
+  id: str
