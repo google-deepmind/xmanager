@@ -208,7 +208,7 @@ def annotations_from_executor(
   if executor.cloud_provider != local_executors.GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER:
     return {}
 
-  if executor.requirements.is_tpu_job:
+  if executor.requirements.accelerator in xm.TpuType:
     tpu_runtime_version = 'nightly'
     if executor.tpu_capability:
       tpu_runtime_version = executor.tpu_capability.tpu_runtime_version

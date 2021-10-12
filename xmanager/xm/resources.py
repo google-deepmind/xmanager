@@ -361,9 +361,6 @@ class JobRequirements:
     self.task_requirements = ResourceDict()
     self.accelerator = None
     self.topology = None
-    # TODO: Consider checking .accelerator type instead.
-    self.is_tpu_job = False
-    self.is_gpu_job = False
 
     for resource_name, value in itertools.chain(resources.items(),
                                                 kw_resources.items()):
@@ -381,11 +378,6 @@ class JobRequirements:
       elif topology is not None:
         raise ValueError(
             f'A topology specified for non accelerator resource {resource}.')
-
-      if resource in TpuType:
-        self.is_tpu_job = True
-      elif resource in GpuType:
-        self.is_gpu_job = True
 
       if resource in self.task_requirements:
         raise ValueError(f'{resource} has been specified twice.')

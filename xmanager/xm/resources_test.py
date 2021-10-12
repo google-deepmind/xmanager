@@ -133,6 +133,21 @@ class JobRequirementsTest(parameterized.TestCase):
     self.assertEqual(
         repr(resources.JobRequirements(cpu=1)), 'xm.JobRequirements(cpu=1.0)')
 
+  def test_is_gpu_tpu_given_cpu(self):
+    requirements = resources.JobRequirements(cpu=1, ram=4 * xm.GiB)
+    self.assertNotIn(requirements.accelerator, xm.GpuType)
+    self.assertNotIn(requirements.accelerator, xm.TpuType)
+
+  def test_is_gpu_tpu_given_gpu(self):
+    requirements = resources.JobRequirements(cpu=1, v100=4)
+    self.assertIn(requirements.accelerator, xm.GpuType)
+    self.assertNotIn(requirements.accelerator, xm.TpuType)
+
+  def test_is_gpu_tpu_given_tpu(self):
+    requirements = resources.JobRequirements(cpu=1, tpu_v2='2x2')
+    self.assertNotIn(requirements.accelerator, xm.GpuType)
+    self.assertIn(requirements.accelerator, xm.TpuType)
+
 
 class EnumSubsetTest(parameterized.TestCase):
 
