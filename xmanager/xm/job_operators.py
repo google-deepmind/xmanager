@@ -93,7 +93,7 @@ def aggregate_constraint_cliques(
     job_group: job_blocks.JobGroup) -> List[ConstraintClique]:
   """Forms constraint cliques.
 
-  For each constraint met, collects all job names it applies to.
+  For each constraint met, collects all jobs it applies to.
 
   Args:
     job_group: A job group to aggregate on.
