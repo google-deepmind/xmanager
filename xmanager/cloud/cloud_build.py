@@ -147,7 +147,8 @@ class Client:
               'name':
                   'gcr.io/kaniko-project/executor:latest',
               'args': [
-                  f'--destination={repository}:{tag}', '--cache=true',
+                  f'--destination={repository}:{tag}',
+                  f'--destination={repository}:latest', '--cache=true',
                   f'--cache-ttl={self.kaniko_cache_ttl}'
               ],
           }]

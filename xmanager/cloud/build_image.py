@@ -177,7 +177,8 @@ def push(image: str) -> str:
 def _get_image_name(py_executable: xm.PythonContainer) -> str:
   image_name = os.path.basename(py_executable.path)
   project_name = auth.get_project_name()
-  return f'gcr.io/{project_name}/{image_name}:latest'
+  tag = docker_lib.create_tag()
+  return f'gcr.io/{project_name}/{image_name}:{tag}'
 
 
 def _get_base_image(py_executable: xm.PythonContainer) -> str:

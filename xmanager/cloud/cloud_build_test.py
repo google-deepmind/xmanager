@@ -67,6 +67,7 @@ class CloudBuildTest(absltest.TestCase):
             'steps': [{
                 'args': [
                     '--destination=my-image:live',
+                    '--destination=my-image:latest',
                     '--cache=true',
                     '--cache-ttl=336h',
                 ],

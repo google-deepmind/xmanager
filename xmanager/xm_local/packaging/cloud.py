@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Packaging for execution on Cloud."""
-
 from typing import Any, Optional
 
 from xmanager import xm
 from xmanager.cloud import auth
 from xmanager.cloud import build_image
+from xmanager.cloud import docker_lib
 from xmanager.docker import docker_adapter
 from xmanager.xm import pattern_matching
 from xmanager.xm_local import executables as local_executables
@@ -106,7 +106,8 @@ def _package_dockerfile(packageable: xm.Packageable, dockerfile: xm.Dockerfile):
   push_image_tag = _get_push_image_tag(packageable.executor_spec)
   if not push_image_tag:
     gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
-    push_image_tag = f'{gcr_project_prefix}/{dockerfile.name}:latest'
+    tag = docker_lib.create_tag()
+    push_image_tag = f'{gcr_project_prefix}/{dockerfile.name}:{tag}'
 
   build_image.push(
       build_image.build_by_dockerfile(dockerfile.path, dockerfile.dockerfile,

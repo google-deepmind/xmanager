@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Utility functions for building Docker images."""
+import datetime
 import os
 import pathlib
 import shutil
@@ -24,6 +25,10 @@ import docker
 from docker.utils import utils as docker_utils
 import humanize
 import termcolor
+
+
+def create_tag() -> str:
+  return datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f')
 
 
 def prepare_directory(destination_directory: str, source_directory: str,
@@ -85,6 +90,8 @@ def push_docker_image(image: str) -> str:
         'Expected docker push to return a string with `status: Pushed` and a '
         'Digest. This is probably a temporary issue with --build_locally and '
         'you should try again')
+  # If we are pushing an image, then :latest should also be present.
+  docker_client.images.push(repository=repository, tag='latest')
   print('Your image URI is:', termcolor.colored(image, color='blue'))
   return image
 
@@ -100,8 +107,12 @@ def _build_image_with_docker_command(client: docker.DockerClient,
   if float(f'{major}.{minor}') < 20.10:
     # docker buildx requires docker 20.10.
     raise RuntimeError('XCloud requires Docker Engine version 20.10+.')
+  repository, tag = docker_utils.parse_repository_tag(image_tag)
+  if not tag:
+    tag = 'latest'
   command = [
-      'docker', 'buildx', 'build', '-t', image_tag, '-f', dockerfile, path
+      'docker', 'buildx', 'build', '-t', f'{repository}:{tag}', '-t',
+      f'{repository}:latest', '-f', dockerfile, path
   ]
 
   # Adding flags to show progress and disabling cache.
@@ -116,10 +127,15 @@ def _build_image_with_docker_command(client: docker.DockerClient,
 def _build_image_with_python_client(client: docker.DockerClient, path: str,
                                     image_tag: str, dockerfile: str) -> None:
   """Builds a Docker image by calling the Docker Python client."""
+  repository, tag = docker_utils.parse_repository_tag(image_tag)
+  if not tag:
+    tag = 'latest'
   try:
     # The `tag=` arg refers to the full repository:tag image name.
     _, logs = client.images.build(
-        path=path, tag=image_tag, dockerfile=dockerfile)
+        path=path, tag=f'{repository}:{tag}', dockerfile=dockerfile)
+    client.images.build(
+        path=path, tag=f'{repository}:latest', dockerfile=dockerfile)
   except docker.errors.BuildError as error:
     for log in error.build_log:
       print(log.get('stream', ''), end='', file=sys.stderr)
