@@ -168,8 +168,16 @@ def merge_args(*operands: Union[SequentialArgs, UserArgs]) -> SequentialArgs:
 class ExecutableSpec(abc.ABC):
   """Executable specification describes what code / computation to run.
 
-  An executable spec must turned into an executable using package() in order
-  to be used in a Job.
+  Use one of the factory functions declared in xm/factories.py to create a spec:
+   * xm.binary - a prebuilt executable program.
+   * xm.bazel_binary - an executable built with Bazel.
+   * xm.container - a prebuilt Docker container.
+   * xm.bazel_container - a Docker container built with Bazel.
+   * xm.python_container - a Docker container running python code.
+   * xm.dockerfile_container - a Docker container built with dockerfile.
+
+  An executable spec must be turned into an Executable using
+  Experiment.package() in order to be used in a Job.
 
   WARNING: `ExecutableSpec`s are supposed to be implementation-agnostic. That
   means there should be no backend-specific class inheriting `ExecutableSpec`.
@@ -198,11 +206,20 @@ class Executable(abc.ABC):
 
 
 class ExecutorSpec(abc.ABC):
-  """Executor spec describes the location of the runtime environment."""
+  """Executor spec describes the location of the runtime environment.
+
+  For a list of supported ExecutorSpecs see a list of executors below.
+  """
 
 
 class Executor(abc.ABC):
-  """Executor describes the runtime environment of a Job."""
+  """Executor describes the runtime environment of a Job.
+
+  Concrete supported executors are listed in xm_local/executors.py:
+    * xm_local.Local
+    * xm_local.Caip
+    * xm_local.Kubernetes
+  """
 
   @classmethod
   @abc.abstractmethod
