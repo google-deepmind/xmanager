@@ -30,11 +30,10 @@ import getpass
 import inspect
 import queue
 import threading
-from typing import Any, Awaitable, Callable, Dict, Mapping, overload, Sequence
+from typing import Any, Awaitable, Callable, Dict, Mapping, Optional, Sequence, overload
 
 import attr
 import immutabledict
-
 from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
@@ -594,15 +593,14 @@ class Experiment(abc.ABC):
 
   @property
   def context(self) -> metadata_context.MetadataContext:
-    """Returns metadata context for a work unit."""
+    """Returns metadata context for the experiment."""
     return metadata_context.MetadataContext(
         creator=getpass.getuser(),
         annotations=metadata_context.ContextAnnotations())
 
 
-# FIXME: Determine base Experiment properties.
 @abc.abstractmethod
-def create_experiment() -> Experiment:
+def create_experiment(experiment_title: Optional[str] = None) -> Experiment:
   """Returns a concrete Experiment instance."""
   raise NotImplementedError
 
