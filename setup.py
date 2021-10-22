@@ -21,13 +21,12 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='xmanager',
-    version='0.1.1',
+    version='0.1.2',
     description='A framework for managing machine learning experiments',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='DeepMind Technologies Limited',
     packages=find_namespace_packages(exclude=['examples.*']),
-    include_package_data=True,
     package_data={'': ['*.sh', '*.sql']},
     python_requires='>=3.7',
     install_requires=[
