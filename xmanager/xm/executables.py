@@ -55,9 +55,6 @@ class Dockerfile(job_blocks.ExecutableSpec):
 
   path: str = attr.ib(
       converter=utils.resolve_path_relative_to_launcher, default='.')
-  # None is default instead of './Dockerfile' because the default behavior is
-  # to use '{path}/Dockerfile'. If './Dockerfile' were used, that would be
-  # equivalent to '{os.path.dir(launcher.py)}/Dockerfile'.
   dockerfile: str = attr.ib(
       converter=utils.resolve_path_relative_to_launcher,
       default=attr.Factory(
