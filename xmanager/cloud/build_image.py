@@ -65,7 +65,20 @@ RUN chown -R 1000:root ./entrypoint.sh && chmod -R 775 ./entrypoint.sh
 
 {entrypoint}
 """
+
 _ENTRYPOINT_TEMPLATE = """#!/bin/bash
+
+if [[ ! -z "$KUBE_GOOGLE_CLOUD_TPU_ENDPOINTS" ]]; then
+  # TPU is available; set up expected env vars.
+  TPU_IP_AND_PORT="${{KUBE_GOOGLE_CLOUD_TPU_ENDPOINTS:7}}"
+  TPU_ADDRESS="$(cut -d':' -f1 <<< "$TPU_IP_AND_PORT")"
+  echo "TPU_ADDRESS is $TPU_ADDRESS"
+  export TPU_ADDRESS
+  # Sometimes TPUs are not ready yet when the job starts. Wait until they are.
+  while ! nc -z $TPU_ADDRESS 8470 ; do sleep 5 ; done
+  # Expected by PyTorch.
+  export XRT_TPU_CONFIG="tpu_worker;0;$TPU_IP_AND_PORT"
+fi
 
 {cmds}
 """
@@ -260,16 +273,27 @@ def _create_dockerfile(
   return t.name
 
 
-def _create_entrypoint(py_executable: xm.PythonContainer) -> str:
-  """Create a bash entrypoint based on the base image."""
+def _get_entrypoint_commands(py_executable: xm.PythonContainer) -> str:
+  """Given the executable, return entrypoint commands."""
   if isinstance(py_executable.entrypoint, xm.ModuleName):
-    cmds = f'python -m {py_executable.entrypoint.module_name} $@'
+    cmds = [f'python -m {py_executable.entrypoint.module_name}']
   elif isinstance(py_executable.entrypoint, xm.CommandList):
-    cmds = '\n'.join(py_executable.entrypoint.commands) + ' $@'
+    # Commands specified by the user are passed unchanged.
+    cmds = py_executable.entrypoint.commands
   else:
     raise ValueError('Unsupported entrypoint type {}'.format(
         type(py_executable.entrypoint)))
-  contents = _ENTRYPOINT_TEMPLATE.format(cmds=cmds)
+  cmds = '\n'.join(cmds)
+  # Allow passing extra parameters to the commands.
+  if not cmds.endswith(('$@', '"$@"')):
+    cmds = cmds + ' "$@"'
+  return cmds
+
+
+def _create_entrypoint(py_executable: xm.PythonContainer) -> str:
+  """Create a bash entrypoint based on the base image."""
+  contents = _ENTRYPOINT_TEMPLATE.format(
+      cmds=_get_entrypoint_commands(py_executable))
 
   t = tempfile.NamedTemporaryFile(delete=False)
   with open(t.name, 'w') as f:
@@ -297,9 +321,9 @@ def _wrap_late_bindings(destination: str, path: str, dockerfile: str) -> None:
   which is only known at runtime and cannot be statically defined.
 
   Args:
-    destination: An empty destination to contain the new project path
-      and the new dockerfile will be destination/Dockerfile.
-      The current contents of destination will be deleted.
+    destination: An empty destination to contain the new project path and the
+      new dockerfile will be destination/Dockerfile. The current contents of
+      destination will be deleted.
     path: The current project path to build.
     dockerfile: The current dockerfile path needed to build the project.
   """
