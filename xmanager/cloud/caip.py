@@ -127,7 +127,7 @@ class Client:
     """Launch jobs on AI Platform (Unified)."""
     pools = []
     tensorboard, output_dir = self.get_tensorboard_settings(jobs)
-    for job in jobs:
+    for i, job in enumerate(jobs):
       executable = job.executable
       if not isinstance(executable,
                         local_executables.GoogleContainerRegistryImage):
@@ -142,6 +142,9 @@ class Client:
         tpu_runtime_version = 'nightly'  # pylint: disable=unused-variable
         if job.executor.tpu_capability:
           tpu_runtime_version = job.executor.tpu_capability.tpu_runtime_version
+      if i == 0 and job.executor.requirements.replicas > 1:
+        raise ValueError('The first job in a JobGroup using the Caip executor '
+                         'cannot have requirements.replicas > 1.')
       pool = aip_v1.WorkerPoolSpec(
           machine_spec=get_machine_spec(job),
           container_spec=aip_v1.ContainerSpec(
@@ -154,7 +157,7 @@ class Client:
               # https://cloud.google.com/ai-platform/training/docs/reference/rest/v1/projects.jobs#ReplicaConfig
               # 'tpuTfVersion': tpu_runtime_version,
           ),
-          replica_count=1,
+          replica_count=job.executor.requirements.replicas,
       )
       # The model SDK only supports tensorboard in v1beta1.
       # https://github.com/googleapis/python-aiplatform/blob/master/google/cloud/aiplatform/jobs.py#L1201
