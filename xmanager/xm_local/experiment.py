@@ -126,7 +126,20 @@ class LocalExperimentUnit(xm.ExperimentUnit):
     Use self.wait_until_complete() after self.stop() to guarantee the work unit
     is stopped.
     """
-    raise NotImplementedError
+
+    def stop_caip_handle(caip_handle: caip.CaipHandle) -> None:
+      caip_handle.stop()
+
+    def throw_on_unknown_handle(handle: Any) -> None:
+      raise TypeError(f'Unsupported handle: {handle!r}')
+
+    handle_stopper = pattern_matching.match(
+        stop_caip_handle,
+        throw_on_unknown_handle,
+    )
+    handles = self._non_local_execution_handles + self._local_execution_handles
+    for handle in handles:
+      handle_stopper(handle)
 
   def get_status(self) -> local_status.LocalWorkUnitStatus:
     """Gets the current status of the work unit."""

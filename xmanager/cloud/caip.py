@@ -231,6 +231,9 @@ class Client:
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(None, job._block_until_complete)  # pylint: disable=protected-access
 
+  def cancel(self, job_name: str) -> None:
+    aiplatform.CustomJob.get(job_name).cancel()
+
   async def create_tensorboard(self, name: str) -> str:
     """Create a CAIP tensorboard instance."""
     tensorboard_client = aip_v1beta.TensorboardServiceAsyncClient(
@@ -285,6 +288,9 @@ class CaipHandle(local_execution.ExecutionHandle):
 
   async def wait(self) -> None:
     await client().wait_for_job(self.job_name)
+
+  def stop(self) -> None:
+    client().cancel(self.job_name)
 
   def get_status(self) -> local_status.LocalWorkUnitStatus:
     state = client().get_state(self.job_name)
