@@ -6,9 +6,7 @@ from xmanager.cloud import build_image
 class BuildImageTest(absltest.TestCase):
 
   def create_container(self, entrypoint) -> xm.PythonContainer:
-    # We have to specify an absolute path, otherwise there is an error about
-    # unknown flag '--xm_launch_script' is issued.
-    return xm.PythonContainer(path='/tmp/launch.py', entrypoint=entrypoint)
+    return xm.PythonContainer(entrypoint=entrypoint)
 
   def test_get_entrypoint_commands_module_adds_suffix(self):
     project = self.create_container(xm.ModuleName('some.python.module'))

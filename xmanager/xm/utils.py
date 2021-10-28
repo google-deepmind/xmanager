@@ -107,7 +107,9 @@ def find_launch_script_path() -> str:
   """Finds the launch script path."""
   # We can get the launch script if it's provided explicitly, or when it's run
   # using a Python interpreter.
-  launch_script_path = FLAGS.xm_launch_script or sys.argv[0]
+  launch_script_path = sys.argv[0]
+  if hasattr(FLAGS, 'xm_launch_script') and FLAGS.xm_launch_script:
+    launch_script_path = FLAGS.xm_launch_script
   if not launch_script_path.endswith('.py'):
     # If the launch script is built with subpar we are interested in the name
     # of the main module, rather than subpar binary.
