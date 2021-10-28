@@ -45,7 +45,7 @@ def main(_):
         base_image='ubuntu:20.04',
         docker_instructions=(
             ['RUN apt-get update && apt-get install -y python-is-python3 python3-pip wget'] +  # pylint: disable=line-too-long
-            build_image.default_steps(directory) +
+            build_image.default_steps(directory, use_deep_module=False) +
             tpu.tpuvm_docker_instructions()),
         entrypoint=xm.ModuleName('cifar10'),
     )
