@@ -430,7 +430,7 @@ class Experiment(abc.ABC):
 
   def __enter__(self):
     if asyncio.get_event_loop().is_running():
-      raise RuntimeError('When using Experiment from a coroutine plase use '
+      raise RuntimeError('When using Experiment from a coroutine please use '
                          '`async with` syntax')
 
     self._event_loop = asyncio.new_event_loop()
