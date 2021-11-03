@@ -1,23 +1,40 @@
 # XManager: A framework for managing machine learning experiments 🧑‍🔬
 
+<!-- Note that links in README.md have to be absolute as it also lands on PyPI. -->
+
 XManager is a platform for packaging, running and keeping track of machine
 learning experiments. It currently enables one to launch experiments locally or
 on [Google Cloud Platform (GCP)](https://cloud.google.com/). Interaction with
 experiments is done via XManager's APIs through Python *launch scripts*.
 
-To get started, install [the prerequisites](#prerequisites), [XManager
-itself](#install-xmanager) and follow [the
-tutorial](#writing-xmanager-launch-scripts) to create and run a launch script.
+To get started, install [XManager](#install-xmanager), its
+[prerequisites](#prerequisites) if needed and follow [the
+tutorial](#writing-xmanager-launch-scripts) or
+[codelab.ipynb](https://github.com/deepmind/xmanager/blob/main/codelab.ipynb)
+to create and run a launch script.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidance on contributions.
+See
+[CONTRIBUTING.md](https://github.com/deepmind/xmanager/blob/main/CONTRIBUTING.md)
+for guidance on contributions.
 
-<!-- TODO: Split the documentation into proper wiki pages. -->
+## Install XManager
+
+```bash
+pip install git+https://github.com/deepmind/xmanager.git
+```
+
+Or, alternatively, [a PyPI project](https://pypi.org/project/xmanager/) is also
+available.
+
+```bash
+pip install xmanager
+```
 
 ## Prerequisites
 
 The codebase assumes Python 3.7+.
 
-### Install Docker
+### Install Docker (optional)
 
 If you use `xmanager.xm.PythonDocker` to run XManager experiments,
 you need to install Docker.
@@ -28,7 +45,7 @@ you need to install Docker.
 2. And if you are a Linux user, follow [the steps](https://docs.docker.com/engine/install/linux-postinstall/)
    to enable sudoless Docker.
 
-### Install Bazel
+### Install Bazel (optional)
 
 If you use `xmanager.xm_local.BazelContainer` or `xmanager.xm_local.BazelBinary`
 to run XManager experiments, you need to install Bazel.
@@ -36,11 +53,11 @@ to run XManager experiments, you need to install Bazel.
 1. Follow [the steps](https://docs.bazel.build/versions/master/install.html) to
    install Bazel.
 
-### Create a GCP project
+### Create a GCP project (optional)
 
-If you use `xm_local.Caip` ([Cloud AI Platform](https://cloud.google.com/ai-platform))
+If you use `xm_local.Caip` ([Vertex AI](https://cloud.google.com/vertex-ai))
 to run XManager experiments, you need to have a GCP project in order to be able
-to access CAIP to run jobs.
+to access Vertex AI to run jobs.
 
 1. [Create](https://console.cloud.google.com/) a GCP project.
 
@@ -89,19 +106,6 @@ to access CAIP to run jobs.
    export GOOGLE_CLOUD_BUCKET_NAME=<GOOGLE_CLOUD_BUCKET_NAME>
    ```
 
-## Install XManager
-
-```bash
-pip install git+https://github.com/deepmind/xmanager.git
-```
-
-Or, alternatively, [a PyPI project](https://pypi.org/project/xmanager/) is also
-available.
-
-```bash
-pip install xmanager
-```
-
 ## Writing XManager launch scripts
 
 <details>
@@ -147,7 +151,7 @@ with xm_local.create_experiment(experiment_title='cifar10') as experiment:
     # `add` creates a new *experiment unit*, which is usually a collection of
     # semantically united jobs, and sends them for execution. To pass an actual
     # collection one may want to use `JobGroup`s (more about it later in the
-    # documentation, but for our purposes we are going to pass just one job.
+    # documentation), but for our purposes we are going to pass just one job.
     experiment.add(xm.Job(
         # The `a.out` we packaged earlier.
         executable=executable,
@@ -257,129 +261,18 @@ XManager executable specifications define what should be packaged in the form of
 binaries, source files, and other input dependencies required for job execution.
 Executable specifications are reusable and generally platform-independent.
 
-#### Container
+See
+[executable_specs.md](https://github.com/deepmind/xmanager/blob/main/docs/executable_specs.md)
+for details on each executable specification.
 
-Container defines a pre-built Docker image located at a URL (or locally).
+| Name | Description |
+| --- | --- |
+| `xmanager.xm.Container` | A pre-built `.tar` image. |
+| `xmanager.xm.BazelContainer` | A [Bazel](https://bazel.build/) target producing a `.tar` image. |
+| `xmanager.xm.Binary` | A pre-built binary. |
+| `xmanager.xm.BazelBinary` | A [Bazel](https://bazel.build/) target producing a self-contained binary. |
+| `xmanager.xm.PythonContainer` | A directory with Python modules to be packaged as a Docker container. |
 
-```python
-xm.Container(path='gcr.io/project-name/image-name:latest')
-```
-
-`xm.container` is a shortener for packageable construction.
-
-```python
-assert xm.container(
-    executor_spec=xm_local.Local.Spec(),
-    args=args,
-    env_vars=env_vars,
-    ...
-) == xm.Packageable(
-    executable_spec=xm.Container(...),
-    executor_spec=xm_local.Local.Spec(),
-    args=args,
-    env_vars=env_vars,
-)
-```
-
-#### BazelBinary
-
-BazelBinary defines a Bazel binary target identified by a label.
-
-```python
-xm.Binary(path='//path/to/target:label')
-```
-
-`xm.bazel_binary` is a shortener for packageable construction.
-
-```python
-assert xm.bazel_binary(
-    executor_spec=xm_local.Local.Spec(),
-    args=args,
-    env_vars=env_vars,
-    ...
-) == xm.Packageable(
-    executable_spec=xm.BazelBinary(...),
-    executor_spec=xm_local.Local.Spec(),
-    args=args,
-    env_vars=env_vars,
-)
-```
-
-#### PythonContainer
-
-PythonContainer defines a Python project that is packaged into a Docker
-container.
-
-```python
-xm.PythonContainer(
-    entrypoint: xm.ModuleName('<module name>'),
-
-    # Optionals.
-    path: '/path/to/python/project/',  # Defaults to the current directory of the launch script.
-    base_image: '<image>[:<tag>]',
-    docker_instructions: ['RUN ...', 'COPY ...', ...],
-)
-```
-
-A simple form of PythonContainer is to just launch a Python module with default
-`docker_intructions`.
-
-```python
-xm.PythonContainer(entrypoint=xm.ModuleName('cifar10'))
-```
-
-That specification produces a Docker image that runs the following command:
-
-```
-python3 -m cifar10 fixed_arg1 fixed_arg2
-```
-
-An advanced form of PythonContainer allows you to override the entrypoint
-command as well as the Docker instructions.
-
-```python
-xm.PythonContainer(
-    entrypoint=xm.CommandList([
-      './pre_process.sh',
-      'python3 -m cifar10 $@',
-      './post_process.sh',
-    ]),
-    docker_instructions=[
-      'COPY pre_process.sh pre_process.sh',
-      'RUN chmod +x ./pre_process.sh',
-      'COPY cifar10.py',
-      'COPY post_process.sh post_process.sh',
-      'RUN chmod +x ./post_process.sh',
-    ],
-)
-```
-
-That specification produces a Docker image that runs the following commands:
-
-```
-./pre_process.sh
-python3 -m cifar10 fixed_arg1 fixed_arg2
-./post_process.sh
-```
-
-IMPORTANT: Note the use of `$@` which accepts command-line arguments. Otherwise,
-all command-line arguments are ignored by your entrypoint.
-
-`xm.python_container` is a shortener for packageable construction.
-
-```python
-assert xm.python_container(
-    executor_spec=xm_local.Local.Spec(),
-    args=args,
-    env_vars=env_vars,
-    ...
-) == xm.Packageable(
-    executable_spec=xm.PythonContainer(...),
-    executor_spec=xm_local.Local.Spec(),
-    args=args,
-    env_vars=env_vars,
-)
-```
 
 ### Executors
 
@@ -389,92 +282,15 @@ requirements for the job.
 Each executor also has a specification which describes how an executable
 specification should be prepared and packaged.
 
-#### Cloud AI Platform (CAIP)
+See
+[executors.md](https://github.com/deepmind/xmanager/blob/main/docs/executors.md)
+for details on each executor.
 
-The `Caip` executor declares that an executable will be run on the CAIP
-platform.
-
-The Caip executor takes in a resource requirements object.
-
-```python
-xm_local.Caip(
-    xm.JobRequirements(
-        cpu=1,  # Measured in vCPUs.
-        ram=4 * xm.GiB,
-        T4=1,  # NVIDIA Tesla T4.
-    ),
-)
-```
-
-```python
-xm_local.Caip(
-    xm.JobRequirements(
-        cpu=1,  # Measured in vCPUs.
-        ram=4 * xm.GiB,
-        TPU_V2=8,  # TPU v2.
-    ),
-)
-```
-
-As of June 2021, the currently supported accelerator types are:
-
-* `P100`
-* `V100`
-* `P4`
-* `T4`
-* `A100`
-* `TPU_V2`
-* `TPU_V3`
-
-IMPORTANT: Note that for `TPU_V2` and `TPU_V3` the only currently supported
-count is 8.
-
-##### Caip Specification
-
-The CAIP executor allows you specify a remote image repository to push to.
-
-```python
-xm_local.Caip.Spec(
-    push_image_tag='gcr.io/<project>/<image>:<tag>',
-)
-```
-
-#### Local
-
-The local executor declares that an executable will be run on the same machine
-from which the launch script is invoked.
-
-#### Kubernetes (experimental)
-
-The Kubernetes executor declares that an executable will be run on a Kubernetes
-cluster. As of October 2021, Kubernetes is not fully supported.
-
-The Kubernetes executor pulls from your local `kubeconfig`. The XManager
-command-line has helpers to set up a Google Kubernetes Engine (GKE) cluster.
-
-```bash
-pip install caliban==0.4.1
-xmanager cluster create
-
-# cleanup
-xmanager cluster delete
-```
-
-You can store the GKE credentials in your `kubeconfig`:
-
-```bash
-gcloud container clusters get-credentials <cluster-name>
-```
-
-##### Kubernetes Specification
-
-The Kubernetes executor allows you specify a remote image repository to push to.
-
-```python
-xm_local.Kubernetes.Spec(
-    push_image_tag='gcr.io/<project>/<image>:<tag>',
-)
-```
+| Name | Description |
+| --- | --- |
+| `xmanager.xm_local.Local` | Runs a binary or a container locally. |
+| `xmanager.xm_local.Caip` | Runs a container on [Vertex AI](#create-a-gcp-project-(optional)). |
+| `xmanager.xm_local.Kubernetes` | Runs a container on Kubernetes. |
 
 ### Job / JobGroup
 
