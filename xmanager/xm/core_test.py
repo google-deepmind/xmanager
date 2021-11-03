@@ -30,6 +30,28 @@ async def failing_job_generator(work_unit: core.WorkUnit):
   raise TestError
 
 
+class ApplyArgsTest(unittest.TestCase):
+
+  def test_wrong_job_args(self):
+    with self.assertRaises(ValueError):
+      core._apply_args(
+          job_blocks.Job(
+              job_blocks.Executable(name=''), testing.TestExecutor()),
+          {'abra': 'kadabra'})
+
+  def test_wrong_job_group_args(self):
+    with self.assertRaises(ValueError):
+      core._apply_args(
+          job_blocks.JobGroup(
+              learner=job_blocks.Job(
+                  job_blocks.Executable(name=''), testing.TestExecutor())),
+          {'eval': {
+              'args': {
+                  'batch_size': 32
+              }
+          }})
+
+
 class ExperimentTest(unittest.TestCase):
 
   def test_single_job_launch(self):

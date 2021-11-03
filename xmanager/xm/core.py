@@ -30,7 +30,7 @@ import getpass
 import inspect
 import queue
 import threading
-from typing import Any, Awaitable, Callable, Dict, Mapping, Optional, Sequence, overload
+from typing import Any, Awaitable, Callable, Collection, Dict, Mapping, Optional, Sequence, overload
 
 import attr
 import immutabledict
@@ -42,8 +42,21 @@ from xmanager.xm import metadata_context
 from xmanager.xm import pattern_matching
 
 
+def _check_if_unsupported_args_are_present(args: Mapping[str, Any],
+                                           supported_args: Collection[str],
+                                           job_type: str) -> None:
+  supported_args = set(supported_args)
+  unsupported_args = set(args.keys()) - supported_args
+  if unsupported_args:
+    raise ValueError(
+        f'Arguments {unsupported_args!r} are not supported by {job_type}. Only '
+        f'{supported_args!r} are allowed.')
+
+
 def _apply_args_to_job(job: job_blocks.Job, args: Mapping[str, Any]) -> None:
   """Overrides job properties."""
+  _check_if_unsupported_args_are_present(args, ('args', 'env_vars'), 'xm.Job')
+
   if 'args' in args:
     job.args = job_blocks.merge_args(job.args, args['args'])
   job.env_vars.update(args.get('env_vars', {}))
@@ -53,6 +66,8 @@ def _apply_args_to_job_group(job_group: job_blocks.JobGroup,
                              args: Mapping[str, Any]) -> None:
   """Recursively overrides job group properties."""
   if args:
+    _check_if_unsupported_args_are_present(args, job_group.jobs.keys(),
+                                           'xm.JobGroup')
     for key, job in job_group.jobs.items():
       _apply_args(job, args.get(key, {}))
 
