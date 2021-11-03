@@ -13,9 +13,11 @@
 # limitations under the License.
 """Tests for executables."""
 
+import os
 import unittest
 
 from xmanager.xm import executables
+from xmanager.xm import utils
 
 
 class ExecutablesTest(unittest.TestCase):
@@ -48,6 +50,13 @@ class ExecutablesTest(unittest.TestCase):
     executable = executables.BazelBinary(label=':binary')
 
     self.assertEqual(executable.name, '_binary')
+
+  def test_dockerfile_defaults(self):
+    root = utils.resolve_path_relative_to_launcher('.')
+
+    spec = executables.Dockerfile()
+    self.assertEqual(spec.path, root)
+    self.assertEqual(spec.dockerfile, os.path.join(root, 'Dockerfile'))
 
 
 if __name__ == '__main__':

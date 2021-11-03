@@ -235,7 +235,7 @@ class Packageable:
   executor_spec: ExecutorSpec
   args: SequentialArgs = attr.ib(
       factory=list, converter=SequentialArgs.from_collection)  # pytype: disable=annotation-type-mismatch
-  env_vars: Dict[str, str] = attr.Factory(dict)
+  env_vars: Dict[str, str] = attr.ib(converter=dict, default=attr.Factory(dict))
 
 
 class Constraint(abc.ABC):

@@ -46,19 +46,26 @@ class Dockerfile(job_blocks.ExecutableSpec):
   Executables such as BazelContainer or PythonContainer.
 
   Attributes:
-      path: Specifies the build's context.
-      dockerfile: The file that will be used for build instructions. Otherwise,
-        {path}/Dockerfile will be used. Equivalent to `docker build -f`.
-        A relative path will use a Dockerfile that is relative to the launcher
-        script.
+    path: Specifies the build's context.
+    dockerfile: The file that will be used for build instructions. Otherwise,
+      {path}/Dockerfile will be used. Equivalent to `docker build -f`. A
+      relative path will use a Dockerfile that is relative to the launcher
+      script.
   """
 
   path: str = attr.ib(
       converter=utils.resolve_path_relative_to_launcher, default='.')
   dockerfile: str = attr.ib(
-      converter=utils.resolve_path_relative_to_launcher,
-      default=attr.Factory(
-          lambda self: os.path.join(self.path, 'Dockerfile'), takes_self=True))
+      # This field is always set once the object is initialized, so we use str
+      # as type annotation. But the default value depends on another property
+      # and is set in __attrs_post_init__, so we temporary convert None to ''.
+      converter=lambda dockerfile: dockerfile or '',
+      default=None)
+
+  def __attrs_post_init__(self):
+    if not self.dockerfile:
+      self.dockerfile = os.path.join(self.path, 'Dockerfile')
+    self.dockerfile = utils.resolve_path_relative_to_launcher(self.dockerfile)
 
   @property
   def name(self) -> str:
@@ -70,43 +77,43 @@ class PythonContainer(job_blocks.ExecutableSpec):
   """PythonContainer describes a directory containing Python code.
 
   Attributes:
-      entrypoint: The Python module or list of shell commands to run when
-        entering this Python project.
-      path: Relative or absolute path to the Python project. By default, the
-        current directory (`'.'`) is used.
-      base_image: Name of the image to initialize a new Docker build stage using
-        the instruction `FROM`.
-      docker_instructions: List of Docker instructions to apply when building
-        the image. If not specified, the default one will be provided.
+    entrypoint: The Python module or list of shell commands to run when entering
+      this Python project.
+    path: Relative or absolute path to the Python project. By default, the
+      current directory (`'.'`) is used.
+    base_image: Name of the image to initialize a new Docker build stage using
+      the instruction `FROM`.
+    docker_instructions: List of Docker instructions to apply when building the
+      image. If not specified, the default one will be provided.
 
-        When you use `docker_instructions`, you are responsible for copying the
-        project directory. For example, if you are running with:
+      When you use `docker_instructions`, you are responsible for copying the
+      project directory. For example, if you are running with:
 
-          path='/path/to/cifar10'
+        path='/path/to/cifar10'
 
-        You should include these steps in your `docker_instructions`:
+      You should include these steps in your `docker_instructions`:
 
-          [
-            'COPY cifar10/ cifar10',
-            'WORKDIR cifar10',
-          ]
+        [
+          'COPY cifar10/ cifar10',
+          'WORKDIR cifar10',
+        ]
 
-        If your source code rarely changes, you can make this your first step.
-        If you are frequently iterating on the source code, it is best practice
-        to place these steps as late as possible in the list to maximize Docker
-        layer-caching.
-      use_deep_module: Whether the experiment code uses deep module structure
-        (i.e., 'from <a.prefix> import models') or not (i.e., 'import models').
+      If your source code rarely changes, you can make this your first step.
+      If you are frequently iterating on the source code, it is best practice
+      to place these steps as late as possible in the list to maximize Docker
+      layer-caching.
+    use_deep_module: Whether the experiment code uses deep module structure
+      (i.e., 'from <a.prefix> import models') or not (i.e., 'import models').
 
-        If use_deep_module is set to True, and docker_instructions are used, it
-        is recommended to use dedicated workdir and copy a whole project
-        directory there. The example above should be modified as:
+      If use_deep_module is set to True, and docker_instructions are used, it
+      is recommended to use dedicated workdir and copy a whole project
+      directory there. The example above should be modified as:
 
-          [
-            'RUN mkdir /workdir',
-            'WORKDIR /workdir',
-            'COPY cifar10/ /workdir/cifar10',
-          ]
+        [
+          'RUN mkdir /workdir',
+          'WORKDIR /workdir',
+          'COPY cifar10/ /workdir/cifar10',
+        ]
   """
 
   entrypoint: Union[ModuleName, CommandList]
@@ -133,6 +140,9 @@ class Container(job_blocks.ExecutableSpec):
   """A prebuilt Docker image.
 
   The image can be tagged locally or in a remote repository.
+
+  Attributes:
+    image_path: Path to a prebuilt container image.
   """
 
   image_path: str
@@ -144,10 +154,17 @@ class Container(job_blocks.ExecutableSpec):
 
 @attr.s(auto_attribs=True)
 class Binary(job_blocks.ExecutableSpec):
-  """A prebuilt executable program."""
+  """A prebuilt executable program.
+
+  Attributes:
+    path: Path to a prebuilt binary.
+    dependencies: A list of data dependencies to be packaged together with the
+      binary.
+  """
 
   path: str
-  dependencies: List[BinaryDependency] = attr.Factory(list)
+  dependencies: List[BinaryDependency] = attr.ib(
+      converter=list, default=attr.Factory(list))
 
   @property
   def name(self) -> str:
@@ -160,10 +177,14 @@ class BazelContainer(job_blocks.ExecutableSpec):
 
   Note that for targets based on https://github.com/bazelbuild/rules_docker one
   should append '.tar' to the label to specify a self-contained image.
+
+  Attributes:
+    label: The Bazel target to be built.
+    bazel_args: Bazel command line arguments.
   """
 
   label: str
-  bazel_args: List[str] = attr.Factory(list)
+  bazel_args: List[str] = attr.ib(converter=list, default=attr.Factory(list))
 
   @property
   def name(self) -> str:
@@ -176,11 +197,18 @@ class BazelBinary(job_blocks.ExecutableSpec):
 
   Note that for Python targets based on https://github.com/google/subpar
   a self-contained '.par' binary would be built.
+
+  Attributes:
+    label: The Bazel target to be built.
+    dependencies: A list of data dependencies to be packaged together with
+      the binary.
+    bazel_args: Bazel command line arguments.
   """
 
   label: str
-  dependencies: List[BinaryDependency] = attr.Factory(list)
-  bazel_args: List[str] = attr.Factory(list)
+  dependencies: List[BinaryDependency] = attr.ib(
+      converter=list, default=attr.Factory(list))
+  bazel_args: List[str] = attr.ib(converter=list, default=attr.Factory(list))
 
   @property
   def name(self) -> str:
