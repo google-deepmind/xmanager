@@ -20,10 +20,10 @@ from xmanager.xm import job_operators
 from xmanager.xm.compute_units import *
 from xmanager.xm.core import *
 from xmanager.xm.executables import *
-from xmanager.xm.factories import *
 from xmanager.xm.job_blocks import *
 from xmanager.xm.metadata_context import ContextAnnotations
 from xmanager.xm.metadata_context import MetadataContext
+from xmanager.xm.packagables import *
 from xmanager.xm.resources import *
 from xmanager.xm.utils import run_in_asyncio_loop
 from xmanager.xm.utils import ShellSafeArg

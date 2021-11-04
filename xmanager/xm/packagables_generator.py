@@ -1,15 +1,15 @@
-"""An utility to generate factory methods in factories.py.
+"""An utility to generate factory methods in packagables.py.
 
-factories.py has a set of convenience functions which can be mechanically
+packagables.py has a set of convenience functions which can be mechanically
 generated for each ExecutableSpec. But we want them to have all arguments
 explicetly written down with proper type annotations. This way IDEs can provide
 proper contextual help and autocompletion. We also want make it easy to find
 documentation, so having docstrings inplace is important.
 
 We do this in an automated manner to ensure that arguments in ExecutableSpecs
-and in the factories do not diverge and that documentation remains up to date.
+and in the packagables do not diverge and that documentation remains up to date.
 
-Usage: Run this binary and replace relevant parts of factories.py. Then run
+Usage: Run this binary and replace relevant parts of packagables.py. Then run
 pyformat.
 """
 

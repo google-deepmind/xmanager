@@ -168,7 +168,7 @@ def merge_args(*operands: Union[SequentialArgs, UserArgs]) -> SequentialArgs:
 class ExecutableSpec(abc.ABC):
   """Executable specification describes what code / computation to run.
 
-  Use one of the factory functions declared in xm/factories.py to create a spec:
+  Use one of the functions declared in xm/packagables.py to create a spec:
    * xm.binary - a prebuilt executable program.
    * xm.bazel_binary - an executable built with Bazel.
    * xm.container - a prebuilt Docker container.

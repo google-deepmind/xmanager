@@ -21,7 +21,7 @@ from xmanager.xm import job_blocks
 
 
 # NOTE: Do not edit methods below manually.
-# They should be generated with factories_generator utility.
+# They should be generated with packagables_generator utility.
 
 
 def binary(

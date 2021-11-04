@@ -11,17 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Tests for factories."""
+"""Tests for packagables."""
 
 import unittest
 
 from xmanager.xm import executables
-from xmanager.xm import factories
 from xmanager.xm import job_blocks
+from xmanager.xm import packagables
 from xmanager.xm_local import executors
 
 
-class FactoriesTest(unittest.TestCase):
+class PackagablesTest(unittest.TestCase):
 
   def test_minimal_executable_spec(self):
     expected = job_blocks.Packageable(
@@ -31,7 +31,7 @@ class FactoriesTest(unittest.TestCase):
         env_vars={},
     )
 
-    actual = factories.bazel_binary(executors.Local.Spec(), label='label')
+    actual = packagables.bazel_binary(executors.Local.Spec(), label='label')
 
     self.assertEqual(actual, expected)
 
@@ -43,7 +43,7 @@ class FactoriesTest(unittest.TestCase):
         env_vars={'KEY': 'value'},
     )
 
-    actual = factories.bazel_binary(
+    actual = packagables.bazel_binary(
         executors.Local.Spec(),
         label='label',
         args=['-f'],
