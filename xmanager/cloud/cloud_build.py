@@ -13,6 +13,7 @@
 # limitations under the License.
 """Client for interacting with Cloud Build."""
 import datetime
+import getpass
 import tarfile
 import tempfile
 import time
@@ -111,9 +112,9 @@ class Client:
     _, archive_path = tempfile.mkstemp(suffix='.tar.gz')
     with tarfile.open(archive_path, 'w:gz') as tar:
       tar.add(directory, '/')
-    destination_name = f'{upload_name}-{tag}.tar.gz'
-    self.upload_tar_to_storage(archive_path, destination_name)
-    build_body = self._build_request_body(destination_name, repository, tag)
+    destination_path = f'{getpass.getuser()}/{upload_name}-{tag}.tar.gz'
+    self.upload_tar_to_storage(archive_path, destination_path)
+    build_body = self._build_request_body(destination_path, repository, tag)
     # Note: On GCP cache_discovery=True (the default) leads to ugly error
     # messages as file_cache is unavailable.
     if not self.cloudbuild_api:
