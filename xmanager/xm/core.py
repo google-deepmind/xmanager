@@ -33,7 +33,6 @@ import threading
 from typing import Any, Awaitable, Callable, Collection, Dict, Mapping, Optional, Sequence, overload
 
 import attr
-import immutabledict
 from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
@@ -147,7 +146,7 @@ class NotFoundError(KeyError):
 
 def _work_unit_arguments(
     job: job_blocks.JobType,
-    args: Mapping[str, Any],
+    args: Optional[Mapping[str, Any]],
 ) -> Mapping[str, Any]:
   """Constructs work unit arguments to display them in various UIs.
 
@@ -169,7 +168,7 @@ def _work_unit_arguments(
         `Job`s;
       - if it's a job generator, we return `{}`.
   """
-  if args:
+  if args is not None:
     # In order to give users control on what is shown as work unit arguments we
     # don't alter them if a value is given.
     return args
@@ -207,7 +206,8 @@ class ExperimentUnit(abc.ABC):
 
   def __init__(self, experiment: 'Experiment',
                create_task: Callable[[Awaitable[Any]], futures.Future],
-               args: Mapping[str, Any], role: ExperimentUnitRole) -> None:
+               args: Optional[Mapping[str,
+                                      Any]], role: ExperimentUnitRole) -> None:
     """Initializes an `ExperimentUnit` instance.
 
     Args:
@@ -239,11 +239,9 @@ class ExperimentUnit(abc.ABC):
     # constructor.
     return asyncio.Event()
 
-  def add(
-      self,
-      job: job_blocks.JobType,
-      args: Mapping[str, Any] = immutabledict.immutabledict()
-  ) -> Awaitable[None]:
+  def add(self,
+          job: job_blocks.JobType,
+          args: Optional[Mapping[str, Any]] = None) -> Awaitable[None]:
     # pyformat: disable
     """Adds a Job / JobGroup to the experiment unit.
 
@@ -269,7 +267,8 @@ class ExperimentUnit(abc.ABC):
     """
     # pyformat: enable
     job = job_operators.shallow_copy_job_type(job)
-    _apply_args(job, args)
+    if args is not None:
+      _apply_args(job, args)
     job_operators.populate_job_names(job)
 
     def launch_job(job: job_blocks.Job) -> Awaitable[None]:
@@ -287,7 +286,7 @@ class ExperimentUnit(abc.ABC):
         raise ValueError(
             'Job generator must be an async function. Signature needs to be '
             '`async def job_generator(work_unit: xm.WorkUnit):`')
-      return job_generator(self, **args)
+      return job_generator(self, **(args or {}))
 
     job_awaitable = pattern_matching.match(launch_job, launch_job_group,
                                            launch_job_generator)(
@@ -533,12 +532,12 @@ class Experiment(abc.ABC):
   @overload
   def add(self,
           job: job_blocks.JobType,
-          args: Mapping[str, Any] = ...,
+          args: Optional[Mapping[str, Any]] = ...,
           role: WorkUnitRole = ...) -> Awaitable[WorkUnit]:
     ...
 
   @overload
-  def add(self, job: job_blocks.JobType, args: Mapping[str, Any],
+  def add(self, job: job_blocks.JobType, args: Optional[Mapping[str, Any]],
           role: ExperimentUnitRole) -> Awaitable[ExperimentUnit]:
     ...
 
@@ -546,14 +545,14 @@ class Experiment(abc.ABC):
   def add(
       self,
       job: job_blocks.JobType,
-      args: Mapping[str, Any] = ...,
+      args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
       role: ExperimentUnitRole
   ) -> Awaitable[ExperimentUnit]:
     ...
 
   # The ExecutableUnit return type is determined by the role.
-  def add(self, job, args=immutabledict.immutabledict(), role=WorkUnitRole()):
+  def add(self, job, args=None, role=WorkUnitRole()):
     # pyformat: disable
     """Adds a Job / JobGroup to the experiment.
 
@@ -587,7 +586,7 @@ class Experiment(abc.ABC):
     return asyncio.wrap_future(self._create_task(launch()))
 
   @abc.abstractmethod
-  def _create_experiment_unit(self, args: Mapping[str, Any],
+  def _create_experiment_unit(self, args: Optional[Mapping[str, Any]],
                               role: ExperimentUnitRole) -> ExperimentUnit:
     raise NotImplementedError
 

@@ -14,7 +14,7 @@
 """Utilities for testing core objects."""
 
 from concurrent import futures
-from typing import Any, Awaitable, Callable, List, Mapping
+from typing import Any, Awaitable, Callable, List, Mapping, Optional
 
 import attr
 from xmanager.xm import core
@@ -31,8 +31,8 @@ class TestWorkUnit(core.WorkUnit):
       work_unit_id_predictor: id_predictor.Predictor,
       create_task: Callable[[Awaitable[Any]], futures.Future],
       launched_jobs: List[job_blocks.JobType],
-      launched_jobs_args: List[Mapping[str, Any]],
-      args: Mapping[str, Any],
+      launched_jobs_args: List[Optional[Mapping[str, Any]]],
+      args: Optional[Mapping[str, Any]],
   ) -> None:
     super().__init__(experiment, create_task, args, core.WorkUnitRole())
     self._launched_jobs = launched_jobs
@@ -43,7 +43,7 @@ class TestWorkUnit(core.WorkUnit):
     """Test work unit is immediately complete."""
 
   async def _launch_job_group(self, job_group: job_blocks.JobGroup,
-                              args: Mapping[str, Any]) -> None:
+                              args: Optional[Mapping[str, Any]]) -> None:
     """Appends the job group to the launched_jobs list."""
     self._launched_jobs.extend(job_group.jobs.values())
     self._launched_jobs_args.append(args)

@@ -16,7 +16,7 @@
 import asyncio
 from concurrent import futures
 import time
-from typing import Any, Awaitable, Callable, List, Mapping, Sequence
+from typing import Any, Awaitable, Callable, List, Mapping, Optional, Sequence
 
 from absl import logging
 import attr
@@ -66,7 +66,8 @@ class LocalExperimentUnit(xm.ExperimentUnit):
 
   def __init__(self, experiment: 'LocalExperiment', experiment_title: str,
                create_task: Callable[[Awaitable[Any]], futures.Future],
-               args: Mapping[str, Any], role: xm.ExperimentUnitRole) -> None:
+               args: Optional[Mapping[str, Any]],
+               role: xm.ExperimentUnitRole) -> None:
     super().__init__(experiment, create_task, args, role)
     self._experiment_title = experiment_title
     self._local_execution_handles: List[
@@ -247,7 +248,7 @@ class LocalExperiment(xm.Experiment):
     self._experiment_units = []
     self._work_unit_count = 0
 
-  def _create_experiment_unit(self, args: Mapping[str, Any],
+  def _create_experiment_unit(self, args: Optional[Mapping[str, Any]],
                               role: xm.ExperimentUnitRole) -> xm.ExperimentUnit:
     """Creates a new WorkUnit instance for the experiment."""
 
