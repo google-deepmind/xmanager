@@ -17,13 +17,33 @@ import os
 from typing import Any
 
 from xmanager import xm
-from xmanager.bazel import client as bazel_client
 from xmanager.cloud import build_image
 from xmanager.cloud import docker_lib
 from xmanager.docker import docker_adapter
 from xmanager.xm import executables
 from xmanager.xm import pattern_matching
 from xmanager.xm_local import executables as local_executables
+from xmanager.xm_local.packaging import bazel_tools
+
+
+# TODO: Move out once we bundle `fetch_kinds` in router.py.
+def _normalize_label(label: str) -> str:
+  """Attempts to correct the label if it does not point to the right target.
+
+  In certain cases people might specify labels that do not correspond to the
+  desired output. For example, for a `py_binary(name='foo', ...)` target the
+  self-contained executable is actually called 'foo.par'.
+
+  Args:
+    label: The target's name.
+
+  Returns:
+    Either the same or a corrected label.
+  """
+  [kind] = bazel_tools.local_bazel_service().fetch_kinds([label])
+  if kind == 'py_binary rule' and not label.endswith('.par'):
+    return f'{label}.par'
+  return label
 
 
 def _package_container(packageable: xm.Packageable,
@@ -83,20 +103,24 @@ def _package_python_container(packageable: xm.Packageable,
 def _package_bazel_container(
     packageable: xm.Packageable,
     container: executables.BazelContainer) -> xm.Executable:
-  paths = bazel_client.build_single_target(container.label)
+  [paths] = bazel_tools.local_bazel_service().build_targets(
+      labels=[_normalize_label(container.label)],
+      tail_args=container.bazel_args,
+  )
   assert len(paths) == 1
   image_id = docker_adapter.instance().load_image(paths[0])
   return local_executables.LoadedContainerImage(
       name=packageable.executable_spec.name,
       image_id=image_id,
       args=packageable.args,
-      env_vars=packageable.env_vars)
+      env_vars=packageable.env_vars,
+  )
 
 
 def _package_bazel_binary(packageable: xm.Packageable,
                           binary: executables.BazelBinary) -> xm.Executable:
-  paths = bazel_client.build_single_target(
-      label=binary.label,
+  [paths] = bazel_tools.local_bazel_service().build_targets(
+      labels=[_normalize_label(binary.label)],
       tail_args=binary.bazel_args,
   )
   assert len(paths) == 1

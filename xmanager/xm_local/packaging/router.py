@@ -50,7 +50,6 @@ _PACKAGING_ROUTER = pattern_matching.match(_visit_caip_spec, _visit_local_spec,
 
 def package(packageables: Sequence[xm.Packageable]) -> List[xm.Executable]:
   """Routes a packageable to an appropriate packaging mechanism."""
-  # TODO: Bundle together.
   return [
       _PACKAGING_ROUTER(packageable, packageable.executor_spec)
       for packageable in packageables
