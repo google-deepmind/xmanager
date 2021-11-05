@@ -89,7 +89,8 @@ def build(py_executable: xm.PythonContainer,
           env_vars: Dict[str, str],
           image_name: Optional[str] = None,
           project: Optional[str] = None,
-          bucket: Optional[str] = None) -> str:
+          bucket: Optional[str] = None,
+          pull_image: bool = True) -> str:
   """Build a Docker image from a Python project.
 
   Args:
@@ -99,6 +100,7 @@ def build(py_executable: xm.PythonContainer,
     image_name: The image name that will be assigned to the resulting image.
     project: The project to use if CloudBuild is used.
     bucket: The bucket to upload if CloudBuild is used.
+    pull_image: Whether to pull the image if CloudBuild is used.
 
   Returns:
     The name of the built image.
@@ -120,14 +122,15 @@ def build(py_executable: xm.PythonContainer,
       docker_lib.prepare_directory(staging, python_path, dirname, entrypoint,
                                    dockerfile)
       return build_by_dockerfile(staging, os.path.join(staging, 'Dockerfile'),
-                                 image_name, project, bucket)
+                                 image_name, project, bucket, pull_image)
 
 
 def build_by_dockerfile(path: str,
                         dockerfile: str,
                         image_name: str,
                         project: Optional[str] = None,
-                        bucket: Optional[str] = None):
+                        bucket: Optional[str] = None,
+                        pull_image: bool = True):
   """Build a Docker image from a Docker directory.
 
   Args:
@@ -136,6 +139,7 @@ def build_by_dockerfile(path: str,
     image_name: The name to set the built image to.
     project: The project to use if CloudBuild is used.
     bucket: The bucket to upload if CloudBuild is used.
+    pull_image: Whether to pull the image if CloudBuild is used.
 
   Returns:
     The name of the built image.
@@ -179,7 +183,8 @@ def build_by_dockerfile(path: str,
     repository, _ = docker_utils.parse_repository_tag(image_name)
     upload_name = repository.split('/')[-1]
     cloud_build_client.build_docker_image(image_name, path, upload_name)
-    docker_adapter.instance().pull_image(image_name)
+    if pull_image:
+      docker_adapter.instance().pull_image(image_name)
     return image_name
 
 
