@@ -14,14 +14,17 @@
 """Bazel tools for local packaging."""
 
 import functools
+import itertools
 import os
 import re
 import subprocess
-from typing import List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 from absl import flags
+from xmanager import xm
 from xmanager.bazel import client
 from xmanager.bazel import file_utils
+from xmanager.xm import pattern_matching
 
 from google.protobuf.internal.decoder import _DecodeVarint32
 from xmanager.generated import build_event_stream_pb2 as bes_pb2
@@ -201,3 +204,47 @@ class LocalBazelService(client.BazelService):
 def local_bazel_service() -> LocalBazelService:
   """Returns a singleton instance of `LocalBazelService`."""
   return LocalBazelService()
+
+
+def _collect_bazel_binary(
+    executable: xm.BazelBinary) -> List[client.BazelTarget]:
+  return [
+      client.BazelTarget(
+          label=executable.label,
+          bazel_args=executable.bazel_args,
+      ),
+  ]
+
+
+def _collect_bazel_container(
+    executable: xm.BazelContainer) -> List[client.BazelTarget]:
+  return [
+      client.BazelTarget(
+          label=executable.label,
+          bazel_args=executable.bazel_args,
+      ),
+  ]
+
+
+def _return_empty_list(_: xm.ExecutableSpec) -> List[client.BazelTarget]:
+  return []
+
+
+_EXECUTABLE_COLLECTOR = pattern_matching.match(
+    _collect_bazel_binary,
+    _collect_bazel_container,
+    _return_empty_list,
+)
+
+
+def collect_bazel_targets(
+    packageables: Sequence[xm.Packageable]) -> List[client.BazelTarget]:
+  """Extracts Bazel targets to package from a sequence of `Packageable`s."""
+  return list(
+      itertools.chain(*[
+          _EXECUTABLE_COLLECTOR(packageable.executable_spec)
+          for packageable in packageables
+      ]))
+
+
+TargetOutputs = Dict[client.BazelTarget, List[str]]
