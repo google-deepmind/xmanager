@@ -70,17 +70,17 @@ async def main(_):
 
     work_units = []
     for hyperparameters in trials:
-      jobs = {}
+      job_group = xm.JobGroup()
       for i in range(FLAGS.nodes):
         hyperparameters = dict(hyperparameters)
         hyperparameters['world_size'] = FLAGS.nodes
         hyperparameters['rank'] = i
-        jobs[str(i)] = xm.Job(
+        job_group.jobs[f'node_{i}'] = xm.Job(
             executable=executable,
             executor=xm_local.Caip(xm.JobRequirements(t4=FLAGS.gpus_per_node)),
             args=hyperparameters,
         )
-      work_units.append(await experiment.add(xm.JobGroup(**jobs)))
+      work_units.append(await experiment.add(job_group))
     print('Waiting for async launches to return values...')
   for work_unit in work_units:
     await work_unit.wait_until_complete()
