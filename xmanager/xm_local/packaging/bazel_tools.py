@@ -166,6 +166,11 @@ def _assemble_label(parts: _LexedLabel) -> str:
   return f"//{'/'.join(init)}:{last}"
 
 
+def _label_kind_lines_to_dict(lines: Sequence[str]) -> Dict[str, str]:
+  kind_label_tuples = [line.rsplit(' ', 1) for line in lines]
+  return {label: kind for kind, label in kind_label_tuples}
+
+
 class LocalBazelService(client.BazelService):
   """Local implementation of `BazelService`."""
 
@@ -190,8 +195,7 @@ class LocalBazelService(client.BazelService):
         stderr=subprocess.PIPE,
         cwd=_root_absolute_path(),
     ).stdout.decode('utf-8')
-    label_kinds = dict(
-        [line.rsplit(' ', 1) for line in stdout.strip().split(os.linesep)])
+    label_kinds = _label_kind_lines_to_dict(stdout.strip().split(os.linesep))
     return [label_kinds[label] for label in labels]
 
   def build_targets(self, labels: Sequence[str],

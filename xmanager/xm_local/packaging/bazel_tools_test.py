@@ -43,6 +43,18 @@ class BazelToolsTest(unittest.TestCase):
   def test_assemble_label(self):
     self.assertEqual(bazel_tools._assemble_label((['a', 'b'], 'c')), '//a/b:c')
 
+  def test_label_kind_lines_to_dict(self):
+    self.assertEqual(
+        bazel_tools._label_kind_lines_to_dict([
+            'py_binary rule //:py_target',
+            'cc_binary rule //:cc_target',
+        ]),
+        {
+            '//:py_target': 'py_binary rule',
+            '//:cc_target': 'cc_binary rule'
+        },
+    )
+
 
 if __name__ == '__main__':
   unittest.main()
