@@ -33,26 +33,27 @@ _BAZEL_COMMAND = flags.DEFINE_string('xm_bazel_command', 'bazel',
                                      'A command that runs Bazel.')
 
 
-def _get_important_output(events: Sequence[bes_pb2.BuildEvent],
-                          label: str) -> Sequence[bes_pb2.File]:
+def _get_important_outputs(events: Sequence[bes_pb2.BuildEvent],
+                           labels: Sequence[str]) -> List[List[bes_pb2.File]]:
+  label_to_output: Dict[str, List[bes_pb2.File]] = {}
   for event in events:
     if event.id.HasField('target_completed'):
       # Note that we ignore `event.id.target_completed.aspect`.
-      if event.id.target_completed.label == label:
-        return event.completed.important_output
-  raise ValueError(f'Missing target completion event for {label} in Bazel logs')
+      label_to_output[event.id.target_completed.label] = list(
+          event.completed.important_output)
+  return [label_to_output[label] for label in labels]
 
 
-def _get_normalized_label(events: Sequence[bes_pb2.BuildEvent],
-                          label: str) -> str:
+def _get_normalized_labels(events: Sequence[bes_pb2.BuildEvent],
+                           labels: Sequence[str]) -> List[str]:
+  label_to_expansion: Dict[str, str] = {}
   for event in events:
     if event.id.HasField('pattern'):
-      assert len(event.id.pattern.pattern) == 1
-      if event.id.pattern.pattern[0] == label:
-        # Assume there is just one `TargetConfiguredId` child in such events.
-        # Note that we ignore `event.children[0].target_configured.aspect`.
-        return event.children[0].target_configured.label
-  raise ValueError(f'Missing pattern expansion event for {label} in Bazel logs')
+      for index, pattern in enumerate(event.id.pattern.pattern):
+        # Note that we ignore `event.children.target_configured.aspect`.
+        label_to_expansion[pattern] = event.children[
+            index].target_configured.label
+  return [label_to_expansion[label] for label in labels]
 
 
 def _get_workspace_directory(events: Sequence[bes_pb2.BuildEvent]) -> str:
@@ -104,14 +105,15 @@ def _root_absolute_path() -> str:
   ).stdout.strip()
 
 
-def build_single_target(label: str, tail_args: Sequence[str] = ()) -> List[str]:
-  """Builds a target and returns paths to its important output.
+def _build_multiple_targets(
+    labels: Sequence[str], tail_args: Sequence[str] = ()) -> List[List[str]]:
+  """Builds the targets and returns paths to their important outputs.
 
   The definition of 'important artifacts in an output group' can be found at
   https://github.com/bazelbuild/bazel/blob/8346ea4cfdd9fbd170d51a528fee26f912dad2d5/src/main/java/com/google/devtools/build/lib/analysis/TopLevelArtifactHelper.java#L223-L224.
 
   Args:
-    label: Label of the target to build.
+    labels: Labels of the targets to build.
     tail_args: Arguments to append to the Bazel command.
 
   Returns:
@@ -125,18 +127,23 @@ def build_single_target(label: str, tail_args: Sequence[str] = ()) -> List[str]:
             f'--build_event_binary_file={bep_path}',
             # Forces a GC at the end of the build and publishes value to BEP.
             '--memory_profile=/dev/null',
-            label,
-        ] + list(tail_args),
+            *labels,
+            *tail_args,
+        ],
         check=True,
         cwd=_root_absolute_path(),
     )
     events = _read_build_events(bep_path)
-    normalized_label = _get_normalized_label(events, label)
-    files = _get_important_output(events, normalized_label)
+    normalized_labels = _get_normalized_labels(events, labels)
+    output_lists = _get_important_outputs(events, normalized_labels)
     workspace = _get_workspace_directory(events)
-    return [
-        os.path.join(workspace, *file.path_prefix, file.name) for file in files
-    ]
+    results: List[List[str]] = []
+    for files in output_lists:
+      results.append([
+          os.path.join(workspace, *file.path_prefix, file.name)
+          for file in files
+      ])
+    return results
 
 
 # Expansions (`...`, `*`) are not allowed.
@@ -200,8 +207,7 @@ class LocalBazelService(client.BazelService):
 
   def build_targets(self, labels: Sequence[str],
                     tail_args: Sequence[str]) -> List[List[str]]:
-    # TODO: Bundle `bazel build` calls together.
-    return [build_single_target(label, tail_args) for label in labels]
+    return _build_multiple_targets(labels, tail_args)
 
 
 @functools.lru_cache()
