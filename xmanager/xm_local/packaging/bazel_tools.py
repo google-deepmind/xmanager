@@ -185,7 +185,7 @@ class LocalBazelService(client.BazelService):
     """Retrieves kind for each given target in the current workspace."""
     labels = [_assemble_label(_lex_label(label)) for label in labels]
 
-    # For each matching target `blaze query` produces a line formatted as
+    # For each matching target `bazel query` produces a line formatted as
     # `<rule name> rule <target name>`, for example, `py_library rule
     # //third_party/py/xmanager/xm:__init__`. See
     # https://docs.bazel.build/versions/main/query.html#output-label_kind.

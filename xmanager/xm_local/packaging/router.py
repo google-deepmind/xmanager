@@ -102,27 +102,29 @@ _ArgsToTargets = Dict[Tuple[str, ...], List[bazel_client.BazelTarget]]
 
 def package(packageables: Sequence[xm.Packageable]) -> List[xm.Executable]:
   """Routes a packageable to an appropriate packaging mechanism."""
+  built_targets: bazel_tools.TargetOutputs = {}
   bazel_targets = bazel_tools.collect_bazel_targets(packageables)
 
-  bazel_labels = [target.label for target in bazel_targets]
-  bazel_kinds = bazel_tools.local_bazel_service().fetch_kinds(bazel_labels)
-  label_to_kind = dict(zip(bazel_labels, bazel_kinds))
+  if bazel_targets:
+    bazel_service = bazel_tools.local_bazel_service()
 
-  args_to_targets: _ArgsToTargets = collections.defaultdict(list)
-  for target in bazel_targets:
-    args_to_targets[target.bazel_args].append(target)
+    bazel_labels = [target.label for target in bazel_targets]
+    bazel_kinds = bazel_service.fetch_kinds(bazel_labels)
+    label_to_kind = dict(zip(bazel_labels, bazel_kinds))
 
-  built_targets: bazel_tools.TargetOutputs = {}
-  for args, targets in args_to_targets.items():
-    outputs = bazel_tools.local_bazel_service().build_targets(
-        labels=[
-            _normalize_label(target.label, label_to_kind[target.label])
-            for target in targets
-        ],
-        tail_args=args,
-    )
-    for target, output in zip(targets, outputs):
-      built_targets[target] = output
+    args_to_targets: _ArgsToTargets = collections.defaultdict(list)
+    for target in bazel_targets:
+      args_to_targets[target.bazel_args].append(target)
+    for args, targets in args_to_targets.items():
+      outputs = bazel_service.build_targets(
+          labels=[
+              _normalize_label(target.label, label_to_kind[target.label])
+              for target in targets
+          ],
+          tail_args=args,
+      )
+      for target, output in zip(targets, outputs):
+        built_targets[target] = output
 
   return [
       _PACKAGING_ROUTER(built_targets, packageable, packageable.executor_spec)
