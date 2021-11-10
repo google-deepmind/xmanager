@@ -72,7 +72,7 @@ class CaipTest(unittest.TestCase):
                             replica_count=1,
                             container_spec=aip_v1.ContainerSpec(
                                 image_uri='image-path',
-                                args=['--a', '1', '--b', '2', '--c', '3'],
+                                args=['--a=1', '--b=2', '--c=3'],
                             ))
                     ],
                     service_account='test-sa',

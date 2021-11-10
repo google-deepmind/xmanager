@@ -26,7 +26,7 @@ class JobBlocksTest(unittest.TestCase):
         'c': 3,
     })
 
-    self.assertEqual(args.to_list(str), ['--a', '1', '--b', '2', '--c', '3'])
+    self.assertEqual(args.to_list(str), ['--a=1', '--b=2', '--c=3'])
 
   def test_from_sequence(self):
     args = job_blocks.SequentialArgs.from_collection([1, 2, 3])
@@ -48,7 +48,7 @@ class JobBlocksTest(unittest.TestCase):
         }, [3]]))
 
     self.assertEqual(
-        args.to_list(str), ['1', '--a', 'z', '--b', 'x', '2', '--c', 't', '3'])
+        args.to_list(str), ['1', '--a=z', '--b=x', '2', '--c=t', '3'])
 
   def test_to_dict(self):
     args = job_blocks.SequentialArgs.merge(

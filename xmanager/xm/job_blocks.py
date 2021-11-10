@@ -14,12 +14,12 @@
 """Data classes for job-related abstractions."""
 
 import abc
-import itertools
 from typing import Any, Awaitable, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
 import attr
 
 from xmanager.xm import pattern_matching
+from xmanager.xm import utils
 
 UserArgs = Union[Mapping, Sequence, 'SequentialArgs']
 
@@ -101,24 +101,28 @@ class SequentialArgs:
     matcher(collection)
     return result
 
-  def to_list(self, escaper: Callable[[Any], str]) -> List[str]:
+  def to_list(
+      self,
+      escaper: Callable[[Any], str],
+      kwargs_joiner: Callable[[str, str], str] = utils.trivial_kwargs_joiner
+  ) -> List[str]:
     """Exports items as a list ready to be passed into the command line."""
 
-    def export_regular_item(item: SequentialArgs._RegularItem) -> List[str]:
-      return [escaper(item.value)]
+    def export_regular_item(item: SequentialArgs._RegularItem) -> str:
+      return escaper(item.value)
 
-    def export_keyword_item(item: SequentialArgs._KeywordItem) -> List[str]:
+    def export_keyword_item(item: SequentialArgs._KeywordItem) -> str:
       value = self._kwvalues[item.name]
       if isinstance(value, bool):
-        return [escaper(f"--{'' if value else 'no'}{item.name}")]
+        return escaper(f"--{'' if value else 'no'}{item.name}")
       else:
-        return [escaper(f'--{item.name}'), escaper(value)]
+        return kwargs_joiner(escaper(f'--{item.name}'), escaper(value))
 
     matcher = pattern_matching.match(
         export_regular_item,
         export_keyword_item,
     )
-    return list(itertools.chain(*[matcher(item) for item in self._items]))
+    return [matcher(item) for item in self._items]
 
   def to_dict(self, kwargs_only: bool = False) -> Dict[str, Any]:
     """Exports items as a dictionary.

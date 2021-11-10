@@ -89,7 +89,7 @@ class KubernetesTest(unittest.TestCase):
                                     'memory': '1',
                                     'nvidia.com/gpu': '2',
                                 },),
-                            args=['--a', '1', '--b', '2', '--c', '3'],
+                            args=['--a=1', '--b=2', '--c=3'],
                             env=[
                                 k8s_client.V1EnvVar(
                                     'CLUSTER_SPEC',

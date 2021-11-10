@@ -60,6 +60,11 @@ ARG_ESCAPER = pattern_matching.match(
 )
 
 
+def trivial_kwargs_joiner(key: str, value: str) -> str:
+  """Concatenates keyword arguments with = sign."""
+  return f'{key}={value}'
+
+
 def run_in_asyncio_loop(
     f: Callable[..., ReturnType]) -> Callable[..., ReturnType]:
   """A decorator that turns an async function to a synchronous one.
