@@ -237,8 +237,22 @@ class Client:
   def cancel(self, job_name: str) -> None:
     aiplatform.CustomJob.get(job_name).cancel()
 
+  async def get_or_create_tensorboard(self, name: str) -> str:
+    """Gets or creates a CAIP tensorboard instance."""
+    tensorboard_client = aip_v1beta.TensorboardServiceAsyncClient(
+        client_options={
+            'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
+        })
+    request = aip_v1beta.ListTensorboardsRequest(
+        parent=self.parent, filter=f'displayName={name}')
+    response = await tensorboard_client.list_tensorboards(request)
+    async for page in response.pages:
+      if page.tensorboards:
+        return response.tensorboards[0].name
+    return await self.create_tensorboard(name)
+
   async def create_tensorboard(self, name: str) -> str:
-    """Create a CAIP tensorboard instance."""
+    """Creates a CAIP tensorboard instance."""
     tensorboard_client = aip_v1beta.TensorboardServiceAsyncClient(
         client_options={
             'api_endpoint': f'{self.location}-aiplatform.googleapis.com'

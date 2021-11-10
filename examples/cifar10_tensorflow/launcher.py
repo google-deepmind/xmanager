@@ -56,7 +56,7 @@ def main(_):
 
     tensorboard = FLAGS.tensorboard
     if not tensorboard:
-      tensorboard = caip.client().create_tensorboard('cifar10')
+      tensorboard = caip.client().get_or_create_tensorboard('cifar10')
       tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
 
     for i, hyperparameters in enumerate(trials):
