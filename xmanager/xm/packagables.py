@@ -43,8 +43,8 @@ def binary(
       binary.
     args: Command line arguments to pass. This can be dict, list or
       xm.SequentialArgs. Dicts are most convenient for keyword flags.
-      {'batch_size': 16} is passed as two arguments: --batch_size 16. If
-      positional arguments are needed one can use a list or xm.SequentialArgs.
+      {'batch_size': 16} is passed as --batch_size=16. If positional arguments
+      are needed one can use a list or xm.SequentialArgs.
     env_vars: Environment variables to be set.
 
   Returns:
@@ -87,8 +87,8 @@ def bazel_binary(
     bazel_args: Bazel command line arguments.
     args: Command line arguments to pass. This can be dict, list or
       xm.SequentialArgs. Dicts are most convenient for keyword flags.
-      {'batch_size': 16} is passed as two arguments: --batch_size 16. If
-      positional arguments are needed one can use a list or xm.SequentialArgs.
+      {'batch_size': 16} is passed as --batch_size=16. If positional arguments
+      are needed one can use a list or xm.SequentialArgs.
     env_vars: Environment variables to be set.
 
   Returns:
@@ -126,8 +126,8 @@ def container(
     image_path: Path to a prebuilt container image.
     args: Command line arguments to pass. This can be dict, list or
       xm.SequentialArgs. Dicts are most convenient for keyword flags.
-      {'batch_size': 16} is passed as two arguments: --batch_size 16. If
-      positional arguments are needed one can use a list or xm.SequentialArgs.
+      {'batch_size': 16} is passed as --batch_size=16. If positional arguments
+      are needed one can use a list or xm.SequentialArgs.
     env_vars: Environment variables to be set.
 
   Returns:
@@ -164,8 +164,8 @@ def bazel_container(
     bazel_args: Bazel command line arguments.
     args: Command line arguments to pass. This can be dict, list or
       xm.SequentialArgs. Dicts are most convenient for keyword flags.
-      {'batch_size': 16} is passed as two arguments: --batch_size 16. If
-      positional arguments are needed one can use a list or xm.SequentialArgs.
+      {'batch_size': 16} is passed as --batch_size=16. If positional arguments
+      are needed one can use a list or xm.SequentialArgs.
     env_vars: Environment variables to be set.
 
   Returns:
@@ -240,8 +240,8 @@ def python_container(
         ]
     args: Command line arguments to pass. This can be dict, list or
       xm.SequentialArgs. Dicts are most convenient for keyword flags.
-      {'batch_size': 16} is passed as two arguments: --batch_size 16. If
-      positional arguments are needed one can use a list or xm.SequentialArgs.
+      {'batch_size': 16} is passed as --batch_size=16. If positional arguments
+      are needed one can use a list or xm.SequentialArgs.
     env_vars: Environment variables to be set.
 
   Returns:
@@ -287,8 +287,8 @@ def dockerfile_container(
       script.
     args: Command line arguments to pass. This can be dict, list or
       xm.SequentialArgs. Dicts are most convenient for keyword flags.
-      {'batch_size': 16} is passed as two arguments: --batch_size 16. If
-      positional arguments are needed one can use a list or xm.SequentialArgs.
+      {'batch_size': 16} is passed as --batch_size=16. If positional arguments
+      are needed one can use a list or xm.SequentialArgs.
     env_vars: Environment variables to be set.
 
   Returns:

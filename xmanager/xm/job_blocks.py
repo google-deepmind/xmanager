@@ -291,7 +291,10 @@ class Job:
     name: Name of the job. Must be unique within the context (work unit). By
       default it is constructed from the executable. Used for naming related
       entities such as newly created containers.
-    args: Command line arguments to pass.
+    args: Command line arguments to pass. This can be dict, list or
+      xm.SequentialArgs. Dicts are most convenient for keyword flags.
+      {'batch_size': 16} is passed as --batch_size=16. If positional arguments
+      are needed one can use a list or xm.SequentialArgs.
     env_vars: Environment variables to apply.
   """
 

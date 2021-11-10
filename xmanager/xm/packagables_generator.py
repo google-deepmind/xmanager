@@ -57,8 +57,8 @@ _ARGS_DOCSTRING = """  Args:
 _DOCSTRING_SUFFIX = """
     args: Command line arguments to pass. This can be dict, list or
       xm.SequentialArgs. Dicts are most convenient for keyword flags.
-      {'batch_size': 16} is passed as two arguments: --batch_size 16. If
-      positional arguments are needed one can use a list or xm.SequentialArgs.
+      {'batch_size': 16} is passed as --batch_size=16. If positional arguments
+      are needed one can use a list or xm.SequentialArgs.
     env_vars: Environment variables to be set.
 
   Returns:
