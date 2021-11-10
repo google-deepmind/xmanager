@@ -37,24 +37,26 @@ class JobBlocksTest(unittest.TestCase):
     args = job_blocks.SequentialArgs.from_collection(None)
     self.assertEqual(args.to_list(str), [])
 
-  def test_merge(self):
-    args = job_blocks.SequentialArgs.merge(
-        map(job_blocks.SequentialArgs.from_collection, [[1], {
+  def test_merge_args(self):
+    args = job_blocks.merge_args(
+        [1],
+        {
             'a': 'z',
-            'b': 'y'
-        }, [2], {
+            'b': 'y',
+        },
+        [2],
+        {
             'b': 'x',
-            'c': 't'
-        }, [3]]))
+            'c': 't',
+        },
+        [3],
+    )
 
     self.assertEqual(
         args.to_list(str), ['1', '--a=z', '--b=x', '2', '--c=t', '3'])
 
   def test_to_dict(self):
-    args = job_blocks.SequentialArgs.merge(
-        map(job_blocks.SequentialArgs.from_collection, [['--knob'], {
-            1: False
-        }]))
+    args = job_blocks.merge_args(['--knob'], {1: False})
 
     self.assertEqual(args.to_dict(), {'--knob': True, '1': False})
 
@@ -62,6 +64,13 @@ class JobBlocksTest(unittest.TestCase):
     args = job_blocks.SequentialArgs.from_collection({'yes': True, 'no': False})
 
     self.assertEqual(args.to_list(str), ['--yes', '--nono'])
+
+  def test_sequential_args_from_string(self):
+    with self.assertRaisesRegex(
+        ValueError,
+        "Tried to construct xm.SequentialArgs from a string: '--foo'. "
+        "Wrap it in a list: \\['--foo'\\] to make it a single argument."):
+      job_blocks.SequentialArgs.from_collection('--foo')
 
 
 if __name__ == '__main__':

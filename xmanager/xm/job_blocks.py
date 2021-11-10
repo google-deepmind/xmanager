@@ -14,7 +14,7 @@
 """Data classes for job-related abstractions."""
 
 import abc
-from typing import Any, Awaitable, Callable, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union
+from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
 import attr
 
@@ -25,12 +25,33 @@ UserArgs = Union[Mapping, Sequence, 'SequentialArgs']
 
 
 class SequentialArgs:
-  """A mix of positional and keyword arguments.
+  """A sequence of positional and keyword arguments for a binary.
 
-  Its main purpose is to provide merging capabilities as arguments can be both
-  lists and dicts. We cannot just convert dicts to lists as we want to allow
-  overriding, for example `['--a'] ∪ {'z': 1, 'y': 2} ∪ ['--b'] ∪ {'z': 3}`
-  is `['--a', '--z', '3', '--y', '2', '--b']`.
+  Unix command line arguments are just a list of strings. But it is very common
+  to simulate keyword arguments in a --key=value form. It is not uncommon to
+  only have keyword arguments. Therefore we allow providing args as:
+
+  Dicts:
+    {'foo': 'space bar', 'with_magic': True} -> --foo='space bar' --with_magic
+    Argument order is preserved.
+  Lists:
+    ['--foo', 'space bar'] -> --foo 'space bar'
+  SequentialArgs (which allows to represent a mix of the two above):
+    xm.merge_args({'foo': 'bar'}, ['--'], {'n': 16}) -> --foo=bar -- --n=16
+
+  SequentialArgs provides a convenient merging semantics: if a value is given
+  for an existing keyword argument, it will be overriden rather than appended,
+  which allows to specify default values and override them later:
+
+    xm.merge_args({'foo': '1', 'bar': '42'}, {'foo': '2'}) -> --foo=2 --bar=42
+
+  SequentialArgs is immutable, but you can get a copy with updated value:
+
+    args = xm.merge_args({'foo': '1', 'bar': '42'})
+    args = xm.merge_args(args, {'foo': '2'})
+
+  We only allow appending new arguments (positional and keyword) and overriding
+  keyword arguments. Removal and inserting to the middle is not supported.
   """
 
   @attr.s(auto_attribs=True)
@@ -41,7 +62,11 @@ class SequentialArgs:
   class _KeywordItem:
     name: str
 
-  def __init__(self):
+  def __init__(self) -> None:
+    """Constucts an empty SequentialArgs.
+
+    Prefer using xm.merge_args to construct SequentialArgs objects.
+    """
     self._items: List[Union[SequentialArgs._RegularItem,
                             SequentialArgs._KeywordItem]] = []
     self._kwvalues: Dict[str, Any] = {}
@@ -71,19 +96,16 @@ class SequentialArgs:
       matcher(item)
 
   @staticmethod
-  def merge(operands: Iterable['SequentialArgs']) -> 'SequentialArgs':
-    """Merges several instances into one left-to-right."""
-    result = SequentialArgs()
-    for operand in operands:
-      result._merge_from(operand)  # pylint: disable=protected-access
-    return result
-
-  @staticmethod
   def from_collection(collection: Optional[UserArgs]) -> 'SequentialArgs':
     """Populates a new instance from a given collection."""
     result = SequentialArgs()
     if collection is None:
       return result
+
+    def check_for_string(args: str) -> None:
+      raise ValueError(
+          f'Tried to construct xm.SequentialArgs from a string: {args!r}. '
+          f'Wrap it in a list: [{args!r}] to make it a single argument.')
 
     def import_sequential_args(args: SequentialArgs) -> None:
       result._merge_from(args)  # pylint: disable=protected-access
@@ -96,8 +118,8 @@ class SequentialArgs:
       for value in collection:
         result._ingest_regular_item(value)  # pylint: disable=protected-access
 
-    matcher = pattern_matching.match(import_sequential_args, import_mapping,
-                                     import_sequence)
+    matcher = pattern_matching.match(check_for_string, import_sequential_args,
+                                     import_mapping, import_sequence)
     matcher(collection)
     return result
 
@@ -161,12 +183,13 @@ class SequentialArgs:
 
 
 def merge_args(*operands: Union[SequentialArgs, UserArgs]) -> SequentialArgs:
-  return SequentialArgs.merge(
-      map(
-          pattern_matching.match(
-              pattern_matching.Case([SequentialArgs], lambda args: args),
-              pattern_matching.Case([Any], SequentialArgs.from_collection)),
-          operands))
+  """Merges several arguments collections into one left-to-right."""
+  result = SequentialArgs()
+  for operand in operands:
+    if not isinstance(operand, SequentialArgs):
+      operand = SequentialArgs.from_collection(operand)
+    result._merge_from(operand)  # pylint: disable=protected-access
+  return result
 
 
 class ExecutableSpec(abc.ABC):
