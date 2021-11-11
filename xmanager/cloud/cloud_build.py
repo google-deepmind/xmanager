@@ -40,7 +40,7 @@ _USE_CLOUD_BUILD_CACHE = flags.DEFINE_boolean(
 )
 
 _USE_KANIKO = flags.DEFINE_boolean(
-    'xm_use_kaniko', True,
+    'xm_use_kaniko', False,
     'Use kaniko backend for Cloud Build and enable caching.')
 _KANIKO_CACHE_TTL = flags.DEFINE_string('xm_kaniko_cache_ttl', '336h',
                                         'Cache ttl to use for kaniko builds.')
