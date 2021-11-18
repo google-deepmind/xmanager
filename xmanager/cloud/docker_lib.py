@@ -60,6 +60,26 @@ def prepare_directory(destination_directory: str, source_directory: str,
                   os.path.join(destination_directory, 'entrypoint.sh'))
 
 
+def is_docker_installed() -> bool:
+  """Checks if Docker is installed and accessible."""
+  try:
+    docker_client = docker.from_env()
+    logging.info('Local docker: %s', docker_client.version())
+    return True
+  except docker.errors.DockerException as e:
+    if 'No such file or directory' in str(e):
+      # This is the expected case when Docker is not installed, so we don't log
+      # anything, and just return False. The other error branches indicate
+      # something wrong with the Docker installation, so we log an error and
+      # also return False.
+      return False
+    logging.info(e)
+    if 'Permission denied' in str(e):
+      print('Looks like there is a permission problem with docker. '
+            'Did you install sudoless docker?')
+  return False
+
+
 def build_docker_image(image: str,
                        directory: str,
                        dockerfile: Optional[str] = None,

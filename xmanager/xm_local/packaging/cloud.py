@@ -67,7 +67,8 @@ def _package_container(packageable: xm.Packageable,
     GoogleContainerRegistryImage Executable.
   """
   gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
-  if container.image_path.startswith(gcr_project_prefix):
+  if container.image_path.startswith(
+      gcr_project_prefix) or not docker_lib.is_docker_installed():
     return local_executables.GoogleContainerRegistryImage(
         name=packageable.executable_spec.name,
         image_path=container.image_path,
@@ -109,9 +110,10 @@ def _package_dockerfile(packageable: xm.Packageable, dockerfile: xm.Dockerfile):
     tag = docker_lib.create_tag()
     push_image_tag = f'{gcr_project_prefix}/{dockerfile.name}:{tag}'
 
-  build_image.push(
-      build_image.build_by_dockerfile(dockerfile.path, dockerfile.dockerfile,
-                                      push_image_tag))
+  image = build_image.build_by_dockerfile(dockerfile.path,
+                                          dockerfile.dockerfile, push_image_tag)
+  if docker_lib.is_docker_installed():
+    build_image.push(image)
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
       image_path=push_image_tag,
@@ -125,9 +127,10 @@ def _package_python_container(
     python_container: xm.PythonContainer) -> xm.Executable:
   """Matcher method for packaging `xm.PythonContainer`."""
   push_image_tag = _get_push_image_tag(packageable.executor_spec)
-  image = build_image.push(
-      build_image.build(python_container, packageable.args,
-                        packageable.env_vars, push_image_tag))
+  image = build_image.build(python_container, packageable.args,
+                            packageable.env_vars, push_image_tag)
+  if docker_lib.is_docker_installed():
+    build_image.push(image)
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
       image_path=image,

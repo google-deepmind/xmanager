@@ -19,10 +19,7 @@ import tempfile
 from typing import Dict, List, Optional
 
 from absl import flags
-from absl import logging
-import docker
 from docker.utils import utils as docker_utils
-import requests
 
 from xmanager import xm
 from xmanager.cloud import auth
@@ -90,7 +87,7 @@ def build(py_executable: xm.PythonContainer,
           image_name: Optional[str] = None,
           project: Optional[str] = None,
           bucket: Optional[str] = None,
-          pull_image: bool = True) -> str:
+          pull_image: bool = False) -> str:
   """Build a Docker image from a Python project.
 
   Args:
@@ -130,7 +127,7 @@ def build_by_dockerfile(path: str,
                         image_name: str,
                         project: Optional[str] = None,
                         bucket: Optional[str] = None,
-                        pull_image: bool = True):
+                        pull_image: bool = False):
   """Build a Docker image from a Docker directory.
 
   Args:
@@ -146,22 +143,7 @@ def build_by_dockerfile(path: str,
   """
   print('Building Docker image, please wait...')
   if _BUILD_IMAGE_LOCALLY.value:
-    try:
-      docker_client = docker.from_env()
-      logging.info('Local docker: %s', docker_client.version())
-    except docker.errors.DockerException as e:
-      logging.info(e)
-      print('Failed to initialize local docker.')
-      print('Falling back to CloudBuild. See INFO log for details.')
-    except requests.exceptions.ConnectionError as e:
-      logging.info(e)
-      if 'Permission denied' in str(e):
-        print('Looks like there is a permission problem with docker. '
-              'Did you install sudoless docker?')
-      else:
-        print('Failed to connect to local docker instance.')
-      print('Falling back to CloudBuild. See INFO log for details.')
-    else:
+    if docker_lib.is_docker_installed():
       # TODO: Improve out-of-disk space handling.
       return docker_lib.build_docker_image(
           image_name,
@@ -169,6 +151,7 @@ def build_by_dockerfile(path: str,
           dockerfile,
           use_docker_command=_USE_DOCKER_COMMAND.value,
           show_docker_command_progress=_SHOW_DOCKER_COMMAND_PROGRESS.value)
+    print('Falling back to CloudBuild. See INFO log for details.')
 
   # If Dockerfile is not a direct child of path, then create a temp directory
   # that contains both the contents of path and Dockerfile.
