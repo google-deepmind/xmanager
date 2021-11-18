@@ -90,7 +90,15 @@ class AsyncPackager:
   def package(
       self, extra_packageables: Sequence[job_blocks.Packageable] = ()
   ) -> Sequence[job_blocks.Executable]:
-    """Packages all accumulated packageables."""
+    """Triggers the packaging of previously added packageables.
+
+    Args:
+      extra_packageables: An explicit sequence of extra packageables items to
+        package synchronously.
+
+    Returns:
+      The list of executables corresponding to `extra_packageables`.
+    """
     with self._lock:
       packageables = self._packageables + list(extra_packageables)
       futures = self._futures

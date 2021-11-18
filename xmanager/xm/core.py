@@ -481,18 +481,19 @@ class Experiment(abc.ABC):
   def package(
       cls, packageables: Sequence[job_blocks.Packageable] = ()
   ) -> Sequence[job_blocks.Executable]:
-    """Packages executable specs into executables based on the executor specs.
+    """Packages `packageables` & triggers async packaging.
 
-    Builds all given executables specs in parallel. While calling package()
-    multiple times is allowed, that would result in slow sequential build,
-    even if invoked from concurrent threads.
+    This function has 2 usages:
+    - Builds all given executables specs in parallel. While calling package(...)
+      multiple times is allowed, that would result in slow sequential build,
+      even if invoked from concurrent threads.
+    - Triggers packaging of the items enqueued previously with `package_async`.
 
     Args:
-      packageables: A sequence of packageables to build.
+      packageables: A sequence of extra packageables to build synchronously.
 
     Returns:
-      A sequence of packaging results. Order corresponds to the order of input
-      packageables.
+      A sequence of packaging results associated to `packageables` (same order).
     """
     return cls._async_packager.package(packageables)
 
