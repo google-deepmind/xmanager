@@ -16,6 +16,7 @@ from typing import List
 import unittest
 
 from xmanager.xm import pattern_matching
+from xmanager.xm import utils
 
 
 class UtilsTest(unittest.TestCase):
@@ -93,6 +94,20 @@ class UtilsTest(unittest.TestCase):
   def testMatch_missingAnnotation(self):
     with self.assertRaises(ValueError):
       pattern_matching.match(lambda x: x)
+
+  @utils.run_in_asyncio_loop
+  async def testMatch_async(self):
+
+    async def visit_int(n: int):
+      return n * 2
+
+    async def visit_str(s: str):
+      return len(s)
+
+    matcher = pattern_matching.async_match(visit_int, visit_str)
+
+    self.assertEqual(await matcher(1), 2)
+    self.assertEqual(await matcher('zzz'), 3)
 
 
 if __name__ == '__main__':

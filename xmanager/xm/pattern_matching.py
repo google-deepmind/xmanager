@@ -21,7 +21,7 @@ API is not final.
 """
 
 import inspect
-from typing import Any, Callable, Iterable, Generic, Tuple, Type, TypeVar, Union
+from typing import Any, Awaitable, Callable, Iterable, Generic, Tuple, Type, TypeVar, Union
 
 R = TypeVar('R')
 
@@ -121,3 +121,12 @@ def match(*handlers: Union[Case[R], Callable[..., R]]) -> Callable[..., R]:
                     f'{known_types}')
 
   return apply
+
+
+def async_match(*handlers: Callable[..., R]) -> Callable[..., Awaitable[R]]:
+  """`match` for async functions."""
+  # Python type system doesn't differentiate regular and async functions enough.
+  # `async def f(int) -> Cls:` is a `Callable[[int], Cls]` but actually returns
+  # `Awaitable[Cls]`. This confuses pytype when it deduces `match` return type.
+
+  return match(*handlers)
