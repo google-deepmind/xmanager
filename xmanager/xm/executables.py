@@ -132,6 +132,9 @@ class BinaryDependency(abc.ABC):
   """Additional resource for `Binary` / `BazelBinary`.
 
   Implementations can define backend-specific dependencies.
+
+  BinaryDependency and its ancestors must be comparable and hashable and
+  therefore immutable.
   """
 
 
