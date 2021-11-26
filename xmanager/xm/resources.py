@@ -83,7 +83,7 @@ class ServiceTier(enum.Enum, metaclass=_CaseInsensetiveEnumMeta):
   Usually there are at least "Take my money, this workload is important" and
   "Buy excess compute for cheap" offerings. This enum provides a classification
   of such offerings and allows matching comparable (but not necessary identical)
-  options from different runetimes.
+  options from different runtimes.
   """
 
   # Highly available tier. The job is expected to be scheduled fast once sent to
