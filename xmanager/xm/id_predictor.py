@@ -53,7 +53,8 @@ class BrokenSequenceError(RuntimeError):
 class Predictor:
   """Predicts IDs that would be assigned on object creation.
 
-  This class is thread safe and async Python friendly.
+  This class is thread safe and async Python friendly. It must be constructed
+  from inside asyncio event loop.
   """
 
   def __init__(self, next_id: int) -> None:

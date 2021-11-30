@@ -436,12 +436,6 @@ class Experiment(abc.ABC):
     """Returns a unique ID assigned to the experiment."""
     raise NotImplementedError
 
-  def _enter(self) -> None:
-    """Initializes internal state on context manager enter."""
-    self._running_tasks = queue.Queue()
-    self._work_unit_id_predictor = id_predictor.Predictor(1 +
-                                                          self.work_unit_count)
-
   def __enter__(self):
     if asyncio.get_event_loop().is_running():
       raise RuntimeError('When using Experiment from a coroutine please use '
@@ -453,7 +447,14 @@ class Experiment(abc.ABC):
         target=self._event_loop.run_forever, daemon=True)
     self._event_loop_thread.start()
 
-    self._enter()
+    # asyncio.run_coroutine_threadsafe doesn't accept class method and wants it
+    # wrapped in a function.
+    async def async_enter():
+      await self.__aenter__()
+
+    asyncio.run_coroutine_threadsafe(
+        async_enter(), loop=self._event_loop).result()
+
     return self
 
   def _wait_for_tasks(self):
@@ -467,7 +468,9 @@ class Experiment(abc.ABC):
 
   async def __aenter__(self):
     self._event_loop = asyncio.get_event_loop()
-    self._enter()
+    self._running_tasks = queue.Queue()
+    self._work_unit_id_predictor = id_predictor.Predictor(1 +
+                                                          self.work_unit_count)
     return self
 
   async def _await_for_tasks(self):
