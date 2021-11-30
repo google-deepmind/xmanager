@@ -25,6 +25,7 @@ from xmanager import xm_foo
 import abc
 import asyncio
 from concurrent import futures
+import enum
 import functools
 import getpass
 import inspect
@@ -196,9 +197,37 @@ def _work_unit_arguments(
   return deduce_args(job)
 
 
+class Importance(enum.Enum):
+  """How important it is to schedule particular Experiment or ExperimentUnit.
+
+  This is a hint to the scheduler. Not all schedulers take it into account
+  (xm_local doesn't). And even with smart scheduler a less important work unit
+  may run before a more important one e.g. if it uses a less contended resource.
+
+  Unlike ServiceTier, importance only controls preference within a team i.e. how
+  team's resources are divided between team's experiments. It has no effect on
+  resource allocation between teams.
+  """
+
+  # High impact experiments. Try scheduling them even at the cost of significant
+  # reduction of the overall throughput that your experiments get.
+  HIGH = 'high'
+  # The default importance.
+  NORMAL = 'normal'
+  # Prefer to schedule other experiments with higher importance, but in overall
+  # try to maximize throughput.
+  LOW = 'low'
+
+
+@attr.s(auto_attribs=True, kw_only=True)
 class ExperimentUnitRole(abc.ABC):
-  """The role of an experiment unit within the experiment structure."""
-  pass
+  """The role of an experiment unit within the experiment structure.
+
+  Attributes:
+    importance: how important it is to schedule this executable unit comparing
+      to all your executable units (from all your experiments).
+  """
+  importance: Importance = Importance.NORMAL
 
 
 class ExperimentUnit(abc.ABC):
@@ -379,7 +408,7 @@ class ExperimentUnit(abc.ABC):
         annotations=metadata_context.ContextAnnotations())
 
 
-@attr.s(auto_attribs=True)
+@attr.s(auto_attribs=True, kw_only=True)
 class WorkUnitRole(ExperimentUnitRole):
   """An experiment unit with this role is a work unit.
 
@@ -398,7 +427,7 @@ class WorkUnit(ExperimentUnit):
     raise NotImplementedError
 
 
-@attr.s(auto_attribs=True)
+@attr.s(auto_attribs=True, kw_only=True)
 class AuxiliaryUnitRole(ExperimentUnitRole):
   """An experiment unit with this role is an auxiliary unit.
 
@@ -407,8 +436,8 @@ class AuxiliaryUnitRole(ExperimentUnitRole):
   determine the status of the experiment. e.g. Tensorboard
 
   Attributes:
-      termination_delay_secs: How long to keep AUX unit running after experiment
-        completion.
+    termination_delay_secs: How long to keep AUX unit running after experiment
+      completion.
   """
 
   termination_delay_secs: int
