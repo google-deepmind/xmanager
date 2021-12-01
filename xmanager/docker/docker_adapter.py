@@ -14,13 +14,19 @@
 """Convenience adapter for the standard client."""
 
 import functools
-from typing import Dict, List, Mapping, Sequence, Tuple, Union
+import subprocess
+from typing import Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
+from absl import flags
 from absl import logging
 import docker
 from docker import errors
 from docker.models import containers
 from docker.utils import utils
+
+_USE_SUBPROCESS = flags.DEFINE_bool(
+    'xm_subprocess_docker_impl', False,
+    'Launch docker using `subprocess` command.')
 
 Ports = Dict[Union[int, str], Union[None, int, Tuple[str, int], List[int]]]
 
@@ -83,8 +89,27 @@ class DockerAdapter(object):
       network: str,
       ports: Ports,
       volumes: Dict[str, str],
-  ) -> containers.Container:
+      interactive: bool = False,
+  ) -> Optional[containers.Container]:
     """Runs a given container image."""
+    if _USE_SUBPROCESS.value or interactive:
+      return self.run_container_subprocess(image_id, args, env_vars, network,
+                                           ports, volumes, interactive)
+    else:
+      return self.run_container_client(name, image_id, args, env_vars, network,
+                                       ports, volumes)
+
+  def run_container_client(
+      self,
+      name: str,
+      image_id: str,
+      args: Sequence[str],
+      env_vars: Mapping[str, str],
+      network: str,
+      ports: Ports,
+      volumes: Dict[str, str],
+  ) -> containers.Container:
+    """Runs a given container image using Python Docker client."""
     make_mount = lambda guest: {'bind': guest, 'mode': 'rw'}
     return self._client.containers.run(
         image_id,
@@ -98,6 +123,34 @@ class DockerAdapter(object):
         ports=ports,
         volumes={host: make_mount(guest) for host, guest in volumes.items()},
     )
+
+  def run_container_subprocess(
+      self,
+      image_id: str,
+      args: Sequence[str],
+      env_vars: Mapping[str, str],
+      network: str,
+      ports: Ports,
+      volumes: Dict[str, str],
+      interactive: bool,
+  ) -> None:
+    """Runs a given container image calling `docker` in a Subprocess."""
+    # TODO: consider using asyncio.create_subprocess_exec() to unify it
+    # with LocalBinary processing.
+    cmd = ['docker', 'run']
+    if network:
+      cmd.extend(['--network', network])
+    for in_port, out_port in ports.items():
+      cmd.extend(['-p', f'{in_port}:{out_port}'])
+    for key, value in volumes.items():
+      cmd.extend(['-v', f'{key}:{value}'])
+    if interactive:
+      print('Entering shell mode.')
+      cmd.extend(['-it', '--entrypoint', 'bash', image_id])
+    else:
+      cmd.extend([image_id] + list(args))
+    subprocess.run(args=cmd, check=True, env=env_vars)
+    return None
 
   def stop_container(self, container_id: str) -> None:
     try:

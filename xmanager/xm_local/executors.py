@@ -39,9 +39,11 @@ class DockerOptions:
       volumes: A dictionary from `str` to `str`, where the keys represent paths
         inside on the host to mount and the values represent paths in the
         container.
+      interactive: If True, requests a run with interactive shell.
   """
   ports: Optional[docker_adapter.Ports] = None
   volumes: Optional[Dict[str, str]] = None
+  interactive: bool = False
 
 
 @attr.s(auto_attribs=True)
