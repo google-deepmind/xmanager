@@ -383,9 +383,14 @@ class JobRequirements:
         raise ValueError(f'{resource} has been specified twice.')
       self.task_requirements[resource] = scalar
 
-    if replicas is not None and self.accelerator in TpuType:
-      raise ValueError('Replicated jobs are not supported for TPUs.')
     self.replicas = replicas or 1
+    self._validate_replicas()
+
+  def _validate_replicas(self) -> None:
+    """Raises ValueError if replication is not supported."""
+    if self.replicas > 1 and self.accelerator in TpuType:
+      raise ValueError(
+          f'Replicated jobs are not supported for {self.accelerator}.')
 
   def __repr__(self) -> str:
     """Returns string representation of the requirements."""
