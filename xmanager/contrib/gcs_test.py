@@ -30,8 +30,7 @@ _PATH_ERROR = 'Path not in gs://bucket/directory or /gcs/path format'
 class GcsTest(parameterized.TestCase):
 
   def gcs_prefix(self, project_name: str) -> str:
-    return ('gs://xcloud_public_bucket/' + getpass.getuser() + '/' +
-            project_name + '-')
+    return f'gs://xcloud-shared/{getpass.getuser()}/{project_name}-'
 
   def test_gcs_path_suggestions(self):
     self.assertStartsWith(gcs.suggestion('xcloud'), self.gcs_prefix('xcloud'))

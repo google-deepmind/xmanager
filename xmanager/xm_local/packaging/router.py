@@ -121,7 +121,7 @@ def package(packageables: Sequence[xm.Packageable]) -> List[xm.Executable]:
               _normalize_label(target.label, label_to_kind[target.label])
               for target in targets
           ],
-          tail_args=args,
+          bazel_args=args,
       )
       for target, output in zip(targets, outputs):
         built_targets[target] = output

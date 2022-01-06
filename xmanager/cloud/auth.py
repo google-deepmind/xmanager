@@ -97,7 +97,7 @@ def _maybe_create_service_account(service_account: str) -> None:
   iam = discovery.build('iam', 'v1')
   accounts = iam.projects().serviceAccounts().list(
       name='projects/' + get_project_name()).execute()
-  for account in accounts['accounts']:
+  for account in accounts.get('accounts', []):
     if account['email'] == service_account:
       return
 

@@ -106,7 +106,7 @@ def _root_absolute_path() -> str:
 
 
 def _build_multiple_targets(
-    labels: Sequence[str], tail_args: Sequence[str] = ()) -> List[List[str]]:
+    labels: Sequence[str], bazel_args: Sequence[str] = ()) -> List[List[str]]:
   """Builds the targets and returns paths to their important outputs.
 
   The definition of 'important artifacts in an output group' can be found at
@@ -114,7 +114,7 @@ def _build_multiple_targets(
 
   Args:
     labels: Labels of the targets to build.
-    tail_args: Arguments to append to the Bazel command.
+    bazel_args: Arguments to append to the Bazel command.
 
   Returns:
     A list of paths to the output.
@@ -128,7 +128,7 @@ def _build_multiple_targets(
             # Forces a GC at the end of the build and publishes value to BEP.
             '--memory_profile=/dev/null',
             *labels,
-            *tail_args,
+            *bazel_args,
         ],
         check=True,
         cwd=_root_absolute_path(),
@@ -206,8 +206,8 @@ class LocalBazelService(client.BazelService):
     return [label_kinds[label] for label in labels]
 
   def build_targets(self, labels: Sequence[str],
-                    tail_args: Sequence[str]) -> List[List[str]]:
-    return _build_multiple_targets(labels, tail_args)
+                    bazel_args: Sequence[str]) -> List[List[str]]:
+    return _build_multiple_targets(labels, bazel_args)
 
 
 @functools.lru_cache()

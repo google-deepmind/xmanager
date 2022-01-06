@@ -37,10 +37,20 @@ _GS_PREFIX = 'gs://'
 _GCS_PREFIX = '/gcs/'
 
 
+_default_bucket_name = 'xcloud-shared'
+
+
+def set_default_bucket(bucket: str) -> None:
+  """Helper to allow sharing this code with XCloud v1. Not for general use."""
+  # TODO: Remove once v1 will be shut down.
+  global _default_bucket_name
+  _default_bucket_name = bucket
+
+
 def suggestion(project_name: str) -> str:
   """Returns a suggested GCS dir name for the given @project_name."""
   return os.path.join(
-      _GS_PREFIX, 'xcloud_public_bucket', getpass.getuser(),
+      _GS_PREFIX, _default_bucket_name, getpass.getuser(),
       project_name + '-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
 
 
