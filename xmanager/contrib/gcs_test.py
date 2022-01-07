@@ -29,29 +29,18 @@ _PATH_ERROR = 'Path not in gs://bucket/directory or /gcs/path format'
 
 class GcsTest(parameterized.TestCase):
 
-  def gcs_prefix(self, project_name: str) -> str:
-    return f'gs://xcloud-shared/{getpass.getuser()}/{project_name}-'
-
-  def test_gcs_path_suggestions(self):
-    self.assertStartsWith(gcs.suggestion('xcloud'), self.gcs_prefix('xcloud'))
-
   def test_gcs_path_empty_flag(self):
-    self.assertEqual(
-        gcs.get_gcs_path_or_suggestion('xcloud'), gcs.suggestion('xcloud'))
     with self.assertRaisesRegex(app.UsageError, '--xm_gcs_path is missing'):
-      gcs.get_gcs_path_or_fail('xcloud')
+      gcs.get_gcs_path_or_fail('project')
 
   def test_gcs_path_correct_value(self):
     with flagsaver.flagsaver(xm_gcs_path='gs://bucket/dir'):
-      self.assertEqual(
-          gcs.get_gcs_path_or_suggestion('xcloud'), 'gs://bucket/dir')
-      self.assertEqual(gcs.get_gcs_path_or_fail('xcloud'), 'gs://bucket/dir')
+      self.assertEqual(gcs.get_gcs_path_or_fail('project'), 'gs://bucket/dir')
 
   def test_gcs_path_incorrect_value(self):
     with flagsaver.flagsaver(xm_gcs_path='file://dir'):
       with self.assertRaisesRegex(app.UsageError, _GCS_PATH_ERROR):
-        gcs.get_gcs_path_or_suggestion('xcloud')
-        gcs.get_gcs_path_or_fail('xcloud')
+        gcs.get_gcs_path_or_fail('project')
 
   # pylint: disable=bad-whitespace
   @parameterized.named_parameters(

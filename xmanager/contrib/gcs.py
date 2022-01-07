@@ -37,14 +37,7 @@ _GS_PREFIX = 'gs://'
 _GCS_PREFIX = '/gcs/'
 
 
-_default_bucket_name = 'xcloud-shared'
-
-
-def set_default_bucket(bucket: str) -> None:
-  """Helper to allow sharing this code with XCloud v1. Not for general use."""
-  # TODO: Remove once v1 will be shut down.
-  global _default_bucket_name
-  _default_bucket_name = bucket
+_default_bucket_name = '<Your bucket>'
 
 
 def suggestion(project_name: str) -> str:
@@ -52,26 +45,6 @@ def suggestion(project_name: str) -> str:
   return os.path.join(
       _GS_PREFIX, _default_bucket_name, getpass.getuser(),
       project_name + '-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
-
-
-def get_gcs_path_or_suggestion(project_name: str) -> str:
-  """Returns a value passed in the --xm_gcs_path flag or a suggested valid path.
-
-  Args:
-    project_name: a project name used to generate suggested GCS path.
-
-  Returns:
-    If the --xm_gcs_path flag is empty, returns a reasonable suggestion.
-    If the --xm_gcs_path contains invalid value, raise an error.
-    Otherwise, returns a flag value.
-  """
-  if not _GCS_PATH.value:
-    return suggestion(project_name)
-  elif not is_gcs_path(_GCS_PATH.value):
-    raise app.UsageError(
-        '--xm_gcs_path not in gs://bucket/directory or /gcs/path format. ' +
-        f'Suggestion: --xm_gcs_path={suggestion(project_name)}')
-  return str(_GCS_PATH.value)
 
 
 def get_gcs_path_or_fail(project_name: str) -> str:
