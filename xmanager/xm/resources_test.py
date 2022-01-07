@@ -92,6 +92,7 @@ class JobRequirementsTest(parameterized.TestCase):
     task_requirements = requirements.task_requirements
     self.assertEqual(task_requirements[resources.ResourceType.CPU], 4)
     self.assertEqual(task_requirements[resources.ResourceType.V100], 1)
+    self.assertEqual(requirements.replicas, 1)
 
   def test_resource_specified_twice(self):
     with self.assertRaises(ValueError):
@@ -101,6 +102,16 @@ class JobRequirementsTest(parameterized.TestCase):
     requirements = resources.JobRequirements(tpu_v3='4x4')
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
     self.assertEqual(requirements.topology.name, '4x4')
+
+  def test_multihost_gpu(self):
+    requirements = resources.JobRequirements(v100='4x2')
+    self.assertEqual(requirements.accelerator, resources.ResourceType.V100)
+    self.assertEqual(requirements.topology.name, '4x2')
+    self.assertEqual(requirements.replicas, 2)
+
+  def test_multihost_gpu_with_replicas(self):
+    with self.assertRaises(ValueError):
+      resources.JobRequirements(v100='4x2', replicas=3)
 
   def test_location(self):
     requirements = resources.JobRequirements(location='lon_r7')

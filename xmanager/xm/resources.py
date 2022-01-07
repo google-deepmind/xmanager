@@ -257,12 +257,12 @@ class Topology:
     self._name = name
 
     dimensions_str = name.split('_')[0]
-    self._dimensions = list(map(int, dimensions_str.split('x')))
+    self.dimensions = list(map(int, dimensions_str.split('x')))
 
   @property
   def chip_count(self) -> int:
     """Returns the number of chips of the TPU topology."""
-    return functools.reduce(operator.mul, self._dimensions)
+    return functools.reduce(operator.mul, self.dimensions)
 
   @property
   def name(self) -> str:
@@ -382,6 +382,13 @@ class JobRequirements:
       if resource in self.task_requirements:
         raise ValueError(f'{resource} has been specified twice.')
       self.task_requirements[resource] = scalar
+
+    if (self.accelerator in GpuType and self.topology and
+        len(self.topology.dimensions) == 2):
+      if replicas is not None:
+        raise ValueError(
+            'Replicated jobs are not supported for multihost GPUs.')
+      replicas = topology.dimensions[1]
 
     self.replicas = replicas or 1
     self._validate_replicas()
