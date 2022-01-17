@@ -343,8 +343,9 @@ class JobRequirements:
         Borg cell.
       replicas: Number of identical tasks to run winthin a job. 1 by default.
       service_tier: A service tier at which the job should run.
-      **kw_resources: resource amounts as a kwargs,
-        for example v100=2 or ram=1 * xm.GiB.
+      **kw_resources: resource amounts as a kwargs, for example `v100=2` or
+        `ram=1 * xm.GiB`. See xm.ResourceType enum for the list of supported
+        types and aliases.
 
     Raises:
       ValueError:
