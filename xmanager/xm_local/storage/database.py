@@ -15,11 +15,11 @@
 import abc
 import functools
 import os
+import sqlite3
 from typing import Dict, List
 
 import attr
 import sqlalchemy
-import sqlite3
 from xmanager.generated import data_pb2
 
 from google.protobuf import text_format
@@ -121,9 +121,9 @@ class Database:
     self.engine.execute(
         query, experiment_id=experiment_id, work_unit_id=work_unit_id)
 
-  def insert_caip_job(self, experiment_id: int, work_unit_id: int, name: str,
-                      caip_job_id: str) -> None:
-    job = data_pb2.Job(caip=data_pb2.AIPlatformJob(resource_name=caip_job_id))
+  def insert_vertex_job(self, experiment_id: int, work_unit_id: int, name: str,
+                        vertex_job_id: str) -> None:
+    job = data_pb2.Job(caip=data_pb2.AIPlatformJob(resource_name=vertex_job_id))
     data = text_format.MessageToBytes(job)
     query = ('INSERT INTO Job (ExperimentId, WorkUnitId, Name, Data) '
              'VALUES (:experiment_id, :work_unit_id, :name, :data)')

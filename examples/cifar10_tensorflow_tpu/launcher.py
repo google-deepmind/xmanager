@@ -26,7 +26,7 @@ from absl import flags
 from xmanager import xm
 from xmanager import xm_local
 from xmanager.cloud import build_image
-from xmanager.cloud import caip
+from xmanager.cloud import vertex
 from xmanager.contrib import tpu
 
 FLAGS = flags.FLAGS
@@ -54,7 +54,7 @@ def main(_):
     [executable] = experiment.package([
         xm.Packageable(
             executable_spec=spec,
-            executor_spec=xm_local.Caip.Spec(),
+            executor_spec=xm_local.Vertex.Spec(),
             args={},
         ),
     ])
@@ -66,7 +66,7 @@ def main(_):
 
     tensorboard = FLAGS.tensorboard
     if not tensorboard:
-      tensorboard = caip.client().get_or_create_tensorboard('cifar10')
+      tensorboard = vertex.client().get_or_create_tensorboard('cifar10')
       tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
 
     for i, hyperparameters in enumerate(trials):
@@ -79,7 +79,7 @@ def main(_):
       experiment.add(
           xm.Job(
               executable=executable,
-              executor=xm_local.Caip(
+              executor=xm_local.Vertex(
                   requirements=xm.JobRequirements(tpu_v2=8),
                   tensorboard=tensorboard_capability),
               args=hyperparameters,

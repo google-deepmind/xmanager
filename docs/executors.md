@@ -11,15 +11,15 @@ xm_local.Local(
 )
 ```
 
-## Cloud AI Platform (CAIP)
+## Vertex AI (Cloud AI Platform)
 
-The `Caip` executor declares that an executable will be run on the CAIP
+The `Vertex` executor declares that an executable will be run on the Vertex AI
 platform.
 
-The Caip executor takes in a resource requirements object.
+The Vertex executor takes in a resource requirements object.
 
 ```python
-xm_local.Caip(
+xm_local.Vertex(
     xm.JobRequirements(
         cpu=1,  # Measured in vCPUs.
         ram=4 * xm.GiB,
@@ -29,7 +29,7 @@ xm_local.Caip(
 ```
 
 ```python
-xm_local.Caip(
+xm_local.Vertex(
     xm.JobRequirements(
         cpu=1,  # Measured in vCPUs.
         ram=4 * xm.GiB,
@@ -51,12 +51,12 @@ As of June 2021, the currently supported accelerator types are:
 IMPORTANT: Note that for `TPU_V2` and `TPU_V3` the only currently supported
 count is 8.
 
-### Caip Specification
+### Vertex AI Specification
 
-The CAIP executor allows you specify a remote image repository to push to.
+The Vertex AI executor allows you specify a remote image repository to push to.
 
 ```python
-xm_local.Caip.Spec(
+xm_local.Vertex.Spec(
     push_image_tag='gcr.io/<project>/<image>:<tag>',
 )
 ```

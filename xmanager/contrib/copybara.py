@@ -28,18 +28,18 @@ preprocess source code so that it can be run on different platforms with
 different executors. e.g.
 
 local_version = run_workflow(config, 'local', path)
-caip_version = run_workflow(config, 'caip', path)
+vertex_version = run_workflow(config, 'vertex', path)
 
 local_spec = xm.PythonContainer(path=local_version, **kwargs)
-caip_spec = xm.PythonContainer(path=caip_version, **kwargs)
+vertex_spec = xm.PythonContainer(path=vertex_version, **kwargs)
 
-[local_executable, caip_executable] = experiment.package([
+[local_executable, vertex_executable] = experiment.package([
   xm.Packageable(
     executable_spec=spec,
     executor_spec=xm_local.Local.Spec()),
   xm.Packageable(
     executable_spec=spec,
-    executor_spec=xm_local.Caip.Spec())])
+    executor_spec=xm_local.Vertex.Spec())])
 
 Copybara has no release process, so you must compile copybara yourself:
 https://github.com/google/copybara

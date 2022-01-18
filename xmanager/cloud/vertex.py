@@ -11,9 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Client for interacting with AI Platform (Unified).
+"""Client for interacting with Vertex AI.
 
-https://cloud.google.com/ai-platform-unified/docs/reference/rest
+https://cloud.google.com/vertex-ai/docs/reference/rest
 """
 import asyncio
 import functools
@@ -96,8 +96,8 @@ def client():
   return Client()
 
 
-def _caip_job_predicate(job: xm.Job) -> bool:
-  return isinstance(job.executor, local_executors.Caip)
+def _vertex_job_predicate(job: xm.Job) -> bool:
+  return isinstance(job.executor, local_executors.Vertex)
 
 
 class Client:
@@ -143,8 +143,8 @@ class Client:
         if job.executor.tpu_capability:
           tpu_runtime_version = job.executor.tpu_capability.tpu_runtime_version
       if i == 0 and job.executor.requirements.replicas > 1:
-        raise ValueError('The first job in a JobGroup using the Caip executor '
-                         'cannot have requirements.replicas > 1.')
+        raise ValueError('The first job in a JobGroup using the Vertex AI '
+                         'executor cannot have requirements.replicas > 1.')
       pool = aip_v1.WorkerPoolSpec(
           machine_spec=get_machine_spec(job),
           container_spec=aip_v1.ContainerSpec(
@@ -170,8 +170,8 @@ class Client:
         pool.container_spec.env = None
       pools.append(pool)
 
-    # TOOD(chenandrew): CAIP only allows for 4 worker pools.
-    # If CAIP does not implement more worker pools, another work-around
+    # TOOD(chenandrew): Vertex Training only allows for 4 worker pools.
+    # If Vertex does not implement more worker pools, another work-around
     # is to simply put all jobs into the same worker pool as replicas.
     # Each replica would contain the same image, but would execute different
     # modules based the replica index. A disadvantage of this implementation
@@ -201,7 +201,7 @@ class Client:
     """Get the tensorboard settings for a sequence of Jobs."""
     executors = []
     for job in jobs:
-      assert isinstance(job.executor, local_executors.Caip)
+      assert isinstance(job.executor, local_executors.Vertex)
       executors.append(job.executor)
     if all(not executor.tensorboard for executor in executors):
       return '', ''
@@ -238,7 +238,7 @@ class Client:
     aiplatform.CustomJob.get(job_name).cancel()
 
   async def get_or_create_tensorboard(self, name: str) -> str:
-    """Gets or creates a CAIP tensorboard instance."""
+    """Gets or creates a Veretex Tensorboard instance."""
     tensorboard_client = aip_v1beta.TensorboardServiceAsyncClient(
         client_options={
             'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
@@ -252,7 +252,7 @@ class Client:
     return await self.create_tensorboard(name)
 
   async def create_tensorboard(self, name: str) -> str:
-    """Creates a CAIP tensorboard instance."""
+    """Creates a Vertex Tensorboard instance."""
     tensorboard_client = aip_v1beta.TensorboardServiceAsyncClient(
         client_options={
             'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
@@ -271,7 +271,7 @@ class Client:
 
 def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   """Get the GCP machine type that best matches the Job's requirements."""
-  assert isinstance(job.executor, local_executors.Caip)
+  assert isinstance(job.executor, local_executors.Vertex)
   requirements = job.executor.requirements
   machine_type = cpu_ram_to_machine_type(
       requirements.task_requirements.get(xm.ResourceType.CPU),
@@ -298,7 +298,7 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
 
 
 @attr.s(auto_attribs=True)
-class CaipHandle(local_execution.ExecutionHandle):
+class VertexHandle(local_execution.ExecutionHandle):
   """A handle for referring to the launched container."""
 
   job_name: str
@@ -315,11 +315,12 @@ class CaipHandle(local_execution.ExecutionHandle):
     return local_status.LocalWorkUnitStatus(status=status)
 
 
-# Must act on all jobs with `local_executors.Caip` executor.
+# Must act on all jobs with `local_executors.Vertex` executor.
 def launch(experiment_title: str, work_unit_name: str,
-           job_group: xm.JobGroup) -> List[CaipHandle]:
-  """Launch CAIP jobs in the job_group and return a handler."""
-  jobs = xm.job_operators.collect_jobs_by_filter(job_group, _caip_job_predicate)
+           job_group: xm.JobGroup) -> List[VertexHandle]:
+  """Launch Vertex jobs in the job_group and return a handler."""
+  jobs = xm.job_operators.collect_jobs_by_filter(job_group,
+                                                 _vertex_job_predicate)
   # As client creation may throw, do not initiate it if there are no jobs.
   if not jobs:
     return []
@@ -328,7 +329,7 @@ def launch(experiment_title: str, work_unit_name: str,
       name=f'{experiment_title}_{work_unit_name}',
       jobs=jobs,
   )
-  return [CaipHandle(job_name=job_name)]
+  return [VertexHandle(job_name=job_name)]
 
 
 def cpu_ram_to_machine_type(cpu: Optional[int], ram: Optional[int]) -> str:

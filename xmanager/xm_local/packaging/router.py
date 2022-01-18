@@ -25,10 +25,10 @@ from xmanager.xm_local.packaging import cloud as cloud_packaging
 from xmanager.xm_local.packaging import local as local_packaging
 
 
-def _visit_caip_spec(
+def _visit_vertex_spec(
     bazel_outputs: bazel_tools.TargetOutputs,
     packageable: xm.Packageable,
-    _: executors.CaipSpec,
+    _: executors.VertexSpec,
 ):
   del bazel_outputs
   return cloud_packaging.package_cloud_executable(
@@ -71,7 +71,7 @@ def _throw_on_unknown_executor(
 
 
 _PACKAGING_ROUTER = pattern_matching.match(
-    _visit_caip_spec,
+    _visit_vertex_spec,
     _visit_local_spec,
     _visit_kubernetes_spec,
     _throw_on_unknown_executor,

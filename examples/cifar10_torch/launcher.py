@@ -51,10 +51,10 @@ async def main(_):
     [executable] = experiment.package([
         xm.Packageable(
             executable_spec=spec,
-            executor_spec=xm_local.Caip.Spec(),
+            executor_spec=xm_local.Vertex.Spec(),
             args={
                 # TODO: replace workerpool0 with the actual name of
-                # the job when uCAIP supports custom name worker pools.
+                # the job when Vertex AI supports custom name worker pools.
                 'master_addr_port':
                     xm.ShellSafeArg(
                         utils.get_workerpool_address('workerpool0')),
@@ -77,7 +77,8 @@ async def main(_):
         hyperparameters['rank'] = i
         job_group.jobs[f'node_{i}'] = xm.Job(
             executable=executable,
-            executor=xm_local.Caip(xm.JobRequirements(t4=FLAGS.gpus_per_node)),
+            executor=xm_local.Vertex(
+                xm.JobRequirements(t4=FLAGS.gpus_per_node)),
             args=hyperparameters,
         )
       work_units.append(await experiment.add(job_group))

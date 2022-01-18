@@ -24,7 +24,7 @@ from absl import app
 from absl import flags
 from xmanager import xm
 from xmanager import xm_local
-from xmanager.cloud import caip
+from xmanager.cloud import vertex
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string(
@@ -54,7 +54,7 @@ def main(_):
     [executable] = experiment.package([
         xm.Packageable(
             executable_spec=spec,
-            executor_spec=xm_local.Caip.Spec(),
+            executor_spec=xm_local.Vertex.Spec(),
             args={
                 'gin_files': gin_file,
             },
@@ -63,7 +63,7 @@ def main(_):
 
     tensorboard = FLAGS.tensorboard
     if not tensorboard:
-      tensorboard = caip.client().get_or_create_tensorboard('cifar10')
+      tensorboard = vertex.client().get_or_create_tensorboard('cifar10')
       tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
     output_dir = os.environ['GOOGLE_CLOUD_BUCKET_NAME']
     output_dir = os.path.join(output_dir, str(experiment.experiment_id))
@@ -72,7 +72,7 @@ def main(_):
     experiment.add(
         xm.Job(
             executable=executable,
-            executor=xm_local.Caip(
+            executor=xm_local.Vertex(
                 xm.JobRequirements(t4=1), tensorboard=tensorboard_capability)))
 
 

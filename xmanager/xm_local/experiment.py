@@ -22,8 +22,8 @@ from absl import logging
 import attr
 from kubernetes import client as k8s_client
 from xmanager import xm
-from xmanager.cloud import caip
 from xmanager.cloud import kubernetes
+from xmanager.cloud import vertex
 from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
 from xmanager.xm import job_operators
@@ -41,7 +41,7 @@ def _throw_on_unknown_executor(job: xm.Job, executor: Any):
 
 _EXECUTOR_VALIDATOR = pattern_matching.match(
     pattern_matching.Case([xm.Job, local_executors.Local], lambda *_: None),
-    pattern_matching.Case([xm.Job, local_executors.Caip], lambda *_: None),
+    pattern_matching.Case([xm.Job, local_executors.Vertex], lambda *_: None),
     pattern_matching.Case([xm.Job, local_executors.Kubernetes],
                           lambda *_: None),
     _throw_on_unknown_executor,
@@ -56,7 +56,7 @@ def _validate_job_group(job_group: xm.JobGroup) -> None:
 
 @attr.s(auto_attribs=True)
 class _LaunchResult:
-  caip_handles: List[caip.CaipHandle]
+  vertex_handles: List[vertex.VertexHandle]
   k8s_handles: List[kubernetes.KubernetesHandle]
   local_handles: List[local_execution.LocalExecutionHandle]
 
@@ -80,19 +80,19 @@ class LocalExperimentUnit(xm.ExperimentUnit):
     # We are delegating the traversal of the job group to modules.
     # That improves modularity, but sacrifices the ability to make
     # cross-executor decisions.
-    caip_handles = caip.launch(self._experiment_title,
-                               self.experiment_unit_name, job_group)
+    vertex_handles = vertex.launch(self._experiment_title,
+                                   self.experiment_unit_name, job_group)
     k8s_handles = kubernetes.launch(self.get_full_job_name, job_group)
     local_handles = await local_execution.launch(self.get_full_job_name,
                                                  job_group)
     return _LaunchResult(
-        caip_handles=caip_handles,
+        vertex_handles=vertex_handles,
         k8s_handles=k8s_handles,
         local_handles=local_handles,
     )
 
   def _ingest_execution_handles(self, launch_result: _LaunchResult) -> None:
-    self._non_local_execution_handles.extend(launch_result.caip_handles +
+    self._non_local_execution_handles.extend(launch_result.vertex_handles +
                                              launch_result.k8s_handles)
     self._local_execution_handles.extend(launch_result.local_handles)
 
@@ -128,14 +128,14 @@ class LocalExperimentUnit(xm.ExperimentUnit):
     is stopped.
     """
 
-    def stop_caip_handle(caip_handle: caip.CaipHandle) -> None:
-      caip_handle.stop()
+    def stop_vertex_handle(vertex_handle: vertex.VertexHandle) -> None:
+      vertex_handle.stop()
 
     def throw_on_unknown_handle(handle: Any) -> None:
       raise TypeError(f'Unsupported handle: {handle!r}')
 
     handle_stopper = pattern_matching.match(
-        stop_caip_handle,
+        stop_vertex_handle,
         throw_on_unknown_handle,
     )
     handles = self._non_local_execution_handles + self._local_execution_handles
@@ -167,10 +167,11 @@ class LocalWorkUnit(LocalExperimentUnit):
       self, handles: Sequence[local_execution.ExecutionHandle]) -> None:
     """Saves jobs present in the handlers."""
 
-    def save_caip_handle(caip_handle: caip.CaipHandle) -> None:
-      database.database().insert_caip_job(self.experiment_id, self.work_unit_id,
-                                          self.experiment_unit_name,
-                                          caip_handle.job_name)
+    def save_vertex_handle(vertex_handle: vertex.VertexHandle) -> None:
+      database.database().insert_vertex_job(self.experiment_id,
+                                            self.work_unit_id,
+                                            self.experiment_unit_name,
+                                            vertex_handle.job_name)
 
     def save_k8s_handle(k8s_handle: kubernetes.KubernetesHandle) -> None:
       for job in k8s_handle.jobs:
@@ -185,7 +186,7 @@ class LocalWorkUnit(LocalExperimentUnit):
       raise TypeError(f'Unsupported handle: {handle!r}')
 
     handle_saver = pattern_matching.match(
-        save_caip_handle,
+        save_vertex_handle,
         save_k8s_handle,
         throw_on_unknown_handle,
     )
@@ -201,7 +202,7 @@ class LocalWorkUnit(LocalExperimentUnit):
       launch_result = await self._submit_jobs_for_execution(job_group)
       self._ingest_execution_handles(launch_result)
       # TODO: Save the local jobs to the database as well.
-      self._save_handles_to_storage(launch_result.caip_handles +
+      self._save_handles_to_storage(launch_result.vertex_handles +
                                     launch_result.k8s_handles)
       self._monitor_local_jobs(launch_result.local_handles)
 
@@ -344,8 +345,9 @@ def get_experiment(experiment_id: int) -> xm.Experiment:
             '[Experiment id: %s, work unit id: %s] '
             'Loading local experiment units from storage is not implemented.',
             experiment_id, work_unit_result.work_unit_id)
+      # "caip" is the legacy field name of vertex inside the proto.
       elif data.HasField('caip'):
-        non_local_handles = [caip.CaipHandle(data.caip.resource_name)]
+        non_local_handles = [vertex.VertexHandle(data.vertex.resource_name)]
       elif data.HasField('kubernetes'):
         job = k8s_client.V1Job()
         job.metadata = k8s_client.V1ObjectMeta(

@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Helper methods to find the cluster details when running on CAIP."""
+"""Helper methods to find the cluster details when running on Vertex."""
 
 import json
 import os
@@ -33,7 +33,7 @@ def get_master_address_port() -> Tuple[str, str]:
   """
   cluster_spec = os.environ.get('CLUSTER_SPEC', None)
   logging.info('CLUSTER_SPEC: %s', cluster_spec)
-  if not cluster_spec:
+  if not cluster_spec or 'workerpool0' not in cluster_spec:
     return '127.0.0.1', '29500'
 
   cluster_spec = json.loads(cluster_spec)

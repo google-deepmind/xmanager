@@ -305,8 +305,8 @@ def _wrap_late_bindings(destination: str, path: str, dockerfile: str) -> None:
   using `docker.APIClient().inspect_image()`.
 
   Late bindings are special formatted strings that are evaluated at runtime. The
-  primary use for late-bindings is to find the address of other jobs in CAIP
-  which is only known at runtime and cannot be statically defined.
+  primary use for late-bindings is to find the address of other jobs in
+  Vertex AI which is only known at runtime and cannot be statically defined.
 
   Args:
     destination: An empty destination to contain the new project path and the
@@ -325,7 +325,7 @@ def _wrap_late_bindings(destination: str, path: str, dockerfile: str) -> None:
       os.path.join(destination, 'wrapped_entrypoint.sh'))
   shutil.copyfile(
       os.path.join(root_dir, 'cloud', 'utils.py'),
-      os.path.join(destination, 'caip_utils.py'))
+      os.path.join(destination, 'vertex_utils.py'))
   shutil.copyfile(
       os.path.join(root_dir, 'vizier', 'vizier_worker.py'),
       os.path.join(destination, 'vizier_worker.py'))

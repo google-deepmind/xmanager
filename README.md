@@ -55,7 +55,7 @@ to run XManager experiments, you need to install Bazel.
 
 ### Create a GCP project (optional)
 
-If you use `xm_local.Caip` ([Vertex AI](https://cloud.google.com/vertex-ai))
+If you use `xm_local.Vertex` ([Vertex AI](https://cloud.google.com/vertex-ai))
 to run XManager experiments, you need to have a GCP project in order to be able
 to access Vertex AI to run jobs.
 
@@ -198,7 +198,7 @@ steps:
     [executable] = experiment.package([
       xm.Packageable(
         executable_spec=spec,
-        executor_spec=xm_local.Caip.Spec(),
+        executor_spec=xm_local.Vertex.Spec(),
       ),
     ])
    ```
@@ -228,7 +228,7 @@ steps:
     for hyperparameters in trials:
       experiment.add(xm.Job(
           executable=executable,
-          executor=xm_local.Caip(requirements=requirements),
+          executor=xm_local.Vertex(requirements=requirements),
           args=hyperparameters,
         ))
     ```
@@ -289,7 +289,7 @@ for details on each executor.
 | Name | Description |
 | --- | --- |
 | `xmanager.xm_local.Local` | Runs a binary or a container locally. |
-| `xmanager.xm_local.Caip` | Runs a container on [Vertex AI](#create-a-gcp-project-(optional)). |
+| `xmanager.xm_local.Vertex` | Runs a container on [Vertex AI](#create-a-gcp-project-(optional)). |
 | `xmanager.xm_local.Kubernetes` | Runs a container on Kubernetes. |
 
 ### Job / JobGroup
@@ -327,7 +327,7 @@ Jobs are defined like this:
 ```python
 [executable] = xm.Package(...)
 
-executor = xm_local.Caip(...)
+executor = xm_local.Vertex(...)
 
 xm.Job(
     executable=executable,

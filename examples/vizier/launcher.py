@@ -59,7 +59,7 @@ def main(_):
     [executable] = experiment.package([
         xm.Packageable(
             executable_spec=spec,
-            executor_spec=xm_local.Caip.Spec(),
+            executor_spec=xm_local.Vertex.Spec(),
         ),
     ])
 
@@ -67,7 +67,7 @@ def main(_):
         experiment=experiment,
         job=xm.Job(
             executable=executable,
-            executor=xm_local.Caip(),
+            executor=xm_local.Vertex(),
         ),
         study_factory=vizier.NewStudy(study_spec=get_study_spec()),
         num_trials_total=3,

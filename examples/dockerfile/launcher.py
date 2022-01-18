@@ -29,12 +29,12 @@ def main(argv: Sequence[str]) -> None:
     [executable] = experiment.package([
         xm.Packageable(
             executable_spec=executable_spec,
-            executor_spec=xm_local.Caip.Spec()),
+            executor_spec=xm_local.Vertex.Spec()),
     ])
     experiment.add(
         xm.Job(
             executable=executable,
-            executor=xm_local.Caip(),
+            executor=xm_local.Vertex(),
             env_vars={'FOO': 'bar'},
             args=['--a=1', '--b=2', '--c=3', '--d=4'],
         ))

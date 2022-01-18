@@ -244,7 +244,7 @@ class Executor(abc.ABC):
 
   Concrete supported executors are listed in xm_local/executors.py:
     * xm_local.Local
-    * xm_local.Caip
+    * xm_local.Vertex
     * xm_local.Kubernetes
   """
 

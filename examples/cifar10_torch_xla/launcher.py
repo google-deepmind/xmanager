@@ -50,7 +50,7 @@ def main(_):
     [executable] = experiment.package([
         xm.Packageable(
             executable_spec=spec,
-            executor_spec=xm_local.Caip.Spec(),
+            executor_spec=xm_local.Vertex.Spec(),
             args={'platform': FLAGS.platform},
         ),
     ])
@@ -70,7 +70,7 @@ def main(_):
       jobs = {}
       jobs['coordinator'] = xm.Job(
           executable=executable,
-          executor=xm_local.Caip(requirements),
+          executor=xm_local.Vertex(requirements),
           args=hyperparameters,
       )
       experiment.add(xm.JobGroup(**jobs))

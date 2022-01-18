@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-python3 -c "import caip_utils; caip_utils.create_workerpool_address_env_vars_script('./map_xm_env_vars')"
+python3 -c "import vertex_utils; vertex_utils.create_workerpool_address_env_vars_script('./map_xm_env_vars')"
 source ./map_xm_env_vars
-ARGS=($(python3 -c "import caip_utils; import sys; caip_utils.print_workerpool_address_args(sys.argv)" $@ | tr -d '[],'))
+ARGS=($(python3 -c "import vertex_utils; import sys; vertex_utils.print_workerpool_address_args(sys.argv)" $@ | tr -d '[],'))
 ./entrypoint.sh ${ARGS[@]}

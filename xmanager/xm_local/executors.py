@@ -73,7 +73,7 @@ class TpuCapability:
 
 @attr.s(auto_attribs=True)
 class TensorboardCapability:
-  """Tensorboard capability integrates a CAIP Job with Vertex Tensorboard."""
+  """Tensorboard capability integrates a Vertex AI Job with Tensorboard."""
 
   # The name of the tensorboard to use.
   name: str
@@ -84,8 +84,8 @@ class TensorboardCapability:
 
 
 @attr.s(auto_attribs=True)
-class CaipSpec(xm.ExecutorSpec):
-  """Caip spec describes the Google Cloud Platform (GCP) location."""
+class VertexSpec(xm.ExecutorSpec):
+  """Vertex AI spec describes the Google Cloud Platform (GCP) location."""
 
   # An image registry name tag to push.
   # The image tag should be in the form 'myregistryhost/name:tag'
@@ -93,14 +93,20 @@ class CaipSpec(xm.ExecutorSpec):
 
 
 @attr.s(auto_attribs=True)
-class Caip(xm.Executor):
-  """Caip Executor describes the runtime environment of GCP."""
+class Vertex(xm.Executor):
+  """Vertex AI Executor describes the runtime environment of GCP."""
 
   requirements: xm.JobRequirements = attr.Factory(xm.JobRequirements)
   tpu_capability: Optional[TpuCapability] = None
   tensorboard: Optional[TensorboardCapability] = None
 
-  Spec = CaipSpec  # pylint: disable=invalid-name
+  Spec = VertexSpec  # pylint: disable=invalid-name
+
+
+# Declaring variable aliases for legacy compatability.
+# New code should not use these aliases.
+Caip = Vertex
+CaipSpec = VertexSpec
 
 
 @attr.s(auto_attribs=True)

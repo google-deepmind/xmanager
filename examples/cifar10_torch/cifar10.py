@@ -35,9 +35,9 @@ from torchvision import transforms
 
 # pylint: disable=g-import-not-at-top
 try:
-  from xmanager.cloud import utils as caip_utils
+  from xmanager.cloud import utils as vertex_utils
 except ModuleNotFoundError:
-  import caip_utils  # a copy of caip_utils.py is present in the directory.
+  import vertex_utils  # a copy of vertex_utils.py is present in the directory.
 # pylint: enable=g-import-not-at-top
 
 FLAGS = flags.FLAGS
@@ -147,8 +147,8 @@ def main(_):
   world_size = FLAGS.world_size
   node_rank = FLAGS.rank
   if master_addr is None or master_port is None:
-    master_addr, master_port = caip_utils.get_master_address_port()
-    world_size, node_rank = caip_utils.get_world_size_rank()
+    master_addr, master_port = vertex_utils.get_master_address_port()
+    world_size, node_rank = vertex_utils.get_world_size_rank()
   ngpus_per_node = torch.cuda.device_count()
 
   # We convert FLAGS to a dict, so it can be passed to spawned processes.

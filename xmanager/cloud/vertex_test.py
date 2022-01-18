@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Tests for xmanager.cloud.caip."""
+"""Tests for xmanager.cloud.vertex."""
 import os
 import unittest
 from unittest import mock
@@ -27,10 +27,10 @@ from xmanager.cloud import auth as xm_auth
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import executors as local_executors
 
-from xmanager.cloud import caip  # pylint: disable=g-bad-import-order
+from xmanager.cloud import vertex  # pylint: disable=g-bad-import-order
 
 
-class CaipTest(unittest.TestCase):
+class VertexTest(unittest.TestCase):
 
   @mock.patch.object(xm_auth, 'get_service_account')
   @mock.patch.object(auth, 'default')
@@ -40,7 +40,7 @@ class CaipTest(unittest.TestCase):
     mock_creds.return_value = (creds, 'test-project')
     mock_sa.return_value = 'test-sa'
 
-    client = caip.Client('test-project', 'us-central1')
+    client = vertex.Client('test-project', 'us-central1')
     job = xm.Job(
         name='test-job',
         executable=local_executables.GoogleContainerRegistryImage(
@@ -48,7 +48,7 @@ class CaipTest(unittest.TestCase):
             image_path='image-path',
             args=xm.SequentialArgs.from_collection({'a': 1}),
         ),
-        executor=local_executors.Caip(xm.JobRequirements(cpu=1, ram=1, t4=2)),
+        executor=local_executors.Vertex(xm.JobRequirements(cpu=1, ram=1, t4=2)),
         args={
             'b': 2,
             'c': 3
@@ -93,46 +93,47 @@ class CaipTest(unittest.TestCase):
   def test_get_machine_spec_default(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
-        executor=local_executors.Caip(),
+        executor=local_executors.Vertex(),
         args={})
-    machine_spec = caip.get_machine_spec(job)
+    machine_spec = vertex.get_machine_spec(job)
     self.assertDictEqual(machine_spec, {'machine_type': 'n1-standard-4'})
 
   def test_get_machine_spec_cpu(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
-        executor=local_executors.Caip(
+        executor=local_executors.Vertex(
             requirements=xm.JobRequirements(cpu=20, ram=40 * xm.GiB)),
         args={})
-    machine_spec = caip.get_machine_spec(job)
+    machine_spec = vertex.get_machine_spec(job)
     self.assertDictEqual(machine_spec, {'machine_type': 'n1-highcpu-64'})
 
   def test_get_machine_spec_gpu(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
-        executor=local_executors.Caip(requirements=xm.JobRequirements(p100=2)),
+        executor=local_executors.Vertex(
+            requirements=xm.JobRequirements(p100=2)),
         args={})
-    machine_spec = caip.get_machine_spec(job)
+    machine_spec = vertex.get_machine_spec(job)
     self.assertDictEqual(
         machine_spec, {
             'machine_type': 'n1-standard-4',
-            'accelerator_type': caip.aip_v1.AcceleratorType.NVIDIA_TESLA_P100,
+            'accelerator_type': vertex.aip_v1.AcceleratorType.NVIDIA_TESLA_P100,
             'accelerator_count': 2,
         })
 
   def test_get_machine_spec_tpu(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
-        executor=local_executors.Caip(
+        executor=local_executors.Vertex(
             requirements=xm.JobRequirements(tpu_v3=8)),
         args={})
-    machine_spec = caip.get_machine_spec(job)
+    machine_spec = vertex.get_machine_spec(job)
     # TPU_V2 and TPU_V3 removed in
     # https://github.com/googleapis/python-aiplatform/commit/f3a3d03c8509dc49c24139155a572dacbe954f66
     # When TPU enums are restored, replace
     #   'accelerator_type': 7,
     # with
-    #   'accelerator_type': caip.aip_v1.AcceleratorType.TPU_V3,
+    #   'accelerator_type': vertex.aip_v1.AcceleratorType.TPU_V3,
     self.assertDictEqual(
         machine_spec, {
             'machine_type': 'n1-standard-4',
@@ -142,19 +143,19 @@ class CaipTest(unittest.TestCase):
 
   def test_cpu_ram_to_machine_type_exact(self):
     self.assertEqual('n1-standard-16',
-                     caip.cpu_ram_to_machine_type(16, 60 * xm.GiB))
+                     vertex.cpu_ram_to_machine_type(16, 60 * xm.GiB))
 
   def test_cpu_ram_to_machine_type_highmem(self):
     self.assertEqual('n1-highmem-64',
-                     caip.cpu_ram_to_machine_type(1, 415 * xm.GiB))
+                     vertex.cpu_ram_to_machine_type(1, 415 * xm.GiB))
 
   def test_cpu_ram_to_machine_type_highcpu(self):
     self.assertEqual('n1-highcpu-64',
-                     caip.cpu_ram_to_machine_type(63, 1 * xm.GiB))
+                     vertex.cpu_ram_to_machine_type(63, 1 * xm.GiB))
 
   def test_cpu_ram_to_machine_type_too_high(self):
     with self.assertRaises(ValueError):
-      caip.cpu_ram_to_machine_type(1000, 1000)
+      vertex.cpu_ram_to_machine_type(1000, 1000)
 
 
 if __name__ == '__main__':
