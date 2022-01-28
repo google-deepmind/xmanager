@@ -13,6 +13,7 @@
 # limitations under the License.
 """Utilities for testing core objects."""
 
+import asyncio
 from concurrent import futures
 from typing import Any, Awaitable, Callable, List, Mapping, Optional
 
@@ -68,14 +69,16 @@ class TestExperiment(core.Experiment):
     self.launched_jobs_args = []
     self._work_units = []
 
-  def _create_experiment_unit(self, args,
-                              role=core.WorkUnitRole()) -> TestWorkUnit:
+  def _create_experiment_unit(
+      self, args, role=core.WorkUnitRole()) -> Awaitable[TestWorkUnit]:
     """Creates a new WorkUnit instance for the experiment."""
+    future = asyncio.Future()
     work_unit = TestWorkUnit(self, self._work_unit_id_predictor,
                              self._create_task, self.launched_jobs,
                              self.launched_jobs_args, args)
     self._work_units.append(work_unit)
-    return work_unit
+    future.set_result(work_unit)
+    return future
 
   @property
   def work_unit_count(self) -> int:

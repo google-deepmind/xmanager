@@ -249,11 +249,12 @@ class LocalExperiment(xm.Experiment):
     self._experiment_units = []
     self._work_unit_count = 0
 
-  def _create_experiment_unit(self, args: Optional[Mapping[str, Any]],
-                              role: xm.ExperimentUnitRole) -> xm.ExperimentUnit:
+  def _create_experiment_unit(
+      self, args: Optional[Mapping[str, Any]],
+      role: xm.ExperimentUnitRole) -> Awaitable[xm.ExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
 
-    def create_work_unit(role: xm.WorkUnitRole):
+    def create_work_unit(role: xm.WorkUnitRole) -> Awaitable[xm.ExperimentUnit]:
       work_unit = LocalWorkUnit(
           self,
           self._experiment_title,
@@ -268,10 +269,13 @@ class LocalExperiment(xm.Experiment):
           self.experiment_id,
           work_unit.work_unit_id,
       )
-      return work_unit
+      future = asyncio.Future()
+      future.set_result(work_unit)
+      return future
 
     # TODO: Support `role.termination_delay_secs`.
-    def create_auxiliary_unit(role: xm.AuxiliaryUnitRole):
+    def create_auxiliary_unit(
+        role: xm.AuxiliaryUnitRole) -> Awaitable[xm.ExperimentUnit]:
       auxiliary_unit = LocalAuxiliaryUnit(
           self,
           self._experiment_title,
@@ -280,7 +284,9 @@ class LocalExperiment(xm.Experiment):
           role,
       )
       self._experiment_units.append(auxiliary_unit)
-      return auxiliary_unit
+      future = asyncio.Future()
+      future.set_result(auxiliary_unit)
+      return future
 
     return pattern_matching.match(create_work_unit, create_auxiliary_unit)(role)
 

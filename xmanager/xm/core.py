@@ -610,17 +610,33 @@ class Experiment(abc.ABC):
       An awaitable that would be fulfilled when the job is launched.
     """
     # pyformat: enable
-    experiment_unit = self._create_experiment_unit(args, role)
+    experiment_unit_future = self._create_experiment_unit(args, role)
 
     async def launch():
+      experiment_unit = await experiment_unit_future
       await experiment_unit.add(job, args)
       return experiment_unit
 
     return asyncio.wrap_future(self._create_task(launch()))
 
   @abc.abstractmethod
-  def _create_experiment_unit(self, args: Optional[Mapping[str, Any]],
-                              role: ExperimentUnitRole) -> ExperimentUnit:
+  def _create_experiment_unit(
+      self, args: Optional[Mapping[str, Any]],
+      role: ExperimentUnitRole) -> Awaitable[ExperimentUnit]:
+    """Creates a new experiment unit.
+
+    Synchronously starts the experiment unit creation, ensuring that IDs would
+    be assigned in invocation order. The operation itself may run asynchronously
+    in background.
+
+    Args:
+      args: Executable unit arguments, to be show as a part of hyper-parameter
+        sweep.
+      role: Executable unit role: whether to create a work or auxiliary unit.
+
+    Returns:
+      An awaitable to the creation result.
+    """
     raise NotImplementedError
 
   def _create_task(self, task: Awaitable[Any]) -> futures.Future:
