@@ -323,7 +323,7 @@ class JobRequirements:
   topology: Optional[Topology]
 
   location: Optional[str]
-  service_tier: Optional[ServiceTier]
+  service_tier: ServiceTier
 
   def __init__(
       self,
@@ -355,9 +355,7 @@ class JobRequirements:
         If topology is supplied for a non acceelerator resource.
     """
     self.location = location
-    self.service_tier = service_tier
-    if self.service_tier is None:
-      self.service_tier = ServiceTier.PROD
+    self.service_tier = service_tier or ServiceTier.PROD
 
     self.task_requirements = ResourceDict()
     self.accelerator = None
