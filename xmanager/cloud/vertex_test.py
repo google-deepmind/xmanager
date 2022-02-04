@@ -121,6 +121,20 @@ class VertexTest(unittest.TestCase):
             'accelerator_count': 2,
         })
 
+  def test_get_machine_spec_a100(self):
+    job = xm.Job(
+        executable=local_executables.GoogleContainerRegistryImage('name', ''),
+        executor=local_executors.Vertex(
+            requirements=xm.JobRequirements(a100=2)),
+        args={})
+    machine_spec = vertex.get_machine_spec(job)
+    self.assertDictEqual(
+        machine_spec, {
+            'machine_type': 'a2-highgpu-2g',
+            'accelerator_type': vertex.aip_v1.AcceleratorType.NVIDIA_TESLA_A100,
+            'accelerator_count': 2,
+        })
+
   def test_get_machine_spec_tpu(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),

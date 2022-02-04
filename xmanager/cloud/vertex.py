@@ -36,9 +36,8 @@ from xmanager.xm_local import executors as local_executors
 from xmanager.xm_local import status as local_status
 
 _DEFAULT_LOCATION = 'us-central1'
-# The only machines available on AI Platform are N1 machines.
+# The only machines available on AI Platform are N1 machines and A2 machines.
 # https://cloud.google.com/ai-platform-unified/docs/predictions/machine-types#machine_type_comparison
-# TODO: Add machines that support A100.
 # TODO: Move lookup to a canonical place.
 _MACHINE_TYPE_TO_CPU_RAM = {
     'n1-standard-4': (4, 15 * xm.GiB),
@@ -58,6 +57,13 @@ _MACHINE_TYPE_TO_CPU_RAM = {
     'n1-highcpu-32': (32, 28 * xm.GiB),
     'n1-highcpu-64': (64, 57 * xm.GiB),
     'n1-highcpu-96': (96, 86 * xm.GiB),
+}
+_A100_GPUS_TO_MACHINE_TYPE = {
+    1: 'a2-highgpu-1g',
+    2: 'a2-highgpu-2g',
+    4: 'a2-highgpu-4g',
+    8: 'a2-highgpu-8g',
+    16: 'a2-megagpu-16g',
 }
 
 _CLOUD_TPU_ACCELERATOR_TYPES = {
@@ -273,10 +279,7 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   """Get the GCP machine type that best matches the Job's requirements."""
   assert isinstance(job.executor, local_executors.Vertex)
   requirements = job.executor.requirements
-  machine_type = cpu_ram_to_machine_type(
-      requirements.task_requirements.get(xm.ResourceType.CPU),
-      requirements.task_requirements.get(xm.ResourceType.RAM))
-  spec = {'machine_type': machine_type}
+  spec = {}
   for resource, value in requirements.task_requirements.items():
     accelerator_type = None
     if resource in xm.GpuType:
@@ -294,6 +297,19 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
       else:
         spec['accelerator_type'] = aip_v1.AcceleratorType[accelerator_type]
       spec['accelerator_count'] = int(value)
+  accelerator = spec.get('accelerator_type', None)
+  if accelerator and accelerator == aip_v1.AcceleratorType.NVIDIA_TESLA_A100:
+    for (gpus, machine_type) in sorted(_A100_GPUS_TO_MACHINE_TYPE.items()):
+      if spec['accelerator_count'] <= gpus:
+        spec['machine_type'] = machine_type
+        break
+    if not spec.get('machine_type', None):
+      raise ValueError('a100={} does not fit in any valid machine type'.format(
+          spec['accelerator_count']))
+  else:
+    spec['machine_type'] = cpu_ram_to_machine_type(
+        requirements.task_requirements.get(xm.ResourceType.CPU),
+        requirements.task_requirements.get(xm.ResourceType.RAM))
   return spec
 
 
