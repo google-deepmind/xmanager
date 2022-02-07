@@ -17,7 +17,7 @@ Metadata is attached to a context and the context may belong to an experiment
 or a work unit.
 """
 
-from typing import Collection, List, Optional, Set
+from typing import Any, Collection, List, Mapping, Optional, Set
 import attr
 
 
