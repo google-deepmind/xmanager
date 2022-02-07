@@ -338,16 +338,19 @@ class ExperimentUnit(abc.ABC):
 
     return asyncio.wrap_future(self._create_task(launch()))
 
-  async def wait_until_complete(self):
+  async def wait_until_complete(self) -> 'ExperimentUnit':
     """Waits until the unit is in a final state: completed/failed/stopped.
 
     Raises:
       ExperimentUnitError: Exception if the unit couldn't complete.
+    Returns:
+      Returns self to facilitate asyncio.as_completed usage.
     """
     await self._launched_event.wait()
     if self._launched_error:
       raise self._launched_error
     await self._wait_until_complete()
+    return self
 
   async def _launch_job_group(self, job_group: job_blocks.JobGroup,
                               args_view: Mapping[str, Any]) -> None:
@@ -425,6 +428,17 @@ class WorkUnit(ExperimentUnit):
   @abc.abstractmethod
   def work_unit_id(self) -> int:
     raise NotImplementedError
+
+  async def wait_until_complete(self) -> 'WorkUnit':
+    """Waits until the unit is in a final state: completed/failed/stopped.
+
+    Raises:
+      ExperimentUnitError: Exception if the unit couldn't complete.
+    Returns:
+      Returns self to facilitate asyncio.as_completed usage.
+    """
+    await super().wait_until_complete()
+    return self
 
 
 @attr.s(auto_attribs=True, kw_only=True)
