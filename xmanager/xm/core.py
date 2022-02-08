@@ -26,12 +26,11 @@ import abc
 import asyncio
 from concurrent import futures
 import enum
-import functools
 import getpass
 import inspect
 import queue
 import threading
-from typing import Any, Awaitable, Callable, Collection, Dict, Mapping, Optional, Sequence, overload
+from typing import Any, Awaitable, Callable, Collection, Dict, List, Mapping, Optional, Sequence, overload
 
 import attr
 from xmanager.xm import async_packager
@@ -251,22 +250,12 @@ class ExperimentUnit(abc.ABC):
     self._args = args
     self._role = role
 
-    self._launched_error = None
+    self._launch_tasks: List[futures.Future] = []
 
   @property
   def experiment_id(self) -> int:
     """Returns a unique ID assigned to the experiment."""
     return self._experiment.experiment_id
-
-  @property
-  @functools.lru_cache()
-  def _launched_event(self) -> asyncio.Event:
-    """Event to be set when the experiment unit is launched."""
-    # In Python < 3.8 `Event` must be created within the event loop. We defer
-    # the initialization because the constructor is not run in the loop. Note
-    # that after migration to Python >= 3.8 this code can be moved to the
-    # constructor.
-    return asyncio.Event()
 
   def add(self,
           job: job_blocks.JobType,
@@ -320,23 +309,9 @@ class ExperimentUnit(abc.ABC):
     job_awaitable = pattern_matching.match(launch_job, launch_job_group,
                                            launch_job_generator)(
                                                job)
-
-    async def launch():
-      try:
-        await job_awaitable
-      except Exception as e:
-        self._launched_error = ExperimentUnitError(e)
-        raise
-      finally:
-        # Note that the current implementation reuses `_launched_event`: imagine
-        # a `work_unit.add(generator)` call -- the generator makes a
-        # `work_unit.add` call internally as well, touching `_launched_event`
-        # twice in total. Same would apply for multiple external `work_unit.add`
-        # calls, which is not allowed yet. `_launched_error` is susceptible to
-        # that too.
-        self._launched_event.set()
-
-    return asyncio.wrap_future(self._create_task(launch()))
+    launch_task = self._create_task(job_awaitable)
+    self._launch_tasks.append(launch_task)
+    return asyncio.wrap_future(launch_task)
 
   async def wait_until_complete(self) -> 'ExperimentUnit':
     """Waits until the unit is in a final state: completed/failed/stopped.
@@ -346,9 +321,11 @@ class ExperimentUnit(abc.ABC):
     Returns:
       Returns self to facilitate asyncio.as_completed usage.
     """
-    await self._launched_event.wait()
-    if self._launched_error:
-      raise self._launched_error
+    try:
+      for task in self._launch_tasks:
+        await asyncio.wrap_future(task)
+    except Exception as e:
+      raise ExperimentUnitError('Experiment unit could not be created.') from e
     await self._wait_until_complete()
     return self
 
