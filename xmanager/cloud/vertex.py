@@ -198,6 +198,7 @@ class Client:
         sync=False,
         service_account=auth.get_service_account(),
         tensorboard=tensorboard,
+        enable_web_access=True,
     )
     custom_job.wait_for_resource_creation()
     print(f'Job launched at: {custom_job._dashboard_uri()}')  # pylint: disable=protected-access
