@@ -57,7 +57,7 @@ class Local(xm.Executor):
   """
 
   docker_options: Optional[DockerOptions] = None
-  experimental_stream_output: bool = False
+  experimental_stream_output: bool = True
 
   Spec = LocalSpec  # pylint: disable=invalid-name
 
