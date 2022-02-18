@@ -149,7 +149,7 @@ class DockerAdapter(object):
       cmd.extend(['-it', '--entrypoint', 'bash', image_id])
     else:
       cmd.extend([image_id] + list(args))
-    subprocess.run(args=cmd, check=True, env=env_vars)
+    subprocess.run(args=cmd, check=True, env={**os.environ, **env_vars})
     return None
 
   def stop_container(self, container_id: str) -> None:

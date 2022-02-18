@@ -141,7 +141,7 @@ def _build_image_with_docker_command(client: docker.DockerClient,
   if progress:
     command[2:2] = ['--progress', 'plain', '--no-cache']
 
-  subprocess.run(command, check=True, env={'DOCKER_BUILDKIT': '1'})
+  subprocess.run(command, check=True, env={**os.environ, 'DOCKER_BUILDKIT': '1'})
 
 
 def _build_image_with_python_client(client: docker.DockerClient, path: str,
