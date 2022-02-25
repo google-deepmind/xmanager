@@ -300,7 +300,8 @@ class ExperimentUnit(abc.ABC):
 
     def launch_job_generator(
         job_generator: job_blocks.JobGeneratorType) -> Awaitable[None]:
-      if not inspect.iscoroutinefunction(job_generator):
+      if (not inspect.iscoroutinefunction(job_generator) and
+          not inspect.iscoroutinefunction(job_generator.__call__)):
         raise ValueError(
             'Job generator must be an async function. Signature needs to be '
             '`async def job_generator(work_unit: xm.WorkUnit):`')
@@ -434,6 +435,40 @@ class AuxiliaryUnitRole(ExperimentUnitRole):
   termination_delay_secs: int
 
 
+class AuxiliaryUnitJob(abc.ABC):
+  """A job bundled with an AuxiliaryUnitRole.
+
+  This class allows libraries to define self-contained objects which would
+  result in AUX units once added to the expetiment.
+  Note that this class conforms to xm.JobGenerator interface.
+  """
+
+  role: AuxiliaryUnitRole
+  _job: job_blocks.JobType
+
+  def __init__(self,
+               job: job_blocks.JobType,
+               *,
+               importance: Importance = Importance.NORMAL,
+               termination_delay_secs: int) -> None:
+    self.role = AuxiliaryUnitRole(
+        importance=importance,
+        termination_delay_secs=termination_delay_secs,
+    )
+    self._job = job
+
+  async def __call__(self, aux_unit: ExperimentUnit, **kwargs):
+
+    async def launch_generator(
+        job_generator: job_blocks.JobGeneratorType) -> None:
+      await job_generator(aux_unit, **kwargs)
+
+    async def launch_job(job: Any) -> None:
+      aux_unit.add(job, args=kwargs)
+
+    await pattern_matching.async_match(launch_generator, launch_job)(self._job)
+
+
 class Experiment(abc.ABC):
   """Experiment contains a family of jobs run on the same snapshot of code.
 
@@ -555,6 +590,12 @@ class Experiment(abc.ABC):
 
   @overload
   def add(self,
+          job: AuxiliaryUnitJob,
+          args: Optional[Mapping[str, Any]] = ...) -> Awaitable[ExperimentUnit]:
+    ...
+
+  @overload
+  def add(self,
           job: job_blocks.JobType,
           args: Optional[Mapping[str, Any]] = ...,
           role: WorkUnitRole = ...) -> Awaitable[WorkUnit]:
@@ -601,6 +642,11 @@ class Experiment(abc.ABC):
       An awaitable that would be fulfilled when the job is launched.
     """
     # pyformat: enable
+    role = pattern_matching.match(
+        pattern_matching.Case([AuxiliaryUnitJob], lambda job: job.role),
+        pattern_matching.Case([Any], lambda job: role),
+    )(
+        job)
     experiment_unit_future = self._create_experiment_unit(args, role)
 
     async def launch():

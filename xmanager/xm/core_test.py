@@ -116,6 +116,35 @@ class ExperimentTest(unittest.TestCase):
 
         experiment.add(job_generator)
 
+  def test_auxiliary_unit_job(self):
+    experiment = testing.TestExperiment()
+    with experiment:
+      job = job_blocks.Job(
+          testing.TestExecutable(),
+          testing.TestExecutor(),
+          args={},
+          name='name')
+      experiment.add(core.AuxiliaryUnitJob(job, termination_delay_secs=600))
+
+    self.assertEqual(len(experiment.auxiliary_units), 1)
+
+  def test_auxiliary_unit_job_generator(self):
+    experiment = testing.TestExperiment()
+    with experiment:
+
+      async def make_job(aux_unit: core.ExperimentUnit):
+        aux_unit.add(
+            job_blocks.Job(
+                testing.TestExecutable(),
+                testing.TestExecutor(),
+                args={},
+                name='name'))
+
+      experiment.add(
+          core.AuxiliaryUnitJob(make_job, termination_delay_secs=600))
+
+    self.assertEqual(len(experiment.auxiliary_units), 1)
+
   def test_launch_with_args(self):
     experiment = testing.TestExperiment()
     with experiment:

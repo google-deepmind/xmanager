@@ -21,9 +21,10 @@ import attr
 from xmanager.xm import core
 from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
+from xmanager.xm import pattern_matching as pm
 
 
-class TestWorkUnit(core.WorkUnit):
+class TestExperimentUnit(core.WorkUnit):
   """A test version of WorkUnit with abstract methods implemented."""
 
   def __init__(
@@ -34,8 +35,9 @@ class TestWorkUnit(core.WorkUnit):
       launched_jobs: List[job_blocks.JobType],
       launched_jobs_args: List[Optional[Mapping[str, Any]]],
       args: Optional[Mapping[str, Any]],
+      role: core.ExperimentUnitRole,
   ) -> None:
-    super().__init__(experiment, create_task, args, core.WorkUnitRole())
+    super().__init__(experiment, create_task, args, role)
     self._launched_jobs = launched_jobs
     self._launched_jobs_args = launched_jobs_args
     self._work_unit_id = work_unit_id_predictor.reserve_id()
@@ -68,16 +70,23 @@ class TestExperiment(core.Experiment):
     self.launched_jobs = []
     self.launched_jobs_args = []
     self._work_units = []
+    self._auxiliary_units = []
 
   def _create_experiment_unit(
-      self, args, role=core.WorkUnitRole()) -> Awaitable[TestWorkUnit]:
+      self, args, role=core.WorkUnitRole()) -> Awaitable[TestExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
     future = asyncio.Future()
-    work_unit = TestWorkUnit(self, self._work_unit_id_predictor,
-                             self._create_task, self.launched_jobs,
-                             self.launched_jobs_args, args)
-    self._work_units.append(work_unit)
-    future.set_result(work_unit)
+    experiment_unit = TestExperimentUnit(self, self._work_unit_id_predictor,
+                                         self._create_task, self.launched_jobs,
+                                         self.launched_jobs_args, args, role)
+    pm.match(
+        pm.Case([core.WorkUnitRole],
+                lambda _: self._work_units.append(experiment_unit)),
+        pm.Case([core.AuxiliaryUnitRole],
+                lambda _: self._auxiliary_units.append(experiment_unit)))(
+                    role)
+
+    future.set_result(experiment_unit)
     return future
 
   @property
@@ -87,6 +96,10 @@ class TestExperiment(core.Experiment):
   @property
   def work_units(self):
     return self._work_units
+
+  @property
+  def auxiliary_units(self):
+    return self._auxiliary_units
 
   @property
   def experiment_id(self) -> int:
