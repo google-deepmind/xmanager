@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests for xmanager.cloud.vertex."""
+import datetime
 import os
 import unittest
 from unittest import mock
@@ -77,14 +78,18 @@ class VertexTest(unittest.TestCase):
                     ],
                     service_account='test-sa',
                     base_output_directory=aip_v1.GcsDestination(
-                        output_uri_prefix='gs://test-bucket',),
+                        output_uri_prefix='gs://test-bucket/aiplatform-custom-job-2022-01-01-00:00:00.000',
+                    ),
                 ),
             ),
     }
 
-    with mock.patch.object(aip_utils.ClientWithOverride, 'WrappedClient') as job_client, \
+    timestamp = datetime.datetime.strptime('2022/1/1', '%Y/%m/%d')
+    with mock.patch.object(datetime, 'datetime') as mock_timestamp, \
+         mock.patch.object(aip_utils.ClientWithOverride, 'WrappedClient') as job_client, \
          mock.patch.object(aiplatform.CustomJob, 'resource_name', new_callable=mock.PropertyMock) as name, \
          mock.patch.object(aiplatform.CustomJob, '_dashboard_uri'):
+      mock_timestamp.now.return_value = timestamp
       name.return_value = 'test-resource-name'
       client.launch('test-experiment', [job])
       job_client.return_value.create_custom_job.assert_called_once_with(

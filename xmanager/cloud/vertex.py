@@ -192,7 +192,7 @@ class Client:
         location=self.location,
         display_name=name,
         worker_pool_specs=pools,
-        staging_bucket=output_dir,
+        base_output_dir=output_dir,
     )
     custom_job.run(
         sync=False,
