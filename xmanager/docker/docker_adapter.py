@@ -142,6 +142,8 @@ class DockerAdapter(object):
       cmd.extend(['--network', network])
     for in_port, out_port in ports.items():
       cmd.extend(['-p', f'{in_port}:{out_port}'])
+    for key, value in env_vars.items():
+      cmd.extend(['-e', f'{key}={value}'])
     for key, value in volumes.items():
       cmd.extend(['-v', f'{key}:{value}'])
     if interactive:
@@ -149,7 +151,7 @@ class DockerAdapter(object):
       cmd.extend(['-it', '--entrypoint', 'bash', image_id])
     else:
       cmd.extend([image_id] + list(args))
-    subprocess.run(args=cmd, check=True, env=env_vars)
+    subprocess.run(args=cmd, check=True)
     return None
 
   def stop_container(self, container_id: str) -> None:
