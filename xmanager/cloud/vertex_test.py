@@ -153,12 +153,11 @@ class VertexTest(unittest.TestCase):
     #   'accelerator_type': 7,
     # with
     #   'accelerator_type': vertex.aip_v1.AcceleratorType.TPU_V3,
-    self.assertDictEqual(
-        machine_spec, {
-            'machine_type': 'n1-standard-4',
-            'accelerator_type': 7,
-            'accelerator_count': 8,
-        })
+    self.assertDictEqual(machine_spec, {
+        'machine_type': 'cloud-tpu',
+        'accelerator_type': 7,
+        'accelerator_count': 8,
+    })
 
   def test_cpu_ram_to_machine_type_exact(self):
     self.assertEqual('n1-standard-16',

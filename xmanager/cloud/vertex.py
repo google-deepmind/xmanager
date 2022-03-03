@@ -20,7 +20,6 @@ import functools
 import logging
 import math
 import os
-import time
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import attr
@@ -307,6 +306,8 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
     if not spec.get('machine_type', None):
       raise ValueError('a100={} does not fit in any valid machine type'.format(
           spec['accelerator_count']))
+  elif accelerator == 6 or accelerator == 7:
+    spec['machine_type'] = 'cloud-tpu'
   else:
     spec['machine_type'] = cpu_ram_to_machine_type(
         requirements.task_requirements.get(xm.ResourceType.CPU),
