@@ -232,6 +232,8 @@ class ExperimentUnitRole(abc.ABC):
 class ExperimentUnit(abc.ABC):
   """ExperimentUnit is a collection of semantically associated `Job`s."""
 
+  experiment: 'Experiment'
+
   def __init__(self, experiment: 'Experiment',
                create_task: Callable[[Awaitable[Any]], futures.Future],
                args: Optional[Mapping[str,
@@ -245,7 +247,7 @@ class ExperimentUnit(abc.ABC):
         the hyperparameter sweep trial corresponding to a work unit.
       role: The role of this unit in the experiment structure.
     """
-    self._experiment = experiment
+    self.experiment = experiment
     self._create_task = create_task
     self._args = args
     self._role = role
@@ -255,7 +257,7 @@ class ExperimentUnit(abc.ABC):
   @property
   def experiment_id(self) -> int:
     """Returns a unique ID assigned to the experiment."""
-    return self._experiment.experiment_id
+    return self.experiment.experiment_id
 
   def add(self,
           job: job_blocks.JobType,
