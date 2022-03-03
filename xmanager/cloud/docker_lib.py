@@ -108,8 +108,8 @@ def push_docker_image(image: str) -> str:
   if not isinstance(push, str) or '"Digest":' not in push:
     raise RuntimeError(
         'Expected docker push to return a string with `status: Pushed` and a '
-        'Digest. This is probably a temporary issue with --build_locally and '
-        'you should try again')
+        'Digest. This is probably a temporary issue with '
+        '--xm_build_image_locally and you should try again')
   # If we are pushing an image, then :latest should also be present.
   docker_client.images.push(repository=repository, tag='latest')
   print('Your image URI is:', termcolor.colored(image, color='blue'))
