@@ -109,6 +109,12 @@ class JobRequirementsTest(parameterized.TestCase):
     self.assertEqual(requirements.topology.name, '4x2')
     self.assertEqual(requirements.replicas, 2)
 
+  def test_multihost_gpu_with_cpu(self):
+    requirements = resources.JobRequirements(v100='4x2', cpu=1)
+    self.assertEqual(requirements.accelerator, resources.ResourceType.V100)
+    self.assertEqual(requirements.topology.name, '4x2')
+    self.assertEqual(requirements.replicas, 2)
+
   def test_multihost_gpu_with_replicas(self):
     with self.assertRaises(ValueError):
       resources.JobRequirements(v100='4x2', replicas=3)

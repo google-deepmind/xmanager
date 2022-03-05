@@ -387,7 +387,7 @@ class JobRequirements:
       if replicas is not None:
         raise ValueError(
             'Replicated jobs are not supported for multihost GPUs.')
-      replicas = topology.dimensions[1]
+      replicas = self.topology.dimensions[1]
 
     self.replicas = replicas or 1
     self._validate_replicas()
