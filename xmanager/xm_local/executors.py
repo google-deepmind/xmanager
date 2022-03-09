@@ -97,7 +97,6 @@ class Vertex(xm.Executor):
   """Vertex AI Executor describes the runtime environment of GCP."""
 
   requirements: xm.JobRequirements = attr.Factory(xm.JobRequirements)
-  tpu_capability: Optional[TpuCapability] = None
   tensorboard: Optional[TensorboardCapability] = None
 
   Spec = VertexSpec  # pylint: disable=invalid-name

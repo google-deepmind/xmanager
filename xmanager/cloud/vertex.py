@@ -25,7 +25,6 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 import attr
 from google.cloud import aiplatform
 from google.cloud import aiplatform_v1 as aip_v1
-from google.cloud import aiplatform_v1beta1 as aip_v1beta
 from xmanager import xm
 from xmanager.cloud import auth
 from xmanager.xm import utils
@@ -121,12 +120,7 @@ class Client:
     self.location = location
     self.project = project or auth.get_project_name()
     self.parent = f'projects/{self.project}/locations/{self.location}'
-    # TODO: move staging_bucket when issue is fixed
-    # https://github.com/googleapis/python-aiplatform/pull/421
-    aiplatform.init(
-        project=self.project,
-        location=self.location,
-        staging_bucket=f'gs://{auth.get_bucket()}')
+    aiplatform.init(project=self.project, location=self.location)
 
   def launch(self, name: str, jobs: Sequence[xm.Job]) -> str:
     """Launch jobs on AI Platform (Unified)."""
@@ -143,10 +137,6 @@ class Client:
       args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
       env_vars = {**executable.env_vars, **job.env_vars}
       env = [{'name': k, 'value': v} for k, v in env_vars.items()]
-      if job.executor.requirements.accelerator in xm.TpuType:
-        tpu_runtime_version = 'nightly'  # pylint: disable=unused-variable
-        if job.executor.tpu_capability:
-          tpu_runtime_version = job.executor.tpu_capability.tpu_runtime_version
       if i == 0 and job.executor.requirements.replicas > 1:
         raise ValueError('The first job in a JobGroup using the Vertex AI '
                          'executor cannot have requirements.replicas > 1.')
@@ -156,23 +146,9 @@ class Client:
               image_uri=executable.image_path,
               args=args,
               env=env,
-              # TODO: The `tpuTfVersion` field doesn't exist
-              # yet in AI Platform (Unified). This is a placeholder
-              # based on the legacy AI Platform ReplicaConfig.
-              # https://cloud.google.com/ai-platform/training/docs/reference/rest/v1/projects.jobs#ReplicaConfig
-              # 'tpuTfVersion': tpu_runtime_version,
           ),
           replica_count=job.executor.requirements.replicas,
       )
-      # The model SDK only supports tensorboard in v1beta1.
-      # https://github.com/googleapis/python-aiplatform/blob/master/google/cloud/aiplatform/jobs.py#L1201
-      # But ContainerSpec.env is not supported in v1beta1.
-      # https://github.com/googleapis/python-aiplatform/blob/master/google/cloud/aiplatform_v1beta1/types/custom_job.py#L216
-      if tensorboard:
-        if env:
-          print('Enviornment variables are not supported when running with '
-                'tensorboard. Set environment variables using `args` instead.')
-        pool.container_spec.env = None
       pools.append(pool)
 
     # TOOD(chenandrew): Vertex Training only allows for 4 worker pools.
@@ -192,10 +168,19 @@ class Client:
         display_name=name,
         worker_pool_specs=pools,
         base_output_dir=output_dir,
+        staging_bucket=f'gs://{auth.get_bucket()}',
     )
+    # TODO Vertex AI can't use TPUs with SA.
+    # https://github.com/deepmind/xmanager/issues/11
+    service_account = auth.get_service_account()
+    for job in jobs:
+      assert isinstance(job.executor, local_executors.Vertex)
+      if job.executor.requirements.accelerator in xm.TpuType:
+        service_account = None
+        break
     custom_job.run(
         sync=False,
-        service_account=auth.get_service_account(),
+        service_account=service_account,
         tensorboard=tensorboard,
         enable_web_access=True,
     )
@@ -245,11 +230,10 @@ class Client:
 
   async def get_or_create_tensorboard(self, name: str) -> str:
     """Gets or creates a Veretex Tensorboard instance."""
-    tensorboard_client = aip_v1beta.TensorboardServiceAsyncClient(
-        client_options={
-            'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
-        })
-    request = aip_v1beta.ListTensorboardsRequest(
+    tensorboard_client = aip_v1.TensorboardServiceAsyncClient(client_options={
+        'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
+    })
+    request = aip_v1.ListTensorboardsRequest(
         parent=self.parent, filter=f'displayName={name}')
     response = await tensorboard_client.list_tensorboards(request)
     async for page in response.pages:
@@ -259,13 +243,12 @@ class Client:
 
   async def create_tensorboard(self, name: str) -> str:
     """Creates a Vertex Tensorboard instance."""
-    tensorboard_client = aip_v1beta.TensorboardServiceAsyncClient(
-        client_options={
-            'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
-        })
-    tensorboard = aip_v1beta.Tensorboard(display_name=name)
+    tensorboard_client = aip_v1.TensorboardServiceAsyncClient(client_options={
+        'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
+    })
+    tensorboard = aip_v1.Tensorboard(display_name=name)
     op = await tensorboard_client.create_tensorboard(
-        aip_v1beta.CreateTensorboardRequest(
+        aip_v1.CreateTensorboardRequest(
             parent=self.parent,
             tensorboard=tensorboard,
         ))

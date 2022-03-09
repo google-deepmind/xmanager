@@ -80,6 +80,7 @@ class VertexTest(unittest.TestCase):
                     base_output_directory=aip_v1.GcsDestination(
                         output_uri_prefix='gs://test-bucket/aiplatform-custom-job-2022-01-01-00:00:00.000',
                     ),
+                    enable_web_access=True,
                 ),
             ),
     }

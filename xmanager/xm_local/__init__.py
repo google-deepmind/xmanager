@@ -13,9 +13,11 @@
 # limitations under the License.
 """Implementation of the XManager Launch API within the local scheduler."""
 
+from xmanager.cloud import vertex
 from xmanager.xm_local import experiment
 from xmanager.xm_local.executors import *
 
 create_experiment = experiment.create_experiment
 get_experiment = experiment.get_experiment
 list_experiments = experiment.list_experiments
+vertex_client = vertex.client
