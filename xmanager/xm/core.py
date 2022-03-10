@@ -30,7 +30,7 @@ import getpass
 import inspect
 import queue
 import threading
-from typing import Any, Awaitable, Callable, Collection, Dict, List, Mapping, Optional, Sequence, overload
+from typing import Any, Awaitable, Callable, Collection, Coroutine, Dict, Generator, List, Mapping, Optional, Sequence, overload
 
 import attr
 from xmanager.xm import async_packager
@@ -316,14 +316,7 @@ class ExperimentUnit(abc.ABC):
     self._launch_tasks.append(launch_task)
     return asyncio.wrap_future(launch_task)
 
-  async def wait_until_complete(self) -> 'ExperimentUnit':
-    """Waits until the unit is in a final state: completed/failed/stopped.
-
-    Raises:
-      ExperimentUnitError: Exception if the unit couldn't complete.
-    Returns:
-      Returns self to facilitate asyncio.as_completed usage.
-    """
+  async def _wait_until_complete_impl(self) -> 'ExperimentUnit':
     try:
       for task in self._launch_tasks:
         await asyncio.wrap_future(task)
@@ -331,6 +324,16 @@ class ExperimentUnit(abc.ABC):
       raise ExperimentUnitError('Experiment unit could not be created.') from e
     await self._wait_until_complete()
     return self
+
+  def wait_until_complete(self) -> Awaitable['ExperimentUnit']:
+    """Waits until the unit is in a final state: completed/failed/stopped.
+
+    Raises:
+      ExperimentUnitError: Exception if the unit couldn't complete.
+    Returns:
+      Returns self to facilitate asyncio.as_completed usage.
+    """
+    return self._wait_until_complete_impl()
 
   async def _launch_job_group(self, job_group: job_blocks.JobGroup,
                               args_view: Mapping[str, Any]) -> None:
@@ -401,6 +404,36 @@ class WorkUnitRole(ExperimentUnitRole):
   """
 
 
+class WorkUnitCompletedAwaitable:
+  """Awaitable for work unit completion event.
+
+  Usage:
+    completion_events = [work_unit.wait_until_complete() for work_unit in ...]
+    while completion_events:
+      completed_event, completion_events = asyncio.wait(
+          completion_events, return_when=asyncio.FIRST_COMPLETED)
+      for event in completed_events:
+        wid = event.work_unit.work_unit_id
+        try:
+          await event
+          print(f'Wor unit {wid} completed successfully.')
+        except xm.ExperimentUnitError as e:
+          print(f'Wor unit {wid} failed: {e}.')
+  """
+
+  def __init__(self, work_unit: 'WorkUnit',
+               awaitable: Coroutine[Any, Any, ExperimentUnit]):
+    self.work_unit = work_unit
+    self._awaitable = awaitable
+
+  async def _wait(self) -> 'WorkUnit':
+    await self._awaitable
+    return self.work_unit
+
+  def __await__(self) -> Generator[Any, None, 'WorkUnit']:
+    return self._wait().__await__()
+
+
 class WorkUnit(ExperimentUnit):
   """Work units are experiment units with the work unit role."""
 
@@ -409,7 +442,7 @@ class WorkUnit(ExperimentUnit):
   def work_unit_id(self) -> int:
     raise NotImplementedError
 
-  async def wait_until_complete(self) -> 'WorkUnit':
+  def wait_until_complete(self) -> WorkUnitCompletedAwaitable:
     """Waits until the unit is in a final state: completed/failed/stopped.
 
     Raises:
@@ -417,8 +450,7 @@ class WorkUnit(ExperimentUnit):
     Returns:
       Returns self to facilitate asyncio.as_completed usage.
     """
-    await super().wait_until_complete()
-    return self
+    return WorkUnitCompletedAwaitable(self, self._wait_until_complete_impl())
 
 
 @attr.s(auto_attribs=True, kw_only=True)

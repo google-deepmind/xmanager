@@ -238,7 +238,9 @@ class ExperimentTest(unittest.TestCase):
       experiment.add(
           job_blocks.Job(
               testing.TestExecutable(), testing.TestExecutor(), args={}))
-      await experiment.work_units[0].wait_until_complete()
+      completion_future = experiment.work_units[0].wait_until_complete()
+      self.assertEqual(completion_future.work_unit.work_unit_id, 1)
+      await completion_future
 
   @utils.run_in_asyncio_loop
   async def test_work_unit_wait_until_complete_exception(self):
