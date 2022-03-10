@@ -93,7 +93,7 @@ class VertexTest(unittest.TestCase):
       mock_timestamp.now.return_value = timestamp
       name.return_value = 'test-resource-name'
       client.launch('test-experiment', [job])
-      job_client.return_value.create_custom_job.assert_called_once_with(
+      job_client.return_value.create_custom_job.assert_called_once_with(  # pytype: disable=attribute-error  # py39-upgrade
           **expected_call)
 
   def test_get_machine_spec_default(self):
