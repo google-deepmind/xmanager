@@ -629,15 +629,23 @@ class Experiment(abc.ABC):
     ...
 
   @overload
-  def add(self,
-          job: job_blocks.JobType,
-          args: Optional[Mapping[str, Any]] = ...,
-          role: WorkUnitRole = ...) -> Awaitable[WorkUnit]:
+  def add(
+      self,
+      job: job_blocks.JobType,
+      args: Optional[Mapping[str, Any]] = ...,
+      *,  # parameters after “*” are keyword-only parameters
+      role: WorkUnitRole = ...
+  ) -> Awaitable[WorkUnit]:
     ...
 
   @overload
-  def add(self, job: job_blocks.JobType, args: Optional[Mapping[str, Any]],
-          role: ExperimentUnitRole) -> Awaitable[ExperimentUnit]:
+  def add(
+      self,
+      job: job_blocks.JobType,
+      args: Optional[Mapping[str, Any]],
+      *,  # parameters after “*” are keyword-only parameters
+      role: ExperimentUnitRole
+  ) -> Awaitable[ExperimentUnit]:
     ...
 
   @overload
@@ -651,7 +659,7 @@ class Experiment(abc.ABC):
     ...
 
   # The ExecutableUnit return type is determined by the role.
-  def add(self, job, args=None, role=WorkUnitRole()):
+  def add(self, job, args=None, *, role=WorkUnitRole()):
     # pyformat: disable
     """Adds a Job / JobGroup to the experiment.
 
