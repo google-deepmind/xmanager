@@ -37,7 +37,8 @@ setup(
         'google-api-core',
         'google-api-python-client',
         'google-auth',
-        'google-cloud-aiplatform>=1.4.0',
+        # TODO waiting for release google-cloud-aiplatform>1.11.0
+        'google-cloud-aiplatform@git+https://github.com/googleapis/python-aiplatform@main',
         'google-cloud-storage',
         'humanize',
         'immutabledict',
