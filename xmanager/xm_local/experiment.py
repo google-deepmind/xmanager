@@ -193,10 +193,18 @@ class LocalWorkUnit(LocalExperimentUnit):
     for handle in handles:
       handle_saver(handle)
 
-  async def _launch_job_group(self, job_group: xm.JobGroup,
-                              args_view: Mapping[str, Any]) -> None:
+  async def _launch_job_group(
+      self,
+      job_group: xm.JobGroup,
+      args_view: Mapping[str, Any],
+      identity: str,
+  ) -> None:
     del args_view  # Unused.
     _validate_job_group(job_group)
+
+    if identity:
+      raise ValueError('LocalExperiment does not support idempotent experiment '
+                       'unit creation.')
 
     async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
       launch_result = await self._submit_jobs_for_execution(job_group)
@@ -249,10 +257,13 @@ class LocalExperiment(xm.Experiment):
     self._experiment_units = []
     self._work_unit_count = 0
 
-  def _create_experiment_unit(
-      self, args: Optional[Mapping[str, Any]],
-      role: xm.ExperimentUnitRole) -> Awaitable[xm.ExperimentUnit]:
+  def _create_experiment_unit(self, args: Optional[Mapping[str, Any]],
+                              role: xm.ExperimentUnitRole,
+                              identity: str) -> Awaitable[xm.ExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
+    if identity:
+      raise ValueError('LocalExperiment does not support idempotent experiment '
+                       'unit creation.')
 
     def create_work_unit(role: xm.WorkUnitRole) -> Awaitable[xm.ExperimentUnit]:
       work_unit = LocalWorkUnit(

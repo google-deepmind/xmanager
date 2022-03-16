@@ -46,7 +46,8 @@ class TestExperimentUnit(core.WorkUnit):
     """Test work unit is immediately complete."""
 
   async def _launch_job_group(self, job_group: job_blocks.JobGroup,
-                              args: Optional[Mapping[str, Any]]) -> None:
+                              args: Optional[Mapping[str, Any]],
+                              identity: str) -> None:
     """Appends the job group to the launched_jobs list."""
     self._launched_jobs.extend(job_group.jobs.values())
     self._launched_jobs_args.append(args)
@@ -73,8 +74,12 @@ class TestExperiment(core.Experiment):
     self._auxiliary_units = []
 
   def _create_experiment_unit(
-      self, args, role=core.WorkUnitRole()) -> Awaitable[TestExperimentUnit]:
+      self,
+      args: Optional[Mapping[str, Any]],
+      role: core.ExperimentUnitRole = core.WorkUnitRole(),
+      identity: str = '') -> Awaitable[TestExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
+    del identity  # Unused.
     future = asyncio.Future()
     experiment_unit = TestExperimentUnit(self, self._work_unit_id_predictor,
                                          self._create_task, self.launched_jobs,

@@ -261,7 +261,9 @@ class ExperimentUnit(abc.ABC):
 
   def add(self,
           job: job_blocks.JobType,
-          args: Optional[Mapping[str, Any]] = None) -> Awaitable[None]:
+          args: Optional[Mapping[str, Any]] = None,
+          *,
+          identity: str = '') -> Awaitable[None]:
     # pyformat: disable
     """Adds a Job / JobGroup to the experiment unit.
 
@@ -281,6 +283,8 @@ class ExperimentUnit(abc.ABC):
         ```
 
         would update `args` field of a job `agent` in the group.
+      identity: Optional unique job identifier. If not empty, `add` adopts an
+        'add if not exists' behavior. No changes to existing job would be done.
 
     Returns:
       An awaitable that would be fulfilled when the job is launched.
@@ -294,11 +298,12 @@ class ExperimentUnit(abc.ABC):
     def launch_job(job: job_blocks.Job) -> Awaitable[None]:
       return self._launch_job_group(
           job_blocks.JobGroup(**{job.name: job}),
-          _work_unit_arguments(job, self._args))
+          _work_unit_arguments(job, self._args), identity)
 
     def launch_job_group(group: job_blocks.JobGroup) -> Awaitable[None]:
       return self._launch_job_group(group,
-                                    _work_unit_arguments(group, self._args))
+                                    _work_unit_arguments(group, self._args),
+                                    identity)
 
     def launch_job_generator(
         job_generator: job_blocks.JobGeneratorType) -> Awaitable[None]:
@@ -335,8 +340,12 @@ class ExperimentUnit(abc.ABC):
     """
     return self._wait_until_complete_impl()
 
-  async def _launch_job_group(self, job_group: job_blocks.JobGroup,
-                              args_view: Mapping[str, Any]) -> None:
+  async def _launch_job_group(
+      self,
+      job_group: job_blocks.JobGroup,
+      args_view: Mapping[str, Any],
+      identity: str,
+  ) -> None:
     """Launches a given job group as part of the unit."""
     raise NotImplementedError
 
@@ -623,9 +632,13 @@ class Experiment(abc.ABC):
     return cls._async_packager.add(packageable)
 
   @overload
-  def add(self,
-          job: AuxiliaryUnitJob,
-          args: Optional[Mapping[str, Any]] = ...) -> Awaitable[ExperimentUnit]:
+  def add(
+      self,
+      job: AuxiliaryUnitJob,
+      args: Optional[Mapping[str, Any]] = ...,
+      *,  # parameters after “*” are keyword-only parameters
+      identity: str = ''
+  ) -> Awaitable[ExperimentUnit]:
     ...
 
   @overload
@@ -634,8 +647,8 @@ class Experiment(abc.ABC):
       job: job_blocks.JobType,
       args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
-      role: WorkUnitRole = ...
-  ) -> Awaitable[WorkUnit]:
+      role: WorkUnitRole = ...,
+      identity: str = '') -> Awaitable[WorkUnit]:
     ...
 
   @overload
@@ -644,8 +657,8 @@ class Experiment(abc.ABC):
       job: job_blocks.JobType,
       args: Optional[Mapping[str, Any]],
       *,  # parameters after “*” are keyword-only parameters
-      role: ExperimentUnitRole
-  ) -> Awaitable[ExperimentUnit]:
+      role: ExperimentUnitRole,
+      identity: str = '') -> Awaitable[ExperimentUnit]:
     ...
 
   @overload
@@ -654,12 +667,12 @@ class Experiment(abc.ABC):
       job: job_blocks.JobType,
       args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
-      role: ExperimentUnitRole
-  ) -> Awaitable[ExperimentUnit]:
+      role: ExperimentUnitRole,
+      identity: str = '') -> Awaitable[ExperimentUnit]:
     ...
 
   # The ExecutableUnit return type is determined by the role.
-  def add(self, job, args=None, *, role=WorkUnitRole()):
+  def add(self, job, args=None, *, role=WorkUnitRole(), identity: str = ''):
     # pyformat: disable
     """Adds a Job / JobGroup to the experiment.
 
@@ -679,6 +692,11 @@ class Experiment(abc.ABC):
 
         would update `args` field of a job `agent` in the group.
       role: The role of this unit in the experiment structure.
+      identity: Optional unique experiment unit identifier within the
+        experiment. If not empty, `add` adopts an 'add if not exists' behavior.
+        If a unit with the given identity already exists it will be returned as
+        is, without modifications. JobGenerators would still run to allow them
+        to recover after preemption.
 
     Returns:
       An awaitable that would be fulfilled when the job is launched.
@@ -689,19 +707,19 @@ class Experiment(abc.ABC):
         pattern_matching.Case([Any], lambda job: role),
     )(
         job)
-    experiment_unit_future = self._create_experiment_unit(args, role)
+    experiment_unit_future = self._create_experiment_unit(args, role, identity)
 
     async def launch():
       experiment_unit = await experiment_unit_future
-      await experiment_unit.add(job, args)
+      await experiment_unit.add(job, args, identity=identity)
       return experiment_unit
 
     return asyncio.wrap_future(self._create_task(launch()))
 
   @abc.abstractmethod
-  def _create_experiment_unit(
-      self, args: Optional[Mapping[str, Any]],
-      role: ExperimentUnitRole) -> Awaitable[ExperimentUnit]:
+  def _create_experiment_unit(self, args: Optional[Mapping[str, Any]],
+                              role: ExperimentUnitRole,
+                              identity: str) -> Awaitable[ExperimentUnit]:
     """Creates a new experiment unit.
 
     Synchronously starts the experiment unit creation, ensuring that IDs would
@@ -712,6 +730,7 @@ class Experiment(abc.ABC):
       args: Executable unit arguments, to be show as a part of hyper-parameter
         sweep.
       role: Executable unit role: whether to create a work or auxiliary unit.
+      identity: Optional user-given experiment unit id.
 
     Returns:
       An awaitable to the creation result.
