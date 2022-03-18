@@ -413,7 +413,7 @@ class WorkUnitRole(ExperimentUnitRole):
   """
 
 
-class WorkUnitCompletedAwaitable:
+class WorkUnitCompletedAwaitable(Coroutine):
   """Awaitable for work unit completion event.
 
   Usage:
@@ -434,13 +434,23 @@ class WorkUnitCompletedAwaitable:
                awaitable: Coroutine[Any, Any, ExperimentUnit]):
     self.work_unit = work_unit
     self._awaitable = awaitable
+    self._wait_coro = self._wait()
 
   async def _wait(self) -> 'WorkUnit':
     await self._awaitable
     return self.work_unit
 
   def __await__(self) -> Generator[Any, None, 'WorkUnit']:
-    return self._wait().__await__()
+    return self._wait_coro.__await__()
+
+  def send(self, value: Any) -> Any:
+    return self._wait_coro.send(value)
+
+  def throw(self, type, value=None, traceback=None) -> Any:  # pylint: disable=redefined-builtin
+    return self._wait_coro.throw(type, value, traceback)
+
+  def close(self) -> None:
+    self._wait_coro.close()
 
 
 class WorkUnit(ExperimentUnit):
