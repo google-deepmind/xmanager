@@ -330,7 +330,7 @@ class ExperimentUnit(abc.ABC):
     await self._wait_until_complete()
     return self
 
-  def wait_until_complete(self) -> Awaitable['ExperimentUnit']:
+  def wait_until_complete(self) -> Coroutine[Any, Any, 'ExperimentUnit']:
     """Waits until the unit is in a final state: completed/failed/stopped.
 
     Raises:
@@ -430,14 +430,16 @@ class WorkUnitCompletedAwaitable(Coroutine):
           print(f'Wor unit {wid} failed: {e}.')
   """
 
-  def __init__(self, work_unit: 'WorkUnit',
-               awaitable: Coroutine[Any, Any, ExperimentUnit]):
+  def __init__(self, work_unit: 'WorkUnit', awaitable: Callable[[],
+                                                                Any]) -> None:
     self.work_unit = work_unit
     self._awaitable = awaitable
     self._wait_coro = self._wait()
 
   async def _wait(self) -> 'WorkUnit':
-    await self._awaitable
+    # Coroutine must be created inside of async function to avoid
+    # "coroutine ... was never awaited" runtime warning.
+    await self._awaitable()
     return self.work_unit
 
   def __await__(self) -> Generator[Any, None, 'WorkUnit']:
@@ -469,7 +471,7 @@ class WorkUnit(ExperimentUnit):
     Returns:
       Returns self to facilitate asyncio.as_completed usage.
     """
-    return WorkUnitCompletedAwaitable(self, self._wait_until_complete_impl())
+    return WorkUnitCompletedAwaitable(self, self._wait_until_complete_impl)
 
 
 @attr.s(auto_attribs=True, kw_only=True)
