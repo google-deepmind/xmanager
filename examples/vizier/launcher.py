@@ -23,9 +23,9 @@ from absl import app
 
 from google.cloud import aiplatform_v1beta1 as aip
 
-from xmanager import vizier
 from xmanager import xm
 from xmanager import xm_local
+from xmanager.vizier import vizier_cloud
 
 
 def get_study_spec() -> aip.StudySpec:
@@ -63,16 +63,15 @@ def main(_):
         ),
     ])
 
-    vizier.VizierExploration(
+    vizier_cloud.VizierExploration(
         experiment=experiment,
         job=xm.Job(
             executable=executable,
             executor=xm_local.Vertex(),
         ),
-        study_factory=vizier.NewStudy(study_spec=get_study_spec()),
+        study_factory=vizier_cloud.NewStudy(study_config=get_study_spec()),
         num_trials_total=3,
         num_parallel_trial_runs=2).launch()
-
 
 if __name__ == '__main__':
   app.run(main)

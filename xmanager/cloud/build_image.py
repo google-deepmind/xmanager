@@ -327,7 +327,7 @@ def _wrap_late_bindings(destination: str, path: str, dockerfile: str) -> None:
       os.path.join(root_dir, 'cloud', 'utils.py'),
       os.path.join(destination, 'vertex_utils.py'))
   shutil.copyfile(
-      os.path.join(root_dir, 'vizier', 'vizier_worker.py'),
+      os.path.join(root_dir, 'vizier', 'vizier_cloud', 'vizier_worker.py'),
       os.path.join(destination, 'vizier_worker.py'))
 
   new_dockerfile = os.path.join(destination, 'Dockerfile')

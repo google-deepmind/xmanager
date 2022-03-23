@@ -11,8 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Vizier Exploration Launch API.
+"""Vizier API for launching Vertex-Vizier explored Experiment for OSS."""
 
-Provides XManager public API for launching experiments as a Vizier Exploration.
-"""
-from xmanager.vizier.vizier_exploration import *
+from xmanager.vizier.vizier_cloud.study_factory import NewStudy
+from xmanager.vizier.vizier_cloud.vizier_exploration import VizierExploration

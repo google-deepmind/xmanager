@@ -13,60 +13,22 @@
 # limitations under the License.
 """Interface for launching Vizier Explorations using Vertex Vizier."""
 
-import abc
 import asyncio
-from typing import Any, Dict, Optional
-
-from google.cloud import aiplatform_v1beta1 as aip
+from typing import Any, Dict
 
 from xmanager import xm
-from xmanager.cloud import auth
-from xmanager.vizier.vizier_controller import VizierController
+from xmanager.vizier.vizier_cloud import study_factory as sf
+from xmanager.vizier.vizier_cloud import vizier_controller
 
 _DEFAULT_LOCATION = 'us-central1'
 
 
-class VizierStudyFactory(abc.ABC):
-  """Abstract class representing vizier study generator."""
-
-  def __init__(self, location: str) -> None:
-    self.vz_client = aip.VizierServiceClient(
-        client_options=dict(
-            api_endpoint=f'{location}-aiplatform.googleapis.com'))
-
-  @abc.abstractmethod
-  def study(self, experiment: xm.Experiment) -> aip.Study:
-    """Create or load the study for the given `experiment`."""
-
-
-class NewStudy(VizierStudyFactory):
-  """Vizier study generator that generates new study from given config."""
-
-  def __init__(self,
-               study_spec: aip.StudySpec,
-               display_name: Optional[str] = None,
-               project: str = auth.get_project_name(),
-               location: str = _DEFAULT_LOCATION) -> None:
-    super().__init__(location)
-
-    self._display_name = display_name
-    self._study_spec = study_spec
-    self._project = project
-    self._location = location
-
-  def study(self, experiment: xm.Experiment) -> aip.Study:
-    return self.vz_client.create_study(
-        parent=f'projects/{self._project}/locations/{self._location}',
-        study=aip.Study(
-            display_name=self._display_name or f'X{experiment.experiment_id}',
-            study_spec=self._study_spec))
-
-
+# TODO: Add vizier_controller as auxiliary Job generator.
 class VizierExploration:
   """An API for launching experiment as a Vizier-based Exploration."""
 
   def __init__(self, experiment: xm.Experiment, job: xm.JobType,
-               study_factory: VizierStudyFactory, num_trials_total: int,
+               study_factory: sf.StudyFactory, num_trials_total: int,
                num_parallel_trial_runs: int) -> None:
     """Create a VizierExploration.
 
@@ -84,11 +46,12 @@ class VizierExploration:
       return asyncio.get_event_loop().run_until_complete(
           experiment.add(job, self._to_job_params(vizier_params)))
 
-    self._controller = VizierController(work_unit_generator,
-                                        study_factory.vz_client,
-                                        study_factory.study(experiment),
-                                        num_trials_total,
-                                        num_parallel_trial_runs)
+    if not study_factory.display_name:
+      study_factory.display_name = f'X{experiment.experiment_id}'
+
+    self._controller = vizier_controller.VizierController(
+        work_unit_generator, study_factory.vz_client, study_factory.study(),
+        num_trials_total, num_parallel_trial_runs)
 
   def _to_job_params(self, vizier_params: Dict[str, Any]) -> Dict[str, Any]:
     # TODO: unflatten parameters for JobGroup case (currently this

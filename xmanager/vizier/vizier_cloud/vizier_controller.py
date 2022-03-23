@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Vizier Controller."""
+"""Main code that the Vertex Cloud Vizier Controller runs."""
 
 import time
 from typing import Any, Callable, Dict, Optional
@@ -26,15 +26,17 @@ class VizierController:
 
   def __init__(self, work_unit_generator: Callable[[Dict[str, Any]],
                                                    xm.WorkUnit],
-               vz_client: aip.VizierServiceClient, study: aip.Study,
-               num_work_units_total: int, num_parallel_work_units: int) -> None:
+               vz_client: aip.VizierServiceClient,
+               study_name: str,
+               num_work_units_total: int,
+               num_parallel_work_units: int) -> None:
     """Create a VizierController.
 
     Args:
       work_unit_generator: the function that generates WorkUnit from
         hyperparameters.
       vz_client: the Vizier Client used for interacting with Vizier.
-      study: the study the controller works on.
+      study_name: the study name the controller works on.
       num_work_units_total: number of work units to create in total. (TODO:
         remove this and retrieve from study spec stopping criteria once it is
         settable there.)
@@ -42,7 +44,7 @@ class VizierController:
     """
     self._work_unit_generator = work_unit_generator
     self._vz_client = vz_client
-    self._study = study
+    self._study_name = study_name
     self._num_work_units_total = num_work_units_total
     self._num_parallel_work_units = num_parallel_work_units
 
@@ -88,7 +90,7 @@ class VizierController:
     for i in range(start_index, start_index + num_work_units_to_create_next):
       trial = self._vz_client.suggest_trials(
           request=aip.SuggestTrialsRequest(
-              parent=self._study.name,
+              parent=self._study_name,
               suggestion_count=1,
               client_id=f'work unit {i}')).result().trials[0]
       print(f'Trial for work unit (index: {i}) is retrieved：\n{trial}')
@@ -98,7 +100,7 @@ class VizierController:
       work_unit = self._work_unit_generator({
           'trial_name': trial.name,
           **{
-              p.parameter_id: getattr(p.value, p.value.WhichOneof('kind'))
+              p.parameter_id: p.value
               for p in trial.parameters
           }
       })
