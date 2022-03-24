@@ -80,7 +80,7 @@ def base_image(framework: FrameworkSpec,
     framework = _get_framework(framework)
   if framework == MLFramework.JAX:
     # JAX-based experiment use the same base image for all accelerators.
-    return 'gcr.io/deeplearning-platform-release/base-cu110'
+    return 'gcr.io/deeplearning-platform-release/base-cu113'
   elif framework == MLFramework.TF2:
     # TF experiments use the same base image for all accelerators.
     return 'gcr.io/deeplearning-platform-release/tf2-gpu.2-6'
@@ -94,4 +94,4 @@ def base_image(framework: FrameworkSpec,
     return 'gcr.io/deeplearning-platform-release/tf-gpu.1-15'
   else:
     # Unrecognized framework: use the default CUDA image.
-    return 'gcr.io/deeplearning-platform-release/base-cu110'
+    return 'gcr.io/deeplearning-platform-release/base-cu113'
