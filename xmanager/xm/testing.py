@@ -15,13 +15,56 @@
 
 import asyncio
 from concurrent import futures
-from typing import Any, Awaitable, Callable, List, Mapping, Optional
+from typing import Any, Awaitable, Callable, List, Mapping, Optional, Set
 
 import attr
+from xmanager.xm import async_packager
 from xmanager.xm import core
 from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
+from xmanager.xm import metadata_context
 from xmanager.xm import pattern_matching as pm
+
+
+class TestContextAnnotations(metadata_context.ContextAnnotations):
+  """ContextAnnotations which stores all data in memory."""
+
+  def __init__(self) -> None:
+    self._title = ''
+    self._tags = set()
+    self._notes = ''
+
+  @property
+  def title(self) -> str:
+    return self._title
+
+  def set_title(self, title: str) -> None:
+    self._title = title
+
+  @property
+  def tags(self) -> Set[str]:
+    return self._tags
+
+  def add_tags(self, *tags: str) -> None:
+    self._tags.update(tags)
+
+  def remove_tags(self, *tags: str) -> None:
+    for tag in tags:
+      self._tags.discard(tag)
+
+  @property
+  def notes(self) -> str:
+    return self._notes
+
+  def set_notes(self, notes: str) -> None:
+    self._notes = notes
+
+
+class TestMetadataContext(metadata_context.MetadataContext):
+  """A MetadataContext which stores all data in memory."""
+
+  def __init__(self) -> None:
+    super().__init__(creator='unknown', annotations=TestContextAnnotations())
 
 
 class TestExperimentUnit(core.WorkUnit):
@@ -66,12 +109,16 @@ class TestExperiment(core.Experiment):
 
   constraints: List[job_blocks.JobType]
 
+  _async_packager = async_packager.AsyncPackager(lambda _: [])
+
   def __init__(self) -> None:
     super().__init__()
     self.launched_jobs = []
     self.launched_jobs_args = []
     self._work_units = []
     self._auxiliary_units = []
+
+    self._context = TestMetadataContext()
 
   def _create_experiment_unit(
       self,
@@ -109,6 +156,11 @@ class TestExperiment(core.Experiment):
   @property
   def experiment_id(self) -> int:
     return 1
+
+  @property
+  def context(self) -> TestMetadataContext:
+    """Returns metadata context for the experiment."""
+    return self._context
 
 
 class TestExecutable(job_blocks.Executable):
