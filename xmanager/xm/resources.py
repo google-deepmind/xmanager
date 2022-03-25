@@ -384,9 +384,11 @@ class JobRequirements:
 
     if (self.accelerator in GpuType and self.topology and
         len(self.topology.dimensions) == 2):
-      if replicas is not None:
+      if replicas is not None and replicas != self.topology.dimensions[1]:
         raise ValueError(
-            'Replicated jobs are not supported for multihost GPUs.')
+            f'For multihost GPUs with topology {self.topology}, replicas should'
+            f'be either None or {self.topology.dimensions[1]}. Found: '
+            f'{replicas}')
       replicas = self.topology.dimensions[1]
 
     self.replicas = replicas or 1

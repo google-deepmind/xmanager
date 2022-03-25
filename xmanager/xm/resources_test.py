@@ -135,6 +135,11 @@ class JobRequirementsTest(parameterized.TestCase):
     with self.assertRaises(ValueError):
       resources.JobRequirements(replicas=2, tpu_v3='4x4')
 
+    resources.JobRequirements(replicas=2, v100='4x2')
+    resources.JobRequirements(v100='4x2')
+    with self.assertRaises(ValueError):
+      resources.JobRequirements(replicas=4, v100='4x2')
+
   def test_str(self):
     self.assertEqual(
         repr(
