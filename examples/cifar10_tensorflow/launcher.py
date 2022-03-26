@@ -69,7 +69,10 @@ def main(_):
       experiment.add(
           xm.Job(
               executable=executable,
-              executor=xm_local.Vertex(tensorboard=tensorboard_capability),
+              executor=xm_local.Vertex(
+                tensorboard=tensorboard_capability,
+                requirements=xm.JobRequirements(T4=1)
+              ),
               args=hyperparameters,
           ))
 
