@@ -16,7 +16,6 @@
 https://cloud.google.com/vertex-ai/docs/reference/rest
 """
 import asyncio
-import functools
 import logging
 import math
 import os
@@ -92,12 +91,7 @@ _STATE_TO_STATUS = {
 # `file_cache is unavailable when using oauth2client >= 4.0.0 or google-auth`
 logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
 
-
-@functools.lru_cache()
-def client():
-  # Global singleton defers client creation until an actual launch.
-  # If the user only launches local jobs, they don't need cloud access.
-  return Client()
+_default_client = None
 
 
 def _vertex_job_predicate(job: xm.Job) -> bool:
@@ -258,6 +252,18 @@ class Client:
     return aiplatform.CustomJob.get(job_name).state
 
 
+def set_default_client(client: Client) -> None:
+  global _default_client
+  _default_client = client
+
+
+def get_default_client():
+  global _default_client
+  if _default_client is None:
+    _default_client = Client()
+  return _default_client
+
+
 def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   """Get the GCP machine type that best matches the Job's requirements."""
   assert isinstance(job.executor, local_executors.Vertex)
@@ -305,13 +311,13 @@ class VertexHandle(local_execution.ExecutionHandle):
   job_name: str
 
   async def wait(self) -> None:
-    await client().wait_for_job(self.job_name)
+    await get_default_client().wait_for_job(self.job_name)
 
   def stop(self) -> None:
-    client().cancel(self.job_name)
+    get_default_client().cancel(self.job_name)
 
   def get_status(self) -> local_status.LocalWorkUnitStatus:
-    state = client().get_state(self.job_name)
+    state = get_default_client().get_state(self.job_name)
     status = _STATE_TO_STATUS[state]
     return local_status.LocalWorkUnitStatus(status=status)
 
@@ -326,7 +332,7 @@ def launch(experiment_title: str, work_unit_name: str,
   if not jobs:
     return []
 
-  job_name = client().launch(
+  job_name = get_default_client().launch(
       name=f'{experiment_title}_{work_unit_name}',
       jobs=jobs,
   )
