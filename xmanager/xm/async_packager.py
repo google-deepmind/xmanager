@@ -25,10 +25,12 @@ class PackageHasNotBeenCalledError(RuntimeError):
   """Access to package_async() awaitable prior to calling .package()."""
 
 
-async def _return_executable(
-    executable: job_blocks.Executable) -> job_blocks.Executable:
-  """An awaitable for an already known executable."""
-  return executable
+def _return_executable(
+    executable: job_blocks.Executable) -> Awaitable[job_blocks.Executable]:
+  """Returns an awaitable for an already known executable."""
+  future = asyncio.Future()
+  future.set_result(executable)
+  return future
 
 
 class AsyncPackager:
