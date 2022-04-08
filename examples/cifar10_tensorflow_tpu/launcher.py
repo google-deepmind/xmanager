@@ -66,7 +66,7 @@ def main(_):
 
     tensorboard = FLAGS.tensorboard
     if not tensorboard:
-      tensorboard = vertex.client().get_or_create_tensorboard('cifar10')
+      tensorboard = vertex.get_default_client().get_or_create_tensorboard('cifar10')
       tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
 
     for i, hyperparameters in enumerate(trials):
