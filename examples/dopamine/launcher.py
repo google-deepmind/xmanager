@@ -63,7 +63,8 @@ def main(_):
 
     tensorboard = FLAGS.tensorboard
     if not tensorboard:
-      tensorboard = vertex.client().get_or_create_tensorboard('cifar10')
+      tensorboard = vertex.get_default_client().get_or_create_tensorboard(
+          'cifar10')
       tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
     output_dir = os.environ['GOOGLE_CLOUD_BUCKET_NAME']
     output_dir = os.path.join(output_dir, str(experiment.experiment_id))
