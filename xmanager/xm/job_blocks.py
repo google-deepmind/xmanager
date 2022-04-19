@@ -277,7 +277,10 @@ class Constraint(abc.ABC):
   """
 
 
-JobGeneratorType = Callable[..., Awaitable]
+# Job generators are async functions returning None.
+# Pylint doesn't distinguish async and sync contexts so Optional[Awaitable] has
+# to be used to accomodate both cases.
+JobGeneratorType = Callable[..., Optional[Awaitable]]
 JobType = Union['Job', 'JobGroup', JobGeneratorType]
 
 

@@ -312,7 +312,9 @@ class ExperimentUnit(abc.ABC):
         raise ValueError(
             'Job generator must be an async function. Signature needs to be '
             '`async def job_generator(work_unit: xm.WorkUnit):`')
-      return job_generator(self, **(args or {}))
+      coroutine = job_generator(self, **(args or {}))
+      assert coroutine is not None
+      return coroutine
 
     job_awaitable = pattern_matching.match(launch_job, launch_job_group,
                                            launch_job_generator)(
@@ -516,7 +518,9 @@ class AuxiliaryUnitJob(abc.ABC):
 
     async def launch_generator(
         job_generator: job_blocks.JobGeneratorType) -> None:
-      await job_generator(aux_unit, **kwargs)
+      coroutine = job_generator(aux_unit, **kwargs)
+      assert coroutine is not None
+      await coroutine
 
     async def launch_job(job: Any) -> None:
       aux_unit.add(job, args=kwargs)
