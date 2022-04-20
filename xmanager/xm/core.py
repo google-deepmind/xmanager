@@ -687,7 +687,7 @@ class Experiment(abc.ABC):
       identity: str = '') -> Awaitable[ExperimentUnit]:
     ...
 
-  # The ExecutableUnit return type is determined by the role.
+  # The ExperimentUnit return type is determined by the role.
   def add(self, job, args=None, *, role=WorkUnitRole(), identity: str = ''):
     # pyformat: disable
     """Adds a Job / JobGroup to the experiment.
