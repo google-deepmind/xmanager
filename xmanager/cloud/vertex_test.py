@@ -83,6 +83,8 @@ class VertexTest(unittest.TestCase):
                     enable_web_access=True,
                 ),
             ),
+        'timeout':
+            None,
     }
 
     timestamp = datetime.datetime.strptime('2022/1/1', '%Y/%m/%d')
