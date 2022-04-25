@@ -16,9 +16,9 @@ import asyncio
 import threading
 import unittest
 
+from xmanager import xm_mock
 from xmanager.xm import core
 from xmanager.xm import job_blocks
-from xmanager.xm import testing
 from xmanager.xm import utils
 
 
@@ -36,7 +36,7 @@ class ApplyArgsTest(unittest.TestCase):
     with self.assertRaises(ValueError):
       core._apply_args(
           job_blocks.Job(
-              job_blocks.Executable(name=''), testing.TestExecutor()),
+              job_blocks.Executable(name=''), xm_mock.MockExecutor()),
           {'abra': 'kadabra'})
 
   def test_wrong_job_group_args(self):
@@ -44,7 +44,7 @@ class ApplyArgsTest(unittest.TestCase):
       core._apply_args(
           job_blocks.JobGroup(
               learner=job_blocks.Job(
-                  job_blocks.Executable(name=''), testing.TestExecutor())),
+                  job_blocks.Executable(name=''), xm_mock.MockExecutor())),
           {'eval': {
               'args': {
                   'batch_size': 32
@@ -55,11 +55,11 @@ class ApplyArgsTest(unittest.TestCase):
 class ExperimentTest(unittest.TestCase):
 
   def test_single_job_launch(self):
-    experiment = testing.TestExperiment()
+    experiment = xm_mock.MockExperiment()
     with experiment:
       job = job_blocks.Job(
-          testing.TestExecutable(),
-          testing.TestExecutor(),
+          xm_mock.MockExecutable(),
+          xm_mock.MockExecutor(),
           args={},
           name='name')
       experiment.add(job)
@@ -67,16 +67,16 @@ class ExperimentTest(unittest.TestCase):
     self.assertEqual(experiment.launched_jobs, [job])
 
   def test_job_group_launch(self):
-    experiment = testing.TestExperiment()
+    experiment = xm_mock.MockExperiment()
     with experiment:
       foo_job = job_blocks.Job(
-          testing.TestExecutable(),
-          testing.TestExecutor(),
+          xm_mock.MockExecutable(),
+          xm_mock.MockExecutor(),
           args={'foo': 1},
           name='1')
       bar_job = job_blocks.Job(
-          testing.TestExecutable(),
-          testing.TestExecutor(),
+          xm_mock.MockExecutable(),
+          xm_mock.MockExecutor(),
           args={'bar': 2},
           name='2')
       experiment.add(job_blocks.JobGroup(foo=foo_job, bar=bar_job))
@@ -84,11 +84,11 @@ class ExperimentTest(unittest.TestCase):
     self.assertEqual(experiment.launched_jobs, [foo_job, bar_job])
 
   def test_job_generator_launch(self):
-    experiment = testing.TestExperiment()
+    experiment = xm_mock.MockExperiment()
     with experiment:
       job = job_blocks.Job(
-          testing.TestExecutable(),
-          testing.TestExecutor(),
+          xm_mock.MockExecutable(),
+          xm_mock.MockExecutor(),
           args={},
           name='name')
 
@@ -102,14 +102,14 @@ class ExperimentTest(unittest.TestCase):
     self.assertEqual(experiment.launched_jobs_args, [{'use_magic': True}])
 
   def test_job_generator_raises(self):
-    experiment = testing.TestExperiment()
+    experiment = xm_mock.MockExperiment()
     with self.assertRaises(TestError):
       with experiment:
         experiment.add(failing_job_generator)
 
   def test_non_async_job_generator_raises_user_friendly_exception(self):
     with self.assertRaisesRegex(ValueError, '.* generator must be an async .*'):
-      with testing.TestExperiment() as experiment:
+      with xm_mock.MockExperiment() as experiment:
 
         def job_generator(work_unit: core.WorkUnit):
           del work_unit
@@ -117,11 +117,11 @@ class ExperimentTest(unittest.TestCase):
         experiment.add(job_generator)
 
   def test_auxiliary_unit_job(self):
-    experiment = testing.TestExperiment()
+    experiment = xm_mock.MockExperiment()
     with experiment:
       job = job_blocks.Job(
-          testing.TestExecutable(),
-          testing.TestExecutor(),
+          xm_mock.MockExecutable(),
+          xm_mock.MockExecutor(),
           args={},
           name='name')
       experiment.add(core.AuxiliaryUnitJob(job, termination_delay_secs=600))
@@ -129,14 +129,14 @@ class ExperimentTest(unittest.TestCase):
     self.assertEqual(len(experiment.auxiliary_units), 1)
 
   def test_auxiliary_unit_job_generator(self):
-    experiment = testing.TestExperiment()
+    experiment = xm_mock.MockExperiment()
     with experiment:
 
       async def make_job(aux_unit: core.ExperimentUnit):
         aux_unit.add(
             job_blocks.Job(
-                testing.TestExecutable(),
-                testing.TestExecutor(),
+                xm_mock.MockExecutable(),
+                xm_mock.MockExecutor(),
                 args={},
                 name='name'))
 
@@ -146,21 +146,21 @@ class ExperimentTest(unittest.TestCase):
     self.assertEqual(len(experiment.auxiliary_units), 1)
 
   def test_launch_with_args(self):
-    experiment = testing.TestExperiment()
+    experiment = xm_mock.MockExperiment()
     with experiment:
       experiment.add(
           job_blocks.JobGroup(
               foo=job_blocks.Job(
-                  testing.TestExecutable(),
-                  testing.TestExecutor(),
+                  xm_mock.MockExecutable(),
+                  xm_mock.MockExecutor(),
                   args={
                       'x': 1,
                       'y': 2
                   },
                   env_vars={'EDITOR': 'vi'}),
               bar=job_blocks.Job(
-                  testing.TestExecutable(),
-                  testing.TestExecutor(),
+                  xm_mock.MockExecutable(),
+                  xm_mock.MockExecutor(),
                   args=['--bar=1'])),
           args={
               'foo': {
@@ -197,7 +197,7 @@ class ExperimentTest(unittest.TestCase):
   def test_add_runs_asynchronously(self):
     generator_called = threading.Event()
 
-    with testing.TestExperiment() as experiment:
+    with xm_mock.MockExperiment() as experiment:
 
       async def job_generator(work_unit: core.WorkUnit):
         del work_unit
@@ -212,7 +212,7 @@ class ExperimentTest(unittest.TestCase):
   async def test_loop_is_reused_in_coro_context(self):
     loop = asyncio.get_event_loop()
 
-    async with testing.TestExperiment() as experiment:
+    async with xm_mock.MockExperiment() as experiment:
 
       async def job_generator(work_unit: core.WorkUnit):
         del work_unit
@@ -223,28 +223,28 @@ class ExperimentTest(unittest.TestCase):
   @utils.run_in_asyncio_loop
   async def test_sync_with_cant_be_used_in_coro_context(self):
     # `async with` works.
-    async with testing.TestExperiment():
+    async with xm_mock.MockExperiment():
       pass
 
     with self.assertRaises(RuntimeError):
       # But `with` raises an exception.
-      with testing.TestExperiment():
+      with xm_mock.MockExperiment():
         pass
 
   @utils.run_in_asyncio_loop
   async def test_work_unit_wait_until_complete(self):
-    experiment = testing.TestExperiment()
+    experiment = xm_mock.MockExperiment()
     async with experiment:
       experiment.add(
           job_blocks.Job(
-              testing.TestExecutable(), testing.TestExecutor(), args={}))
+              xm_mock.MockExecutable(), xm_mock.MockExecutor(), args={}))
       completion_future = experiment.work_units[0].wait_until_complete()
       self.assertEqual(completion_future.work_unit.work_unit_id, 1)
       await completion_future
 
   @utils.run_in_asyncio_loop
   async def test_work_unit_wait_until_complete_exception(self):
-    experiment = testing.TestExperiment()
+    experiment = xm_mock.MockExperiment()
     with self.assertRaises(TestError):
       async with experiment:
         experiment.add(failing_job_generator)
@@ -257,7 +257,7 @@ class ExperimentTest(unittest.TestCase):
     async def generator(work_unit):
       self.assertEqual(work_unit.get_full_job_name('name'), '1_1_name')
 
-    async with testing.TestExperiment() as experiment:
+    async with xm_mock.MockExperiment() as experiment:
       experiment.add(generator)
 
 

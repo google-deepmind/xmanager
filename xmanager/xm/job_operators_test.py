@@ -14,16 +14,16 @@
 
 import unittest
 
+from xmanager import xm_mock
 from xmanager.xm import job_blocks
 from xmanager.xm import job_operators
-from xmanager.xm import testing
 
 
 def construct_job(name=None):
   return job_blocks.Job(
       name=name,
-      executable=testing.TestExecutable(),
-      executor=testing.TestExecutor())
+      executable=xm_mock.MockExecutable(),
+      executor=xm_mock.MockExecutor())
 
 
 class JobOperatorsTest(unittest.TestCase):
@@ -60,9 +60,9 @@ class JobOperatorsTest(unittest.TestCase):
     outer_1 = construct_job('outer_1')
     inner_1 = construct_job('inner_1')
     inner_2 = construct_job('inner_2')
-    constraint_a = testing.TestConstraint('A')
-    constraint_b = testing.TestConstraint('B')
-    constraint_c = testing.TestConstraint('C')
+    constraint_a = xm_mock.MockConstraint('A')
+    constraint_b = xm_mock.MockConstraint('B')
+    constraint_c = xm_mock.MockConstraint('C')
     job_group = job_blocks.JobGroup(
         outer_1=outer_1,
         outer_2=job_blocks.JobGroup(

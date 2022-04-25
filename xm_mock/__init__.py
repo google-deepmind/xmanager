@@ -11,7 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for testing core objects."""
+"""A mock implemenation of core XM objects.
+
+This module is mainly purposed for unit tests. It provides implementation of
+xm.Experiment, xm.WorkUnit, xm.MetadataContext which don't do much apart from
+allowing to inspect what methods were called.
+It also may be used as a stub implementation for cases when one doesn't care
+how experiment is set up, but wants to maintain API consistency. For examle if
+a framework provides own local run mode and wants to ignore any experiment
+metadata manipulations.
+"""
 
 import asyncio
 from concurrent import futures
@@ -26,7 +35,7 @@ from xmanager.xm import metadata_context
 from xmanager.xm import pattern_matching as pm
 
 
-class TestContextAnnotations(metadata_context.ContextAnnotations):
+class MockContextAnnotations(metadata_context.ContextAnnotations):
   """ContextAnnotations which stores all data in memory."""
 
   def __init__(self) -> None:
@@ -60,15 +69,15 @@ class TestContextAnnotations(metadata_context.ContextAnnotations):
     self._notes = notes
 
 
-class TestMetadataContext(metadata_context.MetadataContext):
+class MockMetadataContext(metadata_context.MetadataContext):
   """A MetadataContext which stores all data in memory."""
 
   def __init__(self) -> None:
-    super().__init__(creator='unknown', annotations=TestContextAnnotations())
+    super().__init__(creator='unknown', annotations=MockContextAnnotations())
 
 
-class TestExperimentUnit(core.WorkUnit):
-  """A test version of WorkUnit with abstract methods implemented."""
+class MockExperimentUnit(core.WorkUnit):
+  """A mock version of WorkUnit with abstract methods implemented."""
 
   def __init__(
       self,
@@ -86,7 +95,7 @@ class TestExperimentUnit(core.WorkUnit):
     self._work_unit_id = work_unit_id_predictor.reserve_id()
 
   async def _wait_until_complete(self) -> None:
-    """Test work unit is immediately complete."""
+    """Mock work unit is immediately complete."""
 
   async def _launch_job_group(self, job_group: job_blocks.JobGroup,
                               args: Optional[Mapping[str, Any]],
@@ -104,8 +113,8 @@ class TestExperimentUnit(core.WorkUnit):
     return f'{self.experiment_id}_{self._work_unit_id}'
 
 
-class TestExperiment(core.Experiment):
-  """A test version of Experiment with abstract methods implemented."""
+class MockExperiment(core.Experiment):
+  """A mock version of Experiment with abstract methods implemented."""
 
   constraints: List[job_blocks.JobType]
 
@@ -118,17 +127,17 @@ class TestExperiment(core.Experiment):
     self._work_units = []
     self._auxiliary_units = []
 
-    self._context = TestMetadataContext()
+    self._context = MockMetadataContext()
 
   def _create_experiment_unit(
       self,
       args: Optional[Mapping[str, Any]],
       role: core.ExperimentUnitRole = core.WorkUnitRole(),
-      identity: str = '') -> Awaitable[TestExperimentUnit]:
+      identity: str = '') -> Awaitable[MockExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
     del identity  # Unused.
     future = asyncio.Future()
-    experiment_unit = TestExperimentUnit(self, self._work_unit_id_predictor,
+    experiment_unit = MockExperimentUnit(self, self._work_unit_id_predictor,
                                          self._create_task, self.launched_jobs,
                                          self.launched_jobs_args, args, role)
     pm.match(
@@ -158,26 +167,26 @@ class TestExperiment(core.Experiment):
     return 1
 
   @property
-  def context(self) -> TestMetadataContext:
+  def context(self) -> MockMetadataContext:
     """Returns metadata context for the experiment."""
     return self._context
 
 
-class TestExecutable(job_blocks.Executable):
-  """A test version of Executable with abstract methods implemented."""
+class MockExecutable(job_blocks.Executable):
+  """A mock version of Executable with abstract methods implemented."""
   counter = 0
 
   def __init__(self):
-    super().__init__(name=f'{TestExecutable.counter}')
-    TestExecutable.counter += 1
+    super().__init__(name=f'{MockExecutable.counter}')
+    MockExecutable.counter += 1
 
 
-class TestExecutor(job_blocks.Executor):
-  """A test version of Executor with abstract methods implemented."""
+class MockExecutor(job_blocks.Executor):
+  """A mock version of Executor with abstract methods implemented."""
 
   Spec = job_blocks.ExecutorSpec  # pylint: disable=invalid-name
 
 
 @attr.s(auto_attribs=True)
-class TestConstraint(job_blocks.Constraint):
+class MockConstraint(job_blocks.Constraint):
   id: str
