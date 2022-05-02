@@ -573,7 +573,11 @@ class Experiment(abc.ABC):
 
   def _wait_for_tasks(self):
     while not self._running_tasks.empty():
-      self._running_tasks.get_nowait().result()
+      try:
+        self._running_tasks.get_nowait().result()
+      except futures.CancelledError:
+        # Ignore cancelled tasks.
+        pass
 
   def __exit__(self, exc_type, exc_value, traceback):
     self._wait_for_tasks()
