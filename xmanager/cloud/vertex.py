@@ -223,7 +223,7 @@ class Client:
     aiplatform.CustomJob.get(job_name).cancel()
 
   async def get_or_create_tensorboard(self, name: str) -> str:
-    """Gets or creates a Veretex Tensorboard instance."""
+    """Gets or creates a Vertex Tensorboard instance."""
     tensorboard_client = aip_v1.TensorboardServiceAsyncClient(client_options={
         'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
     })
