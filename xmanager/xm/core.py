@@ -654,7 +654,7 @@ class Experiment(abc.ABC):
       args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
       identity: str = ''
-  ) -> Awaitable[ExperimentUnit]:
+  ) -> asyncio.Future[ExperimentUnit]:
     ...
 
   @overload
@@ -664,7 +664,7 @@ class Experiment(abc.ABC):
       args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
       role: WorkUnitRole = ...,
-      identity: str = '') -> Awaitable[WorkUnit]:
+      identity: str = '') -> asyncio.Future[WorkUnit]:
     ...
 
   @overload
@@ -674,7 +674,7 @@ class Experiment(abc.ABC):
       args: Optional[Mapping[str, Any]],
       *,  # parameters after “*” are keyword-only parameters
       role: ExperimentUnitRole,
-      identity: str = '') -> Awaitable[ExperimentUnit]:
+      identity: str = '') -> asyncio.Future[ExperimentUnit]:
     ...
 
   @overload
@@ -684,7 +684,7 @@ class Experiment(abc.ABC):
       args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
       role: ExperimentUnitRole,
-      identity: str = '') -> Awaitable[ExperimentUnit]:
+      identity: str = '') -> asyncio.Future[ExperimentUnit]:
     ...
 
   # The ExperimentUnit return type is determined by the role.
