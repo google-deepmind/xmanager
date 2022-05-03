@@ -225,6 +225,9 @@ def default_steps(directory: str, use_deep_module: bool) -> List[str]:
       # we're just always setting it.
       # [1] https://github.com/spotDL/spotify-downloader/issues/279
       'ENV LANG=C.UTF-8',
+      'RUN rm /etc/apt/sources.list.d/cuda.list',
+      'RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | ' +
+      'apt-key add -',
       # Updating and installing on the same line causes cache-busting.
       # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
       'RUN apt-get update && apt-get install -y git netcat',
