@@ -162,7 +162,7 @@ class BinaryHandle(LocalExecutionHandle):
   """A handle referring to the launched binary."""
 
   name: str
-  process: asyncio.subprocess.Process
+  process: asyncio.subprocess.Process  # pytype: disable=module-attr
   stream_output: bool
 
   async def wait(self) -> None:
