@@ -21,7 +21,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='xmanager',
-    version='0.1.5',
+    version='0.2.0',
     description='A framework for managing machine learning experiments',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -37,8 +37,7 @@ setup(
         'google-api-core',
         'google-api-python-client',
         'google-auth',
-        # TODO waiting for release google-cloud-aiplatform>1.11.0
-        'google-cloud-aiplatform@git+https://github.com/googleapis/python-aiplatform@main',
+        'google-cloud-aiplatform',
         'google-cloud-storage',
         'humanize',
         'immutabledict',
