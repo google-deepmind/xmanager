@@ -529,11 +529,28 @@ class AuxiliaryUnitJob(abc.ABC):
 
 
 class Experiment(abc.ABC):
-  """Experiment contains a family of jobs run on the same snapshot of code.
+  """Experiment is the core unit of research in XManager.
 
-  Experiment also implements the behavior of how to add and execute jobs.
-  Attempting to add jobs that contain Executables with unsupported types will
-  fail.
+  An experiment typically involves running a computation (e.g. training a model)
+  in different hyperparameter configurations. Experiments are made up of work
+  units, which do the computation(s) in question, and auxiliary units which
+  perform other functions like TensorBoard. It can have associated metadata,
+  such as title or source code commit from which it has been compiled.
+
+  XManager API provides multiple implementations of the Experiment class which
+  use different backends to start jobs. Types of supported Executables may vary
+  between these implementations. Usually experiments woulbe be created by though
+  xm_<foo>.create_experiment() functions.
+
+  While experiment metadata and statuses can accessed and altered directly,
+  adding work or auxiliary units requires entering experiment context:
+
+    with xm_foo.create_experiment(...) as experiment:
+      experiment.add(xm.Job(...))
+
+  This context would spawn background event pool to support asynchronous
+  operations and ensure that they all are completed on exit. It also may mark
+  experiment as failed if an exception is thrown.
   """
 
   # An event loop in which job generators would be run.
