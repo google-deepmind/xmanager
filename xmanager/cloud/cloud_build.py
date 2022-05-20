@@ -18,6 +18,7 @@ import tarfile
 import tempfile
 import time
 from typing import Any, Dict, Optional
+import warnings
 
 from absl import flags
 from docker.utils import utils as docker_utils
@@ -44,6 +45,15 @@ _USE_KANIKO = flags.DEFINE_boolean(
     'Use kaniko backend for Cloud Build and enable caching.')
 _KANIKO_CACHE_TTL = flags.DEFINE_string('xm_kaniko_cache_ttl', '336h',
                                         'Cache ttl to use for kaniko builds.')
+
+_CLOUD_SDK_CREDENTIALS_WARNING = """\
+Your application has authenticated using end user credentials from Google \
+Cloud SDK without a quota project. You might receive a "quota exceeded" \
+or "API not enabled" error. We recommend you rerun \
+`gcloud auth application-default login` and make sure a quota project is \
+added. Or you can use service accounts instead. For more information \
+about service accounts, see https://cloud.google.com/docs/authentication/"""
+warnings.filterwarnings('ignore', _CLOUD_SDK_CREDENTIALS_WARNING)
 
 
 class Client:

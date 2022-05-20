@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests for cloud_build."""
+from unittest import mock
 from absl.testing import absltest
 
 from xmanager.cloud import cloud_build
@@ -23,7 +24,7 @@ class CloudBuildTest(absltest.TestCase):
     client = cloud_build.Client(
         'my-project',
         'my-bucket',
-        'fake-creds',
+        mock.Mock(),
         use_kaniko=False,
         use_cloud_build_cache=False)
     image = client._build_request_body('path/to/project', 'my-image', 'live')
@@ -52,7 +53,7 @@ class CloudBuildTest(absltest.TestCase):
     client = cloud_build.Client(
         'my-project',
         'my-bucket',
-        'fake-creds',
+        mock.Mock(),
         use_kaniko=True,
         use_cloud_build_cache=False)
     image = client._build_request_body('path/to/project', 'my-image', 'live')
@@ -80,7 +81,7 @@ class CloudBuildTest(absltest.TestCase):
     client = cloud_build.Client(
         'my-project',
         'my-bucket',
-        'fake-creds',
+        mock.Mock(),
         use_kaniko=False,
         use_cloud_build_cache=True)
     image = client._build_request_body('path/to/project', 'my-image', 'live')
