@@ -123,6 +123,31 @@ class SequentialArgs:
     matcher(collection)
     return result
 
+  def rewrite_args(self, rewrite: Callable[[str], str]) -> 'SequentialArgs':
+    """Applies the rewrite function to all args and returns the result."""
+    result = SequentialArgs()
+
+    def rewrite_regular_item(item: SequentialArgs._RegularItem):
+      new_value = item.value
+      if isinstance(new_value, str):
+        new_value = rewrite(new_value)
+      result._ingest_regular_item(new_value)  # pylint: disable=protected-access
+
+    def rewrite_keyword_item(item: SequentialArgs._KeywordItem):
+      new_value = self._kwvalues[item.name]
+      if isinstance(new_value, str):
+        new_value = rewrite(new_value)
+      result._ingest_keyword_item(item.name, new_value)  # pylint: disable=protected-access
+
+    matcher = pattern_matching.match(
+        rewrite_regular_item,
+        rewrite_keyword_item,
+    )
+    for item in self._items:
+      matcher(item)
+
+    return result
+
   def to_list(
       self,
       escaper: Callable[[Any], str],
