@@ -170,9 +170,16 @@ class VertexTest(unittest.TestCase):
     self.assertEqual('n1-highmem-64',
                      vertex.cpu_ram_to_machine_type(1, 415 * xm.GiB))
 
+  def test_cpu_ram_to_machine_type_mem_only(self):
+    self.assertEqual('n1-highmem-64',
+                     vertex.cpu_ram_to_machine_type(None, 415 * xm.GiB))
+
   def test_cpu_ram_to_machine_type_highcpu(self):
     self.assertEqual('n1-highcpu-64',
                      vertex.cpu_ram_to_machine_type(63, 1 * xm.GiB))
+
+  def test_cpu_ram_to_machine_type_cpu_only(self):
+    self.assertEqual('n1-highcpu-64', vertex.cpu_ram_to_machine_type(63, None))
 
   def test_cpu_ram_to_machine_type_too_high(self):
     with self.assertRaises(ValueError):

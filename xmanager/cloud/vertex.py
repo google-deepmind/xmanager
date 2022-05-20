@@ -341,7 +341,9 @@ def launch(experiment_title: str, work_unit_name: str,
 
 def cpu_ram_to_machine_type(cpu: Optional[int], ram: Optional[int]) -> str:
   """Convert a cpu and memory spec into a machine type."""
-  if cpu is None or ram is None:
+  cpu = cpu or 0
+  ram = ram or 0
+  if cpu + ram == 0:
     return 'n1-standard-4'
 
   optimal_machine_type = ''
