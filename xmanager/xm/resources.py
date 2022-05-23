@@ -231,6 +231,13 @@ class ResourceDict(MutableMapping):
     return ', '.join(
         sorted([f'{key}: {value}' for (key, value) in self.items()]))
 
+  def __add__(self: 'ResourceDict', rhs: 'ResourceDict') -> 'ResourceDict':
+    """Returns a sum of two ResourceDicts."""
+    result = ResourceDict()
+    for key in [*self.keys(), *rhs.keys()]:
+      result[key] = self.get(key, 0) + rhs.get(key, 0)
+    return result
+
 
 class InvalidTpuTopologyError(Exception):
   """An unrecognized TPU topology has been provided."""
