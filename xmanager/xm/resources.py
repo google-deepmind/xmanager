@@ -254,7 +254,7 @@ class Topology:
   Examples of valid topologies:
     '1' - a single device.
     '4' - 4 GPUs on one host.
-    '4x4' - A 4x4 TPU grid.
+    '4x4' - a 4x4 TPU grid.
   """
 
   def __init__(self, name: str) -> None:
