@@ -13,6 +13,7 @@
 # limitations under the License.
 """Implementation of the XManager Launch API within the local scheduler."""
 
+from xmanager.cloud import auth
 from xmanager.cloud import vertex
 from xmanager.xm_local import experiment
 from xmanager.xm_local.executors import *
