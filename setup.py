@@ -28,7 +28,7 @@ setup(
     author='DeepMind Technologies Limited',
     packages=find_namespace_packages(exclude=['examples.*']),
     package_data={'': ['*.sh', '*.sql']},
-    python_requires='>=3.7',
+    python_requires='>=3.9',
     install_requires=[
         'absl-py',
         'async_generator',
