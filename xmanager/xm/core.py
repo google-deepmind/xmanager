@@ -196,6 +196,32 @@ def _work_unit_arguments(
   return deduce_args(job)
 
 
+@attr.s(auto_attribs=True, kw_only=True)
+class LaunchedJob:
+  """A read-only view of a launched job.
+
+  Launched jobs correspond to job instances that have been added to an
+  Experiment Unit. If a Job does not have a unique identity, it can be added
+  multiple times to an Experiment, so a Job object may correspond to multiple
+  LaunchedJob objects. A LaunchedJob will have the same name as the added Job,
+  but launched jobs may have different addresses and logs.
+
+  `experiment.add(job)` will generate an Experiment Unit
+  containing a corresponding launched job. `experiment.add(job_group)` will
+  generate an Experiment Unit with multiple corresponding launched jobs.
+  `experiment.add(generator)` will generate an Experiment Unit with as many
+  launched jobs as the generator adds.
+
+  Attributes:
+    name: Name of the job corresponding to this launched job.
+    address: The job's address.
+    logs: A URL to this job's logs.
+  """
+  name: str
+  address: Optional[str] = None
+  logs: Optional[str] = None
+
+
 class Importance(enum.Enum):
   """How important it is to schedule particular Experiment or ExperimentUnit.
 
@@ -403,6 +429,15 @@ class ExperimentUnit(abc.ABC):
     return metadata_context.MetadataContext(
         creator=getpass.getuser(),
         annotations=metadata_context.ContextAnnotations())
+
+  @property
+  def launched_jobs(self) -> List[LaunchedJob]:
+    """Gets a representation for each individual job that was added.
+
+    Each added Job should produce a LaunchedJob.
+    Each added JobGroup will produce a LaunchedJob for each leaf Job.
+    """
+    raise NotImplementedError
 
 
 @attr.s(auto_attribs=True, kw_only=True)

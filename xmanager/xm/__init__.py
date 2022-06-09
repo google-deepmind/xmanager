@@ -28,6 +28,7 @@ from xmanager.xm.core import ExperimentUnitNotCompletedError
 from xmanager.xm.core import ExperimentUnitRole
 from xmanager.xm.core import ExperimentUnitStatus
 from xmanager.xm.core import Importance
+from xmanager.xm.core import LaunchedJob
 from xmanager.xm.core import NotFoundError
 from xmanager.xm.core import WorkUnit
 from xmanager.xm.core import WorkUnitCompletedAwaitable
