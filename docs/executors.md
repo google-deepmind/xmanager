@@ -48,9 +48,6 @@ As of June 2021, the currently supported accelerator types are:
 * `TPU_V2`
 * `TPU_V3`
 
-IMPORTANT: Note that for `TPU_V2` and `TPU_V3` the only currently supported
-count is 8.
-
 ### Vertex AI Specification
 
 The Vertex AI executor allows you specify a remote image repository to push to.
