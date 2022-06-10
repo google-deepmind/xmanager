@@ -304,6 +304,7 @@ ResourceQuantity = Union[int, float, str, Topology]
 
 
 def _parse_resource_quantity(
+    resource_name: str,
     value: ResourceQuantity) -> Tuple[float, Optional[Topology]]:
   """Parses a string representation of a resource quantity."""
 
@@ -321,7 +322,11 @@ def _parse_resource_quantity(
   def parse_number(value: Any):
     return float(value), None
 
-  return pm.match(parse_string, parse_topology, parse_number)(value)
+  try:
+    return pm.match(parse_string, parse_topology, parse_number)(value)
+  except Exception as e:
+    raise ValueError(f"Couldn't parse resource quantity for {resource_name}. "
+                     f'{value!r} was given.') from e
 
 
 class JobRequirements:
@@ -384,7 +389,7 @@ class JobRequirements:
 
     for resource_name, value in itertools.chain(resources.items(),
                                                 kw_resources.items()):
-      scalar, topology = _parse_resource_quantity(value)
+      scalar, topology = _parse_resource_quantity(resource_name, value)
       resource = pm.match(
           pm.Case([str], lambda r: ResourceType[r]),
           pm.Case([ResourceType], lambda r: r))(
