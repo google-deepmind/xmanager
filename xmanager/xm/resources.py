@@ -27,7 +27,7 @@ import immutabledict
 from xmanager.xm import pattern_matching as pm
 
 
-class _CaseInsensetiveEnumMeta(enum.EnumMeta):
+class _CaseInsensetiveResourceTypeMeta(enum.EnumMeta):
   """Metaclass which allows case-insensetive enum lookup.
 
   Enum keys are upper case, but we allow other cases for the input. For
@@ -38,10 +38,10 @@ class _CaseInsensetiveEnumMeta(enum.EnumMeta):
     try:
       return super().__getitem__(resource_name.upper())
     except KeyError:
-      raise KeyError(f'Unknown {cls.__name__} {resource_name!r}')
+      raise KeyError(f'Unknown {cls.__name__} {resource_name!r}')  # pylint: disable=raise-missing-from
 
 
-class ResourceType(enum.Enum, metaclass=_CaseInsensetiveEnumMeta):
+class ResourceType(enum.Enum, metaclass=_CaseInsensetiveResourceTypeMeta):
   """Type of a countable resource (e.g., CPU, memory, accelerators etc).
 
   We use a schema in which every particular accelerator has its own type. This
@@ -76,7 +76,21 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensetiveEnumMeta):
     return self._name_
 
 
-class ServiceTier(enum.Enum, metaclass=_CaseInsensetiveEnumMeta):
+class _CaseInsensetiveServiceTierMeta(enum.EnumMeta):
+  """Metaclass which allows case-insensetive enum lookup.
+
+  Enum keys are upper case, but we allow other cases for the input. For
+  example existing flags and JobRequirements use lower case for resource names.
+  """
+
+  def __getitem__(cls, resource_name: str) -> 'ServiceTier':
+    try:
+      return super().__getitem__(resource_name.upper())
+    except KeyError:
+      raise KeyError(f'Unknown {cls.__name__} {resource_name!r}')  # pylint: disable=raise-missing-from
+
+
+class ServiceTier(enum.Enum, metaclass=_CaseInsensetiveServiceTierMeta):
   """The job availability guarantees which underlying platfrom should provide.
 
   Most cloud platforms offer a selection of availability/price tradeoff options.
