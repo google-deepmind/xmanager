@@ -126,7 +126,16 @@ class ExperimentUnitStatus(abc.ABC):
 
 
 class ExperimentUnitError(RuntimeError):
-  """Experiment unit could not be completed."""
+  """Experiment unit could not be completed.
+
+  Attrs:
+    work_unit: The work unit in which the error occured, if available.
+  """
+  work_unit: Optional['WorkUnit'] = None
+
+  def __init__(self, message: Any, *, work_unit: Optional['WorkUnit'] = None):
+    super().__init__(message)
+    self.work_unit = work_unit
 
 
 class ExperimentUnitFailedError(ExperimentUnitError):

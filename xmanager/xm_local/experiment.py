@@ -110,7 +110,8 @@ class LocalExperimentUnit(xm.ExperimentUnit):
           self._non_local_execution_handles
       ])
     except RuntimeError as error:
-      raise xm.ExperimentUnitFailedError(error)
+      raise xm.ExperimentUnitFailedError(
+          error, work_unit=self if isinstance(self, LocalWorkUnit) else None)
 
   async def wait_for_local_jobs(self, is_exit_abrupt: bool):
     if not is_exit_abrupt:
