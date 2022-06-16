@@ -136,7 +136,7 @@ class MockExperiment(core.Experiment):
       identity: str = '') -> Awaitable[MockExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
     del identity  # Unused.
-    future = asyncio.Future()
+    future = asyncio.Future(loop=self._event_loop)
     experiment_unit = MockExperimentUnit(self, self._work_unit_id_predictor,
                                          self._create_task, self.launched_jobs,
                                          self.launched_jobs_args, args, role)

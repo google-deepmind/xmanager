@@ -612,7 +612,13 @@ class Experiment(abc.ABC):
     raise NotImplementedError
 
   def __enter__(self):
-    if asyncio.get_event_loop().is_running():
+    is_coro_context = False
+    try:
+      asyncio.get_running_loop()
+      is_coro_context = True
+    except RuntimeError:
+      pass
+    if is_coro_context:
       raise RuntimeError('When using Experiment from a coroutine please use '
                          '`async with` syntax')
 
@@ -795,7 +801,8 @@ class Experiment(abc.ABC):
       await experiment_unit.add(job, args, identity=identity)
       return experiment_unit
 
-    return asyncio.wrap_future(self._create_task(launch()))
+    return asyncio.wrap_future(
+        self._create_task(launch()), loop=self._event_loop)
 
   @abc.abstractmethod
   def _create_experiment_unit(self, args: Optional[Mapping[str, Any]],

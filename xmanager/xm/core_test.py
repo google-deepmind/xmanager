@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import asyncio
+from concurrent import futures
 import threading
 import unittest
 
@@ -230,6 +231,19 @@ class ExperimentTest(unittest.TestCase):
       # But `with` raises an exception.
       with xm_mock.MockExperiment():
         pass
+
+  def test_experiment_works_from_thread_pool(self):
+    # There would be no Asyncio even loop thread attahched if running from a
+    # worker thread. We ensure that the API still works.
+    def launch_experiment():
+      experiment = xm_mock.MockExperiment()
+      with experiment:
+        experiment.add(
+            job_blocks.Job(
+                xm_mock.MockExecutable(), xm_mock.MockExecutor(), args={}))
+
+    with futures.ThreadPoolExecutor() as executor:
+      executor.submit(launch_experiment).result()
 
   @utils.run_in_asyncio_loop
   async def test_work_unit_wait_until_complete(self):
