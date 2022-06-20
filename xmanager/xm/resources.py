@@ -332,7 +332,7 @@ def _parse_resource_quantity(
 class JobRequirements:
   """Describes the resource requirements of a Job.
 
-  Attribures:
+  Attributes:
     task_requirements: Amount of resources needed for a single task within a
       job.
     accelerator: The accelearator the jobs uses, if there is one. Jobs using
@@ -342,6 +342,7 @@ class JobRequirements:
     location: Place where the job should run. For example a cluster name or
       a Borg cell.
     service_tier: A service tier at which the job should run.
+    replicas: Number of identical tasks to run within a job
   """
 
   task_requirements: ResourceDict
@@ -367,7 +368,7 @@ class JobRequirements:
         for example {xm.ResourceType.V100: 2}.
       location: Place where the job should run. For example a cluster name or a
         Borg cell.
-      replicas: Number of identical tasks to run winthin a job. 1 by default.
+      replicas: Number of identical tasks to run within a job. 1 by default.
       service_tier: A service tier at which the job should run.
       **kw_resources: resource amounts as a kwargs, for example `v100=2` or
         `ram=1 * xm.GiB`. See xm.ResourceType enum for the list of supported
