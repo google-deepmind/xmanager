@@ -83,7 +83,7 @@ class MockExperimentUnit(core.WorkUnit):
       self,
       experiment: core.Experiment,
       work_unit_id_predictor: id_predictor.Predictor,
-      create_task: Callable[[Awaitable[Any]], futures.Future],
+      create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
       launched_jobs: List[job_blocks.JobType],
       launched_jobs_args: List[Optional[Mapping[str, Any]]],
       args: Optional[Mapping[str, Any]],

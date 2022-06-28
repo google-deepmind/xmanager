@@ -271,7 +271,7 @@ class ExperimentUnit(abc.ABC):
   experiment: 'Experiment'
 
   def __init__(self, experiment: 'Experiment',
-               create_task: Callable[[Awaitable[Any]], futures.Future],
+               create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
                args: Optional[Mapping[str,
                                       Any]], role: ExperimentUnitRole) -> None:
     """Initializes an `ExperimentUnit` instance.
@@ -288,7 +288,7 @@ class ExperimentUnit(abc.ABC):
     self._args = args
     self._role = role
 
-    self._launch_tasks: List[futures.Future] = []
+    self._launch_tasks: List[futures.Future[Any]] = []
 
   @property
   def experiment_id(self) -> int:
@@ -495,8 +495,8 @@ class WorkUnitCompletedAwaitable(Coroutine):
   def send(self, value: Any) -> Any:
     return self._wait_coro.send(value)
 
-  def throw(self, type, value=None, traceback=None) -> Any:  # pylint: disable=redefined-builtin
-    return self._wait_coro.throw(type, value, traceback)
+  def throw(self, typ, val=None, tb=None) -> Any:
+    return self._wait_coro.throw(typ, val, tb)
 
   def close(self) -> None:
     self._wait_coro.close()
@@ -601,7 +601,7 @@ class Experiment(abc.ABC):
   # An event loop in which job generators would be run.
   _event_loop: asyncio.AbstractEventLoop
   # A queue of background tasks that launch work units.
-  _running_tasks: queue.Queue
+  _running_tasks: queue.Queue[futures.Future[Any]]
   # Work unit ID predictor.
   _work_unit_id_predictor: id_predictor.Predictor
   # A class variable for batching packaging requests.
@@ -834,7 +834,7 @@ class Experiment(abc.ABC):
     """
     raise NotImplementedError
 
-  def _create_task(self, task: Awaitable[Any]) -> futures.Future:
+  def _create_task(self, task: Awaitable[Any]) -> futures.Future[Any]:
     future = asyncio.run_coroutine_threadsafe(task, loop=self._event_loop)
     self._running_tasks.put_nowait(future)
     return future

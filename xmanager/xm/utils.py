@@ -34,7 +34,7 @@ flags.DEFINE_string(
    'xm_launch_script', None, 'Path to the launch script that is using '
    'XManager Launch API')
 
-ReturnType = TypeVar('ReturnType')
+ReturnT = TypeVar('ReturnT')
 
 
 class SpecialArg(abc.ABC):
@@ -65,8 +65,7 @@ def trivial_kwargs_joiner(key: str, value: str) -> str:
   return f'{key}={value}'
 
 
-def run_in_asyncio_loop(
-    f: Callable[..., ReturnType]) -> Callable[..., ReturnType]:
+def run_in_asyncio_loop(f: Callable[..., ReturnT]) -> Callable[..., ReturnT]:
   """A decorator that turns an async function to a synchronous one.
 
   Python asynchronous APIs can't be used directly from synchronous functions.
@@ -99,7 +98,7 @@ def run_in_asyncio_loop(
   """
 
   @functools.wraps(f)
-  def decorated(*args, **kwargs) -> ReturnType:
+  def decorated(*args, **kwargs) -> ReturnT:
     loop = asyncio.new_event_loop()
     asyncio.get_child_watcher().attach_loop(loop)
     return loop.run_until_complete(f(*args, **kwargs))

@@ -65,7 +65,7 @@ class LocalExperimentUnit(xm.ExperimentUnit):
   """Experiment unit operated by the local backend."""
 
   def __init__(self, experiment: 'LocalExperiment', experiment_title: str,
-               create_task: Callable[[Awaitable[Any]], futures.Future],
+               create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
                args: Optional[Mapping[str, Any]],
                role: xm.ExperimentUnitRole) -> None:
     super().__init__(experiment, create_task, args, role)
@@ -157,7 +157,7 @@ class LocalWorkUnit(LocalExperimentUnit):
   """A work unit operated by the local backend."""
 
   def __init__(self, experiment: 'LocalExperiment', experiment_title: str,
-               create_task: Callable[[Awaitable[Any]], futures.Future],
+               create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
                args: Mapping[str, Any], role: xm.ExperimentUnitRole,
                work_unit_id_predictor: id_predictor.Predictor) -> None:
     super().__init__(experiment, experiment_title, create_task, args, role)
