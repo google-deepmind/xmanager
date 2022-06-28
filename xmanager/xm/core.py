@@ -32,6 +32,7 @@ import queue
 import threading
 from typing import Any, Awaitable, Callable, Collection, Coroutine, Dict, Generator, List, Mapping, Optional, Sequence, overload
 
+from absl import logging
 import attr
 from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
@@ -798,7 +799,15 @@ class Experiment(abc.ABC):
 
     async def launch():
       experiment_unit = await experiment_unit_future
-      await experiment_unit.add(job, args, identity=identity)
+      try:
+        await experiment_unit.add(job, args, identity=identity)
+      except:
+        try:
+          # Ideally we should mark the work unit as failed.
+          experiment_unit.stop()
+        except Exception as e:  # pylint: disable=broad-except
+          logging.error("Couldn't stop experiment unit: %s", e)
+        raise
       return experiment_unit
 
     return asyncio.wrap_future(
