@@ -835,6 +835,10 @@ class Experiment(abc.ABC):
     raise NotImplementedError
 
   def _create_task(self, task: Awaitable[Any]) -> futures.Future[Any]:
+    if not self._event_loop.is_running():
+      raise RuntimeError(
+          'Event loop is not running. Have you entered Experiment context '
+          'manager (e.g. with xm.create-experiment() as experiment:)?')
     future = asyncio.run_coroutine_threadsafe(task, loop=self._event_loop)
     self._running_tasks.put_nowait(future)
     return future
