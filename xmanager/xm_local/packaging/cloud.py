@@ -15,6 +15,7 @@
 from typing import Any, Optional
 
 from xmanager import xm
+from xmanager.bazel import client as bazel_client
 from xmanager.cloud import auth
 from xmanager.cloud import build_image
 from xmanager.cloud import docker_lib
@@ -22,6 +23,7 @@ from xmanager.docker import docker_adapter
 from xmanager.xm import pattern_matching
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import executors as local_executors
+from xmanager.xm_local.packaging import bazel_tools
 
 
 def _get_push_image_tag(executor_spec: xm.ExecutorSpec) -> Optional[str]:
@@ -44,7 +46,8 @@ def _get_push_image_tag(executor_spec: xm.ExecutorSpec) -> Optional[str]:
       executor_spec)
 
 
-def _package_container(packageable: xm.Packageable,
+def _package_container(bazel_outputs: bazel_tools.TargetOutputs,
+                       packageable: xm.Packageable,
                        container: xm.Container) -> xm.Executable:
   """Matcher method for packaging `xm.Container`.
 
@@ -60,12 +63,14 @@ def _package_container(packageable: xm.Packageable,
   already be in the destination location.
 
   Args:
+    bazel_outputs: TargetOutputs mapping from Bazel targets to outputs.
     packageable: Packageable containing Executor and Executable.
     container: Container specifying image path.
 
   Returns:
     GoogleContainerRegistryImage Executable.
   """
+  del bazel_outputs
   gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
   if container.image_path.startswith(
       gcr_project_prefix) or not docker_lib.is_docker_installed():
@@ -102,8 +107,10 @@ def _package_container(packageable: xm.Packageable,
   )
 
 
-def _package_dockerfile(packageable: xm.Packageable, dockerfile: xm.Dockerfile):
+def _package_dockerfile(bazel_outputs: bazel_tools.TargetOutputs,
+                        packageable: xm.Packageable, dockerfile: xm.Dockerfile):
   """Matcher method for packaging `xm.Dockerfile`."""
+  del bazel_outputs
   push_image_tag = _get_push_image_tag(packageable.executor_spec)
   if not push_image_tag:
     gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
@@ -126,9 +133,10 @@ def _package_dockerfile(packageable: xm.Packageable, dockerfile: xm.Dockerfile):
 
 
 def _package_python_container(
-    packageable: xm.Packageable,
+    bazel_outputs: bazel_tools.TargetOutputs, packageable: xm.Packageable,
     python_container: xm.PythonContainer) -> xm.Executable:
   """Matcher method for packaging `xm.PythonContainer`."""
+  del bazel_outputs
   push_image_tag = _get_push_image_tag(packageable.executor_spec)
   image = build_image.build(
       python_container,
@@ -144,6 +152,33 @@ def _package_python_container(
   )
 
 
+def _package_bazel_container(bazel_outputs: bazel_tools.TargetOutputs,
+                             packageable: xm.Packageable,
+                             bazel_container: xm.BazelContainer):
+  """Matcher method for packaging `xm.BazelContainer`."""
+  paths = bazel_outputs[bazel_client.BazelTarget(
+      label=bazel_container.label,
+      bazel_args=bazel_container.bazel_args,
+  )]
+
+  instance = docker_adapter.instance()
+  client = instance.get_client()
+
+  push_image_tag = _get_push_image_tag(packageable.executor_spec)
+  print(f'Loading {bazel_container.label}...')
+  loaded_image_id = instance.load_image(paths[0])
+
+  image = client.images.get(loaded_image_id)
+  image.tag(push_image_tag)
+  print(f'Pushing {push_image_tag}...')
+  client.images.push(push_image_tag)
+
+  return local_executables.GoogleContainerRegistryImage(
+      name=packageable.executable_spec.name,
+      image_path=push_image_tag,
+  )
+
+
 def _throw_on_unknown_executable(packageable: xm.Packageable,
                                  executable: xm.ExecutableSpec):
   raise TypeError('Unsupported executable specification '
@@ -154,11 +189,12 @@ _CLOUD_PACKAGING_ROUTER = pattern_matching.match(
     _package_container,
     _package_dockerfile,
     _package_python_container,
+    _package_bazel_container,
     _throw_on_unknown_executable,
 )
 
 
 def package_cloud_executable(
-    packageable: xm.Packageable,
+    bazel_outputs: bazel_tools.TargetOutputs, packageable: xm.Packageable,
     executable_spec: xm.ExecutableSpec) -> xm.Executable:
-  return _CLOUD_PACKAGING_ROUTER(packageable, executable_spec)
+  return _CLOUD_PACKAGING_ROUTER(bazel_outputs, packageable, executable_spec)

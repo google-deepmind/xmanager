@@ -30,8 +30,8 @@ def _visit_vertex_spec(
     packageable: xm.Packageable,
     _: executors.VertexSpec,
 ):
-  del bazel_outputs
   return cloud_packaging.package_cloud_executable(
+      bazel_outputs,
       packageable,
       packageable.executable_spec,
   )
@@ -54,8 +54,8 @@ def _visit_kubernetes_spec(
     packageable: xm.Packageable,
     _: executors.KubernetesSpec,
 ):
-  del bazel_outputs
   return cloud_packaging.package_cloud_executable(
+      bazel_outputs,
       packageable,
       packageable.executable_spec,
   )
