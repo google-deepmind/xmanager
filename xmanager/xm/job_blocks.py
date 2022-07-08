@@ -14,6 +14,7 @@
 """Data classes for job-related abstractions."""
 
 import abc
+import re
 from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
 import attr
@@ -279,6 +280,16 @@ class Executor(abc.ABC):
     raise NotImplementedError
 
 
+def _validate_env_vars(self: Any, attribute: Any, env_vars: Dict[str,
+                                                                 str]) -> None:
+  del self  # Unused.
+  del attribute  # Unused.
+  for key in env_vars.keys():
+    if not re.fullmatch('[a-zA-Z_][a-zA-Z0-9_]*', key):
+      raise ValueError('Environment variables names must conform to '
+                       f'[a-zA-Z_][a-zA-Z0-9_]*. Got {key!r}.')
+
+
 @attr.s(auto_attribs=True)
 class Packageable:
   """Packageable describes what to build and its static parameters."""
@@ -287,7 +298,8 @@ class Packageable:
   executor_spec: ExecutorSpec
   args: SequentialArgs = attr.ib(
       factory=list, converter=SequentialArgs.from_collection)  # pytype: disable=annotation-type-mismatch
-  env_vars: Dict[str, str] = attr.ib(converter=dict, default=attr.Factory(dict))
+  env_vars: Dict[str, str] = attr.ib(
+      converter=dict, default=attr.Factory(dict), validator=_validate_env_vars)
 
 
 class Constraint(abc.ABC):
@@ -331,7 +343,8 @@ class Job:
   name: Optional[str] = None
   args: SequentialArgs = attr.ib(
       factory=list, converter=SequentialArgs.from_collection)  # pytype: disable=annotation-type-mismatch
-  env_vars: Dict[str, str] = attr.Factory(dict)
+  env_vars: Dict[str, str] = attr.ib(
+      converter=dict, default=attr.Factory(dict), validator=_validate_env_vars)
 
 
 class JobGroup:
