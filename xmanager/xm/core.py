@@ -25,6 +25,7 @@ from xmanager import xm_foo
 import abc
 import asyncio
 from concurrent import futures
+import contextvars
 import enum
 import getpass
 import inspect
@@ -40,6 +41,13 @@ from xmanager.xm import job_blocks
 from xmanager.xm import job_operators
 from xmanager.xm import metadata_context
 from xmanager.xm import pattern_matching
+
+# ContextVars holding the current experiment (when within an Experiment context)
+# and current experiment unit (when inside a JobGenerator).
+_current_experiment: contextvars.ContextVar['Experiment'] = (
+    contextvars.ContextVar('_xm_current_experiment'))
+_current_experiment_unit: contextvars.ContextVar['ExperimentUnit'] = (
+    contextvars.ContextVar('_xm_current_experiment_unit'))
 
 
 def _check_if_unsupported_args_are_present(args: Mapping[str, Any],
@@ -332,11 +340,15 @@ class ExperimentUnit(abc.ABC):
     job_operators.populate_job_names(job)
 
     def launch_job(job: job_blocks.Job) -> Awaitable[None]:
+      _current_experiment.set(self.experiment)
+      _current_experiment_unit.set(self)
       return self._launch_job_group(
           job_blocks.JobGroup(**{job.name: job}),
           _work_unit_arguments(job, self._args), identity)
 
     def launch_job_group(group: job_blocks.JobGroup) -> Awaitable[None]:
+      _current_experiment.set(self.experiment)
+      _current_experiment_unit.set(self)
       return self._launch_job_group(group,
                                     _work_unit_arguments(group, self._args),
                                     identity)
@@ -348,6 +360,8 @@ class ExperimentUnit(abc.ABC):
         raise ValueError(
             'Job generator must be an async function. Signature needs to be '
             '`async def job_generator(work_unit: xm.WorkUnit):`')
+      _current_experiment.set(self.experiment)
+      _current_experiment_unit.set(self)
       coroutine = job_generator(self, **(args or {}))
       assert coroutine is not None
       return coroutine
@@ -606,6 +620,9 @@ class Experiment(abc.ABC):
   _work_unit_id_predictor: id_predictor.Predictor
   # A class variable for batching packaging requests.
   _async_packager: async_packager.AsyncPackager
+  # ContextVars token when entering the context.
+  _current_experiment_token: contextvars.Token
+  _current_async_experiment_token: contextvars.Token
 
   @property
   def experiment_id(self) -> int:
@@ -623,6 +640,7 @@ class Experiment(abc.ABC):
       raise RuntimeError('When using Experiment from a coroutine please use '
                          '`async with` syntax')
 
+    self._current_experiment_token = _current_experiment.set(self)
     self._event_loop = asyncio.new_event_loop()
     asyncio.get_child_watcher().attach_loop(self._event_loop)
     self._event_loop_thread = threading.Thread(
@@ -648,11 +666,13 @@ class Experiment(abc.ABC):
         pass
 
   def __exit__(self, exc_type, exc_value, traceback):
+    _current_experiment.reset(self._current_experiment_token)
     self._wait_for_tasks()
     self._event_loop.call_soon_threadsafe(self._event_loop.stop)
     self._event_loop_thread.join()
 
   async def __aenter__(self):
+    self._current_async_experiment_token = _current_experiment.set(self)
     self._event_loop = asyncio.get_event_loop()
     self._running_tasks = queue.Queue()
     self._work_unit_id_predictor = id_predictor.Predictor(1 +
@@ -664,6 +684,7 @@ class Experiment(abc.ABC):
       await asyncio.wrap_future(self._running_tasks.get_nowait())
 
   async def __aexit__(self, exc_type, exc_value, traceback):
+    _current_experiment.reset(self._current_async_experiment_token)
     await self._await_for_tasks()
 
   @classmethod

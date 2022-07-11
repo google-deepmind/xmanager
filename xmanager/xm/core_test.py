@@ -275,5 +275,79 @@ class ExperimentTest(unittest.TestCase):
       experiment.add(generator)
 
 
+class ContextvarsTest(unittest.TestCase):
+
+  def test_contextvars_single_job_launch(self):
+    with xm_mock.MockExperiment() as experiment:
+      job = job_blocks.Job(xm_mock.MockExecutable(), xm_mock.MockExecutor())
+      self.assertEqual(core._current_experiment.get(), experiment)
+      experiment.add(job)
+
+    self.assertIsNone(core._current_experiment.get(None))
+    self.assertIsNone(core._current_experiment_unit.get(None))
+
+  def test_contextvars_job_group_launch(self):
+    with xm_mock.MockExperiment() as experiment:
+      foo_job = job_blocks.Job(xm_mock.MockExecutable(), xm_mock.MockExecutor())
+      self.assertEqual(core._current_experiment.get(), experiment)
+      experiment.add(job_blocks.JobGroup(foo=foo_job))
+
+    self.assertIsNone(core._current_experiment.get(None))
+    self.assertIsNone(core._current_experiment_unit.get(None))
+
+  def test_contextvars_job_generator_launch(self):
+    with xm_mock.MockExperiment() as experiment:
+      self.assertEqual(core._current_experiment.get(), experiment)
+
+      async def job_generator(work_unit: core.WorkUnit):
+        self.assertEqual(core._current_experiment_unit.get(), work_unit)
+        self.assertEqual(core._current_experiment.get(), work_unit.experiment)
+
+      experiment.add(job_generator)
+
+    self.assertIsNone(core._current_experiment.get(None))
+    self.assertIsNone(core._current_experiment_unit.get(None))
+
+  def test_contextvars_async_job_generator_launch(self):
+
+    async def make_experiment():
+      async with xm_mock.MockExperiment() as experiment:
+
+        async def job_generator(work_unit: core.WorkUnit):
+
+          self.assertEqual(core._current_experiment_unit.get(), work_unit)
+          self.assertEqual(core._current_experiment.get(), work_unit.experiment)
+
+        experiment.add(job_generator)
+        self.assertEqual(core._current_experiment.get(), experiment)
+
+      asyncio.run(make_experiment())
+
+    self.assertIsNone(core._current_experiment.get(None))
+    self.assertIsNone(core._current_experiment_unit.get(None))
+
+  def test_contextvars_nested_async_job_generator_launch(self):
+
+    async def job_generator(work_unit: core.WorkUnit):
+
+      self.assertEqual(core._current_experiment.get(), work_unit.experiment)
+      self.assertEqual(core._current_experiment_unit.get(), work_unit)
+
+    with xm_mock.MockExperiment() as outer_exp:
+
+      async def make_inner_exp():
+        async with xm_mock.MockExperiment() as experiment:
+
+          experiment.add(job_generator)
+          outer_exp.add(job_generator)
+          self.assertEqual(core._current_experiment.get(), experiment)
+
+      asyncio.run(make_inner_exp())
+      self.assertEqual(core._current_experiment.get(), outer_exp)
+
+    self.assertIsNone(core._current_experiment.get(None))
+    self.assertIsNone(core._current_experiment_unit.get(None))
+
+
 if __name__ == '__main__':
   unittest.main()
