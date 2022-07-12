@@ -32,7 +32,7 @@ pip install xmanager
 
 ## Prerequisites
 
-The codebase assumes Python 3.7+.
+The codebase assumes Python 3.9+.
 
 ### Install Docker (optional)
 
