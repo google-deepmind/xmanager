@@ -409,3 +409,24 @@ class JobGroup:
 
 
 JobTypeVar = TypeVar('JobTypeVar', Job, JobGroup, JobGeneratorType)
+
+
+def get_args_for_all_jobs(job: JobType, args: Dict[str, Any]) -> Dict[str, Any]:
+  """Gets args to apply on all jobs inside a JobGroup.
+
+  This is useful if all jobs within a work unit accept the same arguments.
+
+  Args:
+    job: The job group to generate args for.
+    args: The args to apply to all jobs inside the job group.
+
+  Returns:
+    args that can be added with work_unit.add()
+  """
+  if not isinstance(job, JobGroup):
+    return {'args': dict(args)}
+  all_args = {}
+  for job_name, job_type in job.jobs.items():
+    job_type_args = get_args_for_all_jobs(job_type, args)
+    all_args[job_name] = job_type_args
+  return all_args

@@ -14,6 +14,7 @@
 
 import unittest
 
+import mock
 from xmanager.xm import job_blocks
 
 
@@ -71,6 +72,39 @@ class JobBlocksTest(unittest.TestCase):
         "Tried to construct xm.SequentialArgs from a string: '--foo'. "
         "Wrap it in a list: \\['--foo'\\] to make it a single argument."):
       job_blocks.SequentialArgs.from_collection('--foo')
+
+  def test_get_args_for_all_jobs(self):
+    group = job_blocks.JobGroup(
+        a=job_blocks.Job(mock.Mock(), mock.Mock()),
+        b=job_blocks.JobGroup(
+            b1=job_blocks.JobGroup(
+                b1i=job_blocks.Job(mock.Mock(), mock.Mock()),
+                b1ii=job_blocks.Job(mock.Mock(), mock.Mock()),
+            ),
+            b2=job_blocks.Job(mock.Mock(), mock.Mock()),
+        ),
+    )
+    logdir = {'logdir': '/logdir/1'}
+    expected = {
+        'a': {
+            'args': logdir
+        },
+        'b': {
+            'b1': {
+                'b1i': {
+                    'args': logdir
+                },
+                'b1ii': {
+                    'args': logdir
+                },
+            },
+            'b2': {
+                'args': logdir
+            },
+        },
+    }
+    args = job_blocks.get_args_for_all_jobs(group, logdir)
+    self.assertDictEqual(expected, args)
 
 
 if __name__ == '__main__':
