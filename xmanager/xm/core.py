@@ -67,7 +67,9 @@ def _apply_args_to_job(job: job_blocks.Job, args: Mapping[str, Any]) -> None:
 
   if 'args' in args:
     job.args = job_blocks.merge_args(job.args, args['args'])
-  job.env_vars.update(args.get('env_vars', {}))
+  if 'env_vars' in args:
+    job.env_vars = job.env_vars.copy()
+    job.env_vars.update(args['env_vars'])
 
 
 def _apply_args_to_job_group(job_group: job_blocks.JobGroup,

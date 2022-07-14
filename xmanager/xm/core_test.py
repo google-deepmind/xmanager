@@ -195,6 +195,17 @@ class ExperimentTest(unittest.TestCase):
         job_blocks.SequentialArgs.from_collection(['--bar=1', '--spacebar']),
     )
 
+  def test_launch_with_different_args(self):
+    experiment = xm_mock.MockExperiment()
+    with experiment:
+      job = job_blocks.Job(xm_mock.MockExecutable(), xm_mock.MockExecutor())
+      for i in range(10):
+        experiment.add(job, args={'env_vars': {'FOO': i}})
+
+    self.assertEqual(experiment.launched_jobs[0].env_vars, {'FOO': 0})
+    self.assertEqual(experiment.launched_jobs[1].env_vars, {'FOO': 1})
+    self.assertEqual(experiment.launched_jobs[2].env_vars, {'FOO': 2})
+
   def test_add_runs_asynchronously(self):
     generator_called = threading.Event()
 
