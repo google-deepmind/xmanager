@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Installs the Google Cloud SDK.
+# Installs Python 3.9.
 
 # Copyright 2021 DeepMind Technologies Limited
 #
@@ -17,10 +17,10 @@
 # limitations under the License.
 
 sudo apt-get update
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" \
-  | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-sudo apt-get install -y apt-transport-https ca-certificates gnupg curl
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg \
-  | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+sudo apt-get install -y software-properties-common
+sudo add-apt-repository -y ppa:deadsnakes/ppa
 sudo apt-get update
-sudo apt-get -y install google-cloud-sdk
+sudo apt-get install -y python3.9
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+sudo apt-get install -y python3-pip python3-distutils
+python3 -m pip install --user --upgrade pip

@@ -30,6 +30,13 @@ available.
 pip install xmanager
 ```
 
+On Debian-based systems, XManager and all its dependencies can be installed and
+set up by cloning this repository and then running
+
+```sh
+cd xmanager/setup_scripts && chmod +x setup_all.sh && . ./setup_all.sh
+```
+
 ## Prerequisites
 
 The codebase assumes Python 3.9+.

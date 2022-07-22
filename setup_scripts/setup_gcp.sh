@@ -119,9 +119,10 @@ select_bucket() {
 
     if [ -n "${BASH_VERSION}" ]; then
       echo "Exporting GOOGLE_CLOUD_BUCKET_NAME=${bucket_name} in ~/.bashrc..."
+      # TODO: Use sed to search and replace instead of simply appending
       echo "export GOOGLE_CLOUD_BUCKET_NAME=${bucket_name}" >> ~/.bashrc
     else
-      echo "You have to add `export GOOGLE_CLOUD_BUCKET_NAME=${bucket_name}` to the shell startup script to make the change persistent."
+      echo "You have to add export GOOGLE_CLOUD_BUCKET_NAME=${bucket_name} to the shell startup script to make the change persistent."
     fi
   fi
 

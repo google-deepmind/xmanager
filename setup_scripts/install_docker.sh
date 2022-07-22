@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-sudo apt update -y
-sudo apt install -y curl
-curl https://get.docker.com/builds/Linux/x86_64/docker-latest.tgz | \
-  tar xvz -C /tmp/ && mv /tmp/docker/docker /usr/bin/docker
+sudo apt update
+sudo apt-get install -y curl
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh

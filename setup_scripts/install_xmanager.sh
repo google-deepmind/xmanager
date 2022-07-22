@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Installs the Google Cloud SDK.
+# Installs XManager.
 
 # Copyright 2021 DeepMind Technologies Limited
 #
@@ -17,10 +17,16 @@
 # limitations under the License.
 
 sudo apt-get update
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" \
-  | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-sudo apt-get install -y apt-transport-https ca-certificates gnupg curl
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg \
-  | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-sudo apt-get update
-sudo apt-get -y install google-cloud-sdk
+sudo apt-get install -y git
+
+python3 -m pip install --user --upgrade setuptools
+python3 -m pip install --user git+https://github.com/deepmind/xmanager
+
+if [ -n "${BASH_VERSION}" ]; then
+  echo "Adding ~/.local/bin to PATH in ~/.bashrc..."
+  # TODO: Use sed to search and replace instead of simply appending
+  echo "export PATH=${PATH}:~/.local/bin" >> ~/.bashrc
+  export PATH="${PATH}:~/.local/bin"
+else
+  echo "Add ~/.local/bin/xmanager to your PATH to directly launch xmanager from the shell."
+fi
