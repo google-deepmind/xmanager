@@ -42,6 +42,11 @@ class UtilsTest(unittest.TestCase):
     self.assertEqual(utils.ARG_ESCAPER('Jonny Droptable'), "'Jonny Droptable'")
     self.assertEqual(utils.ARG_ESCAPER(ResourceType.VESPEN), 'VESPEN')
 
+  def test_shell_safe_arg_in_f_string(self):
+    # ShellSafeArg shouldn't be used in f-strings.
+    with self.assertRaises(RuntimeError):
+      f'{utils.ShellSafeArg("42")}'  # pylint: disable=expression-not-assigned
+
 
 if __name__ == '__main__':
   unittest.main()

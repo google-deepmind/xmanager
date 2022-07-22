@@ -52,6 +52,11 @@ class ShellSafeArg(SpecialArg):
 
   arg: str
 
+  def __str__(self) -> str:
+    """Prevents ShellSafeArg from being used in f-strings."""
+    raise RuntimeError(
+        f'Converting {self!r} to a string would strip the ShellSafe semantics.')
+
 
 ARG_ESCAPER = pattern_matching.match(
     pattern_matching.Case([ShellSafeArg], lambda v: v.arg),
