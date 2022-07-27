@@ -9,8 +9,9 @@ experiments is done via XManager's APIs through Python *launch scripts*.
 
 To get started, install [XManager](#install-xmanager), its
 [prerequisites](#prerequisites) if needed and follow [the
-tutorial](#writing-xmanager-launch-scripts) or
-[codelab.ipynb](https://github.com/deepmind/xmanager/blob/main/codelab.ipynb)
+tutorial](#writing-xmanager-launch-scripts) or a codelab 
+([Jupyter Notebook](https://github.com/deepmind/xmanager/blob/main/jupyter_codelab.ipynb) /
+[Colab Notebook](https://github.com/deepmind/xmanager/blob/main/colab_codelab.ipynb))
 to create and run a launch script.
 
 See
