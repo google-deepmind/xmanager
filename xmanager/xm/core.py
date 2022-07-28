@@ -31,6 +31,7 @@ import getpass
 import inspect
 import queue
 import threading
+import traceback
 from typing import Any, Awaitable, Callable, Collection, Coroutine, Dict, Generator, List, Mapping, Optional, Sequence, overload
 
 from absl import logging
@@ -414,7 +415,11 @@ class ExperimentUnit(abc.ABC):
     """
     raise NotImplementedError
 
-  def stop(self) -> None:
+  def stop(self,
+           *,
+           mark_as_failed: bool = False,
+           mark_as_completed: bool = False,
+           message: Optional[str] = None) -> None:
     """Initiate the process to stop the unit from running.
 
     This method will synchronously make a request for the unit to stop.
@@ -423,6 +428,11 @@ class ExperimentUnit(abc.ABC):
 
     Use self.wait_until_complete() after self.stop() to guarantee the unit
     is stopped.
+
+    Args:
+      mark_as_failed: Mark this unit as failed rather than stopped.
+      mark_as_completed: Mark this unit as completed rather than stopped.
+      message: Optional user-defined status message.
     """
     raise NotImplementedError
 
@@ -667,7 +677,7 @@ class Experiment(abc.ABC):
         # Ignore cancelled tasks.
         pass
 
-  def __exit__(self, exc_type, exc_value, traceback):
+  def __exit__(self, exc_type, exc_value, traceback):  # pylint:disable=redefined-outer-name
     _current_experiment.reset(self._current_experiment_token)
     self._wait_for_tasks()
     self._event_loop.call_soon_threadsafe(self._event_loop.stop)
@@ -685,7 +695,7 @@ class Experiment(abc.ABC):
     while not self._running_tasks.empty():
       await asyncio.wrap_future(self._running_tasks.get_nowait())
 
-  async def __aexit__(self, exc_type, exc_value, traceback):
+  async def __aexit__(self, exc_type, exc_value, traceback):  # pylint:disable=redefined-outer-name
     _current_experiment.reset(self._current_async_experiment_token)
     await self._await_for_tasks()
 
@@ -824,12 +834,13 @@ class Experiment(abc.ABC):
       experiment_unit = await experiment_unit_future
       try:
         await experiment_unit.add(job, args, identity=identity)
-      except:
+      except Exception:
         try:
-          # Ideally we should mark the work unit as failed.
-          experiment_unit.stop()
-        except Exception as e:  # pylint: disable=broad-except
-          logging.error("Couldn't stop experiment unit: %s", e)
+          experiment_unit.stop(
+              mark_as_failed=True,
+              message=f'Work unit creation failed. {traceback.format_exc()}')
+        except Exception as stop_exception:  # pylint: disable=broad-except
+          logging.error("Couldn't stop experiment unit: %s", stop_exception)
         raise
       return experiment_unit
 

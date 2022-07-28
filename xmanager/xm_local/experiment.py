@@ -118,7 +118,11 @@ class LocalExperimentUnit(xm.ExperimentUnit):
       await asyncio.gather(
           *[handle.wait() for handle in self._local_execution_handles])
 
-  def stop(self) -> None:
+  def stop(self,
+           *,
+           mark_as_failed: bool = False,
+           mark_as_completed: bool = False,
+           message: Optional[str] = None) -> None:
     """Initiate the process to stop the work unit from running.
 
     This method will synchronously make a request for the work unit to stop.
@@ -127,7 +131,15 @@ class LocalExperimentUnit(xm.ExperimentUnit):
 
     Use self.wait_until_complete() after self.stop() to guarantee the work unit
     is stopped.
+
+    Args:
+      mark_as_failed: Mark this unit as failed rather than stopped.
+      mark_as_completed: Mark this unit as completed rather than stopped.
+      message: Optional user-defined status message.
     """
+    del mark_as_failed  # Not implemented in xm_local.
+    del mark_as_completed  # Not implemented in xm_local.
+    del message  # Not implemented in xm_local.
 
     def stop_vertex_handle(vertex_handle: vertex.VertexHandle) -> None:
       vertex_handle.stop()
