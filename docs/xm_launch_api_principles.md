@@ -122,7 +122,8 @@ bindings, but we apply the following tests:
 It is often possible to break the data dependency loop and provide a concrete
 value. Being explicit slightly bloats the code. But we found that defaults that
 magically work for the majority of users tend to obscurely break on edge cases.
-Unfortunately research is a lot about doing cutting-edge stuff.
+This presents a challenge since cutting-edge research often implies working with
+edge cases.
 
 ## [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) speed & repeatability
 
@@ -139,5 +140,5 @@ to allow fast iteration.
 
 But while doing so we must maintain enough order to not get lost in the process.
 It should be possible to look back and tell which changes were helpful and which
-broke our model. So infrastructure needs to guide users towards good engineering
-practices.
+broke our model. So the infrastructure needs to guide users towards good
+engineering practices.
