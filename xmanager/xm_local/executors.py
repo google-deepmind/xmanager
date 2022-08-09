@@ -37,12 +37,15 @@ class DockerOptions:
         the ports of the host to bind. See the specification at
         https://docker-py.readthedocs.io/en/stable/containers.html.
       volumes: A dictionary from `str` to `str`, where the keys represent paths
-        inside on the host to mount and the values represent paths in the
+        inside the host to mount and the values represent paths in the
         container.
+      mount_gcs_path: If True, checks for the `~/gcs` directory on the host
+        and mounts it (if found) at `/gcs` in the container. Defaults to True.
       interactive: If True, requests a run with interactive shell.
   """
   ports: Optional[docker_adapter.Ports] = None
   volumes: Optional[Dict[str, str]] = None
+  mount_gcs_path: bool = True
   interactive: bool = False
 
 

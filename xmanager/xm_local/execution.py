@@ -134,11 +134,22 @@ async def _launch_loaded_container_image(
   env_vars = {**executable.env_vars, **job.env_vars}
   options = executor.docker_options or executors.DockerOptions()
 
-  # Add GCP credentials to Local Executor.
   volumes = options.volumes or {}
+  # Add GCP credentials to Local Executor.
   local_gcloud_config_path = os.path.expanduser('~/.config/gcloud')
   image_gcloud_config_path = '/root/.config/gcloud'
   volumes[local_gcloud_config_path] = image_gcloud_config_path
+
+  if options.mount_gcs_path and os.path.isdir(os.path.expanduser('~/gcs')):
+    local_gcs_path = os.path.expanduser('~/gcs')
+    image_gcs_path = '/gcs'
+
+    if local_gcs_path not in volumes:
+      volumes[local_gcs_path] = image_gcs_path
+    else:
+      logging.warning(
+          'Default GCS path inside container overwritten by'
+          '`volumes` parameter to %s', volumes[local_gcs_path])
 
   container = instance.run_container(
       name=get_full_job_name(job.name),
