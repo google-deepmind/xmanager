@@ -183,7 +183,6 @@ class LocalWorkUnit(LocalExperimentUnit):
     def save_vertex_handle(vertex_handle: vertex.VertexHandle) -> None:
       database.database().insert_vertex_job(self.experiment_id,
                                             self.work_unit_id,
-                                            self.experiment_unit_name,
                                             vertex_handle.job_name)
 
     def save_k8s_handle(k8s_handle: kubernetes.KubernetesHandle) -> None:
@@ -192,7 +191,6 @@ class LocalWorkUnit(LocalExperimentUnit):
         name = job.metadata.name
         database.database().insert_kubernetes_job(self.experiment_id,
                                                   self.work_unit_id,
-                                                  self.experiment_unit_name,
                                                   namespace, name)
 
     def throw_on_unknown_handle(handle: Any) -> None:

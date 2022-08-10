@@ -121,7 +121,7 @@ class Database:
     self.engine.execute(
         query, experiment_id=experiment_id, work_unit_id=work_unit_id)
 
-  def insert_vertex_job(self, experiment_id: int, work_unit_id: int, name: str,
+  def insert_vertex_job(self, experiment_id: int, work_unit_id: int,
                         vertex_job_id: str) -> None:
     job = data_pb2.Job(caip=data_pb2.AIPlatformJob(resource_name=vertex_job_id))
     data = text_format.MessageToBytes(job)
@@ -131,11 +131,11 @@ class Database:
         query,
         experiment_id=experiment_id,
         work_unit_id=work_unit_id,
-        name=name,
+        name=vertex_job_id,
         data=data)
 
   def insert_kubernetes_job(self, experiment_id: int, work_unit_id: int,
-                            name: str, namespace: str, job_name: str) -> None:
+                            namespace: str, job_name: str) -> None:
     job = data_pb2.Job(
         kubernetes=data_pb2.KubernetesJob(
             namespace=namespace, job_name=job_name))
@@ -146,7 +146,7 @@ class Database:
         query,
         experiment_id=experiment_id,
         work_unit_id=work_unit_id,
-        name=name,
+        name=job_name,
         data=data)
 
   def list_experiment_ids(self) -> List[int]:
