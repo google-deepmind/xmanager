@@ -83,12 +83,13 @@ def base_image(framework: FrameworkSpec,
     return 'gcr.io/deeplearning-platform-release/base-cu113'
   elif framework == MLFramework.TF2:
     # TF experiments use the same base image for all accelerators.
-    return 'gcr.io/deeplearning-platform-release/tf2-gpu.2-6'
+    return 'gcr.io/deeplearning-platform-release/tf2-gpu.2-9'
   elif framework == MLFramework.PYTORCH:
     if accelerator in xm.TpuType:
+      # TODO: update this default as well.
       return 'gcr.io/deeplearning-platform-release/pytorch-xla.1-9'
     else:
-      return 'gcr.io/deeplearning-platform-release/pytorch-gpu.1-9'
+      return 'gcr.io/deeplearning-platform-release/pytorch-gpu.1-12'
   elif framework == MLFramework.TF1:
     logging.warning('Tensorflow 1.x is not supported')
     return 'gcr.io/deeplearning-platform-release/tf-gpu.1-15'
