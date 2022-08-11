@@ -178,7 +178,7 @@ TpuType = _enum_subset(
 GpuType = _enum_subset(
     'GpuType',
     [
-        ResourceType.LOCAL_GPU,
+        # LOCAL_GPU is missing as only specific GPU types should be added.
         ResourceType.P4,
         ResourceType.T4,
         ResourceType.P100,
@@ -187,10 +187,10 @@ GpuType = _enum_subset(
     ],
 )
 
-
 _AcceleratorType = _enum_subset(
     '_AcceleratorType',
     [
+        ResourceType.LOCAL_GPU,
         *list(TpuType),
         *list(GpuType),
     ],
