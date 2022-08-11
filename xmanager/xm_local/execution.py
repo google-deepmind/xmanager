@@ -18,6 +18,7 @@ import asyncio
 import atexit
 from concurrent import futures
 import os
+import subprocess
 import threading
 from typing import Any, Awaitable, Callable, List, Optional, cast
 
@@ -130,6 +131,16 @@ async def _launch_loaded_container_image(
   if not instance.has_network(_BRIDGE_NETWORK_NAME):
     instance.create_network(_BRIDGE_NETWORK_NAME)
 
+  gpu_count = int(
+      executor.requirements.task_requirements.get(xm.ResourceType.LOCAL_GPU, 0))
+
+  if gpu_count > 0:
+    try:
+      subprocess.check_output('nvidia-smi')
+    except subprocess.CalledProcessError as exception:
+      raise RuntimeError('No NVIDIA devices detected. Only NVIDIA'
+                         'GPUs are currently supported') from exception
+
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
   env_vars = {**executable.env_vars, **job.env_vars}
   options = executor.docker_options or executors.DockerOptions()
@@ -159,6 +170,7 @@ async def _launch_loaded_container_image(
       env_vars=env_vars,
       ports=options.ports or {},
       volumes=volumes,
+      gpu_count=gpu_count,
       interactive=options.interactive,
   )
   return ContainerHandle(

@@ -21,6 +21,7 @@ from absl import flags
 from absl import logging
 import docker
 from docker import errors
+from docker import types
 from docker.models import containers
 from docker.utils import utils
 
@@ -89,15 +90,17 @@ class DockerAdapter(object):
       network: str,
       ports: Ports,
       volumes: Dict[str, str],
+      gpu_count: int,
       interactive: bool = False,
   ) -> Optional[containers.Container]:
     """Runs a given container image."""
     if _USE_SUBPROCESS.value or interactive:
       return self.run_container_subprocess(image_id, args, env_vars, network,
-                                           ports, volumes, interactive)
+                                           ports, volumes, gpu_count,
+                                           interactive)
     else:
       return self.run_container_client(name, image_id, args, env_vars, network,
-                                       ports, volumes)
+                                       ports, volumes, gpu_count)
 
   def run_container_client(
       self,
@@ -108,9 +111,13 @@ class DockerAdapter(object):
       network: str,
       ports: Ports,
       volumes: Dict[str, str],
+      gpu_count: int,
   ) -> containers.Container:
     """Runs a given container image using Python Docker client."""
     make_mount = lambda guest: {'bind': guest, 'mode': 'rw'}
+    device_requests = [
+        types.DeviceRequest(count=gpu_count, capabilities=[['gpu']])
+    ]
     return self._client.containers.run(
         image_id,
         name=name,
@@ -122,6 +129,8 @@ class DockerAdapter(object):
         environment=env_vars,
         ports=ports,
         volumes={host: make_mount(guest) for host, guest in volumes.items()},
+        runtime='nvidia' if gpu_count else None,
+        device_requests=device_requests if gpu_count else None,
     )
 
   def run_container_subprocess(
@@ -132,6 +141,7 @@ class DockerAdapter(object):
       network: str,
       ports: Ports,
       volumes: Dict[str, str],
+      gpu_count: int,
       interactive: bool,
   ) -> None:
     """Runs a given container image calling `docker` in a Subprocess."""
@@ -146,6 +156,9 @@ class DockerAdapter(object):
       cmd.extend(['-e', f'{key}={value}'])
     for key, value in volumes.items():
       cmd.extend(['-v', f'{key}:{value}'])
+    if gpu_count:
+      cmd.extend(['--gpus', f'{gpu_count}'])
+      cmd.extend(['--runtime', 'nvidia'])
     if interactive:
       print('Entering shell mode.')
       cmd.extend(['-it', '--entrypoint', 'bash', image_id])

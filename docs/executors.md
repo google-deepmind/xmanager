@@ -11,6 +11,18 @@ xm_local.Local(
 )
 ```
 
+Making GPUs available to local containers is possible by requesting
+the `local_gpu` resource through a requirements object.
+
+```python
+xm_local.Local(
+    xm.JobRequirements(local_gpu=1)
+)
+```
+
+Note: Only local NVIDIA GPUs can be requested for the `Local` executor through
+the resource requirements object. Any other requirements will be ignored.
+
 ## Vertex AI (Cloud AI Platform)
 
 The `Vertex` executor declares that an executable will be run on the Vertex AI

@@ -59,7 +59,7 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensetiveResourceTypeMeta):
   DISK = 100003
 
   # GPUs
-
+  LOCAL_GPU = 100006
   P4 = 21
   T4 = 22
   P100 = 14
@@ -178,6 +178,7 @@ TpuType = _enum_subset(
 GpuType = _enum_subset(
     'GpuType',
     [
+        ResourceType.LOCAL_GPU,
         ResourceType.P4,
         ResourceType.T4,
         ResourceType.P100,

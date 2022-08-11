@@ -29,7 +29,8 @@ from xmanager.xm_local import execution
 from xmanager.xm_local import executors as local_executors
 
 
-def create_test_job(interactive: bool = False,
+def create_test_job(gpu_count: int,
+                    interactive: bool = False,
                     mount_gcs_path: bool = True) -> xm.Job:
   return xm.Job(
       name='test-job',
@@ -39,6 +40,7 @@ def create_test_job(interactive: bool = False,
           args=xm.SequentialArgs.from_collection({'a': 1}),
           env_vars={'c': '0'}),
       executor=local_executors.Local(
+          requirements=xm.JobRequirements(local_gpu=gpu_count),
           docker_options=local_executors.DockerOptions(
               ports={8080: 8080},
               volumes={'a': 'b'},
@@ -56,19 +58,22 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
   @parameterized.product(
       interactive=[True, False],
       mount_gcs_path=[True, False],
-      gcs_dir_exists=[True, False])
+      gcs_dir_exists=[True, False],
+      gpu_count=[0, 1, 4])
   @mock.patch.object(
       docker_adapter.DockerAdapter, 'run_container', return_value=None)
   async def test_container_launch_dispatcher(self, mock_run_container,
                                              interactive, mount_gcs_path,
-                                             gcs_dir_exists):
+                                             gcs_dir_exists, gpu_count):
     """Tests if the container launch dispatcher is called correctly when using `xm_local.execution.launch`."""
 
     mock_docker_client = mock.Mock()
     mock_docker_client.has_network.return_value = True
 
     job = create_test_job(
-        interactive=interactive, mount_gcs_path=mount_gcs_path)
+        interactive=interactive,
+        mount_gcs_path=mount_gcs_path,
+        gpu_count=gpu_count)
 
     mock_gcs_dir_existence = (
         lambda path: gcs_dir_exists and path.endswith('/gcs'))
@@ -76,38 +81,34 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
     with mock.patch.object(docker, 'from_env',
                            return_value=mock_docker_client), \
          mock.patch.object(os.path, 'isdir',
-                           side_effect=mock_gcs_dir_existence):
+                           side_effect=mock_gcs_dir_existence), \
+         mock.patch.object(subprocess, 'check_output', return_value=True):
       await execution.launch(lambda x: x, job_group=xm.JobGroup(test_job=job))
 
-    expected_call_kwargs = {
-        'name': 'test-job',
-        'image_id': 'test-image',
-        'network': 'xmanager',
-        'args': ['--a=1'],
-        'env_vars': {
-            'c': '0'
-        },
-        'ports': {
-            8080: 8080
-        },
-        'volumes': {
+    expected_gcs_volume = {os.path.expanduser('~/gcs'): '/gcs'}
+    mock_run_container.assert_called_once_with(
+        name='test-job',
+        image_id='test-image',
+        network='xmanager',
+        args=['--a=1'],
+        env_vars={'c': '0'},
+        ports={8080: 8080},
+        volumes=({
             'a': 'b',
             os.path.expanduser('~/.config/gcloud'): '/root/.config/gcloud'
-        },
-        'interactive': interactive
-    }
-
-    if mount_gcs_path and gcs_dir_exists:
-      expected_call_kwargs['volumes'][os.path.expanduser('~/gcs')] = '/gcs'
-
-    mock_run_container.assert_called_once_with(**expected_call_kwargs)
+        } | (expected_gcs_volume if mount_gcs_path and gcs_dir_exists else {})),
+        gpu_count=gpu_count,
+        interactive=interactive)
 
   @parameterized.product(
-      mount_gcs_path=[True, False], gcs_dir_exists=[True, False])
+      mount_gcs_path=[True, False],
+      gcs_dir_exists=[True, False],
+      gpu_count=[0, 1, 4])
   @mock.patch.object(
       docker.models.containers.ContainerCollection, 'run', return_value=None)
   async def test_container_launch_by_client(self, mock_client_run,
-                                            mount_gcs_path, gcs_dir_exists):
+                                            mount_gcs_path, gcs_dir_exists,
+                                            gpu_count):
     """Tests if the Docker Python client launches containers correctly when using `xm_local.execution.launch`."""
 
     mock_docker_client = mock.Mock()
@@ -115,30 +116,35 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
     mock_docker_client.containers = (
         docker.models.containers.ContainerCollection(None))
 
-    job = create_test_job(interactive=False, mount_gcs_path=mount_gcs_path)
+    job = create_test_job(
+        interactive=False, mount_gcs_path=mount_gcs_path, gpu_count=gpu_count)
     mock_gcs_dir_existence = (
         lambda path: gcs_dir_exists and path.endswith('/gcs'))
 
     with mock.patch.object(docker, 'from_env',
                            return_value=mock_docker_client), \
          mock.patch.object(os.path, 'isdir',
-                           side_effect=mock_gcs_dir_existence):
+                           side_effect=mock_gcs_dir_existence), \
+         mock.patch.object(subprocess, 'check_output', return_value=True):
       await execution.launch(lambda x: x, job_group=xm.JobGroup(test_job=job))
 
-    expected_call_kwargs = {
-        'name': 'test-job',
-        'hostname': 'test-job',
-        'network': 'xmanager',
-        'detach': True,
-        'remove': True,
-        'command': ['--a=1'],
-        'environment': {
-            'c': '0'
-        },
-        'ports': {
-            8080: 8080
-        },
-        'volumes': {
+    expected_gcs_volume = {
+        os.path.expanduser('~/gcs'): {
+            'bind': '/gcs',
+            'mode': 'rw'
+        }
+    }
+    mock_client_run.assert_called_once_with(
+        'test-image',
+        name='test-job',
+        hostname='test-job',
+        network='xmanager',
+        detach=True,
+        remove=True,
+        command=['--a=1'],
+        environment={'c': '0'},
+        ports={8080: 8080},
+        volumes=({
             'a': {
                 'bind': 'b',
                 'mode': 'rw'
@@ -147,48 +153,51 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
                 'bind': '/root/.config/gcloud',
                 'mode': 'rw'
             }
-        }
-    }
-    if mount_gcs_path and gcs_dir_exists:
-      expected_call_kwargs['volumes'][os.path.expanduser('~/gcs')] = {
-          'bind': '/gcs',
-          'mode': 'rw'
-      }
-
-    mock_client_run.assert_called_once_with('test-image',
-                                            **expected_call_kwargs)
+        } | (expected_gcs_volume if mount_gcs_path and gcs_dir_exists else {})),
+        runtime='nvidia' if gpu_count > 0 else None,
+        device_requests=[
+            docker.types.DeviceRequest(count=gpu_count, capabilities=[['gpu']])
+        ] if gpu_count > 0 else None)
 
   @parameterized.product(
-      mount_gcs_path=[True, False], gcs_dir_exists=[True, False])
+      mount_gcs_path=[True, False],
+      gcs_dir_exists=[True, False],
+      gpu_count=[0, 1, 4])
   @mock.patch.object(subprocess, 'run', return_value=None)
   async def test_container_launch_by_subprocess(
-      self, mock_container_launch_by_subprocess, mount_gcs_path,
-      gcs_dir_exists):
+      self, mock_container_launch_by_subprocess, mount_gcs_path, gcs_dir_exists,
+      gpu_count):
     """Tests if the Docker subprocesses are created correctly when using `xm_local.execution.launch."""
 
     mock_docker_client = mock.Mock()
     mock_docker_client.has_network.return_value = True
 
-    job = create_test_job(interactive=True, mount_gcs_path=mount_gcs_path)
+    job = create_test_job(
+        interactive=True, mount_gcs_path=mount_gcs_path, gpu_count=gpu_count)
     mock_gcs_dir_existence = (
         lambda path: gcs_dir_exists and path.endswith('/gcs'))
 
     with mock.patch.object(docker, 'from_env',
                            return_value=mock_docker_client), \
          mock.patch.object(os.path, 'isdir',
-                           side_effect=mock_gcs_dir_existence):
+                           side_effect=mock_gcs_dir_existence), \
+         mock.patch.object(subprocess, 'check_output', return_value=True):
       await execution.launch(lambda x: x, job_group=xm.JobGroup(test_job=job))
 
     expected_gcs_path_args = []
     if mount_gcs_path and gcs_dir_exists:
       expected_gcs_path_args = ['-v', '%s:/gcs' % os.path.expanduser('~/gcs')]
 
+    expected_gpu_args = []
+    if gpu_count > 0:
+      expected_gpu_args = ['--gpus', str(gpu_count), '--runtime', 'nvidia']
+
     mock_container_launch_by_subprocess.assert_called_once_with(
         args=[
             'docker', 'run', '--network', 'xmanager', '-p', '8080:8080', '-e',
             'c=0', '-v', 'a:b', '-v',
             '%s:/root/.config/gcloud' % os.path.expanduser('~/.config/gcloud')
-        ] + expected_gcs_path_args +
+        ] + expected_gcs_path_args + expected_gpu_args +
         ['-it', '--entrypoint', 'bash', 'test-image'],
         check=True)
 

@@ -54,11 +54,16 @@ class Local(xm.Executor):
   """Current machine executor.
 
   Attributes:
+    requirements: Resources to be requested from the host.
+      Note: Currently, only the `local_gpu` resource is
+      supported (and only with a container-based executable).
+      Any other resource requirement will be ignored.
     docker_options: Options applied if the job is a container-based executable.
     experimental_stream_output: Whether to pipe the job's stdout and stderr to
       the terminal. Might be removed once we decide on the logging design.
   """
 
+  requirements: xm.JobRequirements = attr.Factory(xm.JobRequirements)
   docker_options: Optional[DockerOptions] = None
   experimental_stream_output: bool = True
 
