@@ -201,6 +201,41 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
         ['-it', '--entrypoint', 'bash', 'test-image'],
         check=True)
 
+  @parameterized.product(interactive=[True, False], gpu_count=[0, 1, 4])
+  @mock.patch.object(
+      docker_adapter.DockerAdapter, 'run_container', return_value=None)
+  async def test_no_nvidia_smi_launch(self, mock_run_container, interactive,
+                                      gpu_count):
+    mock_docker_client = mock.Mock()
+    mock_docker_client.has_network.return_value = True
+
+    job = create_test_job(
+        interactive=interactive, mount_gcs_path=True, gpu_count=gpu_count)
+
+    if gpu_count > 0:
+      with mock.patch.object(subprocess, 'check_output',
+                             side_effect=Exception()), \
+        self.assertRaises(RuntimeError):
+        await execution.launch(lambda x: x, job_group=xm.JobGroup(test_job=job))
+
+      mock_run_container.assert_not_called()
+    else:
+      await execution.launch(lambda x: x, job_group=xm.JobGroup(test_job=job))
+
+      mock_run_container.assert_called_once_with(
+          name='test-job',
+          image_id='test-image',
+          network='xmanager',
+          args=['--a=1'],
+          env_vars={'c': '0'},
+          ports={8080: 8080},
+          volumes={
+              'a': 'b',
+              os.path.expanduser('~/.config/gcloud'): '/root/.config/gcloud'
+          },
+          gpu_count=gpu_count,
+          interactive=interactive)
+
 
 if __name__ == '__main__':
   unittest.main()

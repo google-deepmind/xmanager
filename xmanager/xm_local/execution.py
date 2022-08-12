@@ -137,8 +137,8 @@ async def _launch_loaded_container_image(
   if gpu_count > 0:
     try:
       subprocess.check_output('nvidia-smi')
-    except subprocess.CalledProcessError as exception:
-      raise RuntimeError('No NVIDIA devices detected. Only NVIDIA'
+    except Exception as exception:
+      raise RuntimeError('No NVIDIA devices detected. Only NVIDIA '
                          'GPUs are currently supported') from exception
 
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
