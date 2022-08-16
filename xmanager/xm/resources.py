@@ -351,7 +351,7 @@ class JobRequirements:
   topology: Optional[Topology]
 
   location: Optional[str]
-  service_tier: ServiceTier
+  _service_tier: ServiceTier
 
   def __init__(
       self,
@@ -383,7 +383,7 @@ class JobRequirements:
         If topology is supplied for a non acceelerator resource.
     """
     self.location = location
-    self.service_tier = service_tier or ServiceTier.PROD
+    self._service_tier = service_tier or ServiceTier.PROD
 
     self.task_requirements = ResourceDict()
     self.accelerator = None
@@ -421,6 +421,14 @@ class JobRequirements:
 
     self.replicas = replicas or 1
     self._validate_replicas()
+
+  @property
+  def service_tier(self):
+    return self._service_tier
+
+  @service_tier.setter
+  def service_tier(self, new_service_tier):
+    self._service_tier = new_service_tier
 
   def _validate_replicas(self) -> None:
     """Raises ValueError if replication is not supported."""

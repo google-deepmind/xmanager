@@ -128,6 +128,12 @@ class JobRequirementsTest(parameterized.TestCase):
         service_tier=resources.ServiceTier.PROD)
     self.assertEqual(requirements.service_tier, resources.ServiceTier.PROD)
 
+  def test_service_tier_mutable(self):
+    requirements = resources.JobRequirements(
+        service_tier=resources.ServiceTier.PROD)
+    requirements.service_tier = resources.ServiceTier.BATCH
+    self.assertEqual(requirements.service_tier, resources.ServiceTier.BATCH)
+
   def test_replicas(self):
     requirements = resources.JobRequirements(replicas=2)
     self.assertEqual(requirements.replicas, 2)
