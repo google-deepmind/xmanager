@@ -5,7 +5,11 @@
 XManager is a platform for packaging, running and keeping track of machine
 learning experiments. It currently enables one to launch experiments locally or
 on [Google Cloud Platform (GCP)](https://cloud.google.com/). Interaction with
-experiments is done via XManager's APIs through Python *launch scripts*.
+experiments is done via XManager's APIs through Python *launch scripts*. Check
+out
+[these slides](https://storage.googleapis.com/gresearch/xmanager/deepmind_xmanager_slides.pdf)
+for a more detailed introduction.
+
 
 To get started, install [XManager](#install-xmanager), its
 [prerequisites](#prerequisites) if needed and follow [the
