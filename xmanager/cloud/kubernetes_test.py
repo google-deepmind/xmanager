@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests for xmanager.cloud.kubernetes."""
-import json
 import unittest
 from unittest import mock
 
@@ -56,17 +55,6 @@ class KubernetesTest(unittest.TestCase):
             cluster_ip='None',
         ),
     )
-    cluster_spec = json.dumps({
-        'cluster': {
-            'workerpool0': [
-                'workerpool0.experiments.default.svc.cluster.local:2222'
-            ]
-        },
-        'task': {
-            'type': 'workerpool0',
-            'index': 0
-        }
-    })
     expected_job = k8s_client.V1Job(
         metadata=k8s_client.V1ObjectMeta(name='test-job'),
         spec=k8s_client.V1JobSpec(
@@ -76,7 +64,7 @@ class KubernetesTest(unittest.TestCase):
                     annotations={},
                 ),
                 spec=k8s_client.V1PodSpec(
-                    hostname='workerpool0',
+                    hostname='test-job',
                     subdomain='experiments',
                     restart_policy='Never',
                     containers=[
@@ -90,12 +78,7 @@ class KubernetesTest(unittest.TestCase):
                                     'nvidia.com/gpu': '2',
                                 },),
                             args=['--a=1', '--b=2', '--c=3'],
-                            env=[
-                                k8s_client.V1EnvVar(
-                                    'CLUSTER_SPEC',
-                                    cluster_spec,
-                                )
-                            ],
+                            env=[],
                         )
                     ],
                     node_selector={

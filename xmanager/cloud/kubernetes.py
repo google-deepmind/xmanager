@@ -22,7 +22,6 @@ from kubernetes import client as k8s_client
 from kubernetes import config as k8s_config
 
 from xmanager import xm
-from xmanager.cloud import utils as cloud_utils
 from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import execution as local_execution
@@ -75,12 +74,7 @@ class Client:
     """Launches jobs on Kubernetes."""
     batch_jobs = []
     service = 'experiments'
-    hostnames = [f'workerpool{i}' for i in range(len(jobs))]
-    domains = [
-        f'{host}.{service}.default.svc.cluster.local:2222' for host in hostnames
-    ]
-    specs = cloud_utils.create_cluster_specs(domains)
-    for i, job in enumerate(jobs):
+    for job in jobs:
       executable = job.executable
       executor = job.executor
       if not isinstance(executable,
@@ -90,7 +84,6 @@ class Client:
                              executable, type(executable)))
       all_env_vars = {**executable.env_vars, **job.env_vars}
       env = [k8s_client.V1EnvVar(k, v) for k, v in all_env_vars.items()]
-      env.append(k8s_client.V1EnvVar('CLUSTER_SPEC', specs[i]))
       job_name = convert_to_valid_label(get_full_job_name(job.name))
       container = k8s_client.V1Container(
           name=job_name,
@@ -108,7 +101,7 @@ class Client:
                   annotations=annotations_from_executor(executor),
               ),
               spec=k8s_client.V1PodSpec(
-                  hostname=hostnames[i],
+                  hostname=job_name,
                   subdomain=service,
                   restart_policy='Never',
                   containers=[container],
