@@ -336,7 +336,7 @@ class JobRequirements:
   Attributes:
     task_requirements: Amount of resources needed for a single task within a
       job.
-    accelerator: The accelearator the jobs uses, if there is one. Jobs using
+    accelerator: The accelerator the jobs uses, if there is one. Jobs using
       multiple accelerators are not supported because different kinds of
       accelerators are usually not installed on the same host.
     topology: Accelerator topology, if an accelerator is used.
