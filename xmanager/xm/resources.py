@@ -24,6 +24,7 @@ import re
 from typing import Any, Iterable, Iterator, Dict, Mapping, MutableMapping, Optional, Tuple, Union
 
 import immutabledict
+import termcolor
 from xmanager.xm import pattern_matching as pm
 
 
