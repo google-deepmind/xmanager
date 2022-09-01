@@ -72,8 +72,8 @@ class FrameworkDefaultsTest(parameterized.TestCase):
   )
   def test_torch_base_image(self, accelerator):
     base_image = framework_defaults.base_image(MLFramework.PYTORCH, accelerator)
-    self.assertStartsWith(base_image, 'gcr.io/deeplearning-platform-release/')
-    self.assertContainsSubsequence(base_image, 'pytorch-')
+    self.assertStartsWith(base_image, 'gcr.io/')
+    self.assertContainsSubsequence(base_image, 'pytorch')
     if accelerator in xm.TpuType:
       self.assertContainsSubsequence(base_image, 'xla')
 

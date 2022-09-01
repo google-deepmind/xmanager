@@ -85,7 +85,9 @@ def base_image(framework: FrameworkSpec,
     return 'gcr.io/deeplearning-platform-release/tf2-gpu.2-6'
   elif framework == MLFramework.PYTORCH:
     if accelerator in xm.TpuType:
-      return 'gcr.io/deeplearning-platform-release/pytorch-xla.1-9'
+      # Base image is taken from pytorch / XLA documentation.
+      # https://github.com/pytorch/xla#-available-images-and-wheels
+      return 'gcr.io/tpu-pytorch/xla:nightly_3.8_tpuvm_20220819'
     else:
       return 'gcr.io/deeplearning-platform-release/pytorch-gpu.1-9'
   elif framework == MLFramework.TF1:
