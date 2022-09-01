@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 """Automatic selection of reasonable defaults based on input.
 
 This library aimed to provide recommended defaults for the choices that can be
