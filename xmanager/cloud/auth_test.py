@@ -17,7 +17,7 @@ _SERVICE_ACCOUNT_FLAG_TEST_PARAMETERS = [{
     'expected_account_name': _DEFAULT_SERVICE_ACCOUNT_NAME
 }, {
     'sys_argv': [
-        *sys.argv, f'--xm_service_account_name={_TEST_SERVICE_ACCOUNT_NAME}'
+        *sys.argv, f'--xm_gcp_service_account_name={_TEST_SERVICE_ACCOUNT_NAME}'
     ],
     'expected_account_name': _TEST_SERVICE_ACCOUNT_NAME
 }]

@@ -24,8 +24,8 @@ from googleapiclient import errors
 
 _DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
 
-_SERVICE_ACCOUNT_NAME = flags.DEFINE_string(
-    'xm_service_account_name', 'xmanager',
+_GCP_SERVICE_ACCOUNT_NAME = flags.DEFINE_string(
+    'xm_gcp_service_account_name', 'xmanager',
     'Specifies the user-managed service account name to be used by XManager'
     'Note that user-managed service accounts have the following format: '
     '`{service-account-name}@{project-id}.iam.gserviceaccount.com`, so only'
@@ -81,7 +81,7 @@ def get_service_account() -> str:
   useful to use a custom service account that can access a greater number of
   GCP APIs.
 
-  The `--xm_service_account_name` flag can be used to specify a user-managed
+  The `--xm_gcp_service_account_name` flag can be used to specify a user-managed
   service account to be used. If not specified, defaults to `xmanager`.
 
   Returns:
@@ -90,7 +90,7 @@ def get_service_account() -> str:
     HttpError: if the response was not a 2xx or 403.
   """
 
-  service_account_name = _SERVICE_ACCOUNT_NAME.value
+  service_account_name = _GCP_SERVICE_ACCOUNT_NAME.value
   service_account = (f'{service_account_name}@{get_project_name()}'
                      '.iam.gserviceaccount.com')
 
