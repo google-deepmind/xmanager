@@ -12,24 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Tests for xmanager.cloud.kubernetes."""
+import sys
 import unittest
 from unittest import mock
 
+from absl import flags
+from absl.testing import parameterized
 from kubernetes import client as k8s_client
-
 from xmanager import xm
 from xmanager.cloud import kubernetes
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import executors as local_executors
+
+_TEST_SERVICE_ACCOUNT_NAME = 'test-service-account'
+_DEFAULT_SERVICE_ACCOUNT_NAME = 'default'
+
+_SERVICE_ACCOUNT_FLAG_TEST_PARAMETERS = [{
+    'sys_argv': sys.argv,
+    'expected_account_name': _DEFAULT_SERVICE_ACCOUNT_NAME
+}, {
+    'sys_argv': [
+        *sys.argv, f'--xm_k8s_service_account_name={_TEST_SERVICE_ACCOUNT_NAME}'
+    ],
+    'expected_account_name': _TEST_SERVICE_ACCOUNT_NAME
+}]
 
 
 class CallAPIResponse:
   items = []
 
 
-class KubernetesTest(unittest.TestCase):
+class KubernetesTest(parameterized.TestCase):
 
-  def test_launch(self):
+  @parameterized.parameters(_SERVICE_ACCOUNT_FLAG_TEST_PARAMETERS)
+  def test_launch(self, sys_argv, expected_account_name):
+    flags.FLAGS(sys_argv)
+
     fake_client = mock.Mock()
     fake_client.call_api.return_value = CallAPIResponse()
     client = kubernetes.Client(fake_client)
@@ -64,6 +82,7 @@ class KubernetesTest(unittest.TestCase):
                     annotations={},
                 ),
                 spec=k8s_client.V1PodSpec(
+                    service_account=expected_account_name,
                     hostname='test-job',
                     subdomain='experiments',
                     restart_policy='Never',
