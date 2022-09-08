@@ -156,12 +156,16 @@ class SequentialArgs:
   ) -> List[str]:
     """Exports items as a list ready to be passed into the command line."""
 
-    def export_regular_item(item: SequentialArgs._RegularItem) -> str:
+    def export_regular_item(item: SequentialArgs._RegularItem) -> Optional[str]:
       return escaper(item.value)
 
-    def export_keyword_item(item: SequentialArgs._KeywordItem) -> str:
+    def export_keyword_item(item: SequentialArgs._KeywordItem) -> Optional[str]:
       value = self._kwvalues[item.name]
-      if isinstance(value, bool):
+      if value is None:
+        # We skip flags with None value, allowing the binary to use defaults.
+        # A string can be used if a literal "None" value needs to be assigned.
+        return None
+      elif isinstance(value, bool):
         return escaper(f"--{'' if value else 'no'}{item.name}")
       else:
         return kwargs_joiner(escaper(f'--{item.name}'), escaper(value))
@@ -170,7 +174,8 @@ class SequentialArgs:
         export_regular_item,
         export_keyword_item,
     )
-    return [matcher(item) for item in self._items]
+    flags = [matcher(item) for item in self._items]
+    return [f for f in flags if f is not None]
 
   def to_dict(self, kwargs_only: bool = False) -> Dict[str, Any]:
     """Exports items as a dictionary.

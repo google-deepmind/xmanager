@@ -66,6 +66,14 @@ class JobBlocksTest(unittest.TestCase):
 
     self.assertEqual(args.to_list(str), ['--yes', '--nono'])
 
+  def test_to_list_none(self):
+    args = job_blocks.SequentialArgs.from_collection({
+        'skip_me': None,
+        'pass_me': 'None'
+    })
+
+    self.assertEqual(args.to_list(str), ['--pass_me=None'])
+
   def test_sequential_args_from_string(self):
     with self.assertRaisesRegex(
         ValueError,
