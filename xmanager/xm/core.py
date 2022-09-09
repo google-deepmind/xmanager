@@ -362,7 +362,7 @@ class ExperimentUnit(abc.ABC):
           not inspect.iscoroutinefunction(job_generator.__call__)):
         raise ValueError(
             'Job generator must be an async function. Signature needs to be '
-            '`async def job_generator(work_unit: xm.WorkUnit):`')
+            '`async def job_generator(work_unit: xm.WorkUnit) -> None:`')
       _current_experiment.set(self.experiment)
       _current_experiment_unit.set(self)
       coroutine = job_generator(self, **(args or {}))
