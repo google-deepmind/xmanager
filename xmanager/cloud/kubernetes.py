@@ -63,12 +63,22 @@ def convert_to_valid_label(label: str) -> str:
   return label.replace('_', '-')
 
 
+def _load_k8s_config() -> None:
+  """Loads K8s config based on where the client is running (inside cluster or not)."""
+  try:
+    k8s_config.load_incluster_config()
+  except k8s_config.ConfigException:
+    # Client is not running inside cluster
+    k8s_config.load_kube_config()
+
+
 class Client:
   """Client class for interacting with Kubernetes."""
 
   def __init__(self, api_client: Optional[k8s_client.ApiClient] = None) -> None:
     if api_client is None:
-      k8s_config.load_kube_config()
+      _load_k8s_config()
+
       api_client = k8s_client.ApiClient()
     self.api_client = api_client
 

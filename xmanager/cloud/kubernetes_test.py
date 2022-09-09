@@ -19,6 +19,7 @@ from unittest import mock
 from absl import flags
 from absl.testing import parameterized
 from kubernetes import client as k8s_client
+from kubernetes import config as k8s_config
 from xmanager import xm
 from xmanager.cloud import kubernetes
 from xmanager.xm_local import executables as local_executables
@@ -115,6 +116,24 @@ class KubernetesTest(parameterized.TestCase):
     self.assertEqual(service_kwargs['body'], expected_service)
     _, job_kwargs = job_call
     self.assertEqual(job_kwargs['body'], expected_job)
+
+  @parameterized.product(
+      inside_cluster=[True, False],)
+  def test_config_load(self, inside_cluster):
+    load_incluster_side_effect = (
+        k8s_config.ConfigException() if not inside_cluster else None)
+    with mock.patch.object(k8s_client, 'ApiClient', return_value=None), \
+         mock.patch.object(k8s_config, 'load_incluster_config',
+                           side_effect=load_incluster_side_effect,
+                           return_value=None) as mock_load_incluster, \
+         mock.patch.object(k8s_config, 'load_kube_config',
+                           return_value=None) as mock_load_kube:
+      kubernetes.Client(None)
+
+    if inside_cluster:
+      mock_load_incluster.assert_called_once_with()
+    else:
+      mock_load_kube.assert_called_once_with()
 
   def test_requirements_from_executor(self):
     executor = local_executors.Kubernetes(
