@@ -323,7 +323,7 @@ class Constraint(abc.ABC):
 # Pylint doesn't distinguish async and sync contexts so Optional[Awaitable] has
 # to be used to accomodate both cases.
 JobGeneratorType = Callable[..., Optional[Awaitable]]
-JobType = Union['Job', 'JobGroup', JobGeneratorType]
+JobType = Union['Job', 'JobGroup', JobGeneratorType, 'JobConfig']
 
 
 @attr.s(auto_attribs=True)
@@ -413,7 +413,18 @@ class JobGroup:
     self.constraints = list(constraints) if constraints else []
 
 
-JobTypeVar = TypeVar('JobTypeVar', Job, JobGroup, JobGeneratorType)
+class JobConfig(abc.ABC):
+  """A job defined by a platform-specific configuration.
+
+  Sometimes defining a job through a platform-agnostic xm.Job/xm.JobGroup
+  interfaces is not feasible. In this case job can be defined by a configuration
+  language native to the underlying platform. This is a base class for such
+  configurations. Concrete XManager implementations may provide descendants for
+  the configuration languages they support.
+  """
+
+
+JobTypeVar = TypeVar('JobTypeVar', Job, JobGroup, JobGeneratorType, JobConfig)
 
 
 def get_args_for_all_jobs(job: JobType, args: Dict[str, Any]) -> Dict[str, Any]:

@@ -369,9 +369,18 @@ class ExperimentUnit(abc.ABC):
       assert coroutine is not None
       return coroutine
 
-    job_awaitable = pattern_matching.match(launch_job, launch_job_group,
-                                           launch_job_generator)(
-                                               job)
+    def launch_job_config(job_config: job_blocks.JobConfig) -> Awaitable[None]:
+      _current_experiment.set(self.experiment)
+      _current_experiment_unit.set(self)
+      return self._launch_job_config(job_config, args or {}, identity)
+
+    job_awaitable = pattern_matching.match(
+        launch_job,
+        launch_job_group,
+        launch_job_generator,
+        launch_job_config,
+    )(
+        job)
     launch_task = self._create_task(job_awaitable)
     self._launch_tasks.append(launch_task)
     return asyncio.wrap_future(launch_task)
@@ -402,6 +411,15 @@ class ExperimentUnit(abc.ABC):
       identity: str,
   ) -> None:
     """Launches a given job group as part of the unit."""
+    raise NotImplementedError
+
+  async def _launch_job_config(
+      self,
+      job_config: job_blocks.JobConfig,
+      args_view: Mapping[str, Any],
+      identity: str,
+  ) -> None:
+    """Launches a given job config as part of the unit."""
     raise NotImplementedError
 
   async def _wait_until_complete(self) -> None:

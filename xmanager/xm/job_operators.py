@@ -36,6 +36,7 @@ def shallow_copy_job_type(
       apply_to_job_group,
       pattern_matching.Case([job_blocks.JobGeneratorType],
                             lambda generator: generator),
+      pattern_matching.Case([job_blocks.JobConfig], copy.copy),
   )
   return matcher(job_type)
 

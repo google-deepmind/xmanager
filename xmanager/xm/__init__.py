@@ -49,6 +49,7 @@ from xmanager.xm.job_blocks import Executor
 from xmanager.xm.job_blocks import ExecutorSpec
 from xmanager.xm.job_blocks import get_args_for_all_jobs
 from xmanager.xm.job_blocks import Job
+from xmanager.xm.job_blocks import JobConfig
 from xmanager.xm.job_blocks import JobGeneratorType
 from xmanager.xm.job_blocks import JobGroup
 from xmanager.xm.job_blocks import JobType
