@@ -190,8 +190,8 @@ class LocalWorkUnit(LocalExperimentUnit):
         namespace = job.metadata.namespace or 'default'
         name = job.metadata.name
         database.database().insert_kubernetes_job(self.experiment_id,
-                                                  self.work_unit_id,
-                                                  namespace, name)
+                                                  self.work_unit_id, namespace,
+                                                  name)
 
     def throw_on_unknown_handle(handle: Any) -> None:
       raise TypeError(f'Unsupported handle: {handle!r}')
@@ -237,10 +237,18 @@ class LocalWorkUnit(LocalExperimentUnit):
 class LocalAuxiliaryUnit(LocalExperimentUnit):
   """An auxiliary unit operated by the local backend."""
 
-  async def _launch_job_group(self, job_group: xm.JobGroup,
-                              args_view: Mapping[str, Any]) -> None:
+  async def _launch_job_group(
+      self,
+      job_group: xm.JobGroup,
+      args_view: Mapping[str, Any],
+      identity: str,
+  ) -> None:
     del args_view  # Unused.
     _validate_job_group(job_group)
+
+    if identity:
+      raise ValueError('LocalExperiment does not support idempotent experiment '
+                       'unit creation.')
 
     launch_result = await self._submit_jobs_for_execution(job_group)
     self._ingest_execution_handles(launch_result)
