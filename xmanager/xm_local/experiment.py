@@ -375,7 +375,7 @@ def get_experiment(experiment_id: int) -> xm.Experiment:
             experiment_id, work_unit_result.work_unit_id)
       # "caip" is the legacy field name of vertex inside the proto.
       elif data.HasField('caip'):
-        non_local_handles = [vertex.VertexHandle(data.vertex.resource_name)]
+        non_local_handles = [vertex.VertexHandle(data.caip.resource_name)]
       elif data.HasField('kubernetes'):
         job = k8s_client.V1Job()
         job.metadata = k8s_client.V1ObjectMeta(
