@@ -16,10 +16,9 @@
 For the code running on Google Cloud a GCS directory should be used to store
 data.
 
-A GCS name should have a particular format 'gs://bucket/directory'. For XCloud
-we provide a shared bucket which can be used by all researchers. To ensure the
-format of the name is correct, and to suggest reasonable defaults for it, this
-file provides a flag and several helper functions.
+A GCS name should have a particular format 'gs://bucket/directory'. To
+ensure the format of the name is correct, and to suggest reasonable defaults
+for it, this file provides a flag and several helper functions.
 """
 
 import datetime
@@ -92,7 +91,7 @@ def is_gcs_fuse_path(path: str) -> bool:
 
 
 def is_gcs_path(path: str) -> bool:
-  """Given the path, checks whether it is a valid GCS URL supported by XCloud.
+  """Given the path, checks whether it is a valid GCS URL.
 
   Args:
     path: a path.
