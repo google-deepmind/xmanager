@@ -39,13 +39,23 @@ branch_labels = None
 depends_on = None
 
 
-def using_legacy_sqlite_db():
+def using_legacy_sqlite_db() -> bool:
   connection = op.get_bind()
   return 'VersionHistory' in Inspector.from_engine(connection).get_table_names()
 
 
 def update_columns() -> None:
-  """Migrates legacy SQLite DB to portable column names and types."""
+  """Migrates legacy SQLite DB to portable column names and types.
+
+  `batch_alter_table` is required when using SQLite because of its limited
+  support for the `ALTER` statement (see
+  https://alembic.sqlalchemy.org/en/latest/batch.html)
+
+  SQLite table names are case-insensitive, but the table names
+  still appear to be upper case when inspecting database with `sqlite`.
+  One has to rename to an intermediate name when changing the case of a
+  table name is required.
+  """
   with op.batch_alter_table('Experiment') as batch_op:
     batch_op.alter_column(
         column_name='Id',
@@ -58,8 +68,6 @@ def update_columns() -> None:
         new_column_name='experiment_title',
         existing_type=sa.TEXT,
         type_=sa.String(255))
-  # SQLite table names are case-insensitive, but the table names
-  # still appear to be upper case when inspecting database with `sqlite`.
   op.rename_table('Experiment', 'tmp_experiment')
   op.rename_table('tmp_experiment', 'experiment')
 
@@ -99,26 +107,43 @@ def update_columns() -> None:
         new_column_name='job_data',
         existing_type=sa.TEXT,
         type_=sa.String(255))
-  # SQLite table names are case-insensitive, but the table names
-  # still appear to be upper case when inspecting database with `sqlite`.
   op.rename_table('Job', 'tmp_job')
   op.rename_table('tmp_job', 'job')
 
 
-def create_new_tables():
-  op.create_table('experiment',
-                  sa.Column('experiment_id', sa.BigInteger(), primary_key=True),
-                  sa.Column('experiment_title', sa.String(255)))
+def create_new_tables() -> None:
+  """Creates tables for new database.
 
-  op.create_table('work_unit',
-                  sa.Column('experiment_id', sa.BigInteger(), primary_key=True),
-                  sa.Column('work_unit_id', sa.Integer(), primary_key=True))
+  `autoincrement` field is required for MSSql (check
+  https://docs.sqlalchemy.org/en/13/dialects/mssql.html#auto-increment-behavior-identity-columns)
+  """
+  op.create_table(
+      'experiment',
+      sa.Column(
+          'experiment_id',
+          sa.BigInteger(),
+          primary_key=True,
+          autoincrement=False), sa.Column('experiment_title', sa.String(255)))
 
-  op.create_table('job',
-                  sa.Column('experiment_id', sa.BigInteger(), primary_key=True),
-                  sa.Column('work_unit_id', sa.Integer(), primary_key=True),
-                  sa.Column('job_name', sa.String(255), primary_key=True),
-                  sa.Column('job_data', sa.String(255)))
+  op.create_table(
+      'work_unit',
+      sa.Column(
+          'experiment_id',
+          sa.BigInteger(),
+          primary_key=True,
+          autoincrement=False),
+      sa.Column('work_unit_id', sa.Integer(), primary_key=True))
+
+  op.create_table(
+      'job',
+      sa.Column(
+          'experiment_id',
+          sa.BigInteger(),
+          primary_key=True,
+          autoincrement=False),
+      sa.Column('work_unit_id', sa.Integer(), primary_key=True),
+      sa.Column('job_name', sa.String(255), primary_key=True),
+      sa.Column('job_data', sa.String(255)))
 
 
 def upgrade() -> None:

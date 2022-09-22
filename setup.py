@@ -43,7 +43,9 @@ setup(
         'humanize',
         'immutabledict',
         'kubernetes',
+        'pyyaml',
         'sqlalchemy==1.2.19',
+        'sqlparse',
         'termcolor',
     ],
     entry_points={

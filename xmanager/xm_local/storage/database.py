@@ -15,17 +15,38 @@
 import abc
 import functools
 import os
-import sqlite3
-from typing import Dict, List
+from typing import Dict, List, Optional, Type, TypeVar, Any
 from absl import flags
 import alembic
 from alembic.config import Config
 
 import attr
 import sqlalchemy
+from xmanager import xm
 from xmanager.generated import data_pb2
+import yaml
 
 from google.protobuf import text_format
+
+_DB_YAML_CONFIG_PATH = flags.DEFINE_string(
+    'xm_db_yaml_config_path', None, """
+    Path of YAML config file containing DB connection details.
+
+    A valid config file contains two main entries:
+      `sql_connector`: must be one of [`sqlite`, `generic`]
+
+      `sql_connection_settings`: contains details about the connection URL.
+        These match the interface of `SqlConnectionSettings` and their
+        combination must form a valid `sqlalchemy` connection URL. Possible
+        fields are:
+          - backend, e.g. 'mysql', 'postgresql'
+          - db_name
+          - driver, e.g. 'pymysql', 'pg8000'
+          - username
+          - password
+          - host
+          - port
+    """)
 
 _UPGRADE_DB = flags.DEFINE_boolean(
     'xm_upgrade_db', False, """
@@ -53,53 +74,81 @@ class ExperimentResult:
 
 
 Engine = sqlalchemy.engine.Engine
-
-
-class SqlSettings(abc.ABC):
-  """Settings for a SQL dialect."""
-
-  @abc.abstractmethod
-  def create_engine(self) -> Engine:
-    raise NotImplementedError
-
-  @abc.abstractmethod
-  def execute_script(self, script: str) -> None:
-    raise NotImplementedError
+text = sqlalchemy.sql.text
 
 
 @attr.s(auto_attribs=True)
-class SqliteSettings(SqlSettings):
-  """Settings for the Sqlite dialect."""
-
-  path: str = os.path.expanduser('~/.xmanager/experiments.sqlite3')
-
-  def create_engine(self) -> Engine:
-    if not os.path.isdir(os.path.dirname(self.path)):
-      os.makedirs(os.path.dirname(self.path))
-    if not os.path.isfile(self.path):
-      sqlite3.connect(self.path)
-    return sqlalchemy.create_engine(f'sqlite:///{self.path}')
-
-  def execute_script(self, script: str) -> None:
-    with open(script) as f:
-      content = f.read()
-    conn = sqlite3.connect(self.path)
-    cursor = conn.cursor()
-    cursor.executescript(content)
+class SqlConnectionSettings:
+  """Settings for a generic SQL connection."""
+  backend: str
+  db_name: str
+  driver: Optional[str] = None
+  username: Optional[str] = None
+  password: Optional[str] = None
+  host: Optional[str] = None
+  port: Optional[int] = None
 
 
-@functools.lru_cache()
-def database():
-  # Create only a single global singleton for database access.
-  return Database()
+class SqlConnector(abc.ABC):
+  """Provides a way of connecting to a SQL DB from some settings."""
+
+  @staticmethod
+  @abc.abstractmethod
+  def create_engine(settings: SqlConnectionSettings) -> Engine:
+    raise NotImplementedError
+
+
+TSqlConnector = TypeVar('TSqlConnector', bound=SqlConnector)
+
+
+class GenericSqlConnector(SqlConnector):
+  """Generic way of connecting to SQL databases using an URL."""
+
+  @staticmethod
+  def create_engine(settings: SqlConnectionSettings) -> Engine:
+    driver_name = settings.backend + (f'+{settings.driver}'
+                                      if settings.driver else '')
+
+    url = sqlalchemy.engine.url.URL(
+        drivername=driver_name,
+        username=settings.username,
+        password=settings.password,
+        host=settings.host,
+        port=settings.port,
+        database=settings.db_name)
+
+    return sqlalchemy.engine.create_engine(url)
+
+
+class SqliteConnector(SqlConnector):
+  """Provides way of connecting to a SQLite database.
+
+  The database used at the file path pointed to by the `database` field
+  in the settings used. The database is created if it doesn't exist.
+  """
+
+  @staticmethod
+  def create_engine(settings: SqlConnectionSettings) -> Engine:
+    if settings.backend and settings.backend != 'sqlite':
+      raise RuntimeError('Can\'t use SqliteConnector with a backend'
+                         'other than `sqlite`')
+
+    if not os.path.isdir(os.path.dirname(settings.db_name)):
+      os.makedirs(os.path.dirname(settings.db_name))
+
+    return GenericSqlConnector.create_engine(settings)
 
 
 class Database:
   """Database object with interacting with experiment metadata storage."""
 
-  def __init__(self, settings: SqlSettings = SqliteSettings()) -> None:
+  def __init__(self, connector: Type[TSqlConnector],
+               settings: SqlConnectionSettings):
     self.settings = settings
-    self.engine: Engine = settings.create_engine()
+    self.engine: Engine = connector.create_engine(settings)
+    # https://github.com/sqlalchemy/sqlalchemy/issues/5645
+    # TODO: Remove this line after using sqlalchemy>=1.14.
+    self.engine.dialect.description_encoding = None
     storage_dir = os.path.dirname(__file__)
     self.alembic_cfg = Config(os.path.join(storage_dir, 'alembic.ini'))
     self.alembic_cfg.set_main_option('sqlalchemy.url', str(self.engine.url))
@@ -137,25 +186,29 @@ class Database:
   def maybe_migrate_database_version(self):
     """Enforces the latest version of the database to be used."""
     db_version = self.database_version()
-    if db_version and db_version != self.latest_version_available():
-      if not _UPGRADE_DB.value:
-        raise RuntimeError(
-            f'Database is not up to date: current={self.database_version()}, '
-            f'latest={self.latest_version_available()}. Take a backup of the '
-            'database and then launch using the `--xm_upgrade_db` flag '
-            'to update to the the latest version.')
+    legacy_sqlite_db = self.engine.dialect.has_table(self.engine,
+                                                     'VersionHistory')
+
+    need_to_update = (db_version != self.latest_version_available() and
+                      db_version) or legacy_sqlite_db
+    if need_to_update and not _UPGRADE_DB.value:
+      raise RuntimeError(
+          f'Database is not up to date: current={self.database_version()}, '
+          f'latest={self.latest_version_available()}. Take a backup of the '
+          'database and then launch using the `--xm_upgrade_db` flag '
+          'to update to the the latest version.')
     self.upgrade_database()
 
   def insert_experiment(self, experiment_id: int,
                         experiment_title: str) -> None:
-    query = ('INSERT INTO experiment (experiment_id, experiment_title) '
-             'VALUES (:experiment_id, :experiment_title)')
+    query = text('INSERT INTO experiment (experiment_id, experiment_title) '
+                 'VALUES (:experiment_id, :experiment_title)')
     self.engine.execute(
         query, experiment_id=experiment_id, experiment_title=experiment_title)
 
   def insert_work_unit(self, experiment_id: int, work_unit_id: int) -> None:
-    query = ('INSERT INTO work_unit (experiment_id, work_unit_id) '
-             'VALUES (:experiment_id, :work_unit_id)')
+    query = text('INSERT INTO work_unit (experiment_id, work_unit_id) '
+                 'VALUES (:experiment_id, :work_unit_id)')
     self.engine.execute(
         query, experiment_id=experiment_id, work_unit_id=work_unit_id)
 
@@ -163,9 +216,9 @@ class Database:
                         vertex_job_id: str) -> None:
     job = data_pb2.Job(caip=data_pb2.AIPlatformJob(resource_name=vertex_job_id))
     data = text_format.MessageToBytes(job)
-    query = ('INSERT INTO '
-             'job (experiment_id, work_unit_id, job_name, job_data) '
-             'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)')
+    query = text('INSERT INTO '
+                 'job (experiment_id, work_unit_id, job_name, job_data) '
+                 'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)')
     self.engine.execute(
         query,
         experiment_id=experiment_id,
@@ -179,9 +232,9 @@ class Database:
         kubernetes=data_pb2.KubernetesJob(
             namespace=namespace, job_name=job_name))
     data = text_format.MessageToString(job)
-    query = ('INSERT INTO '
-             'job (experiment_id, work_unit_id, job_name, job_data) '
-             'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)')
+    query = text('INSERT INTO '
+                 'job (experiment_id, work_unit_id, job_name, job_data) '
+                 'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)')
     self.engine.execute(
         query,
         experiment_id=experiment_id,
@@ -191,14 +244,14 @@ class Database:
 
   def list_experiment_ids(self) -> List[int]:
     """Lists all the experiment ids from local database."""
-    query = ('SELECT experiment_id FROM experiment')
+    query = text('SELECT experiment_id FROM experiment')
     rows = self.engine.execute(query)
     return [r['experiment_id'] for r in rows]
 
   def get_experiment(self, experiment_id: int) -> ExperimentResult:
     """Gets an experiment from local database."""
-    query = ('SELECT experiment_title FROM experiment '
-             'WHERE experiment_id=:experiment_id')
+    query = text('SELECT experiment_title FROM experiment '
+                 'WHERE experiment_id=:experiment_id')
     rows = self.engine.execute(query, experiment_id=experiment_id)
     title = None
     for r in rows:
@@ -211,17 +264,17 @@ class Database:
 
   def list_work_units(self, experiment_id: int) -> List[WorkUnitResult]:
     """Lists an experiment's work unit ids from local database."""
-    query = ('SELECT work_unit_id '
-             'FROM work_unit WHERE experiment_id=:experiment_id')
+    query = text('SELECT work_unit_id '
+                 'FROM work_unit WHERE experiment_id=:experiment_id')
     rows = self.engine.execute(query, experiment_id=experiment_id)
     return [self.get_work_unit(experiment_id, r['work_unit_id']) for r in rows]
 
   def get_work_unit(self, experiment_id: int,
                     work_unit_id: int) -> WorkUnitResult:
     """Gets a work unit from local database."""
-    query = ('SELECT job_name, job_data '
-             'FROM job WHERE experiment_id=:experiment_id '
-             'AND work_unit_id=:work_unit_id')
+    query = text('SELECT job_name, job_data FROM job '
+                 'WHERE experiment_id=:experiment_id '
+                 'AND work_unit_id=:work_unit_id')
     rows = self.engine.execute(
         query, experiment_id=experiment_id, work_unit_id=work_unit_id)
     jobs = {}
@@ -229,3 +282,64 @@ class Database:
       job = data_pb2.Job()
       jobs[r['job_name']] = text_format.Parse(r['job_data'], job)
     return WorkUnitResult(work_unit_id, jobs)
+
+
+def sqlite_settings(
+    db_file='~/.xmanager/experiments.sqlite3') -> SqlConnectionSettings:
+  return SqlConnectionSettings(
+      backend='sqlite', db_name=os.path.expanduser(db_file))
+
+
+_SUPPORTED_CONNECTORS = ['sqlite', 'generic']
+
+
+def _validate_db_config(config: Dict[str, Any]) -> None:
+  if 'sql_connector' not in config:
+    raise RuntimeError('DB YAML config must contain `sql_connector` entry')
+  if config['sql_connector'] not in _SUPPORTED_CONNECTORS:
+    raise RuntimeError(
+        f'`sql_connector` must be one of: {_SUPPORTED_CONNECTORS}')
+
+  if 'sql_connection_settings' not in config:
+    raise RuntimeError('DB YAML config must contain '
+                       '`sql_connection_settings` entry')
+
+
+@functools.lru_cache()
+def _db_config() -> Dict[str, Any]:
+  """Parses and validates YAML DB config file to a dict."""
+  if _DB_YAML_CONFIG_PATH.value is not None:
+    db_config_file = xm.utils.resolve_path_relative_to_launcher(
+        _DB_YAML_CONFIG_PATH.value)
+    with open(db_config_file, 'r') as f:
+      config = yaml.safe_load(f)
+      _validate_db_config(config)
+      return config
+
+  return {}
+
+
+@functools.lru_cache()
+def db_connector() -> Type[TSqlConnector]:
+  """Returns connector based on DB configuration."""
+  sql_connector = _db_config().get('sql_connector')
+
+  if sql_connector is None or sql_connector == 'sqlite':
+    return SqliteConnector
+
+  return GenericSqlConnector
+
+
+@functools.lru_cache()
+def db_settings() -> SqlConnectionSettings:
+  """Returns connection settings created based on DB configuration."""
+  if _db_config():
+    return SqlConnectionSettings(**_db_config()['sql_connection_settings'])
+
+  return sqlite_settings()
+
+
+@functools.lru_cache()
+def database() -> Database:
+  """Returns database based on DB configuration."""
+  return Database(db_connector(), db_settings())
