@@ -27,10 +27,11 @@ setup(
     long_description_content_type='text/markdown',
     author='DeepMind Technologies Limited',
     packages=find_namespace_packages(exclude=['examples.*']),
-    package_data={'': ['*.sh', '*.sql']},
+    package_data={'': ['*.sh', '*.sql', '*.ini', '*.mako']},
     python_requires='>=3.9',
     install_requires=[
         'absl-py',
+        'alembic==1.4.3',
         'async_generator',
         'attrs',
         'docker',

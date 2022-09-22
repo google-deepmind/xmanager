@@ -17,12 +17,24 @@ import functools
 import os
 import sqlite3
 from typing import Dict, List
+from absl import flags
+import alembic
+from alembic.config import Config
 
 import attr
 import sqlalchemy
 from xmanager.generated import data_pb2
 
 from google.protobuf import text_format
+
+_UPGRADE_DB = flags.DEFINE_boolean(
+    'xm_upgrade_db', False, """
+    Specifies if XManager should update the database to the latest version.
+    It's recommended to take a back-up of the database before updating, since
+    migrations can fail/have errors. This is especially true
+    for non-transactional DDLs, where partial migrations can occur on
+    failure, leaving the database in a not well-defined state.
+    """)
 
 
 @attr.s(auto_attribs=True)
@@ -85,28 +97,54 @@ def database():
 class Database:
   """Database object with interacting with experiment metadata storage."""
 
-  def __init__(self, settings: SqlSettings = SqliteSettings()):
+  def __init__(self, settings: SqlSettings = SqliteSettings()) -> None:
     self.settings = settings
     self.engine: Engine = settings.create_engine()
-    self.maybe_migrate_database_version(self.engine)
+    storage_dir = os.path.dirname(__file__)
+    self.alembic_cfg = Config(os.path.join(storage_dir, 'alembic.ini'))
+    self.alembic_cfg.set_main_option('sqlalchemy.url', str(self.engine.url))
+    self.alembic_cfg.set_main_option('script_location',
+                                     os.path.join(storage_dir, 'alembic'))
 
-  def maybe_migrate_database_version(self, engine: Engine):
-    """Check the database VersionHistory table and maybe migrate."""
-    # Create the tables for the first time.
-    if 'VersionHistory' not in engine.table_names():
-      schema = os.path.join(
-          os.path.dirname(os.path.realpath(__file__)), 'schema.sql')
-      self.settings.execute_script(schema)
+    self.maybe_migrate_database_version()
 
-    rows = list(
-        self.engine.execute(
-            'SELECT Version, Timestamp FROM VersionHistory ORDER BY Timestamp DESC LIMIT 1'
-        ))
-    if not rows:
-      raise ValueError('The database is invalid. It has no VersionHistory.')
-    if rows[0][0] > 1:
-      raise ValueError(
-          f'The database schema is on an unsupported version: {rows[0][0]}')
+  def upgrade_database(self, revision: str = 'head') -> None:
+    """Upgrades database to given revision."""
+    with self.engine.begin() as connection:
+      # https://alembic.sqlalchemy.org/en/latest/cookbook.html#sharing-a-connection-across-one-or-more-programmatic-migration-commands
+      # Allows sharing connection across multiple commands.
+      self.alembic_cfg.attributes['connection'] = connection
+      try:
+        alembic.command.upgrade(self.alembic_cfg, revision)
+      except Exception as e:
+        raise RuntimeError(
+            'Database upgrade failed. The DB may be in an undefined state or '
+            'data may have been lost. Revert to the previous state using your '
+            'backup or proceed with caution.') from e
+      finally:
+        self.alembic_cfg.attributes['connection'] = None
+
+  def database_version(self) -> str:
+    with self.engine.begin() as connection:
+      context = alembic.migration.MigrationContext.configure(connection)
+      return context.get_current_revision()
+
+  def latest_version_available(self) -> str:
+    script_directory = alembic.script.ScriptDirectory.from_config(
+        self.alembic_cfg)
+    return script_directory.get_current_head()
+
+  def maybe_migrate_database_version(self):
+    """Enforces the latest version of the database to be used."""
+    db_version = self.database_version()
+    if db_version and db_version != self.latest_version_available():
+      if not _UPGRADE_DB.value:
+        raise RuntimeError(
+            f'Database is not up to date: current={self.database_version()}, '
+            f'latest={self.latest_version_available()}. Take a backup of the '
+            'database and then launch using the `--xm_upgrade_db` flag '
+            'to update to the the latest version.')
+    self.upgrade_database()
 
   def insert_experiment(self, experiment_id: int,
                         experiment_title: str) -> None:
