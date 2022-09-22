@@ -44,25 +44,89 @@ def using_legacy_sqlite_db():
   return 'VersionHistory' in Inspector.from_engine(connection).get_table_names()
 
 
+def update_columns() -> None:
+  """Migrates legacy SQLite DB to portable column names and types."""
+  with op.batch_alter_table('Experiment') as batch_op:
+    batch_op.alter_column(
+        column_name='Id',
+        new_column_name='experiment_id',
+        existing_type=sa.Integer(),
+        type_=sa.BigInteger())
+
+    batch_op.alter_column(
+        column_name='Title',
+        new_column_name='experiment_title',
+        existing_type=sa.TEXT,
+        type_=sa.String(255))
+  # SQLite table names are case-insensitive, but the table names
+  # still appear to be upper case when inspecting database with `sqlite`.
+  op.rename_table('Experiment', 'tmp_experiment')
+  op.rename_table('tmp_experiment', 'experiment')
+
+  with op.batch_alter_table('WorkUnit') as batch_op:
+    batch_op.alter_column(
+        column_name='ExperimentId',
+        new_column_name='experiment_id',
+        existing_type=sa.Integer(),
+        type_=sa.BigInteger())
+
+    batch_op.alter_column(
+        column_name='WorkUnitId',
+        new_column_name='work_unit_id',
+    )
+  op.rename_table('WorkUnit', 'work_unit')
+
+  with op.batch_alter_table('Job') as batch_op:
+    batch_op.alter_column(
+        column_name='ExperimentId',
+        new_column_name='experiment_id',
+        existing_type=sa.Integer(),
+        type_=sa.BigInteger())
+
+    batch_op.alter_column(
+        column_name='WorkUnitId',
+        new_column_name='work_unit_id',
+    )
+
+    batch_op.alter_column(
+        column_name='Name',
+        new_column_name='job_name',
+        existing_type=sa.TEXT,
+        type_=sa.String(255))
+
+    batch_op.alter_column(
+        column_name='Data',
+        new_column_name='job_data',
+        existing_type=sa.TEXT,
+        type_=sa.String(255))
+  # SQLite table names are case-insensitive, but the table names
+  # still appear to be upper case when inspecting database with `sqlite`.
+  op.rename_table('Job', 'tmp_job')
+  op.rename_table('tmp_job', 'job')
+
+
 def create_new_tables():
-  op.create_table('Experiment', sa.Column('Id', sa.Integer(), primary_key=True),
-                  sa.Column('Title', sa.String(255)))
+  op.create_table('experiment',
+                  sa.Column('experiment_id', sa.BigInteger(), primary_key=True),
+                  sa.Column('experiment_title', sa.String(255)))
 
-  op.create_table('WorkUnit',
-                  sa.Column('ExperimentId', sa.Integer(), primary_key=True),
-                  sa.Column('WorkUnitId', sa.Integer(), primary_key=True))
+  op.create_table('work_unit',
+                  sa.Column('experiment_id', sa.BigInteger(), primary_key=True),
+                  sa.Column('work_unit_id', sa.Integer(), primary_key=True))
 
-  op.create_table('Job',
-                  sa.Column('ExperimentId', sa.Integer(), primary_key=True),
-                  sa.Column('WorkUnitId', sa.Integer(), primary_key=True),
-                  sa.Column('Name', sa.String(255), primary_key=True),
-                  sa.Column('Data', sa.String(255)))
+  op.create_table('job',
+                  sa.Column('experiment_id', sa.BigInteger(), primary_key=True),
+                  sa.Column('work_unit_id', sa.Integer(), primary_key=True),
+                  sa.Column('job_name', sa.String(255), primary_key=True),
+                  sa.Column('job_data', sa.String(255)))
 
 
 def upgrade() -> None:
   """Upgrades DB."""
   if using_legacy_sqlite_db():
     op.drop_table('VersionHistory')
+
+    update_columns()
   else:
     create_new_tables()
 

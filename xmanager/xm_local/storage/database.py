@@ -148,13 +148,13 @@ class Database:
 
   def insert_experiment(self, experiment_id: int,
                         experiment_title: str) -> None:
-    query = ('INSERT INTO Experiment (Id, Title) '
+    query = ('INSERT INTO experiment (experiment_id, experiment_title) '
              'VALUES (:experiment_id, :experiment_title)')
     self.engine.execute(
         query, experiment_id=experiment_id, experiment_title=experiment_title)
 
   def insert_work_unit(self, experiment_id: int, work_unit_id: int) -> None:
-    query = ('INSERT INTO WorkUnit (ExperimentId, WorkUnitId) '
+    query = ('INSERT INTO work_unit (experiment_id, work_unit_id) '
              'VALUES (:experiment_id, :work_unit_id)')
     self.engine.execute(
         query, experiment_id=experiment_id, work_unit_id=work_unit_id)
@@ -163,14 +163,15 @@ class Database:
                         vertex_job_id: str) -> None:
     job = data_pb2.Job(caip=data_pb2.AIPlatformJob(resource_name=vertex_job_id))
     data = text_format.MessageToBytes(job)
-    query = ('INSERT INTO Job (ExperimentId, WorkUnitId, Name, Data) '
-             'VALUES (:experiment_id, :work_unit_id, :name, :data)')
+    query = ('INSERT INTO '
+             'job (experiment_id, work_unit_id, job_name, job_data) '
+             'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)')
     self.engine.execute(
         query,
         experiment_id=experiment_id,
         work_unit_id=work_unit_id,
-        name=vertex_job_id,
-        data=data)
+        job_name=vertex_job_id,
+        job_data=data)
 
   def insert_kubernetes_job(self, experiment_id: int, work_unit_id: int,
                             namespace: str, job_name: str) -> None:
@@ -178,28 +179,30 @@ class Database:
         kubernetes=data_pb2.KubernetesJob(
             namespace=namespace, job_name=job_name))
     data = text_format.MessageToString(job)
-    query = ('INSERT INTO Job (ExperimentId, WorkUnitId, Name, Data) '
-             'VALUES (:experiment_id, :work_unit_id, :name, :data)')
+    query = ('INSERT INTO '
+             'job (experiment_id, work_unit_id, job_name, job_data) '
+             'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)')
     self.engine.execute(
         query,
         experiment_id=experiment_id,
         work_unit_id=work_unit_id,
-        name=job_name,
-        data=data)
+        job_name=job_name,
+        job_data=data)
 
   def list_experiment_ids(self) -> List[int]:
     """Lists all the experiment ids from local database."""
-    query = ('SELECT Id FROM Experiment')
+    query = ('SELECT experiment_id FROM experiment')
     rows = self.engine.execute(query)
-    return [r['Id'] for r in rows]
+    return [r['experiment_id'] for r in rows]
 
   def get_experiment(self, experiment_id: int) -> ExperimentResult:
     """Gets an experiment from local database."""
-    query = ('SELECT Title FROM Experiment WHERE Id=:experiment_id')
+    query = ('SELECT experiment_title FROM experiment '
+             'WHERE experiment_id=:experiment_id')
     rows = self.engine.execute(query, experiment_id=experiment_id)
     title = None
     for r in rows:
-      title = r['Title']
+      title = r['experiment_title']
       break
     if title is None:
       raise ValueError(f'Experiment Id {experiment_id} doesn\'t exist.')
@@ -208,20 +211,21 @@ class Database:
 
   def list_work_units(self, experiment_id: int) -> List[WorkUnitResult]:
     """Lists an experiment's work unit ids from local database."""
-    query = ('SELECT WorkUnitId '
-             'FROM WorkUnit WHERE ExperimentId=:experiment_id')
+    query = ('SELECT work_unit_id '
+             'FROM work_unit WHERE experiment_id=:experiment_id')
     rows = self.engine.execute(query, experiment_id=experiment_id)
-    return [self.get_work_unit(experiment_id, r['WorkUnitId']) for r in rows]
+    return [self.get_work_unit(experiment_id, r['work_unit_id']) for r in rows]
 
   def get_work_unit(self, experiment_id: int,
                     work_unit_id: int) -> WorkUnitResult:
     """Gets a work unit from local database."""
-    query = ('SELECT Name, Data FROM Job '
-             'WHERE ExperimentId=:experiment_id AND WorkUnitID=:work_unit_id')
+    query = ('SELECT job_name, job_data '
+             'FROM job WHERE experiment_id=:experiment_id '
+             'AND work_unit_id=:work_unit_id')
     rows = self.engine.execute(
         query, experiment_id=experiment_id, work_unit_id=work_unit_id)
     jobs = {}
     for r in rows:
       job = data_pb2.Job()
-      jobs[r['Name']] = text_format.Parse(r['Data'], job)
+      jobs[r['job_name']] = text_format.Parse(r['job_data'], job)
     return WorkUnitResult(work_unit_id, jobs)
