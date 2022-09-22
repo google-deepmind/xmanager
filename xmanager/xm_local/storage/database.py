@@ -28,12 +28,14 @@ import yaml
 
 from google.protobuf import text_format
 
+from google.cloud.sql.connector import Connector, IPTypes
+
 _DB_YAML_CONFIG_PATH = flags.DEFINE_string(
     'xm_db_yaml_config_path', None, """
     Path of YAML config file containing DB connection details.
 
     A valid config file contains two main entries:
-      `sql_connector`: must be one of [`sqlite`, `generic`]
+      `sql_connector`: must be one of [`sqlite`, `generic`, `cloudsql`]
 
       `sql_connection_settings`: contains details about the connection URL.
         These match the interface of `SqlConnectionSettings` and their
@@ -44,7 +46,7 @@ _DB_YAML_CONFIG_PATH = flags.DEFINE_string(
           - driver, e.g. 'pymysql', 'pg8000'
           - username
           - password
-          - host
+          - host (instance connection name when using CloudSql)
           - port
     """)
 
@@ -137,6 +139,44 @@ class SqliteConnector(SqlConnector):
       os.makedirs(os.path.dirname(settings.db_name))
 
     return GenericSqlConnector.create_engine(settings)
+
+
+class CloudSqlConnector(SqlConnector):
+  """Provides way of connecting to a CloudSQL database."""
+
+  # Each CloudSql backend supports one driver.
+  BACKEND_DRIVERS = {
+      'mysql': 'pymysql',
+      'postgresql': 'pg8000',
+      'mssql': 'pytds'
+  }
+
+  @staticmethod
+  def create_engine(settings: SqlConnectionSettings) -> Engine:
+    ip_type = IPTypes.PRIVATE if os.environ.get(
+        'PRIVATE_IP') else IPTypes.PUBLIC
+    connector = Connector(ip_type)
+
+    if settings.backend not in CloudSqlConnector.BACKEND_DRIVERS:
+      raise RuntimeError(f'CloudSql doesn\'t support the '
+                         f'`{settings.backend}` backend.')
+
+    driver = CloudSqlConnector.BACKEND_DRIVERS[settings.backend]
+    if settings.driver and settings.driver != driver:
+      raise RuntimeError(f'CloudSql backend `{settings.backend}` does not '
+                         f'support the `{settings.driver}` driver')
+
+    def get_connection():
+      return connector.connect(
+          settings.host,
+          driver,
+          user=settings.username,
+          password=settings.password,
+          db=settings.db_name)
+
+    url = sqlalchemy.engine.url.URL(drivername=f'{settings.backend}+{driver}',
+                                    host='localhost')
+    return sqlalchemy.create_engine(url, creator=get_connection)
 
 
 class Database:
@@ -290,7 +330,7 @@ def sqlite_settings(
       backend='sqlite', db_name=os.path.expanduser(db_file))
 
 
-_SUPPORTED_CONNECTORS = ['sqlite', 'generic']
+_SUPPORTED_CONNECTORS = ['sqlite', 'generic', 'cloudsql']
 
 
 def _validate_db_config(config: Dict[str, Any]) -> None:
@@ -326,6 +366,9 @@ def db_connector() -> Type[TSqlConnector]:
 
   if sql_connector is None or sql_connector == 'sqlite':
     return SqliteConnector
+
+  if sql_connector == 'cloudsql':
+    return CloudSqlConnector
 
   return GenericSqlConnector
 
