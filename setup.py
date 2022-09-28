@@ -34,6 +34,7 @@ setup(
         'alembic==1.4.3',
         'async_generator',
         'attrs',
+        'cloud-sql-python-connector',
         'docker',
         'google-api-core',
         'google-api-python-client',
