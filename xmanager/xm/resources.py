@@ -254,6 +254,17 @@ class ResourceDict(MutableMapping):
       result[key] = self.get(key, 0) + rhs.get(key, 0)
     return result
 
+  def __mul__(self: 'ResourceDict', rhs: float) -> 'ResourceDict':
+    """Returns the multiplication of a ResourceDict with a scalar."""
+    result = ResourceDict()
+    for key, value in self.items():
+      result[key] = value * rhs
+    return result
+
+  def __rmul__(self: 'ResourceDict', rhs: float) -> 'ResourceDict':
+    """Returns the multiplication of a ResourceDict with a scalar."""
+    return self * rhs
+
 
 class InvalidTpuTopologyError(Exception):
   """An unrecognized TPU topology has been provided."""

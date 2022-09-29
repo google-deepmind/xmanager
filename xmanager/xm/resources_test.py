@@ -51,6 +51,16 @@ class ResourceDictTest(unittest.TestCase):
     with self.assertRaises(KeyError):
       JobRequirements(cpu=0.5 * xm.vCPU, upc=2)
 
+  def test_requirements_summation(self):
+    first = resources.JobRequirements(cpu=1, tpu_v2='2x2')
+    second = resources.JobRequirements(ram=4 * xm.GiB, replicas=10)
+    total = (
+        first.replicas * first.task_requirements +
+        second.replicas * second.task_requirements)
+    self.assertEqual(total[ResourceType.CPU], 1)
+    self.assertEqual(total[ResourceType.RAM], 40 * xm.GiB)
+    self.assertEqual(total[ResourceType.TPU_V2], 4)
+
 
 class TopologyTest(parameterized.TestCase):
 
