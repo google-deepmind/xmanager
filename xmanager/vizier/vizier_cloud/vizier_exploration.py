@@ -13,7 +13,6 @@
 # limitations under the License.
 """Interface for launching Vizier Explorations using Vertex Vizier."""
 
-import asyncio
 from typing import Any, Dict
 
 from xmanager import xm
@@ -40,18 +39,21 @@ class VizierExploration:
       num_parallel_trial_runs: number of parallel runs evaluating the trials.
     """
 
-    # TODO: Reconsider to make functions async instead of
-    # using get_event_loop().
-    def work_unit_generator(vizier_params: Dict[str, Any]) -> xm.WorkUnit:
-      return asyncio.get_event_loop().run_until_complete(
-          experiment.add(job, self._to_job_params(vizier_params)))
+    async def work_unit_generator(work_unit: xm.WorkUnit,
+                                  vizier_params: Dict[str, Any]):
+      work_unit.add(job, self._to_job_params(vizier_params))
 
     if not study_factory.display_name:
       study_factory.display_name = f'X{experiment.experiment_id}'
 
     self._controller = vizier_controller.VizierController(
-        work_unit_generator, study_factory.vz_client, study_factory.study(),
-        num_trials_total, num_parallel_trial_runs)
+        experiment,
+        work_unit_generator,
+        study_factory.vz_client,
+        study_factory.study(),
+        num_trials_total,
+        num_parallel_trial_runs,
+    )
 
   def _to_job_params(self, vizier_params: Dict[str, Any]) -> Dict[str, Any]:
     # TODO: unflatten parameters for JobGroup case (currently this

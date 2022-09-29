@@ -24,15 +24,15 @@ from xmanager import xm
 class VizierController:
   """A Controller that runs Vizier suggested hyperparameters in multiple work units."""
 
-  def __init__(self, work_unit_generator: Callable[[Dict[str, Any]],
-                                                   xm.WorkUnit],
-               vz_client: aip.VizierServiceClient,
-               study_name: str,
-               num_work_units_total: int,
-               num_parallel_work_units: int) -> None:
+  def __init__(self, experiment: xm.Experiment,
+               work_unit_generator: Callable[[xm.WorkUnit, Dict[str, Any]],
+                                             Any],
+               vz_client: aip.VizierServiceClient, study_name: str,
+               num_work_units_total: int, num_parallel_work_units: int) -> None:
     """Create a VizierController.
 
     Args:
+      experiment: XM experiment.
       work_unit_generator: the function that generates WorkUnit from
         hyperparameters.
       vz_client: the Vizier Client used for interacting with Vizier.
@@ -42,6 +42,7 @@ class VizierController:
         settable there.)
       num_parallel_work_units: number of work units to run in parallel.
     """
+    self._experiment = experiment
     self._work_unit_generator = work_unit_generator
     self._vz_client = vz_client
     self._study_name = study_name
@@ -97,21 +98,26 @@ class VizierController:
 
       print(f'Creating work unit (index: {i})... \n')
 
-      work_unit = self._work_unit_generator({
+      def create_gen(index: int, trial: aip.Trial) -> xm.JobGeneratorType:
+
+        async def gen_work_unit(work_unit: xm.WorkUnit, **kwargs):
+          await self._work_unit_generator(work_unit, kwargs)
+
+          # TODO: Add an utility to handle logging conditionally
+          # (use print when run local otherwise logging.info.)
+          print(f'Work unit (index: {index}, '
+                f'id: {work_unit.work_unit_id}) created. \n')
+          self._work_unit_updaters.append(
+              WorkUnitVizierUpdater(
+                  vz_client=self._vz_client, work_unit=work_unit, trial=trial))
+
+        return gen_work_unit
+
+      args = {
           'trial_name': trial.name,
-          **{
-              p.parameter_id: p.value
-              for p in trial.parameters
-          }
-      })
-
-      # TODO: Add an utility to handle logging conditionally
-      # (use print when run local otherwise logging.info.)
-      print(f'Work unit (index: {i}, id: {work_unit.work_unit_id}) created. \n')
-
-      self._work_unit_updaters.append(
-          WorkUnitVizierUpdater(
-              vz_client=self._vz_client, work_unit=work_unit, trial=trial))
+          **{p.parameter_id: p.value for p in trial.parameters}
+      }
+      self._experiment.add(create_gen(i, trial), args)
 
 
 class WorkUnitVizierUpdater:
