@@ -55,6 +55,23 @@ class BazelToolsTest(unittest.TestCase):
         },
     )
 
+  def test_absolute_label_with_extension_dot(self):
+    self.assertEqual(
+        bazel_tools._lex_label('//project/directory:image.tar'),
+        (['project', 'directory'], 'image.tar'))
+
+  def test_label_with_three_dots(self):
+    with self.assertRaisesRegex(ValueError, 'is not an absolute Bazel label'):
+      bazel_tools._lex_label('//project/directory/...')
+
+  def test_label_with_star_target(self):
+    with self.assertRaisesRegex(ValueError, 'is not an absolute Bazel label'):
+      bazel_tools._lex_label('//project/directory:*')
+
+  def test_label_with_all_target(self):
+    with self.assertRaisesRegex(ValueError, '`:all` is not a valid target'):
+      bazel_tools._lex_label('//project/directory:all')
+
 
 if __name__ == '__main__':
   unittest.main()

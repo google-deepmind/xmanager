@@ -147,7 +147,7 @@ def _build_multiple_targets(
 
 
 # Expansions (`...`, `*`) are not allowed.
-_NAME_RE = '[^:/.*]+'
+_NAME_RE = r'(?:[^.*:/]|\.(?!\.\.))+'
 _LABEL_LEXER = re.compile(
     f'^//(?P<packages>{_NAME_RE}(/{_NAME_RE})*)?(?P<target>:{_NAME_RE})?$')
 _LexedLabel = Tuple[List[str], str]
@@ -161,8 +161,10 @@ def _lex_label(label: str) -> _LexedLabel:
   groups = match.groupdict()
   packages: Optional[str] = groups['packages']
   target: Optional[str] = groups['target']
-  if packages is None and target is None:
+  if not packages and not target:
     raise ValueError(f'{label} cannot be empty')
+  if target == ':all':
+    raise ValueError('`:all` is not a valid target')
   init = packages.split('/') if packages else []
   last = target[1:] if target else init[-1]
   return init, last
