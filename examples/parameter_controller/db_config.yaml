@@ -1,0 +1,16 @@
+# Connector used - one of ['cloudsql', 'sqlite', 'generic']
+sql_connector: ''
+
+sql_connection_settings:
+  # Backend used, e.g. 'mysql', 'postgresql'
+  backend: ''
+  # Username
+  username: ''
+  # Password
+  password: ''
+  # Host (or instance connection name for CloudSql)
+  host: ''
+  # Port
+  port: 0
+  # Database name
+  db_name: ''
