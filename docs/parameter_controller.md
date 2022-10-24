@@ -138,3 +138,8 @@ permissions to allow the controller job to launch and track new jobs:
 -   **List services**
 -   **Create batch jobs**
 -   **Get status of batch jobs**
+
+## Slides
+
+Remote metadata execution and metadata storage are present in
+[these slides](https://storage.googleapis.com/gresearch/xmanager/remote_execution_slides.pdf).

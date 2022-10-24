@@ -55,3 +55,8 @@ script. If the flag is not enabled, the default SQLite database is used.
 The XManager client attempts to always keep the database to the latest version.
 For details, check
 [database migration docs](https://github.com/deepmind/xmanager/tree/main/xmanager/xm_local/storage/alembic/README.md).
+
+## Slides
+
+Remote metadata execution and metadata storage are present in
+[these slides](https://storage.googleapis.com/gresearch/xmanager/remote_execution_slides.pdf).
