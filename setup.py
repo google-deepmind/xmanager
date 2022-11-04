@@ -36,6 +36,7 @@ setup(
         'attrs',
         'cloud-sql-python-connector',
         'docker',
+        'etils[epath]',
         'google-api-core',
         'google-api-python-client',
         'google-auth',
