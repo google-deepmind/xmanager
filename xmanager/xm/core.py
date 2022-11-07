@@ -688,12 +688,20 @@ class Experiment(abc.ABC):
     return self
 
   def _wait_for_tasks(self):
+    """Waits for pending tasks to complete, raising the first error."""
+    exception = None
     while not self._running_tasks.empty():
       try:
         self._running_tasks.get_nowait().result()
       except futures.CancelledError:
         # Ignore cancelled tasks.
         pass
+      except Exception as e:  # pylint: disable=broad-except
+        # Allow remaining tasks to complete before raising the first exception.
+        if not exception:
+          exception = e
+    if exception:
+      raise exception
 
   def __exit__(self, exc_type, exc_value, traceback):  # pylint:disable=redefined-outer-name
     _current_experiment.reset(self._current_experiment_token)
