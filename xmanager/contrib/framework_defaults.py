@@ -89,7 +89,7 @@ def base_image(framework: FrameworkSpec,
       # https://github.com/pytorch/xla#-available-images-and-wheels
       return 'gcr.io/tpu-pytorch/xla:nightly_3.8_tpuvm_20220819'
     else:
-      return 'gcr.io/deeplearning-platform-release/pytorch-gpu.1-9'
+      return 'gcr.io/deeplearning-platform-release/pytorch-gpu.1-12'
   elif framework == MLFramework.TF1:
     logging.warning('Tensorflow 1.x is not supported')
     return 'gcr.io/deeplearning-platform-release/tf-gpu.1-15'
