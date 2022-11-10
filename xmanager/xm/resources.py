@@ -395,7 +395,7 @@ class JobRequirements:
         If several accelerator resources are supplied (i.e. GPU and TPU).
         If the same resource is passed in a `resources` dictionary and as
           a command line argument.
-        If topology is supplied for a non acceelerator resource.
+        If topology is supplied for a non accelerator resource.
     """
     self.location = location
     self._service_tier = service_tier or ServiceTier.PROD
