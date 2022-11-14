@@ -86,6 +86,8 @@ def _apply_args_to_job_group(job_group: job_blocks.JobGroup,
 _apply_args = pattern_matching.match(
     _apply_args_to_job, _apply_args_to_job_group,
     pattern_matching.Case([job_blocks.JobGeneratorType, Any],
+                          lambda other, args: None),
+    pattern_matching.Case([job_blocks.JobConfig, Any],
                           lambda other, args: None))
 
 
