@@ -75,7 +75,7 @@ class FrameworkDefaultsTest(parameterized.TestCase):
     self.assertStartsWith(base_image, 'gcr.io/')
     self.assertContainsSubsequence(base_image, 'pytorch')
     if accelerator in xm.TpuType:
-      self.assertContainsSubsequence(base_image, 'xla')
+      self.assertContainsSubsequence(base_image, 'tpu')
 
   @parameterized.named_parameters(
       ('cpu', None),
