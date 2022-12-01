@@ -170,7 +170,7 @@ class SequentialArgs:
         return [None]
       elif isinstance(value, bool):
         return [escaper(f"--{'' if value else 'no'}{item.name}")]
-      elif isinstance(value, (list, tuple)):
+      elif type(value) in (list, tuple):
         return [
             kwargs_joiner(escaper(f'--{item.name}'), escaper(v)) for v in value
         ]
