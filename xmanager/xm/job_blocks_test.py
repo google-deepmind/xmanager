@@ -29,6 +29,14 @@ class JobBlocksTest(unittest.TestCase):
 
     self.assertEqual(args.to_list(str), ['--a=1', '--b=2', '--c=3'])
 
+  def test_from_mapping_multi(self):
+    args = job_blocks.SequentialArgs.from_collection({
+        'a': 1,
+        'c': [3, '4'],
+    })
+
+    self.assertEqual(args.to_list(str), ['--a=1', '--c=3', '--c=4'])
+
   def test_from_sequence(self):
     args = job_blocks.SequentialArgs.from_collection([1, 2, 3])
 
