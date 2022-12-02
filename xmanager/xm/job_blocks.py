@@ -14,15 +14,23 @@
 """Data classes for job-related abstractions."""
 
 import abc
+import itertools
 import re
 from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
+from absl import flags as absl_flags
 import attr
 
 from xmanager.xm import pattern_matching
 from xmanager.xm import utils
 
 UserArgs = Union[Mapping, Sequence, 'SequentialArgs']
+
+_ENABLE_MULTI_ARG_FLAGS = absl_flags.DEFINE_bool(
+    'xm_to_list_multi_arg_behavior',
+    False,
+    'If True, pass `args=dict(x=[v0, v1])` as --x=v0, --x=v1',
+)
 
 
 class SequentialArgs:
@@ -151,30 +159,51 @@ class SequentialArgs:
 
   def to_list(
       self,
-      escaper: Callable[[Any], str],
+      escaper: Callable[[Any], str] = utils.ARG_ESCAPER,
       kwargs_joiner: Callable[[str, str], str] = utils.trivial_kwargs_joiner
   ) -> List[str]:
     """Exports items as a list ready to be passed into the command line."""
 
-    def export_regular_item(item: SequentialArgs._RegularItem) -> Optional[str]:
-      return escaper(item.value)
+    def export_regular_item(
+        item: SequentialArgs._RegularItem) -> List[Optional[str]]:
+      return [escaper(item.value)]
 
-    def export_keyword_item(item: SequentialArgs._KeywordItem) -> Optional[str]:
+    def export_keyword_item(
+        item: SequentialArgs._KeywordItem) -> List[Optional[str]]:
       value = self._kwvalues[item.name]
       if value is None:
         # We skip flags with None value, allowing the binary to use defaults.
         # A string can be used if a literal "None" value needs to be assigned.
-        return None
+        return [None]
       elif isinstance(value, bool):
-        return escaper(f"--{'' if value else 'no'}{item.name}")
+        return [escaper(f"--{'' if value else 'no'}{item.name}")]
+      elif type(value) in (list, tuple):
+        # TODO: Cleanup once users have migrated
+        if _ENABLE_MULTI_ARG_FLAGS.value:
+          return [
+              kwargs_joiner(escaper(f'--{item.name}'), escaper(v))
+              for v in value
+          ]
+        else:
+          print(
+              '*****BREAKAGE WARNING: Passing `args=dict(flag=[v0, v1])` '
+              'will change behavior on 2023/01/15 to pass args as '
+              '`--flag=v0 --flag=v1` instead of `--flag=[v0, v1]` as '
+              'currently. To keep the old behavior, simply wrap your list in '
+              '`str`: `args=dict(flag=str([v0, v1,...]))`.\n'
+              'The new behavior is more consistent:\n'
+              ' `flags.DEFINE_multi_xyz`: `args=dict(x=[v0, v1])` match `FLAGS.x == [v0, v1]`.\n'
+              ' `flags.DEFINE_string`: `args=dict(x=\'[v0, v1]\')` match `FLAGS.x == \'[v0, v1]\'`.\n'
+              f'*** Impacted args: --{item.name}={str(value):.20} ***')
+          return [kwargs_joiner(escaper(f'--{item.name}'), escaper(value))]
       else:
-        return kwargs_joiner(escaper(f'--{item.name}'), escaper(value))
+        return [kwargs_joiner(escaper(f'--{item.name}'), escaper(value))]
 
     matcher = pattern_matching.match(
         export_regular_item,
         export_keyword_item,
     )
-    flags = [matcher(item) for item in self._items]
+    flags = itertools.chain.from_iterable(matcher(item) for item in self._items)
     return [f for f in flags if f is not None]
 
   def to_dict(self, kwargs_only: bool = False) -> Dict[str, Any]:
