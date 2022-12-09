@@ -94,17 +94,17 @@ def executable_graph(
   return run_graphs()  # pylint: disable=no-value-for-parameter
 
 
-def _normalize_name(x: str) -> str:
-  """Replace whitespace with underscores."""
-  return x.replace(' ', '_')
+def _quote_name(x: str) -> str:
+  """Return a quoted name for a node in a graphviz graph."""
+  return '"' + x.replace('"', '\\"') + '"'
 
 
 def _make_dot_graph_url(jobs_deps: dict[str, Sequence[str]]) -> str:
   # First add all leaf (potential singleton)
-  terms = [_normalize_name(j) for j, deps in jobs_deps.items() if not deps]
+  terms = [_quote_name(j) for j, deps in jobs_deps.items() if not deps]
   for job_name, job_deps in jobs_deps.items():
     for dep in job_deps:
-      terms.append(f'{_normalize_name(job_name)}->{_normalize_name(dep)}')
+      terms.append(f'{_quote_name(job_name)}->{_quote_name(dep)}')
   dot = 'digraph{{{}}}'.format(' '.join(terms))
   return dot
 
