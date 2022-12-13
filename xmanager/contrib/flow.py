@@ -104,7 +104,7 @@ def _make_dot_graph_url(jobs_deps: dict[str, Sequence[str]]) -> str:
   terms = [_quote_name(j) for j, deps in jobs_deps.items() if not deps]
   for job_name, job_deps in jobs_deps.items():
     for dep in job_deps:
-      terms.append(f'{_quote_name(job_name)}->{_quote_name(dep)}')
+      terms.append(f'{_quote_name(dep)}->{_quote_name(job_name)}')
   dot = 'digraph{{{}}}'.format(' '.join(terms))
   return dot
 
