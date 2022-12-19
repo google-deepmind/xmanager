@@ -14,13 +14,13 @@
 """Data classes for job-related abstractions."""
 
 import abc
+import functools
 import itertools
 import re
 from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
 from absl import flags as absl_flags
 import attr
-
 from xmanager.xm import pattern_matching
 from xmanager.xm import utils
 
@@ -31,6 +31,12 @@ _ENABLE_MULTI_ARG_FLAGS = absl_flags.DEFINE_bool(
     False,
     'If True, pass `args=dict(x=[v0, v1])` as --x=v0, --x=v1',
 )
+
+
+@functools.cache
+def print_none_warning(key: str) -> None:
+  print(f'WARNING: Setting `{key}=None` will exclude the flag. To pass the '
+        f'actual value, pass the string literal `{key}="None"` instead')
 
 
 class SequentialArgs:
@@ -174,6 +180,7 @@ class SequentialArgs:
       if value is None:
         # We skip flags with None value, allowing the binary to use defaults.
         # A string can be used if a literal "None" value needs to be assigned.
+        print_none_warning(item.name)
         return [None]
       elif isinstance(value, bool):
         return [escaper(f"--{'' if value else 'no'}{item.name}")]
