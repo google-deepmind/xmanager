@@ -7,7 +7,6 @@ import asyncio
 from collections.abc import Sequence
 from typing import Callable, Optional
 
-from absl import logging
 from xmanager import xm
 from xmanager.contrib import parameter_controller
 
