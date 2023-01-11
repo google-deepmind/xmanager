@@ -20,6 +20,12 @@ _Controller = Callable[[_Fn], _AsyncFn]
 controller = parameter_controller.controller
 
 
+class _UnlaunchedJob:
+
+  async def wait_until_complete(self):
+    raise xm.ExperimentUnitError
+
+
 def executable_graph(
     *,
     jobs: dict[str, xm.JobType],
@@ -27,6 +33,7 @@ def executable_graph(
     # Have to redefine external symbol to allow both
     # `flow.controller` and `flow.executable_graph(controller=)`
     controller: Optional[_Controller] = None,  # pylint: disable=redefined-outer-name
+    terminate_on_failure: bool = True,
 ) -> xm.JobGeneratorType:
   """Returns an executable which run the pipeline.
 
@@ -58,6 +65,8 @@ def executable_graph(
     controller: A `flow.controller()` (alias of
       `xmanager.contrib.parameter_controller.controller()`) to customize the
       executor parameters. If missing, a default executor is used.
+    terminate_on_failure: If true, terminate upon the the first failure. If
+      false, continue to launch jobs whose dependencies are successful.
 
   Returns:
     The controller to pass to `experiment.add()`
@@ -76,15 +85,27 @@ def executable_graph(
 
     jobs_launched = {job_name: asyncio.Future() for job_name in jobs}
 
-    async def job_finished(job_name):
+    async def job_finished(job_name: str) -> bool:
       op = await jobs_launched[job_name]  # Wait for the `experiment.add`
-      await op.wait_until_complete()  # Wait for the job to complete
+      try:
+        await op.wait_until_complete()  # Wait for the job to complete
+      except xm.ExperimentUnitError:
+        if terminate_on_failure:
+          raise
+        return False
+      else:
+        return True
 
-    async def launch_single_job(job_name):
+    async def launch_single_job(job_name: str) -> None:
       # Wait for all the deps to complete
-      await asyncio.gather(*(job_finished(dep) for dep in jobs_deps[job_name]))
+      deps_finished = await asyncio.gather(
+          *(job_finished(dep) for dep in jobs_deps[job_name])
+      )
       # Schedule the job
-      op = await experiment.add(jobs[job_name], identity=job_name)
+      if all(deps_finished):
+        op = await experiment.add(jobs[job_name], identity=job_name)
+      else:
+        op = _UnlaunchedJob()
       # Notify other waiting jobs
       jobs_launched[job_name].set_result(op)
 
