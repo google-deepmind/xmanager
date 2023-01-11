@@ -64,7 +64,9 @@ def base_image(framework: FrameworkSpec,
   """Returns a base image recommendation depending on the input.
 
   Please note that the recommendations can change as we are trying to recommend
-  the latest supported images for all frameworks.
+  the latest supported images for all frameworks. Currently most of the images
+  are taken from
+  https://cloud.google.com/deep-learning-containers/docs/choosing-container.
 
   Args:
     framework: a free-text framework name. Recognized options are `jax`,
@@ -77,6 +79,7 @@ def base_image(framework: FrameworkSpec,
   """
   if isinstance(framework, str):
     framework = _get_framework(framework)
+  # LINT.IfChange(base_image_version)
   if framework == MLFramework.JAX:
     # JAX-based experiment use the same base image for all accelerators.
     return 'gcr.io/deeplearning-platform-release/base-cu113'
@@ -90,6 +93,7 @@ def base_image(framework: FrameworkSpec,
       return 'gcr.io/tpu-pytorch/xla:nightly_3.8_tpuvm_20220819'
     else:
       return 'gcr.io/deeplearning-platform-release/pytorch-gpu.1-12'
+  # LINT.ThenChange(:tpu_runtime_version)
   elif framework == MLFramework.TF1:
     logging.warning('Tensorflow 1.x is not supported')
     return 'gcr.io/deeplearning-platform-release/tf-gpu.1-15'
