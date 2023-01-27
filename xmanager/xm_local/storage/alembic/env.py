@@ -13,16 +13,11 @@
 # limitations under the License.
 """Alembic env.py."""
 
-from logging import config as logging_config
-
 from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 config = context.config
-
-if config.config_file_name is not None:
-  logging_config.fileConfig(config.config_file_name)
 
 target_metadata = None
 
