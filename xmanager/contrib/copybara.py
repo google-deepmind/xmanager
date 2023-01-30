@@ -54,11 +54,13 @@ from typing import Optional
 COPYBARA_BIN = 'copybara'
 
 
-def run_workflow(config: str,
-                 workflow: str,
-                 origin_folder: str,
-                 destination_folder: Optional[str] = None,
-                 config_root: Optional[str] = None) -> str:
+def run_workflow(
+    config: str,
+    workflow: str,
+    origin_folder: str,
+    destination_folder: Optional[str] = None,
+    config_root: Optional[str] = None,
+) -> str:
   """Run a workflow in a copybara config to transform origin to destination.
 
   Args:
@@ -77,8 +79,12 @@ def run_workflow(config: str,
   if not destination_folder:
     destination_folder = tempfile.mkdtemp()
   command = [
-      COPYBARA_BIN, config, workflow, '--ignore-noop', origin_folder,
-      '--folder-dir=' + destination_folder
+      COPYBARA_BIN,
+      config,
+      workflow,
+      '--ignore-noop',
+      origin_folder,
+      '--folder-dir=' + destination_folder,
   ]
   if config_root:
     command += ['--config-root=' + config_root]

@@ -22,8 +22,9 @@ from absl.testing import parameterized
 from xmanager.contrib import gcs
 
 # Error patterns.
-_GCS_PATH_ERROR = ('--xm_gcs_path not in gs://bucket/directory or /gcs/path '
-                   'format.')
+_GCS_PATH_ERROR = (
+    '--xm_gcs_path not in gs://bucket/directory or /gcs/path format.'
+)
 _PATH_ERROR = 'Path not in gs://bucket/directory or /gcs/path format'
 
 
@@ -61,16 +62,20 @@ class GcsTest(parameterized.TestCase):
   def test_get_gcs_url(self):
     self.assertEqual(
         gcs.get_gcs_url('gs://a/b/c'),
-        f'{gcs.gcp_website_url}/storage/browser/a/b/c')
+        f'{gcs.gcp_website_url}/storage/browser/a/b/c',
+    )
     self.assertEqual(
         gcs.get_gcs_url('gs://d/e'),
-        f'{gcs.gcp_website_url}/storage/browser/d/e')
+        f'{gcs.gcp_website_url}/storage/browser/d/e',
+    )
     self.assertEqual(
         gcs.get_gcs_url('/gcs/a/b/c'),
-        f'{gcs.gcp_website_url}/storage/browser/a/b/c')
+        f'{gcs.gcp_website_url}/storage/browser/a/b/c',
+    )
     self.assertEqual(
         gcs.get_gcs_url('/gcs/d/e'),
-        f'{gcs.gcp_website_url}/storage/browser/d/e')
+        f'{gcs.gcp_website_url}/storage/browser/d/e',
+    )
     with self.assertRaisesRegex(ValueError, _PATH_ERROR):
       gcs.get_gcs_url('a/b/f')
 

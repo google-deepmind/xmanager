@@ -30,7 +30,8 @@ class XmTensorflowTest(parameterized.TestCase):
   def test_kubernetes_multiworker_strategy(self, num_workers):
     experiment = absltest.mock.MagicMock()
     type(experiment).experiment_id = absltest.mock.PropertyMock(
-        return_value=123)
+        return_value=123
+    )
     work_unit = absltest.mock.MagicMock()
     type(work_unit).work_unit_id = absltest.mock.PropertyMock(return_value=42)
     executable = absltest.mock.MagicMock()
@@ -43,13 +44,15 @@ class XmTensorflowTest(parameterized.TestCase):
         worker_executable=executable,
         worker_executor=executor,
         num_workers=num_workers,
-        worker_name=worker_name)
+        worker_name=worker_name,
+    )
     job_group = builder.create_job_group(hparams=hparams, work_unit=work_unit)
 
     expected_job_names = [f'{worker_name}-{i}' for i in range(num_workers)]
     expected_worker_domains = [
         addressing.k8s_pod_domain(
-            job_name=job_name, experiment_id=123, work_unit_id=42)
+            job_name=job_name, experiment_id=123, work_unit_id=42
+        )
         for job_name in expected_job_names
     ]
 
@@ -64,13 +67,8 @@ class XmTensorflowTest(parameterized.TestCase):
       self.assertEqual(job.args, xm.SequentialArgs.from_collection(hparams))
 
       tf_config = {
-          'cluster': {
-              'worker': expected_worker_domains
-          },
-          'task': {
-              'type': 'worker',
-              'index': i
-          }
+          'cluster': {'worker': expected_worker_domains},
+          'task': {'type': 'worker', 'index': i},
       }
       self.assertEqual(job.env_vars, {'TF_CONFIG': json.dumps(tf_config)})
 
@@ -78,7 +76,8 @@ class XmTensorflowTest(parameterized.TestCase):
   def test_kubernetes_parameter_server_strategy(self, num_workers, num_ps):
     experiment = absltest.mock.MagicMock()
     type(experiment).experiment_id = absltest.mock.PropertyMock(
-        return_value=123)
+        return_value=123
+    )
     work_unit = absltest.mock.MagicMock()
     type(work_unit).work_unit_id = absltest.mock.PropertyMock(return_value=42)
 
@@ -106,18 +105,22 @@ class XmTensorflowTest(parameterized.TestCase):
         worker_name=worker_name,
         ps_name=ps_name,
         num_workers=num_workers,
-        num_ps=num_ps)
+        num_ps=num_ps,
+    )
     job_group = builder.create_job_group(work_unit=work_unit, hparams=hparams)
 
     expected_worker_job_names = [
         f'{worker_name}-{i}' for i in range(num_workers)
     ]
     expected_ps_job_names = [f'{ps_name}-{i}' for i in range(num_ps)]
-    self.assertSameElements([chief_name] + expected_worker_job_names +
-                            expected_ps_job_names, list(job_group.jobs.keys()))
+    self.assertSameElements(
+        [chief_name] + expected_worker_job_names + expected_ps_job_names,
+        list(job_group.jobs.keys()),
+    )
 
     expected_chief_domain = addressing.k8s_pod_domain(
-        chief_name, experiment_id=123, work_unit_id=42)
+        chief_name, experiment_id=123, work_unit_id=42
+    )
     expected_worker_domains = [
         addressing.k8s_pod_domain(worker_name, 123, 42)
         for worker_name in expected_worker_job_names
@@ -138,19 +141,20 @@ class XmTensorflowTest(parameterized.TestCase):
           'cluster': {
               'chief': [expected_chief_domain],
               'worker': expected_worker_domains,
-              'ps': expected_ps_domains
+              'ps': expected_ps_domains,
           },
           'task': {
               'type': task_type,
               'index': task_index,
-          }
+          },
       }
 
     self.assertEqual(job.executable, chief_executable)
     self.assertEqual(job.executor, chief_executor)
     self.assertEqual(
         job.env_vars,
-        {'TF_CONFIG': json.dumps(_create_expected_tf_config('chief', 0))})
+        {'TF_CONFIG': json.dumps(_create_expected_tf_config('chief', 0))},
+    )
 
     # Test workers
     for i in range(num_workers):
@@ -162,7 +166,8 @@ class XmTensorflowTest(parameterized.TestCase):
       self.assertEqual(job.args, xm.SequentialArgs.from_collection(hparams))
       self.assertEqual(
           job.env_vars,
-          {'TF_CONFIG': json.dumps(_create_expected_tf_config('worker', i))})
+          {'TF_CONFIG': json.dumps(_create_expected_tf_config('worker', i))},
+      )
 
     # Test parameter servers
     for i in range(num_ps):
@@ -173,7 +178,8 @@ class XmTensorflowTest(parameterized.TestCase):
       self.assertEqual(job.executor, ps_executor)
       self.assertEqual(
           job.env_vars,
-          {'TF_CONFIG': json.dumps(_create_expected_tf_config('ps', i))})
+          {'TF_CONFIG': json.dumps(_create_expected_tf_config('ps', i))},
+      )
 
 
 if __name__ == '__main__':

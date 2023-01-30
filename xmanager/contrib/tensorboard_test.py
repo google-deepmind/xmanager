@@ -25,16 +25,13 @@ from xmanager.contrib import tensorboard
 class TensorboardTest(parameterized.TestCase):
 
   @parameterized.product(
-      executor=[xm_local.Vertex(),
-                xm_local.Kubernetes(),
-                xm_local.Local()],
+      executor=[xm_local.Vertex(), xm_local.Kubernetes(), xm_local.Local()],
       logdir=['logs'],
-      args=[{}, None, {
-          'new': 0
-      }])
-  def test_add_tensorboard_negative_timeout(self, executor: xm.Executor,
-                                            logdir: str, args: Mapping[str,
-                                                                       Any]):
+      args=[{}, None, {'new': 0}],
+  )
+  def test_add_tensorboard_negative_timeout(
+      self, executor: xm.Executor, logdir: str, args: Mapping[str, Any]
+  ):
     mock_experiment = absltest.mock.Mock()
     mock_experiment.add.return_value = None
     mock_executable = absltest.mock.Mock()
@@ -46,19 +43,22 @@ class TensorboardTest(parameterized.TestCase):
           logdir=logdir,
           executor=executor,
           timeout_secs=-5,
-          args=args)
+          args=args,
+      )
 
   @parameterized.product(
-      executor=[xm_local.Vertex(),
-                xm_local.Kubernetes(),
-                xm_local.Local()],
+      executor=[xm_local.Vertex(), xm_local.Kubernetes(), xm_local.Local()],
       logdir=['logs'],
       timeout_secs=[0, 5],
-      args=[{}, None, {
-          'new': 0
-      }])
-  def test_add_tensorboard(self, executor: xm.Executor, logdir: str,
-                           timeout_secs: int, args: Mapping[str, Any]):
+      args=[{}, None, {'new': 0}],
+  )
+  def test_add_tensorboard(
+      self,
+      executor: xm.Executor,
+      logdir: str,
+      timeout_secs: int,
+      args: Mapping[str, Any],
+  ):
     mock_experiment = absltest.mock.Mock()
     mock_experiment.add.return_value = None
     mock_executable = absltest.mock.Mock()
@@ -69,23 +69,29 @@ class TensorboardTest(parameterized.TestCase):
         logdir=logdir,
         executor=executor,
         timeout_secs=timeout_secs,
-        args=args)
+        args=args,
+    )
 
     expected_packageable_spec_arg = (
         tensorboard.TensorboardProvider.get_tensorboard_packageable(
-            timeout_secs=timeout_secs))
+            timeout_secs=timeout_secs
+        )
+    )
     mock_experiment.package.assert_called_once()
     packageable_arg = mock_experiment.package.call_args[0][0][0]
-    self.assertEqual(packageable_arg.executable_spec,
-                     expected_packageable_spec_arg)
+    self.assertEqual(
+        packageable_arg.executable_spec, expected_packageable_spec_arg
+    )
     self.assertEqual(packageable_arg.executor_spec, executor.Spec())
 
     expected_job = xm.Job(
         executable=mock_executable,
         executor=executor,
         args=tensorboard.TensorboardProvider.get_tensorboard_job_args(
-            logdir, additional_args=args),
-        name='tensorboard')
+            logdir, additional_args=args
+        ),
+        name='tensorboard',
+    )
     mock_experiment.add.assert_called_once()
     auxiliary_job_arg = mock_experiment.add.call_args[0][0]
     self.assertIsInstance(auxiliary_job_arg, xm.AuxiliaryUnitJob)
@@ -101,7 +107,8 @@ class TensorboardTest(parameterized.TestCase):
     provider = tensorboard.TensorboardProvider
 
     packageable = provider.get_tensorboard_packageable(
-        timeout_secs=timeout_secs)
+        timeout_secs=timeout_secs
+    )
 
     self.assertIsInstance(packageable, xm.PythonContainer)
     self.assertEqual(packageable.base_image, 'tensorflow/tensorflow')
@@ -109,13 +116,11 @@ class TensorboardTest(parameterized.TestCase):
   @parameterized.product(
       log_dir=['logs'],
       port=[None, 6006, 2002],
-      additional_args=[{}, None, {
-          'logdir': 'logs_v2'
-      }, {
-          'new': 0
-      }])
-  def test_get_tensorboard_job_args(self, log_dir: str, port: int,
-                                    additional_args: Mapping[str, Any]):
+      additional_args=[{}, None, {'logdir': 'logs_v2'}, {'new': 0}],
+  )
+  def test_get_tensorboard_job_args(
+      self, log_dir: str, port: int, additional_args: Mapping[str, Any]
+  ):
     provider = tensorboard.TensorboardProvider
 
     args = provider.get_tensorboard_job_args(log_dir, port, additional_args)
@@ -124,7 +129,11 @@ class TensorboardTest(parameterized.TestCase):
             {
                 'logdir': log_dir,
                 'port': port or provider.DEFAULT_TENSORBOARD_PORT,
-            }, **(additional_args if additional_args else {})), args)
+            },
+            **(additional_args if additional_args else {}),
+        ),
+        args,
+    )
 
 
 if __name__ == '__main__':

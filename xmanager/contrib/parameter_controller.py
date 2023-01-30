@@ -40,7 +40,8 @@ from xmanager import xm_local
 
 
 def _parameter_controller_job_args(
-    controller_args: Dict[str, Any]) -> Dict[str, Any]:
+    controller_args: Dict[str, Any]
+) -> Dict[str, Any]:
   """Converts given XM flags to coresponding Launchpad's `process_entry` flags.
 
   The XM client runs inside `process_entry`, but flags are not defined yet.
@@ -56,18 +57,19 @@ def _parameter_controller_job_args(
   """
   args = {
       'lp_task_id': 0,
-      'flags_to_populate': xm.ShellSafeArg(json.dumps(controller_args))
+      'flags_to_populate': xm.ShellSafeArg(json.dumps(controller_args)),
   }
 
   return args
 
 
-def _to_python_container(node: lp.PyNode, label: str,
-                         docker_config: lp.DockerConfig) -> xm.PythonContainer:
+def _to_python_container(
+    node: lp.PyNode, label: str, docker_config: lp.DockerConfig
+) -> xm.PythonContainer:
   """Returns xm.PythonContainer embedding a lp.PyNode."""
-  return lp_docker.to_docker_executables([node],
-                                         label=label,
-                                         docker_config=docker_config)[0][0]
+  return lp_docker.to_docker_executables(
+      [node], label=label, docker_config=docker_config
+  )[0][0]
 
 
 def _use_host_db_config(
@@ -92,12 +94,15 @@ def _use_host_db_config(
   """
 
   if 'xm_db_yaml_config_path' in controller_args:
-    raise RuntimeError('Parameter controller can\'t use host DB config '
-                       'and also use `--xm_db_yaml_config_path` flag. Use '
-                       '`use_host_db_config=False` or remove the flag.')
+    raise RuntimeError(
+        "Parameter controller can't use host DB config "
+        'and also use `--xm_db_yaml_config_path` flag. Use '
+        '`use_host_db_config=False` or remove the flag.'
+    )
 
   config_path = xm.utils.resolve_path_relative_to_launcher(
-      flags.FLAGS.xm_db_yaml_config_path)
+      flags.FLAGS.xm_db_yaml_config_path
+  )
 
   if not os.path.isfile(os.path.join(package_path, config_path)):
     shutil.copy(config_path, package_path)
@@ -126,22 +131,27 @@ async def _launch_remote_controller(
   docker_config = lp.DockerConfig(package_path, docker_requirements)
 
   executable_spec = _to_python_container(
-      node, f'{aux_unit.experiment_unit_name}_{function_label}', docker_config)
+      node, f'{aux_unit.experiment_unit_name}_{function_label}', docker_config
+  )
 
   [executable] = await asyncio.get_running_loop().run_in_executor(
-      None, aux_unit.experiment.package, [
+      None,
+      aux_unit.experiment.package,
+      [
           xm.Packageable(
               executable_spec=executable_spec,
               executor_spec=executor.Spec(),
           )
-      ])
+      ],
+  )
 
   controller_job = xm.Job(
       name=controller_name,
       executable=executable,
       executor=executor,
       args=_parameter_controller_job_args(controller_args) or {},
-      env_vars=controller_env_vars or {})
+      env_vars=controller_env_vars or {},
+  )
 
   aux_unit.add(controller_job)
 
@@ -161,8 +171,9 @@ def _populate_flags(controller_args: Dict[str, Any]) -> None:
     flags.FLAGS[name].value = value
 
 
-async def _controller_body(experiment_id, f, controller_args, *args,
-                           **kwargs) -> None:
+async def _controller_body(
+    experiment_id, f, controller_args, *args, **kwargs
+) -> None:
   _populate_flags(controller_args)
 
   async with xm_local.get_experiment(experiment_id) as experiment:
@@ -204,9 +215,7 @@ def controller(
   """
 
   def wrap(f: Callable[..., None]) -> Callable[..., xm.JobGeneratorType]:
-
     def make_controller(*args, **kwargs) -> xm.JobType:
-
       async def job_generator(aux_unit: xm.ExperimentUnit) -> None:
         experiment_id = aux_unit.experiment.experiment_id
 
@@ -214,8 +223,13 @@ def controller(
             _launch_remote_controller(
                 aux_unit,
                 lp.PyNode(
-                    xm.run_in_asyncio_loop(_controller_body), experiment_id, f,
-                    controller_args, *args, **kwargs),
+                    xm.run_in_asyncio_loop(_controller_body),
+                    experiment_id,
+                    f,
+                    controller_args,
+                    *args,
+                    **kwargs,
+                ),
                 function_label=f.__name__,
                 executor=executor,
                 controller_name=controller_name,
@@ -223,7 +237,8 @@ def controller(
                 controller_env_vars=controller_env_vars,
                 package_path=package_path,
                 use_host_db_config=use_host_db_config,
-            ))
+            )
+        )
 
         await remote_controller
 
@@ -231,7 +246,8 @@ def controller(
           job_generator,
           importance=xm.Importance.HIGH,
           # TODO: Add support for `termination_delay_secs`.
-          termination_delay_secs=0)
+          termination_delay_secs=0,
+      )
 
     return make_controller
 

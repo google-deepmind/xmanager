@@ -29,8 +29,13 @@ from absl import app
 from absl import flags
 
 _GCS_PATH = flags.DEFINE_string(
-    'xm_gcs_path', None, 'A GCS directory within a bucket to store output '
-    '(in gs://bucket/directory format).')
+    'xm_gcs_path',
+    None,
+    (
+        'A GCS directory within a bucket to store output '
+        '(in gs://bucket/directory format).'
+    ),
+)
 
 _GS_PREFIX = 'gs://'
 _GCS_PREFIX = '/gcs/'
@@ -42,8 +47,11 @@ _default_bucket_name = '<Your bucket>'
 def suggestion(project_name: str) -> str:
   """Returns a suggested GCS dir name for the given @project_name."""
   return os.path.join(
-      _GS_PREFIX, _default_bucket_name, getpass.getuser(),
-      project_name + '-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
+      _GS_PREFIX,
+      _default_bucket_name,
+      getpass.getuser(),
+      project_name + '-' + datetime.datetime.now().strftime('%Y%m%d-%H%M%S'),
+  )
 
 
 def get_gcs_path_or_fail(project_name: str) -> str:
@@ -57,12 +65,15 @@ def get_gcs_path_or_fail(project_name: str) -> str:
     error. Otherwise, returns a flag value.
   """
   if not _GCS_PATH.value:
-    raise app.UsageError('--xm_gcs_path is missing. Suggestion: ' +
-                         f'--xm_gcs_path={suggestion(project_name)}')
+    raise app.UsageError(
+        '--xm_gcs_path is missing. Suggestion: '
+        + f'--xm_gcs_path={suggestion(project_name)}'
+    )
   elif not is_gcs_path(_GCS_PATH.value):
     raise app.UsageError(
-        '--xm_gcs_path not in gs://bucket/directory or /gcs/path format. ' +
-        f'Suggestion: --xm_gcs_path={suggestion(project_name)}')
+        '--xm_gcs_path not in gs://bucket/directory or /gcs/path format. '
+        + f'Suggestion: --xm_gcs_path={suggestion(project_name)}'
+    )
   return str(_GCS_PATH.value)
 
 
@@ -112,11 +123,12 @@ def _gcs_path_no_prefix(path: str) -> str:
     Path without 'gs://' prefix.
   """
   if is_gs_path(path):
-    return path[len(_GS_PREFIX):]
+    return path[len(_GS_PREFIX) :]
   if is_gcs_fuse_path(path):
-    return path[len(_GCS_PREFIX):]
+    return path[len(_GCS_PREFIX) :]
   raise ValueError(
-      f'Path not in gs://bucket/directory or /gcs/path format: {path}')
+      f'Path not in gs://bucket/directory or /gcs/path format: {path}'
+  )
 
 
 # Exposed for testing.

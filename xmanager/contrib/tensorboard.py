@@ -20,6 +20,7 @@ from xmanager import xm
 
 class TensorboardProvider:
   """A class to generate package and job/args to Tensorboard jobs."""
+
   DEFAULT_TENSORBOARD_PORT = 6006
 
   @staticmethod
@@ -42,7 +43,8 @@ class TensorboardProvider:
 
     return xm.PythonContainer(
         base_image='tensorflow/tensorflow',
-        entrypoint=xm.CommandList([f'timeout {timeout_secs}s tensorboard']))
+        entrypoint=xm.CommandList([f'timeout {timeout_secs}s tensorboard']),
+    )
 
   @staticmethod
   def get_tensorboard_job_args(
@@ -62,7 +64,7 @@ class TensorboardProvider:
         # `additional_args` param.
         #
         # https://github.com/tensorflow/tensorboard/issues/4784#issuecomment-868945650
-        'load_fast': 'false'
+        'load_fast': 'false',
     }
     if additional_args:
       args.update(additional_args)
@@ -79,17 +81,21 @@ def add_tensorboard(
 ) -> None:
   """Self-contained function which adds a Tensorboard auxiliary job to @experiment."""
   provider = TensorboardProvider
-  [executable] = experiment.package([
-      xm.Packageable(
-          provider.get_tensorboard_packageable(timeout_secs=timeout_secs),
-          executor.Spec())
-  ])
+  [executable] = experiment.package(
+      [
+          xm.Packageable(
+              provider.get_tensorboard_packageable(timeout_secs=timeout_secs),
+              executor.Spec(),
+          )
+      ]
+  )
 
   job = xm.Job(
       executable,
       executor,
       args=provider.get_tensorboard_job_args(logdir, additional_args=args),
-      name='tensorboard')
+      name='tensorboard',
+  )
 
   # TODO: Add support for `termination_delay_secs`.
   experiment.add(xm.AuxiliaryUnitJob(job, termination_delay_secs=0))

@@ -35,6 +35,7 @@ from xmanager import xm
 
 class MLFramework(enum.Enum):
   """ML Framework used in the experiment code."""
+
   UNKNOWN = 0
   JAX = 1
   PYTORCH = 2
@@ -47,7 +48,7 @@ FrameworkSpec = Union[str, MLFramework]
 
 def _get_framework(framework: str) -> MLFramework:
   """Given a framework name in a loose form, returns the most suitable enum."""
-  if (framework == 'jax' or framework == 'flax'):
+  if framework == 'jax' or framework == 'flax':
     return MLFramework.JAX
   if 'torch' in framework:
     return MLFramework.PYTORCH
@@ -59,8 +60,9 @@ def _get_framework(framework: str) -> MLFramework:
   return MLFramework.UNKNOWN
 
 
-def base_image(framework: FrameworkSpec,
-               accelerator: Optional[xm.ResourceType]) -> str:
+def base_image(
+    framework: FrameworkSpec, accelerator: Optional[xm.ResourceType]
+) -> str:
   """Returns a base image recommendation depending on the input.
 
   Please note that the recommendations can change as we are trying to recommend

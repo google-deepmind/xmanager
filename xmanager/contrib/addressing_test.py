@@ -25,11 +25,13 @@ class AddressingTest(absltest.TestCase):
         experiment_id=123,
         work_unit_id=4,
         service='best_service',
-        namespace='best_namespace')
+        namespace='best_namespace',
+    )
 
     self.assertEqual(
         address,
-        '123-4-cifar10.best_service.best_namespace.svc.cluster.local:2222')
+        '123-4-cifar10.best_service.best_namespace.svc.cluster.local:2222',
+    )
 
 
 if __name__ == '__main__':

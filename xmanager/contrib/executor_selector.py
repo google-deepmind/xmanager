@@ -57,6 +57,7 @@ from xmanager import xm_local
 
 class XMLaunchMode(enum.Enum):
   """Specifies an executor to run an experiment."""
+
   VERTEX = 'vertex'
   LOCAL = 'local'
   INTERACTIVE = 'interactive'
@@ -66,9 +67,11 @@ _XM_LAUNCH_MODE = flags.DEFINE_enum_class(
     'xm_launch_mode',
     XMLaunchMode.VERTEX,
     XMLaunchMode,
-    'How to launch the experiment. Supports local and interactive execution, ' +
-    'launch on ' +
-    'Vertex.')
+    'How to launch the experiment. Supports local and interactive execution, '
+    + 'launch on '
+    +
+    'Vertex.',
+)
 
 
 def launch_mode() -> XMLaunchMode:
@@ -77,7 +80,8 @@ def launch_mode() -> XMLaunchMode:
 
 def create_experiment(
     experiment_title: Optional[str] = None,
-    mode: Optional[XMLaunchMode] = None) -> xm.Experiment:
+    mode: Optional[XMLaunchMode] = None,
+) -> xm.Experiment:
   """Creates an experiment depending on the launch mode.
 
   Args:
@@ -94,8 +98,11 @@ def create_experiment(
   if mode is None:
     mode = launch_mode()
 
-  if mode in (XMLaunchMode.LOCAL, XMLaunchMode.INTERACTIVE,
-              XMLaunchMode.VERTEX):
+  if mode in (
+      XMLaunchMode.LOCAL,
+      XMLaunchMode.INTERACTIVE,
+      XMLaunchMode.VERTEX,
+  ):
     # TODO: add import here?
     return xm_local.create_experiment(experiment_title)
   raise ValueError(f'Unknown launch mode: {mode}')
@@ -109,7 +116,8 @@ def _local_executor(interactive: bool) -> Callable[..., xm.Executor]:
     # Copy supported arguments.
     if 'experimental_stream_output' in kwargs_in:
       kwargs['experimental_stream_output'] = kwargs_in[
-          'experimental_stream_output']
+          'experimental_stream_output'
+      ]
     # Set the specified value of `interactive`.
     docker_options = kwargs_in.get('docker_options', xm_local.DockerOptions())
     setattr(docker_options, 'interactive', interactive)
@@ -120,7 +128,8 @@ def _local_executor(interactive: bool) -> Callable[..., xm.Executor]:
 
 
 def get_executor(
-    mode: Optional[XMLaunchMode] = None) -> Callable[..., xm.Executor]:
+    mode: Optional[XMLaunchMode] = None,
+) -> Callable[..., xm.Executor]:
   """Select an `xm.Executor` specialization depending on the launch mode.
 
   Args:
@@ -138,6 +147,6 @@ def get_executor(
 
   if mode == XMLaunchMode.VERTEX:
     return xm_local.Caip
-  if (mode == XMLaunchMode.LOCAL or mode == XMLaunchMode.INTERACTIVE):
+  if mode == XMLaunchMode.LOCAL or mode == XMLaunchMode.INTERACTIVE:
     return _local_executor(mode == XMLaunchMode.INTERACTIVE)
   raise ValueError(f'Unknown launch mode: {mode}')

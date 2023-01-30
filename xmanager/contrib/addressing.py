@@ -18,11 +18,13 @@ known. Addressing should not involve tokens or late-bindings.
 """
 
 
-def k8s_pod_domain(job_name: str,
-                   experiment_id: int,
-                   work_unit_id: int,
-                   service: str = 'experiments',
-                   namespace: str = 'default') -> str:
+def k8s_pod_domain(
+    job_name: str,
+    experiment_id: int,
+    work_unit_id: int,
+    service: str = 'experiments',
+    namespace: str = 'default',
+) -> str:
   """Returns the Kubernetes pod address of a job.
 
   Args:
@@ -32,5 +34,7 @@ def k8s_pod_domain(job_name: str,
     service: Name of the service for the job. Defaults to 'experiments'
     namespace: Namespace of the job. Defaults to 'default'
   """
-  return (f'{experiment_id}-{work_unit_id}-{job_name}'
-          f'.{service}.{namespace}.svc.cluster.local:2222')
+  return (
+      f'{experiment_id}-{work_unit_id}-{job_name}'
+      f'.{service}.{namespace}.svc.cluster.local:2222'
+  )

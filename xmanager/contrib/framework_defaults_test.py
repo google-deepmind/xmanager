@@ -24,25 +24,31 @@ class FrameworkDefaultsTest(parameterized.TestCase):
 
   def test_known_frameworks(self):
     self.assertEqual(
-        framework_defaults._get_framework('torch'), MLFramework.PYTORCH)
+        framework_defaults._get_framework('torch'), MLFramework.PYTORCH
+    )
     self.assertEqual(
-        framework_defaults._get_framework('pytorch'), MLFramework.PYTORCH)
+        framework_defaults._get_framework('pytorch'), MLFramework.PYTORCH
+    )
     self.assertEqual(framework_defaults._get_framework('tf'), MLFramework.TF2)
     self.assertEqual(framework_defaults._get_framework('tf1'), MLFramework.TF1)
     self.assertEqual(framework_defaults._get_framework('tf2'), MLFramework.TF2)
     self.assertEqual(
-        framework_defaults._get_framework('tensorflow 2.x'), MLFramework.TF2)
+        framework_defaults._get_framework('tensorflow 2.x'), MLFramework.TF2
+    )
     self.assertEqual(framework_defaults._get_framework('jax'), MLFramework.JAX)
     self.assertEqual(framework_defaults._get_framework('flax'), MLFramework.JAX)
 
   def test_unknown_frameworks(self):
     self.assertEqual(
-        framework_defaults._get_framework('huggingface'), MLFramework.UNKNOWN)
+        framework_defaults._get_framework('huggingface'), MLFramework.UNKNOWN
+    )
     self.assertEqual(
-        framework_defaults._get_framework('objax'), MLFramework.UNKNOWN)
+        framework_defaults._get_framework('objax'), MLFramework.UNKNOWN
+    )
     self.assertEqual(
         framework_defaults._get_framework('not a framework name'),
-        MLFramework.UNKNOWN)
+        MLFramework.UNKNOWN,
+    )
 
   @parameterized.named_parameters(
       ('cpu', None),
