@@ -147,7 +147,8 @@ def _enum_subset(class_name: str, values: Iterable[ResourceType]) -> type:  # py
       result = ResourceType[item]
       if result not in cls:  # pylint: disable=unsupported-membership-test
         raise AttributeError(
-            f"type object '{cls.__name__}' has no attribute '{item}'")
+            f"type object '{cls.__name__}' has no attribute '{item}'"
+        )
       return result
 
     def __iter__(cls) -> Iterator[ResourceType]:
@@ -248,7 +249,8 @@ class ResourceDict(MutableMapping):
     # TODO: We do not aggregate memory yet, update this method to be more
     # user-friendly.
     return ', '.join(
-        sorted([f'{key}: {value}' for (key, value) in self.items()]))
+        sorted([f'{key}: {value}' for (key, value) in self.items()])
+    )
 
   def __add__(self: 'ResourceDict', rhs: 'ResourceDict') -> 'ResourceDict':
     """Returns a sum of two ResourceDicts."""
@@ -320,8 +322,8 @@ ResourceQuantity = Union[int, float, str, Topology]
 
 
 def _parse_resource_quantity(
-    resource_name: str,
-    value: ResourceQuantity) -> Tuple[float, Optional[Topology]]:
+    resource_name: str, value: ResourceQuantity
+) -> Tuple[float, Optional[Topology]]:
   """Parses a string representation of a resource quantity."""
 
   def parse_string(value: str):
@@ -341,11 +343,14 @@ def _parse_resource_quantity(
   try:
     return pm.match(parse_string, parse_topology, parse_number)(value)
   except Exception as e:
-    raise ValueError(f"Couldn't parse resource quantity for {resource_name}. "
-                     f'{value!r} was given.') from e
+    raise ValueError(
+        f"Couldn't parse resource quantity for {resource_name}. "
+        f'{value!r} was given.'
+    ) from e
 
 
 class JobRequirements:
+  # pyformat: disable
   """Describes the resource requirements of a Job.
 
   Attributes:
@@ -355,11 +360,12 @@ class JobRequirements:
       multiple accelerators are not supported because different kinds of
       accelerators are usually not installed on the same host.
     topology: Accelerator topology, if an accelerator is used.
-    location: Place where the job should run. For example a cluster name or
-      a Borg cell.
+    location: Place where the job should run. For example a cluster name or a
+      Borg cell.
     service_tier: A service tier at which the job should run.
     replicas: Number of identical tasks to run within a job
   """
+  # pyformat:enable
 
   task_requirements: ResourceDict
   accelerator: Optional[ResourceType]
@@ -370,18 +376,21 @@ class JobRequirements:
 
   def __init__(
       self,
-      resources: Mapping[Union[ResourceType, str],
-                         ResourceQuantity] = immutabledict.immutabledict(),
+      resources: Mapping[
+          Union[ResourceType, str], ResourceQuantity
+      ] = immutabledict.immutabledict(),
       *,
       location: Optional[str] = None,
       replicas: Optional[int] = None,
       service_tier: Optional[ServiceTier] = None,
-      **kw_resources: ResourceQuantity) -> None:
+      **kw_resources: ResourceQuantity,
+  ) -> None:
+    # pyformat: disable
     """Define a set of resources.
 
     Args:
-      resources: resource amounts as a dictionary,
-        for example {xm.ResourceType.V100: 2}.
+      resources: resource amounts as a dictionary, for example
+        {xm.ResourceType.V100: 2}.
       location: Place where the job should run. For example a cluster name or a
         Borg cell.
       replicas: Number of identical tasks to run within a job. 1 by default.
@@ -397,6 +406,7 @@ class JobRequirements:
           a command line argument.
         If topology is supplied for a non accelerator resource.
     """
+    # pyformat: enable
     self.location = location
     self._service_tier = service_tier or ServiceTier.PROD
 
@@ -404,13 +414,14 @@ class JobRequirements:
     self.accelerator = None
     self.topology = None
 
-    for resource_name, value in itertools.chain(resources.items(),
-                                                kw_resources.items()):
+    for resource_name, value in itertools.chain(
+        resources.items(), kw_resources.items()
+    ):
       scalar, topology = _parse_resource_quantity(resource_name, value)
       resource = pm.match(
           pm.Case([str], lambda r: ResourceType[r]),
-          pm.Case([ResourceType], lambda r: r))(
-              resource_name)
+          pm.Case([ResourceType], lambda r: r),
+      )(resource_name)
 
       if resource in _AcceleratorType:
         if self.accelerator is not None:
@@ -419,19 +430,24 @@ class JobRequirements:
         self.topology = topology or Topology(f'{scalar:g}')
       elif topology is not None:
         raise ValueError(
-            f'A topology specified for non accelerator resource {resource}.')
+            f'A topology specified for non accelerator resource {resource}.'
+        )
 
       if resource in self.task_requirements:
         raise ValueError(f'{resource} has been specified twice.')
       self.task_requirements[resource] = scalar
 
-    if (self.accelerator in GpuType and self.topology and
-        len(self.topology.dimensions) == 2):
+    if (
+        self.accelerator in GpuType
+        and self.topology
+        and len(self.topology.dimensions) == 2
+    ):
       if replicas is not None and replicas != self.topology.dimensions[1]:
         raise ValueError(
             f'For multihost GPUs with topology {self.topology}, replicas should'
             f'be either None or {self.topology.dimensions[1]}. Found: '
-            f'{replicas}')
+            f'{replicas}'
+        )
       replicas = self.topology.dimensions[1]
 
     self.replicas = replicas or 1
@@ -449,7 +465,8 @@ class JobRequirements:
     """Raises ValueError if replication is not supported."""
     if self.replicas > 1 and self.accelerator in TpuType:
       raise ValueError(
-          f'Replicated jobs are not supported for {self.accelerator}.')
+          f'Replicated jobs are not supported for {self.accelerator}.'
+      )
 
   def __repr__(self) -> str:
     """Returns string representation of the requirements."""

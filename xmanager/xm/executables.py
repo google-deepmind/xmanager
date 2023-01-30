@@ -30,11 +30,13 @@ def name_from_path(path: str) -> str:
 
 class ModuleName(NamedTuple):
   """Name of python module to execute when entering this project."""
+
   module_name: str
 
 
 class CommandList(NamedTuple):
   """List of commands to execute when entering this project."""
+
   commands: List[str]
 
 
@@ -54,13 +56,15 @@ class Dockerfile(job_blocks.ExecutableSpec):
   """
 
   path: str = attr.ib(
-      converter=utils.resolve_path_relative_to_launcher, default='.')
+      converter=utils.resolve_path_relative_to_launcher, default='.'
+  )
   dockerfile: str = attr.ib(
       # This field is always set once the object is initialized, so we use str
       # as type annotation. But the default value depends on another property
       # and is set in __attrs_post_init__, so we temporary convert None to ''.
       converter=lambda dockerfile: dockerfile or '',
-      default=None)
+      default=None,
+  )
 
   def __attrs_post_init__(self):
     if not self.dockerfile:
@@ -118,7 +122,8 @@ class PythonContainer(job_blocks.ExecutableSpec):
 
   entrypoint: Union[ModuleName, CommandList]
   path: str = attr.ib(
-      converter=utils.resolve_path_relative_to_launcher, default='.')
+      converter=utils.resolve_path_relative_to_launcher, default='.'
+  )
   base_image: Optional[str] = None
   docker_instructions: Optional[List[str]] = None
   use_deep_module: bool = False
@@ -167,7 +172,8 @@ class Binary(job_blocks.ExecutableSpec):
 
   path: str
   dependencies: List[BinaryDependency] = attr.ib(
-      converter=list, default=attr.Factory(list))
+      converter=list, default=attr.Factory(list)
+  )
 
   @property
   def name(self) -> str:
@@ -196,6 +202,7 @@ class BazelContainer(job_blocks.ExecutableSpec):
 
 @attr.s(auto_attribs=True)
 class BazelBinary(job_blocks.ExecutableSpec):
+  # pyformat: disable
   """A Bazel target that produces a self-contained binary.
 
   Note that for Python targets based on https://github.com/google/subpar
@@ -203,14 +210,16 @@ class BazelBinary(job_blocks.ExecutableSpec):
 
   Attributes:
     label: The Bazel target to be built.
-    dependencies: A list of data dependencies to be packaged together with
-      the binary.
+    dependencies: A list of data dependencies to be packaged together with the
+      binary.
     bazel_args: Bazel command line arguments.
   """
+  # pyformat: enable
 
   label: str
   dependencies: List[BinaryDependency] = attr.ib(
-      converter=list, default=attr.Factory(list))
+      converter=list, default=attr.Factory(list)
+  )
   bazel_args: List[str] = attr.ib(converter=list, default=attr.Factory(list))
 
   @property
