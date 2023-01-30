@@ -35,8 +35,10 @@ _ENABLE_MULTI_ARG_FLAGS = absl_flags.DEFINE_bool(
 
 @functools.cache
 def print_none_warning(key: str) -> None:
-  print(f'WARNING: Setting `{key}=None` will exclude the flag. To pass the '
-        f'actual value, pass the string literal `{key}="None"` instead')
+  print(
+      f'WARNING: Setting `{key}=None` will exclude the flag. To pass the '
+      f'actual value, pass the string literal `{key}="None"` instead'
+  )
 
 
 class SequentialArgs:
@@ -82,8 +84,9 @@ class SequentialArgs:
 
     Prefer using xm.merge_args to construct SequentialArgs objects.
     """
-    self._items: List[Union[SequentialArgs._RegularItem,
-                            SequentialArgs._KeywordItem]] = []
+    self._items: List[
+        Union[SequentialArgs._RegularItem, SequentialArgs._KeywordItem]
+    ] = []
     self._kwvalues: Dict[str, Any] = {}
 
   def _ingest_regular_item(self, value: Any) -> None:
@@ -120,7 +123,8 @@ class SequentialArgs:
     def check_for_string(args: str) -> None:
       raise ValueError(
           f'Tried to construct xm.SequentialArgs from a string: {args!r}. '
-          f'Wrap it in a list: [{args!r}] to make it a single argument.')
+          f'Wrap it in a list: [{args!r}] to make it a single argument.'
+      )
 
     def import_sequential_args(args: SequentialArgs) -> None:
       result._merge_from(args)  # pylint: disable=protected-access
@@ -133,8 +137,12 @@ class SequentialArgs:
       for value in collection:
         result._ingest_regular_item(value)  # pylint: disable=protected-access
 
-    matcher = pattern_matching.match(check_for_string, import_sequential_args,
-                                     import_mapping, import_sequence)
+    matcher = pattern_matching.match(
+        check_for_string,
+        import_sequential_args,
+        import_mapping,
+        import_sequence,
+    )
     matcher(collection)
     return result
 
@@ -166,16 +174,18 @@ class SequentialArgs:
   def to_list(
       self,
       escaper: Callable[[Any], str] = utils.ARG_ESCAPER,
-      kwargs_joiner: Callable[[str, str], str] = utils.trivial_kwargs_joiner
+      kwargs_joiner: Callable[[str, str], str] = utils.trivial_kwargs_joiner,
   ) -> List[str]:
     """Exports items as a list ready to be passed into the command line."""
 
     def export_regular_item(
-        item: SequentialArgs._RegularItem) -> List[Optional[str]]:
+        item: SequentialArgs._RegularItem,
+    ) -> List[Optional[str]]:
       return [escaper(item.value)]
 
     def export_keyword_item(
-        item: SequentialArgs._KeywordItem) -> List[Optional[str]]:
+        item: SequentialArgs._KeywordItem,
+    ) -> List[Optional[str]]:
       value = self._kwvalues[item.name]
       if value is None:
         # We skip flags with None value, allowing the binary to use defaults.
@@ -193,15 +203,16 @@ class SequentialArgs:
           ]
         else:
           print(
-              '*****BREAKAGE WARNING: Passing `args=dict(flag=[v0, v1])` '
-              'will change behavior on 2023/01/15 to pass args as '
-              '`--flag=v0 --flag=v1` instead of `--flag=[v0, v1]` as '
-              'currently. To keep the old behavior, simply wrap your list in '
-              '`str`: `args=dict(flag=str([v0, v1,...]))`.\n'
-              'The new behavior is more consistent:\n'
-              ' `flags.DEFINE_multi_xyz`: `args=dict(x=[v0, v1])` match `FLAGS.x == [v0, v1]`.\n'
-              ' `flags.DEFINE_string`: `args=dict(x=\'[v0, v1]\')` match `FLAGS.x == \'[v0, v1]\'`.\n'
-              f'*** Impacted args: --{item.name}={str(value):.20} ***')
+              '*****BREAKAGE WARNING: Passing `args=dict(flag=[v0, v1])` will'
+              ' change behavior on 2023/01/15 to pass args as `--flag=v0'
+              ' --flag=v1` instead of `--flag=[v0, v1]` as currently. To keep'
+              ' the old behavior, simply wrap your list in `str`:'
+              ' `args=dict(flag=str([v0, v1,...]))`.\nThe new behavior is more'
+              ' consistent:\n `flags.DEFINE_multi_xyz`: `args=dict(x=[v0,'
+              ' v1])` match `FLAGS.x == [v0, v1]`.\n `flags.DEFINE_string`:'
+              " `args=dict(x='[v0, v1]')` match `FLAGS.x == '[v0, v1]'`.\n***"
+              f' Impacted args: --{item.name}={str(value):.20} ***'
+          )
           return [kwargs_joiner(escaper(f'--{item.name}'), escaper(value))]
       else:
         return [kwargs_joiner(escaper(f'--{item.name}'), escaper(value))]
@@ -226,11 +237,13 @@ class SequentialArgs:
       return self._kwvalues
 
     def export_regular_item(
-        item: SequentialArgs._RegularItem) -> Tuple[str, Any]:
+        item: SequentialArgs._RegularItem,
+    ) -> Tuple[str, Any]:
       return (str(item.value), True)
 
     def export_keyword_item(
-        item: SequentialArgs._KeywordItem) -> Tuple[str, Any]:
+        item: SequentialArgs._KeywordItem,
+    ) -> Tuple[str, Any]:
       return (item.name, self._kwvalues[item.name])
 
     matcher = pattern_matching.match(
@@ -321,14 +334,17 @@ class Executor(abc.ABC):
     raise NotImplementedError
 
 
-def _validate_env_vars(self: Any, attribute: Any, env_vars: Dict[str,
-                                                                 str]) -> None:
+def _validate_env_vars(
+    self: Any, attribute: Any, env_vars: Dict[str, str]
+) -> None:
   del self  # Unused.
   del attribute  # Unused.
   for key in env_vars.keys():
     if not re.fullmatch('[a-zA-Z_][a-zA-Z0-9_]*', key):
-      raise ValueError('Environment variables names must conform to '
-                       f'[a-zA-Z_][a-zA-Z0-9_]*. Got {key!r}.')
+      raise ValueError(
+          'Environment variables names must conform to '
+          f'[a-zA-Z_][a-zA-Z0-9_]*. Got {key!r}.'
+      )
 
 
 @attr.s(auto_attribs=True)
@@ -338,9 +354,11 @@ class Packageable:
   executable_spec: ExecutableSpec
   executor_spec: ExecutorSpec
   args: SequentialArgs = attr.ib(
-      factory=list, converter=SequentialArgs.from_collection)  # pytype: disable=annotation-type-mismatch
+      factory=list, converter=SequentialArgs.from_collection
+  )  # pytype: disable=annotation-type-mismatch
   env_vars: Dict[str, str] = attr.ib(
-      converter=dict, default=attr.Factory(dict), validator=_validate_env_vars)
+      converter=dict, default=attr.Factory(dict), validator=_validate_env_vars
+  )
 
 
 class Constraint(abc.ABC):
@@ -383,9 +401,11 @@ class Job:
   executor: Executor
   name: Optional[str] = None
   args: SequentialArgs = attr.ib(
-      factory=list, converter=SequentialArgs.from_collection)  # pytype: disable=annotation-type-mismatch
+      factory=list, converter=SequentialArgs.from_collection
+  )  # pytype: disable=annotation-type-mismatch
   env_vars: Dict[str, str] = attr.ib(
-      converter=dict, default=attr.Factory(dict), validator=_validate_env_vars)
+      converter=dict, default=attr.Factory(dict), validator=_validate_env_vars
+  )
 
 
 class JobGroup:
@@ -435,10 +455,12 @@ class JobGroup:
   jobs: Dict[str, JobType]
   constraints: List[Constraint]
 
-  def __init__(self,
-               *,
-               constraints: Optional[Sequence[Constraint]] = None,
-               **jobs: JobType) -> None:
+  def __init__(
+      self,
+      *,
+      constraints: Optional[Sequence[Constraint]] = None,
+      **jobs: JobType,
+  ) -> None:
     """Builds a JobGroup.
 
     Args:
