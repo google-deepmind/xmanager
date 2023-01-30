@@ -26,8 +26,10 @@ from docker.models import containers
 from docker.utils import utils
 
 _USE_SUBPROCESS = flags.DEFINE_bool(
-    'xm_subprocess_docker_impl', False,
-    'Launch docker using `subprocess` command.')
+    'xm_subprocess_docker_impl',
+    False,
+    'Launch docker using `subprocess` command.',
+)
 
 Ports = Dict[Union[int, str], Union[None, int, Tuple[str, int], List[int]]]
 
@@ -95,12 +97,20 @@ class DockerAdapter(object):
   ) -> Optional[containers.Container]:
     """Runs a given container image."""
     if _USE_SUBPROCESS.value or interactive:
-      return self.run_container_subprocess(image_id, args, env_vars, network,
-                                           ports, volumes, gpu_count,
-                                           interactive)
+      return self.run_container_subprocess(
+          image_id,
+          args,
+          env_vars,
+          network,
+          ports,
+          volumes,
+          gpu_count,
+          interactive,
+      )
     else:
-      return self.run_container_client(name, image_id, args, env_vars, network,
-                                       ports, volumes, gpu_count)
+      return self.run_container_client(
+          name, image_id, args, env_vars, network, ports, volumes, gpu_count
+      )
 
   def run_container_client(
       self,
@@ -172,5 +182,9 @@ class DockerAdapter(object):
       self._client.containers.get(container_id).stop()
     except docker.errors.NotFound:
       logging.warning(
-          'Container %s could not be stopped as it was not found '
-          '(it may already have been stopped)', container_id)
+          (
+              'Container %s could not be stopped as it was not found '
+              '(it may already have been stopped)'
+          ),
+          container_id,
+      )

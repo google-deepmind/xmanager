@@ -36,15 +36,22 @@ class StudyFactory(abc.ABC):
   # display_name and num_trials_total are supposed to be set into the study
   # config, which is not supported by aip.StudySpec currently. But should be
   # settable when pyvizier.StudyConfig is available.
-  def __init__(self, study_config: aip.StudySpec, num_trials_total: int,
-               display_name: str, location: str) -> None:
+  def __init__(
+      self,
+      study_config: aip.StudySpec,
+      num_trials_total: int,
+      display_name: str,
+      location: str,
+  ) -> None:
     super().__init__()
     self.study_config = study_config
     self.num_trials_total = num_trials_total
     self.display_name = display_name
     self.vz_client = aip.VizierServiceClient(
         client_options=dict(
-            api_endpoint=f'{location}-aiplatform.googleapis.com'))
+            api_endpoint=f'{location}-aiplatform.googleapis.com'
+        )
+    )
 
   @abc.abstractmethod
   def study(self) -> str:
@@ -61,21 +68,25 @@ class NewStudy(StudyFactory):
   # soon-to-deprecate VizierExploration users.
   # `display_name` is optional for user to customize, if not set, XM will
   # set it with experiment information
-  def __init__(self,
-               study_config: aip.StudySpec,
-               num_trials_total: int = 0,
-               display_name: Optional[str] = None,
-               project: Optional[str] = None,
-               location: Optional[str] = None) -> None:
-
+  def __init__(
+      self,
+      study_config: aip.StudySpec,
+      num_trials_total: int = 0,
+      display_name: Optional[str] = None,
+      project: Optional[str] = None,
+      location: Optional[str] = None,
+  ) -> None:
     self.project = project or auth.get_project_name()
     self.location = location or _DEFAULT_LOCATION
 
-    super().__init__(study_config, num_trials_total, display_name or '',
-                     self.location)
+    super().__init__(
+        study_config, num_trials_total, display_name or '', self.location
+    )
 
   def study(self) -> str:
     return self.vz_client.create_study(
         parent=f'projects/{self.project}/locations/{self.location}',
         study=aip.Study(
-            display_name=self.display_name, study_spec=self.study_config)).name
+            display_name=self.display_name, study_spec=self.study_config
+        ),
+    ).name

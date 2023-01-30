@@ -36,8 +36,10 @@ def main(argv):
     launch_module, _ = os.path.splitext(os.path.basename(launch_script))
     m = importlib.import_module(launch_module)
     sys.path.pop(0)
-    argv = [launch_script, '--xm_launch_script={}'.format(launch_script)
-           ] + argv[3:]
+    argv = [
+        launch_script,
+        '--xm_launch_script={}'.format(launch_script),
+    ] + argv[3:]
     app.run(m.main, argv=argv)
   elif cmd == 'cluster':
     caliban_gke = importlib.import_module('caliban.platform.gke.cli')
@@ -56,7 +58,8 @@ def main(argv):
       caliban_gke._cluster_delete(args)  # pylint: disable=protected-access
     else:
       raise app.UsageError(
-          f'Subcommand `{cmd} {subcmd}` is not a supported subcommand')
+          f'Subcommand `{cmd} {subcmd}` is not a supported subcommand'
+      )
   else:
     raise app.UsageError(f'Command `{cmd}` is not a supported command')
 

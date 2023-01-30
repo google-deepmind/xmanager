@@ -51,7 +51,9 @@ setup(
         'termcolor',
     ],
     entry_points={
-        'console_scripts': ['xmanager = xmanager.cli.cli:entrypoint',],
+        'console_scripts': [
+            'xmanager = xmanager.cli.cli:entrypoint',
+        ],
     },
     # https://github.com/pypa/warehouse/blob/de4a2e5e2ec26d01bf7813da427ebc4725dccde9/warehouse/templates/packaging/detail.html#L20-L60
     project_urls={

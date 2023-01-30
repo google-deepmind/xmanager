@@ -97,9 +97,12 @@ class MockExperimentUnit(core.WorkUnit):
   async def _wait_until_complete(self) -> None:
     """Mock work unit is immediately complete."""
 
-  async def _launch_job_group(self, job_group: job_blocks.JobGroup,
-                              args: Optional[Mapping[str, Any]],
-                              identity: str) -> None:
+  async def _launch_job_group(
+      self,
+      job_group: job_blocks.JobGroup,
+      args: Optional[Mapping[str, Any]],
+      identity: str,
+  ) -> None:
     """Appends the job group to the launched_jobs list."""
     self._launched_jobs.extend(job_group.jobs.values())
     self._launched_jobs_args.append(args)
@@ -133,19 +136,30 @@ class MockExperiment(core.Experiment):
       self,
       args: Optional[Mapping[str, Any]],
       role: core.ExperimentUnitRole = core.WorkUnitRole(),
-      identity: str = '') -> Awaitable[MockExperimentUnit]:
+      identity: str = '',
+  ) -> Awaitable[MockExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
     del identity  # Unused.
     future = asyncio.Future(loop=self._event_loop)
-    experiment_unit = MockExperimentUnit(self, self._work_unit_id_predictor,
-                                         self._create_task, self.launched_jobs,
-                                         self.launched_jobs_args, args, role)
+    experiment_unit = MockExperimentUnit(
+        self,
+        self._work_unit_id_predictor,
+        self._create_task,
+        self.launched_jobs,
+        self.launched_jobs_args,
+        args,
+        role,
+    )
     pm.match(
-        pm.Case([core.WorkUnitRole],
-                lambda _: self._work_units.append(experiment_unit)),
-        pm.Case([core.AuxiliaryUnitRole],
-                lambda _: self._auxiliary_units.append(experiment_unit)))(
-                    role)
+        pm.Case(
+            [core.WorkUnitRole],
+            lambda _: self._work_units.append(experiment_unit),
+        ),
+        pm.Case(
+            [core.AuxiliaryUnitRole],
+            lambda _: self._auxiliary_units.append(experiment_unit),
+        ),
+    )(role)
 
     future.set_result(experiment_unit)
     return future
@@ -174,6 +188,7 @@ class MockExperiment(core.Experiment):
 
 class MockExecutable(job_blocks.Executable):
   """A mock version of Executable with abstract methods implemented."""
+
   counter = 0
 
   def __init__(self):

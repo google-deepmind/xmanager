@@ -24,11 +24,15 @@ from xmanager import xm
 class VizierController:
   """A Controller that runs Vizier suggested hyperparameters in multiple work units."""
 
-  def __init__(self, experiment: xm.Experiment,
-               work_unit_generator: Callable[[xm.WorkUnit, Dict[str, Any]],
-                                             Any],
-               vz_client: aip.VizierServiceClient, study_name: str,
-               num_work_units_total: int, num_parallel_work_units: int) -> None:
+  def __init__(
+      self,
+      experiment: xm.Experiment,
+      work_unit_generator: Callable[[xm.WorkUnit, Dict[str, Any]], Any],
+      vz_client: aip.VizierServiceClient,
+      study_name: str,
+      num_work_units_total: int,
+      num_parallel_work_units: int,
+  ) -> None:
     """Create a VizierController.
 
     Args:
@@ -63,8 +67,12 @@ class VizierController:
       # when such API is ready on Vizier side.
       num_exisiting_work_units = len(self._work_unit_updaters)
       num_completed_work_units = sum(
-          [wuu.completed for wuu in self._work_unit_updaters])
-      if num_exisiting_work_units == self._num_work_units_total and num_completed_work_units == self._num_work_units_total:
+          [wuu.completed for wuu in self._work_unit_updaters]
+      )
+      if (
+          num_exisiting_work_units == self._num_work_units_total
+          and num_completed_work_units == self._num_work_units_total
+      ):
         print('All done! Exiting VizierController... \n')
         return
 
@@ -77,45 +85,60 @@ class VizierController:
     """Get hyperparmeter suggestions from Vizier and assign to new work units to run."""
     # 1. Compute num of work units to create next.
     num_existing_work_units = len(self._work_unit_updaters)
-    num_running_work_units = len([
-        wuu for wuu in self._work_unit_updaters
-        if wuu.work_unit_status().is_active
-    ])
-    num_work_units_to_create_total = self._num_work_units_total - num_existing_work_units
+    num_running_work_units = len(
+        [
+            wuu
+            for wuu in self._work_unit_updaters
+            if wuu.work_unit_status().is_active
+        ]
+    )
+    num_work_units_to_create_total = (
+        self._num_work_units_total - num_existing_work_units
+    )
     num_work_units_to_create_next = min(
         self._num_parallel_work_units - num_running_work_units,
-        num_work_units_to_create_total)
+        num_work_units_to_create_total,
+    )
 
     # 2. Create the work units.
     start_index = num_existing_work_units + 1
     for i in range(start_index, start_index + num_work_units_to_create_next):
-      trial = self._vz_client.suggest_trials(
-          request=aip.SuggestTrialsRequest(
-              parent=self._study_name,
-              suggestion_count=1,
-              client_id=f'work unit {i}')).result().trials[0]
+      trial = (
+          self._vz_client.suggest_trials(
+              request=aip.SuggestTrialsRequest(
+                  parent=self._study_name,
+                  suggestion_count=1,
+                  client_id=f'work unit {i}',
+              )
+          )
+          .result()
+          .trials[0]
+      )
       print(f'Trial for work unit (index: {i}) is retrieved：\n{trial}')
 
       print(f'Creating work unit (index: {i})... \n')
 
       def create_gen(index: int, trial: aip.Trial) -> xm.JobGeneratorType:
-
         async def gen_work_unit(work_unit: xm.WorkUnit, **kwargs):
           await self._work_unit_generator(work_unit, kwargs)
 
           # TODO: Add an utility to handle logging conditionally
           # (use print when run local otherwise logging.info.)
-          print(f'Work unit (index: {index}, '
-                f'id: {work_unit.work_unit_id}) created. \n')
+          print(
+              f'Work unit (index: {index}, '
+              f'id: {work_unit.work_unit_id}) created. \n'
+          )
           self._work_unit_updaters.append(
               WorkUnitVizierUpdater(
-                  vz_client=self._vz_client, work_unit=work_unit, trial=trial))
+                  vz_client=self._vz_client, work_unit=work_unit, trial=trial
+              )
+          )
 
         return gen_work_unit
 
       args = {
           'trial_name': trial.name,
-          **{p.parameter_id: p.value for p in trial.parameters}
+          **{p.parameter_id: p.value for p in trial.parameters},
       }
       self._experiment.add(create_gen(i, trial), args)
 
@@ -123,8 +146,12 @@ class VizierController:
 class WorkUnitVizierUpdater:
   """An updater for syncing completion state between work unit and vizier trial."""
 
-  def __init__(self, vz_client: aip.VizierServiceClient, work_unit: xm.WorkUnit,
-               trial: aip.Trial) -> None:
+  def __init__(
+      self,
+      vz_client: aip.VizierServiceClient,
+      work_unit: xm.WorkUnit,
+      trial: aip.Trial,
+  ) -> None:
     self.completed = False
     self._vz_client = vz_client
     self._work_unit = work_unit
@@ -139,28 +166,37 @@ class WorkUnitVizierUpdater:
       return
 
     print(
-        f'Start completion check for work unit {self._work_unit.work_unit_id}.\n'
+        'Start completion check for work unit'
+        f' {self._work_unit.work_unit_id}.\n'
     )
 
     # TODO: Add infeasible_reason when available.
     if not self.work_unit_status().is_active:
       self._complete_trial(self._trial)
       self.completed = True
-    elif self._vz_client.check_trial_early_stopping_state(
-        request=aip.CheckTrialEarlyStoppingStateRequest(
-            trial_name=self._trial.name)).result().should_stop:
+    elif (
+        self._vz_client.check_trial_early_stopping_state(
+            request=aip.CheckTrialEarlyStoppingStateRequest(
+                trial_name=self._trial.name
+            )
+        )
+        .result()
+        .should_stop
+    ):
       print(f'Early stopping work unit {self._work_unit.work_unit_id}.\n')
       self._work_unit.stop()
     else:
       print(f'Work unit {self._work_unit.work_unit_id} is still running.\n')
 
-  def _complete_trial(self,
-                      trial: aip.Trial,
-                      infeasible_reason: Optional[str] = None) -> None:
+  def _complete_trial(
+      self, trial: aip.Trial, infeasible_reason: Optional[str] = None
+  ) -> None:
     """Complete a trial."""
     self._vz_client.complete_trial(
         request=aip.CompleteTrialRequest(
             name=trial.name,
             trial_infeasible=infeasible_reason is not None,
-            infeasible_reason=infeasible_reason))
+            infeasible_reason=infeasible_reason,
+        )
+    )
     print(f'Trial {trial.name} is completed\n')

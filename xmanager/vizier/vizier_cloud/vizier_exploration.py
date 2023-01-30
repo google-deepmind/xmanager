@@ -26,9 +26,14 @@ _DEFAULT_LOCATION = 'us-central1'
 class VizierExploration:
   """An API for launching experiment as a Vizier-based Exploration."""
 
-  def __init__(self, experiment: xm.Experiment, job: xm.JobType,
-               study_factory: sf.StudyFactory, num_trials_total: int,
-               num_parallel_trial_runs: int) -> None:
+  def __init__(
+      self,
+      experiment: xm.Experiment,
+      job: xm.JobType,
+      study_factory: sf.StudyFactory,
+      num_trials_total: int,
+      num_parallel_trial_runs: int,
+  ) -> None:
     """Create a VizierExploration.
 
     Args:
@@ -39,8 +44,9 @@ class VizierExploration:
       num_parallel_trial_runs: number of parallel runs evaluating the trials.
     """
 
-    async def work_unit_generator(work_unit: xm.WorkUnit,
-                                  vizier_params: Dict[str, Any]):
+    async def work_unit_generator(
+        work_unit: xm.WorkUnit, vizier_params: Dict[str, Any]
+    ):
       work_unit.add(job, self._to_job_params(vizier_params))
 
     if not study_factory.display_name:

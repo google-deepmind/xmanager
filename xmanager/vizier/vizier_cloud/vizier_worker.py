@@ -18,7 +18,9 @@ from typing import Dict, Optional
 from absl import logging
 from google.cloud import aiplatform_v1beta1 as aip
 
-_TRIAL_NAME_REGEX = r'projects\/[^\/]+\/locations\/[^\/]+\/studies\/[^\/]+\/trials\/[^\/]+'
+_TRIAL_NAME_REGEX = (
+    r'projects\/[^\/]+\/locations\/[^\/]+\/studies\/[^\/]+\/trials\/[^\/]+'
+)
 
 
 class VizierWorker:
@@ -26,16 +28,20 @@ class VizierWorker:
 
   def __init__(self, trial_name: str) -> None:
     if not re.match(_TRIAL_NAME_REGEX, trial_name):
-      raise Exception('The trial_name must be in the form: '
-                      'projects/{project}/locations/{location}/'
-                      'studies/{study}/trials/{trial}')
+      raise Exception(
+          'The trial_name must be in the form: '
+          'projects/{project}/locations/{location}/'
+          'studies/{study}/trials/{trial}'
+      )
 
     self._trial_name = trial_name
 
     location = trial_name.split('/')[3]
-    self._vz_client = aip.VizierServiceClient(client_options={
-        'api_endpoint': f'{location}-aiplatform.googleapis.com',
-    })
+    self._vz_client = aip.VizierServiceClient(
+        client_options={
+            'api_endpoint': f'{location}-aiplatform.googleapis.com',
+        }
+    )
 
   def add_trial_measurement(self, step: int, metrics: Dict[str, float]) -> None:
     """Add trial measurements to Vizier."""
@@ -48,7 +54,9 @@ class VizierWorker:
                     aip.Measurement.Metric(metric_id=k, value=v)
                     for k, v in metrics.items()
                 ],
-            )))
+            ),
+        )
+    )
     logging.info('Step %d Metric %s is reported', step, metrics)
 
   def complete_trial(self, infeasible_reason: Optional[str] = None) -> None:
@@ -57,5 +65,7 @@ class VizierWorker:
         request=aip.CompleteTrialRequest(
             name=self._trial_name,
             trial_infeasible=infeasible_reason is not None,
-            infeasible_reason=infeasible_reason))
+            infeasible_reason=infeasible_reason,
+        )
+    )
     logging.info('Trial %s is completed', self._trial_name)

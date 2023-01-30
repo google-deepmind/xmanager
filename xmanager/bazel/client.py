@@ -37,8 +37,9 @@ class BazelService(abc.ABC):
     raise NotImplementedError
 
   @abc.abstractmethod
-  def build_targets(self, labels: Sequence[str],
-                    tail_args: Sequence[str]) -> List[List[str]]:
+  def build_targets(
+      self, labels: Sequence[str], tail_args: Sequence[str]
+  ) -> List[List[str]]:
     """Builds given targets and returns paths to their important outputs.
 
     Args:
