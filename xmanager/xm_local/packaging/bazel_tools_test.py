@@ -22,12 +22,14 @@ class BazelToolsTest(unittest.TestCase):
   def test_lex_full_label(self):
     self.assertEqual(
         bazel_tools._lex_label('//project/directory:target'),
-        (['project', 'directory'], 'target'))
+        (['project', 'directory'], 'target'),
+    )
 
   def test_lex_short_label(self):
     self.assertEqual(
         bazel_tools._lex_label('//project/package'),
-        (['project', 'package'], 'package'))
+        (['project', 'package'], 'package'),
+    )
 
   def test_lex_root_target(self):
     self.assertEqual(bazel_tools._lex_label('//:label'), ([], 'label'))
@@ -49,16 +51,14 @@ class BazelToolsTest(unittest.TestCase):
             'py_binary rule //:py_target',
             'cc_binary rule //:cc_target',
         ]),
-        {
-            '//:py_target': 'py_binary rule',
-            '//:cc_target': 'cc_binary rule'
-        },
+        {'//:py_target': 'py_binary rule', '//:cc_target': 'cc_binary rule'},
     )
 
   def test_absolute_label_with_extension_dot(self):
     self.assertEqual(
         bazel_tools._lex_label('//project/directory:image.tar'),
-        (['project', 'directory'], 'image.tar'))
+        (['project', 'directory'], 'image.tar'),
+    )
 
   def test_label_with_three_dots(self):
     with self.assertRaisesRegex(ValueError, 'is not an absolute Bazel label'):

@@ -33,9 +33,9 @@ class LocalWorkUnitStatusEnum(enum.Enum):
 class LocalWorkUnitStatus(xm.ExperimentUnitStatus):
   """Status of a local experiment job."""
 
-  def __init__(self,
-               status: LocalWorkUnitStatusEnum,
-               message: str = '') -> None:
+  def __init__(
+      self, status: LocalWorkUnitStatusEnum, message: str = ''
+  ) -> None:
     super().__init__()
     self._status = status
     self._message = message

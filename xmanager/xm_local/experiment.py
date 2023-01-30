@@ -42,8 +42,9 @@ def _throw_on_unknown_executor(job: xm.Job, executor: Any):
 _EXECUTOR_VALIDATOR = pattern_matching.match(
     pattern_matching.Case([xm.Job, local_executors.Local], lambda *_: None),
     pattern_matching.Case([xm.Job, local_executors.Vertex], lambda *_: None),
-    pattern_matching.Case([xm.Job, local_executors.Kubernetes],
-                          lambda *_: None),
+    pattern_matching.Case(
+        [xm.Job, local_executors.Kubernetes], lambda *_: None
+    ),
     _throw_on_unknown_executor,
 )
 
@@ -64,27 +65,36 @@ class _LaunchResult:
 class LocalExperimentUnit(xm.ExperimentUnit):
   """Experiment unit operated by the local backend."""
 
-  def __init__(self, experiment: 'LocalExperiment', experiment_title: str,
-               create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
-               args: Optional[Mapping[str, Any]],
-               role: xm.ExperimentUnitRole) -> None:
+  def __init__(
+      self,
+      experiment: 'LocalExperiment',
+      experiment_title: str,
+      create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
+      args: Optional[Mapping[str, Any]],
+      role: xm.ExperimentUnitRole,
+  ) -> None:
     super().__init__(experiment, create_task, args, role)
     self._experiment_title = experiment_title
     self._local_execution_handles: List[
-        local_execution.LocalExecutionHandle] = []
-    self._non_local_execution_handles: List[
-        local_execution.ExecutionHandle] = []
+        local_execution.LocalExecutionHandle
+    ] = []
+    self._non_local_execution_handles: List[local_execution.ExecutionHandle] = (
+        []
+    )
 
-  async def _submit_jobs_for_execution(self,
-                                       job_group: xm.JobGroup) -> _LaunchResult:
+  async def _submit_jobs_for_execution(
+      self, job_group: xm.JobGroup
+  ) -> _LaunchResult:
     # We are delegating the traversal of the job group to modules.
     # That improves modularity, but sacrifices the ability to make
     # cross-executor decisions.
-    vertex_handles = vertex.launch(self._experiment_title,
-                                   self.experiment_unit_name, job_group)
+    vertex_handles = vertex.launch(
+        self._experiment_title, self.experiment_unit_name, job_group
+    )
     k8s_handles = kubernetes.launch(self.get_full_job_name, job_group)
-    local_handles = await local_execution.launch(self.get_full_job_name,
-                                                 job_group)
+    local_handles = await local_execution.launch(
+        self.get_full_job_name, job_group
+    )
     return _LaunchResult(
         vertex_handles=vertex_handles,
         k8s_handles=k8s_handles,
@@ -92,37 +102,45 @@ class LocalExperimentUnit(xm.ExperimentUnit):
     )
 
   def _ingest_execution_handles(self, launch_result: _LaunchResult) -> None:
-    self._non_local_execution_handles.extend(launch_result.vertex_handles +
-                                             launch_result.k8s_handles)
+    self._non_local_execution_handles.extend(
+        launch_result.vertex_handles + launch_result.k8s_handles
+    )
     self._local_execution_handles.extend(launch_result.local_handles)
 
   def _monitor_local_jobs(
       self,
-      local_execution_handles: Sequence[local_execution.LocalExecutionHandle]
+      local_execution_handles: Sequence[local_execution.LocalExecutionHandle],
   ) -> None:
     for handle in local_execution_handles:
       self._create_task(handle.monitor())
 
   async def _wait_until_complete(self) -> None:
     try:
-      await asyncio.gather(*[
-          handle.wait() for handle in self._local_execution_handles +
-          self._non_local_execution_handles
-      ])
+      await asyncio.gather(
+          *[
+              handle.wait()
+              for handle in self._local_execution_handles
+              + self._non_local_execution_handles
+          ]
+      )
     except RuntimeError as error:
       raise xm.ExperimentUnitFailedError(
-          error, work_unit=self if isinstance(self, LocalWorkUnit) else None)
+          error, work_unit=self if isinstance(self, LocalWorkUnit) else None
+      )
 
   async def wait_for_local_jobs(self, is_exit_abrupt: bool):
     if not is_exit_abrupt:
       await asyncio.gather(
-          *[handle.wait() for handle in self._local_execution_handles])
+          *[handle.wait() for handle in self._local_execution_handles]
+      )
 
-  def stop(self,
-           *,
-           mark_as_failed: bool = False,
-           mark_as_completed: bool = False,
-           message: Optional[str] = None) -> None:
+  def stop(
+      self,
+      *,
+      mark_as_failed: bool = False,
+      mark_as_completed: bool = False,
+      message: Optional[str] = None,
+  ) -> None:
     """Initiate the process to stop the work unit from running.
 
     This method will synchronously make a request for the work unit to stop.
@@ -162,36 +180,43 @@ class LocalExperimentUnit(xm.ExperimentUnit):
       return handles[0].get_status()
     raise NotImplementedError(
         'Status aggregation for work units with multiple jobs is not '
-        'implemented yet.')
+        'implemented yet.'
+    )
 
 
 class LocalWorkUnit(LocalExperimentUnit):
   """A work unit operated by the local backend."""
 
-  def __init__(self, experiment: 'LocalExperiment', experiment_title: str,
-               create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
-               args: Mapping[str, Any], role: xm.ExperimentUnitRole,
-               work_unit_id_predictor: id_predictor.Predictor) -> None:
+  def __init__(
+      self,
+      experiment: 'LocalExperiment',
+      experiment_title: str,
+      create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
+      args: Mapping[str, Any],
+      role: xm.ExperimentUnitRole,
+      work_unit_id_predictor: id_predictor.Predictor,
+  ) -> None:
     super().__init__(experiment, experiment_title, create_task, args, role)
     self._work_unit_id_predictor = work_unit_id_predictor
     self._work_unit_id = self._work_unit_id_predictor.reserve_id()
 
   def _save_handles_to_storage(
-      self, handles: Sequence[local_execution.ExecutionHandle]) -> None:
+      self, handles: Sequence[local_execution.ExecutionHandle]
+  ) -> None:
     """Saves jobs present in the handlers."""
 
     def save_vertex_handle(vertex_handle: vertex.VertexHandle) -> None:
-      database.database().insert_vertex_job(self.experiment_id,
-                                            self.work_unit_id,
-                                            vertex_handle.job_name)
+      database.database().insert_vertex_job(
+          self.experiment_id, self.work_unit_id, vertex_handle.job_name
+      )
 
     def save_k8s_handle(k8s_handle: kubernetes.KubernetesHandle) -> None:
       for job in k8s_handle.jobs:
         namespace = job.metadata.namespace or 'default'
         name = job.metadata.name
-        database.database().insert_kubernetes_job(self.experiment_id,
-                                                  self.work_unit_id, namespace,
-                                                  name)
+        database.database().insert_kubernetes_job(
+            self.experiment_id, self.work_unit_id, namespace, name
+        )
 
     def throw_on_unknown_handle(handle: Any) -> None:
       raise TypeError(f'Unsupported handle: {handle!r}')
@@ -214,15 +239,18 @@ class LocalWorkUnit(LocalExperimentUnit):
     _validate_job_group(job_group)
 
     if identity:
-      raise ValueError('LocalExperiment does not support idempotent experiment '
-                       'unit creation.')
+      raise ValueError(
+          'LocalExperiment does not support idempotent experiment '
+          'unit creation.'
+      )
 
     async with self._work_unit_id_predictor.submit_id(self.work_unit_id):
       launch_result = await self._submit_jobs_for_execution(job_group)
       self._ingest_execution_handles(launch_result)
       # TODO: Save the local jobs to the database as well.
-      self._save_handles_to_storage(launch_result.vertex_handles +
-                                    launch_result.k8s_handles)
+      self._save_handles_to_storage(
+          launch_result.vertex_handles + launch_result.k8s_handles
+      )
       self._monitor_local_jobs(launch_result.local_handles)
 
   @property
@@ -247,8 +275,10 @@ class LocalAuxiliaryUnit(LocalExperimentUnit):
     _validate_job_group(job_group)
 
     if identity:
-      raise ValueError('LocalExperiment does not support idempotent experiment '
-                       'unit creation.')
+      raise ValueError(
+          'LocalExperiment does not support idempotent experiment '
+          'unit creation.'
+      )
 
     launch_result = await self._submit_jobs_for_execution(job_group)
     self._ingest_execution_handles(launch_result)
@@ -276,13 +306,18 @@ class LocalExperiment(xm.Experiment):
     self._experiment_units = []
     self._work_unit_count = 0
 
-  def _create_experiment_unit(self, args: Optional[Mapping[str, Any]],
-                              role: xm.ExperimentUnitRole,
-                              identity: str) -> Awaitable[xm.ExperimentUnit]:
+  def _create_experiment_unit(
+      self,
+      args: Optional[Mapping[str, Any]],
+      role: xm.ExperimentUnitRole,
+      identity: str,
+  ) -> Awaitable[xm.ExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
     if identity:
-      raise ValueError('LocalExperiment does not support idempotent experiment '
-                       'unit creation.')
+      raise ValueError(
+          'LocalExperiment does not support idempotent experiment '
+          'unit creation.'
+      )
 
     def create_work_unit(role: xm.WorkUnitRole) -> Awaitable[xm.ExperimentUnit]:
       work_unit = LocalWorkUnit(
@@ -305,7 +340,8 @@ class LocalExperiment(xm.Experiment):
 
     # TODO: Support `role.termination_delay_secs`.
     def create_auxiliary_unit(
-        role: xm.AuxiliaryUnitRole) -> Awaitable[xm.ExperimentUnit]:
+        role: xm.AuxiliaryUnitRole,
+    ) -> Awaitable[xm.ExperimentUnit]:
       auxiliary_unit = LocalAuxiliaryUnit(
           self,
           self._experiment_title,
@@ -322,8 +358,10 @@ class LocalExperiment(xm.Experiment):
 
   def _wait_for_local_jobs(self, is_exit_abrupt: bool):
     if self._experiment_units:
-      print('Waiting for local jobs to complete. '
-            'Press Ctrl+C to terminate them and exit')
+      print(
+          'Waiting for local jobs to complete. '
+          'Press Ctrl+C to terminate them and exit'
+      )
     for unit in self._experiment_units:
       self._create_task(unit.wait_for_local_jobs(is_exit_abrupt))
 
@@ -356,8 +394,9 @@ class LocalExperiment(xm.Experiment):
 def create_experiment(experiment_title: str) -> xm.Experiment:
   """Create Experiment."""
   experiment = LocalExperiment(experiment_title)
-  database.database().insert_experiment(experiment.experiment_id,
-                                        experiment._experiment_title)  # pylint: disable=protected-access
+  database.database().insert_experiment(
+      experiment.experiment_id, experiment._experiment_title  # pylint: disable=protected-access
+  )
   return experiment
 
 
@@ -369,25 +408,35 @@ def get_experiment(experiment_id: int) -> xm.Experiment:
   experiment._id = experiment_id
   experiment._work_unit_id_predictor = id_predictor.Predictor(1)
   for work_unit_result in experiment_result.work_units:
-    work_unit = LocalWorkUnit(experiment, experiment_result.experiment_title,
-                              lambda _: None, {}, xm.WorkUnitRole(),
-                              experiment._work_unit_id_predictor)
+    work_unit = LocalWorkUnit(
+        experiment,
+        experiment_result.experiment_title,
+        lambda _: None,
+        {},
+        xm.WorkUnitRole(),
+        experiment._work_unit_id_predictor,
+    )
     work_unit._work_unit_id = work_unit_result.work_unit_id
     non_local_handles = []
     kubernetes_jobs = []
     for _, data in work_unit_result.jobs.items():
       if data.HasField('local'):
         logging.warning(
-            '[Experiment id: %s, work unit id: %s] '
-            'Loading local experiment units from storage is not implemented.',
-            experiment_id, work_unit_result.work_unit_id)
+            (
+                '[Experiment id: %s, work unit id: %s] Loading local experiment'
+                ' units from storage is not implemented.'
+            ),
+            experiment_id,
+            work_unit_result.work_unit_id,
+        )
       # "caip" is the legacy field name of vertex inside the proto.
       elif data.HasField('caip'):
         non_local_handles = [vertex.VertexHandle(data.caip.resource_name)]
       elif data.HasField('kubernetes'):
         job = k8s_client.V1Job()
         job.metadata = k8s_client.V1ObjectMeta(
-            namespace=data.kubernetes.namespace, name=data.kubernetes.job_name)
+            namespace=data.kubernetes.namespace, name=data.kubernetes.job_name
+        )
         kubernetes_jobs.append(job)
         non_local_handles = [kubernetes.KubernetesHandle(kubernetes_jobs)]
     work_unit._non_local_execution_handles = non_local_handles

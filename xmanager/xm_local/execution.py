@@ -89,11 +89,13 @@ class ContainerHandle(LocalExecutionHandle):
       return
 
     response = await asyncio.wrap_future(
-        self.futures_executor.submit(self.model.wait))
+        self.futures_executor.submit(self.model.wait)
+    )
     status_code = response['StatusCode']
     if status_code != 0:
       raise RuntimeError(
-          f'Container {self.model!r} returned non-zero status: {status_code}')
+          f'Container {self.model!r} returned non-zero status: {status_code}'
+      )
 
   def get_status(self) -> status.LocalWorkUnitStatus:
     raise NotImplementedError
@@ -132,14 +134,16 @@ async def _launch_loaded_container_image(
     instance.create_network(_BRIDGE_NETWORK_NAME)
 
   gpu_count = int(
-      executor.requirements.task_requirements.get(xm.ResourceType.LOCAL_GPU, 0))
+      executor.requirements.task_requirements.get(xm.ResourceType.LOCAL_GPU, 0)
+  )
 
   if gpu_count > 0:
     try:
       subprocess.check_output('nvidia-smi')
     except Exception as exception:
-      raise RuntimeError('No NVIDIA devices detected. Only NVIDIA '
-                         'GPUs are currently supported') from exception
+      raise RuntimeError(
+          'No NVIDIA devices detected. Only NVIDIA GPUs are currently supported'
+      ) from exception
 
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
   env_vars = {**executable.env_vars, **job.env_vars}
@@ -159,8 +163,12 @@ async def _launch_loaded_container_image(
       volumes[local_gcs_path] = image_gcs_path
     else:
       logging.warning(
-          'Default GCS path inside container overwritten by'
-          '`volumes` parameter to %s', volumes[local_gcs_path])
+          (
+              'Default GCS path inside container overwritten by'
+              '`volumes` parameter to %s'
+          ),
+          volumes[local_gcs_path],
+      )
 
   container = instance.run_container(
       name=get_full_job_name(job.name),
@@ -192,7 +200,8 @@ class BinaryHandle(LocalExecutionHandle):
     return_code = await self.process.wait()
     if return_code != 0:
       raise RuntimeError(
-          f'Process {self.process!r} returned non-zero code: {return_code}')
+          f'Process {self.process!r} returned non-zero code: {return_code}'
+      )
 
   def get_status(self) -> status.LocalWorkUnitStatus:
     raise NotImplementedError
@@ -227,9 +236,11 @@ async def _launch_local_binary(
       env=env_vars,
       start_new_session=True,
       stdout=asyncio.subprocess.PIPE
-      if job.executor.experimental_stream_output else None,
+      if job.executor.experimental_stream_output
+      else None,
       stderr=asyncio.subprocess.STDOUT
-      if job.executor.experimental_stream_output else None,
+      if job.executor.experimental_stream_output
+      else None,
   )
   return BinaryHandle(
       name=job.name,
@@ -241,8 +252,9 @@ async def _launch_local_binary(
 # PyType infers the return type of `async` functions without wrapping them with
 # `Awaitable`, so we are overriding the type of `_LOCAL_EXECUTION_ROUTER` to
 # make it right.
-_LocalExecutionRouter = Callable[[Callable[[str], str], xm.Job, Any],
-                                 Awaitable[LocalExecutionHandle]]
+_LocalExecutionRouter = Callable[
+    [Callable[[str], str], xm.Job, Any], Awaitable[LocalExecutionHandle]
+]
 _LOCAL_EXECUTION_ROUTER: _LocalExecutionRouter = pattern_matching.match(
     _launch_loaded_container_image,
     _launch_local_binary,
@@ -260,8 +272,10 @@ def _terminate_local_jobs():
   """Terminates local jobs that were launched during the current session."""
   with _local_jobs_lock:
     if _local_jobs:
-      print(f'Terminating {len(_local_jobs)} local job(s)'
-            ' that may still be running...')
+      print(
+          f'Terminating {len(_local_jobs)} local job(s)'
+          ' that may still be running...'
+      )
     for local_job in _local_jobs:
       try:
         local_job.terminate()
@@ -273,12 +287,14 @@ def _local_job_predicate(job: xm.Job) -> bool:
   return isinstance(job.executor, executors.Local)
 
 
-async def launch(get_full_job_name: Callable[[str], str],
-                 job_group: xm.JobGroup) -> List[LocalExecutionHandle]:
+async def launch(
+    get_full_job_name: Callable[[str], str], job_group: xm.JobGroup
+) -> List[LocalExecutionHandle]:
   """Launches jobs with `xm_local.Local` executor."""
   # Must act on all jobs with `Local` executor.
-  local_jobs = job_operators.collect_jobs_by_filter(job_group,
-                                                    _local_job_predicate)
+  local_jobs = job_operators.collect_jobs_by_filter(
+      job_group, _local_job_predicate
+  )
   handles: List[LocalExecutionHandle] = [
       await _LOCAL_EXECUTION_ROUTER(get_full_job_name, job, job.executable)
       for job in local_jobs

@@ -29,30 +29,35 @@ from xmanager.xm import pattern_matching
 from google.protobuf.internal.decoder import _DecodeVarint32
 from xmanager.generated import build_event_stream_pb2 as bes_pb2
 
-_BAZEL_COMMAND = flags.DEFINE_string('xm_bazel_command', 'bazel',
-                                     'A command that runs Bazel.')
+_BAZEL_COMMAND = flags.DEFINE_string(
+    'xm_bazel_command', 'bazel', 'A command that runs Bazel.'
+)
 
 
-def _get_important_outputs(events: Sequence[bes_pb2.BuildEvent],
-                           labels: Sequence[str]) -> List[List[bes_pb2.File]]:
+def _get_important_outputs(
+    events: Sequence[bes_pb2.BuildEvent], labels: Sequence[str]
+) -> List[List[bes_pb2.File]]:
   label_to_output: Dict[str, List[bes_pb2.File]] = {}
   for event in events:
     if event.id.HasField('target_completed'):
       # Note that we ignore `event.id.target_completed.aspect`.
       label_to_output[event.id.target_completed.label] = list(
-          event.completed.important_output)
+          event.completed.important_output
+      )
   return [label_to_output[label] for label in labels]
 
 
-def _get_normalized_labels(events: Sequence[bes_pb2.BuildEvent],
-                           labels: Sequence[str]) -> List[str]:
+def _get_normalized_labels(
+    events: Sequence[bes_pb2.BuildEvent], labels: Sequence[str]
+) -> List[str]:
   label_to_expansion: Dict[str, str] = {}
   for event in events:
     if event.id.HasField('pattern'):
       for index, pattern in enumerate(event.id.pattern.pattern):
         # Note that we ignore `event.children.target_configured.aspect`.
         label_to_expansion[pattern] = event.children[
-            index].target_configured.label
+            index
+        ].target_configured.label
   return [label_to_expansion[label] for label in labels]
 
 
@@ -86,7 +91,7 @@ def _read_build_events(path: str) -> List[bes_pb2.BuildEvent]:
       # protobufs, which is not available in Python.
       size, start = _DecodeVarint32(buffer, position)
       event = bes_pb2.BuildEvent()
-      event.ParseFromString(buffer[start:start + size])
+      event.ParseFromString(buffer[start : start + size])
       events.append(event)
       position = start + size
     return events
@@ -96,17 +101,21 @@ def _root_absolute_path() -> str:
   # If the launch script is run with Bazel, use `BUILD_WORKSPACE_DIRECTORY` to
   # get the root of the workspace where the build was initiated. If the launch
   # script is run with the CLI, query Bazel to find out.
-  return os.getenv('BUILD_WORKSPACE_DIRECTORY') or subprocess.run(
-      [_BAZEL_COMMAND.value, 'info', 'workspace'],
-      check=True,
-      stdout=subprocess.PIPE,
-      stderr=subprocess.PIPE,
-      universal_newlines=True,
-  ).stdout.strip()
+  return (
+      os.getenv('BUILD_WORKSPACE_DIRECTORY')
+      or subprocess.run(
+          [_BAZEL_COMMAND.value, 'info', 'workspace'],
+          check=True,
+          stdout=subprocess.PIPE,
+          stderr=subprocess.PIPE,
+          universal_newlines=True,
+      ).stdout.strip()
+  )
 
 
 def _build_multiple_targets(
-    labels: Sequence[str], bazel_args: Sequence[str] = ()) -> List[List[str]]:
+    labels: Sequence[str], bazel_args: Sequence[str] = ()
+) -> List[List[str]]:
   """Builds the targets and returns paths to their important outputs.
 
   The definition of 'important artifacts in an output group' can be found at
@@ -139,17 +148,20 @@ def _build_multiple_targets(
     workspace = _get_workspace_directory(events)
     results: List[List[str]] = []
     for files in output_lists:
-      results.append([
-          os.path.join(workspace, *file.path_prefix, file.name)
-          for file in files
-      ])
+      results.append(
+          [
+              os.path.join(workspace, *file.path_prefix, file.name)
+              for file in files
+          ]
+      )
     return results
 
 
 # Expansions (`...`, `*`) are not allowed.
 _NAME_RE = r'(?:[^.*:/]|\.(?!\.\.))+'
 _LABEL_LEXER = re.compile(
-    f'^//(?P<packages>{_NAME_RE}(/{_NAME_RE})*)?(?P<target>:{_NAME_RE})?$')
+    f'^//(?P<packages>{_NAME_RE}(/{_NAME_RE})*)?(?P<target>:{_NAME_RE})?$'
+)
 _LexedLabel = Tuple[List[str], str]
 
 
@@ -207,8 +219,9 @@ class LocalBazelService(client.BazelService):
     label_kinds = _label_kind_lines_to_dict(stdout.strip().split(os.linesep))
     return [label_kinds[label] for label in labels]
 
-  def build_targets(self, labels: Sequence[str],
-                    bazel_args: Sequence[str]) -> List[List[str]]:
+  def build_targets(
+      self, labels: Sequence[str], bazel_args: Sequence[str]
+  ) -> List[List[str]]:
     return _build_multiple_targets(labels, bazel_args)
 
 
@@ -219,7 +232,8 @@ def local_bazel_service() -> LocalBazelService:
 
 
 def _collect_bazel_binary(
-    executable: xm.BazelBinary) -> List[client.BazelTarget]:
+    executable: xm.BazelBinary,
+) -> List[client.BazelTarget]:
   return [
       client.BazelTarget(
           label=executable.label,
@@ -229,7 +243,8 @@ def _collect_bazel_binary(
 
 
 def _collect_bazel_container(
-    executable: xm.BazelContainer) -> List[client.BazelTarget]:
+    executable: xm.BazelContainer,
+) -> List[client.BazelTarget]:
   return [
       client.BazelTarget(
           label=executable.label,
@@ -250,13 +265,17 @@ _EXECUTABLE_COLLECTOR = pattern_matching.match(
 
 
 def collect_bazel_targets(
-    packageables: Sequence[xm.Packageable]) -> List[client.BazelTarget]:
+    packageables: Sequence[xm.Packageable],
+) -> List[client.BazelTarget]:
   """Extracts Bazel targets to package from a sequence of `Packageable`s."""
   return list(
-      itertools.chain(*[
-          _EXECUTABLE_COLLECTOR(packageable.executable_spec)
-          for packageable in packageables
-      ]))
+      itertools.chain(
+          *[
+              _EXECUTABLE_COLLECTOR(packageable.executable_spec)
+              for packageable in packageables
+          ]
+      )
+  )
 
 
 TargetOutputs = Dict[client.BazelTarget, List[str]]

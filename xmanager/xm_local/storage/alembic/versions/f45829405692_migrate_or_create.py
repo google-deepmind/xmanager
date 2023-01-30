@@ -26,7 +26,6 @@ There are two ways a DB doesn't already have a current revision:
 Revision ID: f45829405692
 Revises:
 Create Date: 2022-09-16 10:50:41.096403
-
 """
 from alembic import op
 import sqlalchemy as sa
@@ -61,13 +60,15 @@ def update_columns() -> None:
         column_name='Id',
         new_column_name='experiment_id',
         existing_type=sa.Integer(),
-        type_=sa.BigInteger())
+        type_=sa.BigInteger(),
+    )
 
     batch_op.alter_column(
         column_name='Title',
         new_column_name='experiment_title',
         existing_type=sa.TEXT,
-        type_=sa.String(255))
+        type_=sa.String(255),
+    )
   op.rename_table('Experiment', 'tmp_experiment')
   op.rename_table('tmp_experiment', 'experiment')
 
@@ -76,7 +77,8 @@ def update_columns() -> None:
         column_name='ExperimentId',
         new_column_name='experiment_id',
         existing_type=sa.Integer(),
-        type_=sa.BigInteger())
+        type_=sa.BigInteger(),
+    )
 
     batch_op.alter_column(
         column_name='WorkUnitId',
@@ -89,7 +91,8 @@ def update_columns() -> None:
         column_name='ExperimentId',
         new_column_name='experiment_id',
         existing_type=sa.Integer(),
-        type_=sa.BigInteger())
+        type_=sa.BigInteger(),
+    )
 
     batch_op.alter_column(
         column_name='WorkUnitId',
@@ -100,13 +103,15 @@ def update_columns() -> None:
         column_name='Name',
         new_column_name='job_name',
         existing_type=sa.TEXT,
-        type_=sa.String(255))
+        type_=sa.String(255),
+    )
 
     batch_op.alter_column(
         column_name='Data',
         new_column_name='job_data',
         existing_type=sa.TEXT,
-        type_=sa.String(255))
+        type_=sa.String(255),
+    )
   op.rename_table('Job', 'tmp_job')
   op.rename_table('tmp_job', 'job')
 
@@ -123,7 +128,10 @@ def create_new_tables() -> None:
           'experiment_id',
           sa.BigInteger(),
           primary_key=True,
-          autoincrement=False), sa.Column('experiment_title', sa.String(255)))
+          autoincrement=False,
+      ),
+      sa.Column('experiment_title', sa.String(255)),
+  )
 
   op.create_table(
       'work_unit',
@@ -131,8 +139,10 @@ def create_new_tables() -> None:
           'experiment_id',
           sa.BigInteger(),
           primary_key=True,
-          autoincrement=False),
-      sa.Column('work_unit_id', sa.Integer(), primary_key=True))
+          autoincrement=False,
+      ),
+      sa.Column('work_unit_id', sa.Integer(), primary_key=True),
+  )
 
   op.create_table(
       'job',
@@ -140,10 +150,12 @@ def create_new_tables() -> None:
           'experiment_id',
           sa.BigInteger(),
           primary_key=True,
-          autoincrement=False),
+          autoincrement=False,
+      ),
       sa.Column('work_unit_id', sa.Integer(), primary_key=True),
       sa.Column('job_name', sa.String(255), primary_key=True),
-      sa.Column('job_data', sa.String(255)))
+      sa.Column('job_data', sa.String(255)),
+  )
 
 
 def upgrade() -> None:
@@ -158,6 +170,8 @@ def upgrade() -> None:
 
 def downgrade() -> None:
   """Downgrades DB."""
-  raise RuntimeError('Downgrade operation is not supported: would downgrade '
-                     'to legacy SQLite schema using `VersionHistory` or to '
-                     ' empty database.')
+  raise RuntimeError(
+      'Downgrade operation is not supported: would downgrade '
+      'to legacy SQLite schema using `VersionHistory` or to '
+      ' empty database.'
+  )

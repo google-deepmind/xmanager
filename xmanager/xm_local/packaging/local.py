@@ -27,9 +27,11 @@ from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local.packaging import bazel_tools
 
 
-def _package_container(bazel_outputs: bazel_tools.TargetOutputs,
-                       packageable: xm.Packageable,
-                       container: executables.Container) -> xm.Executable:
+def _package_container(
+    bazel_outputs: bazel_tools.TargetOutputs,
+    packageable: xm.Packageable,
+    container: executables.Container,
+) -> xm.Executable:
   """Packages a container for local execution."""
   del bazel_outputs
   instance = docker_adapter.instance()
@@ -47,11 +49,15 @@ def _package_container(bazel_outputs: bazel_tools.TargetOutputs,
     )
   else:
     raise ValueError(
-        f'{container.image_path} is found neither locally nor remotely')
+        f'{container.image_path} is found neither locally nor remotely'
+    )
 
 
-def _package_binary(bazel_outputs: bazel_tools.TargetOutputs,
-                    packageable: xm.Packageable, binary: executables.Binary):
+def _package_binary(
+    bazel_outputs: bazel_tools.TargetOutputs,
+    packageable: xm.Packageable,
+    binary: executables.Binary,
+):
   del bazel_outputs
   if not os.path.exists(binary.path):
     raise ValueError(f'{binary.path} does not exist on this machine')
@@ -63,12 +69,15 @@ def _package_binary(bazel_outputs: bazel_tools.TargetOutputs,
   )
 
 
-def _package_dockerfile(bazel_outputs: bazel_tools.TargetOutputs,
-                        packageable: xm.Packageable,
-                        dockerfile: executables.Dockerfile):
+def _package_dockerfile(
+    bazel_outputs: bazel_tools.TargetOutputs,
+    packageable: xm.Packageable,
+    dockerfile: executables.Dockerfile,
+):
   del bazel_outputs
-  image_id = docker_lib.build_docker_image(dockerfile.name, dockerfile.path,
-                                           dockerfile.dockerfile)
+  image_id = docker_lib.build_docker_image(
+      dockerfile.name, dockerfile.path, dockerfile.dockerfile
+  )
   return local_executables.LoadedContainerImage(
       name=packageable.executable_spec.name,
       image_id=image_id,
@@ -77,25 +86,34 @@ def _package_dockerfile(bazel_outputs: bazel_tools.TargetOutputs,
   )
 
 
-def _package_python_container(bazel_outputs: bazel_tools.TargetOutputs,
-                              packageable: xm.Packageable,
-                              py_executable: executables.PythonContainer):
+def _package_python_container(
+    bazel_outputs: bazel_tools.TargetOutputs,
+    packageable: xm.Packageable,
+    py_executable: executables.PythonContainer,
+):
   del bazel_outputs
   # Use the directory as the image name.
   image_name = os.path.basename(py_executable.path)
-  image_id = build_image.build(py_executable, packageable.args,
-                               packageable.env_vars, image_name)
+  image_id = build_image.build(
+      py_executable, packageable.args, packageable.env_vars, image_name
+  )
   return local_executables.LoadedContainerImage(
-      name=packageable.executable_spec.name, image_id=image_id)
+      name=packageable.executable_spec.name, image_id=image_id
+  )
 
 
 def _package_bazel_container(
-    bazel_outputs: bazel_tools.TargetOutputs, packageable: xm.Packageable,
-    container: executables.BazelContainer) -> xm.Executable:
-  paths = bazel_outputs[bazel_client.BazelTarget(
-      label=container.label,
-      bazel_args=container.bazel_args,
-  )]
+    bazel_outputs: bazel_tools.TargetOutputs,
+    packageable: xm.Packageable,
+    container: executables.BazelContainer,
+) -> xm.Executable:
+  """Matcher to package BazelContainer."""
+  paths = bazel_outputs[
+      bazel_client.BazelTarget(
+          label=container.label,
+          bazel_args=container.bazel_args,
+      )
+  ]
   assert len(paths) == 1
   image_id = docker_adapter.instance().load_image(paths[0])
   return local_executables.LoadedContainerImage(
@@ -106,13 +124,18 @@ def _package_bazel_container(
   )
 
 
-def _package_bazel_binary(bazel_outputs: bazel_tools.TargetOutputs,
-                          packageable: xm.Packageable,
-                          binary: executables.BazelBinary) -> xm.Executable:
-  paths = bazel_outputs[bazel_client.BazelTarget(
-      label=binary.label,
-      bazel_args=binary.bazel_args,
-  )]
+def _package_bazel_binary(
+    bazel_outputs: bazel_tools.TargetOutputs,
+    packageable: xm.Packageable,
+    binary: executables.BazelBinary,
+) -> xm.Executable:
+  """Matcher to package BazelBinary."""
+  paths = bazel_outputs[
+      bazel_client.BazelTarget(
+          label=binary.label,
+          bazel_args=binary.bazel_args,
+      )
+  ]
   assert len(paths) == 1
   return local_executables.LocalBinary(
       name=packageable.executable_spec.name,
@@ -122,11 +145,16 @@ def _package_bazel_binary(bazel_outputs: bazel_tools.TargetOutputs,
   )
 
 
-def _throw_on_unknown_executable(bazel_outputs: bazel_tools.TargetOutputs,
-                                 packageable: xm.Packageable, executable: Any):
+def _throw_on_unknown_executable(
+    bazel_outputs: bazel_tools.TargetOutputs,
+    packageable: xm.Packageable,  # pylint: disable=unused-argument
+    executable: Any,
+):
   del bazel_outputs
-  raise TypeError('Unsupported executable specification '
-                  f'for local packaging: {executable!r}')
+  raise TypeError(
+      'Unsupported executable specification '
+      f'for local packaging: {executable!r}'
+  )
 
 
 _LOCAL_PACKAGING_ROUTER = pattern_matching.match(
@@ -140,7 +168,9 @@ _LOCAL_PACKAGING_ROUTER = pattern_matching.match(
 )
 
 
-def package_for_local_executor(bazel_outputs: bazel_tools.TargetOutputs,
-                               packageable: xm.Packageable,
-                               executable_spec: xm.ExecutableSpec):
+def package_for_local_executor(
+    bazel_outputs: bazel_tools.TargetOutputs,
+    packageable: xm.Packageable,
+    executable_spec: xm.ExecutableSpec,
+):
   return _LOCAL_PACKAGING_ROUTER(bazel_outputs, packageable, executable_spec)

@@ -66,8 +66,10 @@ def _throw_on_unknown_executor(
     packageable: xm.Packageable,
     executor: Any,
 ):
-  raise TypeError(f'Unsupported executor specification: {executor!r}. '
-                  f'Packageable: {packageable!r}')
+  raise TypeError(
+      f'Unsupported executor specification: {executor!r}. '
+      f'Packageable: {packageable!r}'
+  )
 
 
 _PACKAGING_ROUTER = pattern_matching.match(

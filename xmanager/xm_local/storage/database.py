@@ -31,7 +31,9 @@ from google.protobuf import text_format
 from google.cloud.sql.connector import Connector, IPTypes
 
 _DB_YAML_CONFIG_PATH = flags.DEFINE_string(
-    'xm_db_yaml_config_path', None, """
+    'xm_db_yaml_config_path',
+    None,
+    """
     Path of YAML config file containing DB connection details.
 
     A valid config file contains two main entries:
@@ -48,21 +50,26 @@ _DB_YAML_CONFIG_PATH = flags.DEFINE_string(
           - password
           - host (instance connection name when using CloudSql)
           - port
-    """)
+    """,
+)
 
 _UPGRADE_DB = flags.DEFINE_boolean(
-    'xm_upgrade_db', False, """
+    'xm_upgrade_db',
+    False,
+    """
     Specifies if XManager should update the database to the latest version.
     It's recommended to take a back-up of the database before updating, since
     migrations can fail/have errors. This is especially true
     for non-transactional DDLs, where partial migrations can occur on
     failure, leaving the database in a not well-defined state.
-    """)
+    """,
+)
 
 
 @attr.s(auto_attribs=True)
 class WorkUnitResult:
   """Result of a WorkUnit database query."""
+
   work_unit_id: int
   jobs: Dict[str, data_pb2.Job]
 
@@ -70,6 +77,7 @@ class WorkUnitResult:
 @attr.s(auto_attribs=True)
 class ExperimentResult:
   """Result of an Experiment database query."""
+
   experiment_id: int
   experiment_title: str
   work_units: List[WorkUnitResult]
@@ -82,6 +90,7 @@ text = sqlalchemy.sql.text
 @attr.s(auto_attribs=True)
 class SqlConnectionSettings:
   """Settings for a generic SQL connection."""
+
   backend: str
   db_name: str
   driver: Optional[str] = None
@@ -108,8 +117,9 @@ class GenericSqlConnector(SqlConnector):
 
   @staticmethod
   def create_engine(settings: SqlConnectionSettings) -> Engine:
-    driver_name = settings.backend + (f'+{settings.driver}'
-                                      if settings.driver else '')
+    driver_name = settings.backend + (
+        f'+{settings.driver}' if settings.driver else ''
+    )
 
     url = sqlalchemy.engine.url.URL(
         drivername=driver_name,
@@ -117,7 +127,8 @@ class GenericSqlConnector(SqlConnector):
         password=settings.password,
         host=settings.host,
         port=settings.port,
-        database=settings.db_name)
+        database=settings.db_name,
+    )
 
     return sqlalchemy.engine.create_engine(url)
 
@@ -132,8 +143,9 @@ class SqliteConnector(SqlConnector):
   @staticmethod
   def create_engine(settings: SqlConnectionSettings) -> Engine:
     if settings.backend and settings.backend != 'sqlite':
-      raise RuntimeError('Can\'t use SqliteConnector with a backend'
-                         'other than `sqlite`')
+      raise RuntimeError(
+          "Can't use SqliteConnector with a backendother than `sqlite`"
+      )
 
     if not os.path.isdir(os.path.dirname(settings.db_name)):
       os.makedirs(os.path.dirname(settings.db_name))
@@ -182,8 +194,9 @@ class CloudSqlConnector(SqlConnector):
 class Database:
   """Database object with interacting with experiment metadata storage."""
 
-  def __init__(self, connector: Type[TSqlConnector],
-               settings: SqlConnectionSettings):
+  def __init__(
+      self, connector: Type[TSqlConnector], settings: SqlConnectionSettings
+  ):
     self.settings = settings
     self.engine: Engine = connector.create_engine(settings)
     # https://github.com/sqlalchemy/sqlalchemy/issues/5645
@@ -192,8 +205,9 @@ class Database:
     storage_dir = os.path.dirname(__file__)
     self.alembic_cfg = Config(os.path.join(storage_dir, 'alembic.ini'))
     self.alembic_cfg.set_main_option('sqlalchemy.url', str(self.engine.url))
-    self.alembic_cfg.set_main_option('script_location',
-                                     os.path.join(storage_dir, 'alembic'))
+    self.alembic_cfg.set_main_option(
+        'script_location', os.path.join(storage_dir, 'alembic')
+    )
 
     self.maybe_migrate_database_version()
 
@@ -209,7 +223,8 @@ class Database:
         raise RuntimeError(
             'Database upgrade failed. The DB may be in an undefined state or '
             'data may have been lost. Revert to the previous state using your '
-            'backup or proceed with caution.') from e
+            'backup or proceed with caution.'
+        ) from e
       finally:
         self.alembic_cfg.attributes['connection'] = None
 
@@ -220,67 +235,89 @@ class Database:
 
   def latest_version_available(self) -> str:
     script_directory = alembic.script.ScriptDirectory.from_config(
-        self.alembic_cfg)
+        self.alembic_cfg
+    )
     return script_directory.get_current_head()
 
   def maybe_migrate_database_version(self):
     """Enforces the latest version of the database to be used."""
     db_version = self.database_version()
-    legacy_sqlite_db = self.engine.dialect.has_table(self.engine,
-                                                     'VersionHistory')
+    legacy_sqlite_db = self.engine.dialect.has_table(
+        self.engine, 'VersionHistory'
+    )
 
-    need_to_update = (db_version != self.latest_version_available() and
-                      db_version) or legacy_sqlite_db
+    need_to_update = (
+        db_version != self.latest_version_available() and db_version
+    ) or legacy_sqlite_db
     if need_to_update and not _UPGRADE_DB.value:
       raise RuntimeError(
           f'Database is not up to date: current={self.database_version()}, '
           f'latest={self.latest_version_available()}. Take a backup of the '
           'database and then launch using the `--xm_upgrade_db` flag '
-          'to update to the the latest version.')
+          'to update to the the latest version.'
+      )
     self.upgrade_database()
 
-  def insert_experiment(self, experiment_id: int,
-                        experiment_title: str) -> None:
-    query = text('INSERT INTO experiment (experiment_id, experiment_title) '
-                 'VALUES (:experiment_id, :experiment_title)')
+  def insert_experiment(
+      self, experiment_id: int, experiment_title: str
+  ) -> None:
+    query = text(
+        'INSERT INTO experiment (experiment_id, experiment_title) '
+        'VALUES (:experiment_id, :experiment_title)'
+    )
     self.engine.execute(
-        query, experiment_id=experiment_id, experiment_title=experiment_title)
+        query, experiment_id=experiment_id, experiment_title=experiment_title
+    )
 
   def insert_work_unit(self, experiment_id: int, work_unit_id: int) -> None:
-    query = text('INSERT INTO work_unit (experiment_id, work_unit_id) '
-                 'VALUES (:experiment_id, :work_unit_id)')
+    query = text(
+        'INSERT INTO work_unit (experiment_id, work_unit_id) '
+        'VALUES (:experiment_id, :work_unit_id)'
+    )
     self.engine.execute(
-        query, experiment_id=experiment_id, work_unit_id=work_unit_id)
+        query, experiment_id=experiment_id, work_unit_id=work_unit_id
+    )
 
-  def insert_vertex_job(self, experiment_id: int, work_unit_id: int,
-                        vertex_job_id: str) -> None:
+  def insert_vertex_job(
+      self, experiment_id: int, work_unit_id: int, vertex_job_id: str
+  ) -> None:
     job = data_pb2.Job(caip=data_pb2.AIPlatformJob(resource_name=vertex_job_id))
     data = text_format.MessageToBytes(job)
-    query = text('INSERT INTO '
-                 'job (experiment_id, work_unit_id, job_name, job_data) '
-                 'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)')
+    query = text(
+        'INSERT INTO '
+        'job (experiment_id, work_unit_id, job_name, job_data) '
+        'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)'
+    )
     self.engine.execute(
         query,
         experiment_id=experiment_id,
         work_unit_id=work_unit_id,
         job_name=vertex_job_id,
-        job_data=data)
+        job_data=data,
+    )
 
-  def insert_kubernetes_job(self, experiment_id: int, work_unit_id: int,
-                            namespace: str, job_name: str) -> None:
+  def insert_kubernetes_job(
+      self, experiment_id: int, work_unit_id: int, namespace: str, job_name: str
+  ) -> None:
+    """Insert a Kubernetes job into the database."""
     job = data_pb2.Job(
         kubernetes=data_pb2.KubernetesJob(
-            namespace=namespace, job_name=job_name))
+            namespace=namespace, job_name=job_name
+        )
+    )
     data = text_format.MessageToString(job)
-    query = text('INSERT INTO '
-                 'job (experiment_id, work_unit_id, job_name, job_data) '
-                 'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)')
+    query = text(
+        'INSERT INTO '
+        'job (experiment_id, work_unit_id, job_name, job_data) '
+        'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)'
+    )
     self.engine.execute(
         query,
         experiment_id=experiment_id,
         work_unit_id=work_unit_id,
         job_name=job_name,
-        job_data=data)
+        job_data=data,
+    )
 
   def list_experiment_ids(self) -> List[int]:
     """Lists all the experiment ids from local database."""
@@ -290,33 +327,41 @@ class Database:
 
   def get_experiment(self, experiment_id: int) -> ExperimentResult:
     """Gets an experiment from local database."""
-    query = text('SELECT experiment_title FROM experiment '
-                 'WHERE experiment_id=:experiment_id')
+    query = text(
+        'SELECT experiment_title FROM experiment '
+        'WHERE experiment_id=:experiment_id'
+    )
     rows = self.engine.execute(query, experiment_id=experiment_id)
     title = None
     for r in rows:
       title = r['experiment_title']
       break
     if title is None:
-      raise ValueError(f'Experiment Id {experiment_id} doesn\'t exist.')
-    return ExperimentResult(experiment_id, title,
-                            self.list_work_units(experiment_id))
+      raise ValueError(f"Experiment Id {experiment_id} doesn't exist.")
+    return ExperimentResult(
+        experiment_id, title, self.list_work_units(experiment_id)
+    )
 
   def list_work_units(self, experiment_id: int) -> List[WorkUnitResult]:
     """Lists an experiment's work unit ids from local database."""
-    query = text('SELECT work_unit_id '
-                 'FROM work_unit WHERE experiment_id=:experiment_id')
+    query = text(
+        'SELECT work_unit_id FROM work_unit WHERE experiment_id=:experiment_id'
+    )
     rows = self.engine.execute(query, experiment_id=experiment_id)
     return [self.get_work_unit(experiment_id, r['work_unit_id']) for r in rows]
 
-  def get_work_unit(self, experiment_id: int,
-                    work_unit_id: int) -> WorkUnitResult:
+  def get_work_unit(
+      self, experiment_id: int, work_unit_id: int
+  ) -> WorkUnitResult:
     """Gets a work unit from local database."""
-    query = text('SELECT job_name, job_data FROM job '
-                 'WHERE experiment_id=:experiment_id '
-                 'AND work_unit_id=:work_unit_id')
+    query = text(
+        'SELECT job_name, job_data FROM job '
+        'WHERE experiment_id=:experiment_id '
+        'AND work_unit_id=:work_unit_id'
+    )
     rows = self.engine.execute(
-        query, experiment_id=experiment_id, work_unit_id=work_unit_id)
+        query, experiment_id=experiment_id, work_unit_id=work_unit_id
+    )
     jobs = {}
     for r in rows:
       job = data_pb2.Job()
@@ -325,9 +370,11 @@ class Database:
 
 
 def sqlite_settings(
-    db_file='~/.xmanager/experiments.sqlite3') -> SqlConnectionSettings:
+    db_file='~/.xmanager/experiments.sqlite3',
+) -> SqlConnectionSettings:
   return SqlConnectionSettings(
-      backend='sqlite', db_name=os.path.expanduser(db_file))
+      backend='sqlite', db_name=os.path.expanduser(db_file)
+  )
 
 
 _SUPPORTED_CONNECTORS = ['sqlite', 'generic', 'cloudsql']
@@ -338,11 +385,13 @@ def _validate_db_config(config: Dict[str, Any]) -> None:
     raise RuntimeError('DB YAML config must contain `sql_connector` entry')
   if config['sql_connector'] not in _SUPPORTED_CONNECTORS:
     raise RuntimeError(
-        f'`sql_connector` must be one of: {_SUPPORTED_CONNECTORS}')
+        f'`sql_connector` must be one of: {_SUPPORTED_CONNECTORS}'
+    )
 
   if 'sql_connection_settings' not in config:
-    raise RuntimeError('DB YAML config must contain '
-                       '`sql_connection_settings` entry')
+    raise RuntimeError(
+        'DB YAML config must contain `sql_connection_settings` entry'
+    )
 
 
 @functools.lru_cache()
@@ -350,7 +399,8 @@ def _db_config() -> Dict[str, Any]:
   """Parses and validates YAML DB config file to a dict."""
   if _DB_YAML_CONFIG_PATH.value is not None:
     db_config_file = xm.utils.resolve_path_relative_to_launcher(
-        _DB_YAML_CONFIG_PATH.value)
+        _DB_YAML_CONFIG_PATH.value
+    )
     with open(db_config_file, 'r') as f:
       config = yaml.safe_load(f)
       _validate_db_config(config)

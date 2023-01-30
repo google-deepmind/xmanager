@@ -39,10 +39,11 @@ class DockerOptions:
       volumes: A dictionary from `str` to `str`, where the keys represent paths
         inside the host to mount and the values represent paths in the
         container.
-      mount_gcs_path: If True, checks for the `~/gcs` directory on the host
-        and mounts it (if found) at `/gcs` in the container. Defaults to True.
+      mount_gcs_path: If True, checks for the `~/gcs` directory on the host and
+        mounts it (if found) at `/gcs` in the container. Defaults to True.
       interactive: If True, requests a run with interactive shell.
   """
+
   ports: Optional[docker_adapter.Ports] = None
   volumes: Optional[Dict[str, str]] = None
   mount_gcs_path: bool = True
@@ -55,9 +56,9 @@ class Local(xm.Executor):
 
   Attributes:
     requirements: Resources to be requested from the host.
-      Note: Currently, only the `local_gpu` resource is
-      supported (and only with a container-based executable).
-      Any other resource requirement will be ignored.
+      Note: Currently, only the `local_gpu` resource is supported (and only with
+        a container-based executable). Any other resource requirement will be
+        ignored.
     docker_options: Options applied if the job is a container-based executable.
     experimental_stream_output: Whether to pipe the job's stdout and stderr to
       the terminal. Might be removed once we decide on the logging design.
