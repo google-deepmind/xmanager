@@ -20,7 +20,7 @@ from absl import flags
 import bottle
 import bottle.ext.redis
 
-redis_host = flags.DEFINE_string('redis_host', None, 'Redis\' host.')
+redis_host = flags.DEFINE_string('redis_host', None, "Redis' host.")
 
 server = bottle.Bottle()
 

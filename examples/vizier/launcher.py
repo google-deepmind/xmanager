@@ -35,16 +35,22 @@ def get_study_spec() -> aip.StudySpec:
           aip.StudySpec.ParameterSpec(
               parameter_id='x',
               double_value_spec=aip.StudySpec.ParameterSpec.DoubleValueSpec(
-                  min_value=-2.0, max_value=2.0)),
+                  min_value=-2.0, max_value=2.0
+              ),
+          ),
           aip.StudySpec.ParameterSpec(
               parameter_id='y',
               double_value_spec=aip.StudySpec.ParameterSpec.DoubleValueSpec(
-                  min_value=-2.0, max_value=2.0))
+                  min_value=-2.0, max_value=2.0
+              ),
+          ),
       ],
       metrics=[
           aip.StudySpec.MetricSpec(
-              metric_id='loss', goal=aip.StudySpec.MetricSpec.GoalType.MINIMIZE)
-      ])
+              metric_id='loss', goal=aip.StudySpec.MetricSpec.GoalType.MINIMIZE
+          )
+      ],
+  )
 
 
 def main(_):
@@ -56,12 +62,14 @@ def main(_):
         entrypoint=xm.ModuleName('polynomial'),
     )
 
-    [executable] = experiment.package([
-        xm.Packageable(
-            executable_spec=spec,
-            executor_spec=xm_local.Vertex.Spec(),
-        ),
-    ])
+    [executable] = experiment.package(
+        [
+            xm.Packageable(
+                executable_spec=spec,
+                executor_spec=xm_local.Vertex.Spec(),
+            ),
+        ]
+    )
 
     vizier_cloud.VizierExploration(
         experiment=experiment,
@@ -71,7 +79,9 @@ def main(_):
         ),
         study_factory=vizier_cloud.NewStudy(study_config=get_study_spec()),
         num_trials_total=3,
-        num_parallel_trial_runs=2).launch()
+        num_parallel_trial_runs=2,
+    ).launch()
+
 
 if __name__ == '__main__':
   app.run(main)

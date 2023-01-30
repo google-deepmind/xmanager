@@ -27,7 +27,8 @@ def main(argv: Sequence[str]) -> None:
   del argv  # Unused.
 
   with xm_local.create_experiment(
-      experiment_title='local_container_links') as experiment:
+      experiment_title='local_container_links'
+  ) as experiment:
     [redis, server] = experiment.package([
         xm.Packageable(
             executable_spec=xm.Container(image_path='redis'),
@@ -45,8 +46,8 @@ def main(argv: Sequence[str]) -> None:
               server=xm.Job(
                   executable=server,
                   executor=xm_local.Local(
-                      docker_options=xm_local.DockerOptions(
-                          ports={8080: 8080})),
+                      docker_options=xm_local.DockerOptions(ports={8080: 8080})
+                  ),
                   args={'redis_host': work_unit.get_full_job_name('redis')},
               ),
               redis=xm.Job(
@@ -54,9 +55,12 @@ def main(argv: Sequence[str]) -> None:
                   executable=redis,
                   executor=xm_local.Local(
                       docker_options=xm_local.DockerOptions(
-                          volumes={'/tmp/redis': '/data'})),
+                          volumes={'/tmp/redis': '/data'}
+                      )
+                  ),
               ),
-          ))
+          )
+      )
 
     experiment.add(generator)
 

@@ -49,9 +49,11 @@ def get_dataset():
       transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
   ])
   train_dataset = datasets.CIFAR10(
-      root=_DATA_DIR, train=True, download=True, transform=transform)
+      root=_DATA_DIR, train=True, download=True, transform=transform
+  )
   test_dataset = datasets.CIFAR10(
-      root=_DATA_DIR, train=False, download=True, transform=transform)
+      root=_DATA_DIR, train=False, download=True, transform=transform
+  )
 
   return train_dataset, test_dataset
 
@@ -94,17 +96,17 @@ def _mp_fn(_, args):
       train_dataset,
       num_replicas=xla_model.xrt_world_size(),
       rank=xla_model.get_ordinal(),
-      shuffle=True)
+      shuffle=True,
+  )
   train_loader = torch.utils.data.DataLoader(
       train_dataset,
       batch_size=args['batch_size'],
       sampler=train_sampler,
-      drop_last=True)
+      drop_last=True,
+  )
   test_loader = torch.utils.data.DataLoader(
-      test_dataset,
-      batch_size=args['batch_size'],
-      shuffle=False,
-      drop_last=True)
+      test_dataset, batch_size=args['batch_size'], shuffle=False, drop_last=True
+  )
 
   device = xla_model.xla_device()
   resnet_model = torchvision.models.resnet18(pretrained=False)
@@ -112,7 +114,8 @@ def _mp_fn(_, args):
   model = wrapped_model.to(device)
 
   optimizer = optim.SGD(
-      model.parameters(), lr=args['learning_rate'], momentum=args['momentum'])
+      model.parameters(), lr=args['learning_rate'], momentum=args['momentum']
+  )
   loss_fn = nn.NLLLoss()
 
   for epoch in range(args['epochs']):
@@ -123,7 +126,8 @@ def _mp_fn(_, args):
     xla_model.master_print('Finished training epoch {}'.format(epoch))
     xla_model.master_print(
         '[xla:{}] Accuracy={:.2f}%'.format(xla_model.get_ordinal(), accuracy),
-        flush=True)
+        flush=True,
+    )
     xla_model.master_print(metrics.metrics_report(), flush=True)
 
 
@@ -136,6 +140,7 @@ def main(_):
   elif FLAGS.platform == 'tpu':
     # Only import tensorflow to get TPUClusterResolver()
     import tensorflow as tf  # pylint: disable=g-import-not-at-top
+
     cluster = tf.distribute.cluster_resolver.TPUClusterResolver()
     print('TPU master:', cluster.master())
     master = cluster.master().split('://')[-1]

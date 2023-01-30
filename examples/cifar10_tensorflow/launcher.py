@@ -41,38 +41,45 @@ def main(_):
         entrypoint=xm.ModuleName('cifar10'),
     )
 
-    [executable] = experiment.package([
-        xm.Packageable(
-            executable_spec=spec,
-            executor_spec=xm_local.Vertex.Spec(),
-            args={},
-        ),
-    ])
+    [executable] = experiment.package(
+        [
+            xm.Packageable(
+                executable_spec=spec,
+                executor_spec=xm_local.Vertex.Spec(),
+                args={},
+            ),
+        ]
+    )
 
     learning_rates = [0.1, 0.001]
     trials = list(
         dict([('learning_rate', lr)])
-        for (lr,) in itertools.product(learning_rates))
+        for (lr,) in itertools.product(learning_rates)
+    )
 
     tensorboard = FLAGS.tensorboard
     if not tensorboard:
       tensorboard = vertex.get_default_client().get_or_create_tensorboard(
-          'cifar10')
+          'cifar10'
+      )
       tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
 
     for i, hyperparameters in enumerate(trials):
       output_dir = os.environ.get('GOOGLE_CLOUD_BUCKET_NAME', None)
       if output_dir:
-        output_dir = os.path.join(output_dir, str(experiment.experiment_id),
-                                  str(i))
+        output_dir = os.path.join(
+            output_dir, str(experiment.experiment_id), str(i)
+        )
       tensorboard_capability = xm_local.TensorboardCapability(
-          name=tensorboard, base_output_directory=output_dir)
+          name=tensorboard, base_output_directory=output_dir
+      )
       experiment.add(
           xm.Job(
               executable=executable,
               executor=xm_local.Vertex(tensorboard=tensorboard_capability),
               args=hyperparameters,
-          ))
+          )
+      )
 
 
 if __name__ == '__main__':

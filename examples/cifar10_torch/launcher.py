@@ -37,7 +37,8 @@ flags.DEFINE_integer('gpus_per_node', 2, 'Number of GPUs per node.')
 @xm.run_in_asyncio_loop
 async def main(_):
   async with xm_local.create_experiment(
-      experiment_title='cifar10') as experiment:
+      experiment_title='cifar10'
+  ) as experiment:
     if FLAGS.image_path:
       spec = xm.Container(image_path=FLAGS.image_path)
     else:
@@ -48,25 +49,29 @@ async def main(_):
           entrypoint=xm.ModuleName('cifar10'),
       )
 
-    [executable] = experiment.package([
-        xm.Packageable(
-            executable_spec=spec,
-            executor_spec=xm_local.Vertex.Spec(),
-            args={
-                # TODO: replace workerpool0 with the actual name of
-                # the job when Vertex AI supports custom name worker pools.
-                'master_addr_port':
-                    xm.ShellSafeArg(
-                        utils.get_workerpool_address('workerpool0')),
-            },
-        ),
-    ])
+    [executable] = experiment.package(
+        [
+            xm.Packageable(
+                executable_spec=spec,
+                executor_spec=xm_local.Vertex.Spec(),
+                args={
+                    # TODO: replace workerpool0 with the actual
+                    # name of the job when Vertex AI supports custom name worker
+                    # pools.
+                    'master_addr_port': xm.ShellSafeArg(
+                        utils.get_workerpool_address('workerpool0')
+                    ),
+                },
+            ),
+        ]
+    )
 
     batch_sizes = [64, 1024]
     learning_rates = [0.1, 0.001]
     trials = list(
         dict([('batch_size', bs), ('learning_rate', lr)])
-        for (bs, lr) in itertools.product(batch_sizes, learning_rates))
+        for (bs, lr) in itertools.product(batch_sizes, learning_rates)
+    )
 
     work_units = []
     for hyperparameters in trials:
@@ -78,7 +83,8 @@ async def main(_):
         job_group.jobs[f'node_{i}'] = xm.Job(
             executable=executable,
             executor=xm_local.Vertex(
-                xm.JobRequirements(t4=FLAGS.gpus_per_node)),
+                xm.JobRequirements(t4=FLAGS.gpus_per_node)
+            ),
             args=hyperparameters,
         )
       work_units.append(await experiment.add(job_group))

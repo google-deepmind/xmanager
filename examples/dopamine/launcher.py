@@ -30,7 +30,8 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string(
     'gin_file',
     'https://raw.githubusercontent.com/google/dopamine/master/dopamine/agents/dqn/configs/dqn_mountaincar.gin',
-    'Gin file pulled from https://github.com/google/dopamine.')
+    'Gin file pulled from https://github.com/google/dopamine.',
+)
 flags.DEFINE_string('tensorboard', None, 'Tensorboard instance.')
 
 
@@ -51,30 +52,37 @@ def main(_):
         entrypoint=xm.ModuleName('train'),
     )
 
-    [executable] = experiment.package([
-        xm.Packageable(
-            executable_spec=spec,
-            executor_spec=xm_local.Vertex.Spec(),
-            args={
-                'gin_files': gin_file,
-            },
-        ),
-    ])
+    [executable] = experiment.package(
+        [
+            xm.Packageable(
+                executable_spec=spec,
+                executor_spec=xm_local.Vertex.Spec(),
+                args={
+                    'gin_files': gin_file,
+                },
+            ),
+        ]
+    )
 
     tensorboard = FLAGS.tensorboard
     if not tensorboard:
       tensorboard = vertex.get_default_client().get_or_create_tensorboard(
-          'cifar10')
+          'cifar10'
+      )
       tensorboard = asyncio.get_event_loop().run_until_complete(tensorboard)
     output_dir = os.environ['GOOGLE_CLOUD_BUCKET_NAME']
     output_dir = os.path.join(output_dir, str(experiment.experiment_id))
     tensorboard_capability = xm_local.TensorboardCapability(
-        name=tensorboard, base_output_directory=output_dir)
+        name=tensorboard, base_output_directory=output_dir
+    )
     experiment.add(
         xm.Job(
             executable=executable,
             executor=xm_local.Vertex(
-                xm.JobRequirements(t4=1), tensorboard=tensorboard_capability)))
+                xm.JobRequirements(t4=1), tensorboard=tensorboard_capability
+            ),
+        )
+    )
 
 
 if __name__ == '__main__':

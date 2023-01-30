@@ -43,16 +43,19 @@ def main(_):
     @parameter_controller.controller(
         executor=xm_local.Kubernetes(),
         controller_args={
-            'xm_k8s_service_account_name':
-                flags.FLAGS.xm_k8s_service_account_name,
-            'xm_gcp_service_account_name':
-                flags.FLAGS.xm_gcp_service_account_name,
+            'xm_k8s_service_account_name': (
+                flags.FLAGS.xm_k8s_service_account_name
+            ),
+            'xm_gcp_service_account_name': (
+                flags.FLAGS.xm_gcp_service_account_name
+            ),
         },
         controller_env_vars={
             'GOOGLE_CLOUD_BUCKET_NAME': os.environ['GOOGLE_CLOUD_BUCKET_NAME'],
         },
         # Package contents of this directory inside parameter controller job
-        package_path='.')
+        package_path='.',
+    )
     async def parameter_controller_example(experiment: xm.Experiment):
       spec = xm.PythonContainer(
           # Package contents of job to be launched

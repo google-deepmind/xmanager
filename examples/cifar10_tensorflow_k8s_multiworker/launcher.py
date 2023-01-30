@@ -28,7 +28,8 @@ from xmanager.contrib import xm_tensorflow
 
 def main(_):
   with xm_local.create_experiment(
-      experiment_title='kubernetes_multiworker') as experiment:
+      experiment_title='kubernetes_multiworker'
+  ) as experiment:
     spec = xm.PythonContainer(
         # Package the current directory that this script is in.
         path='.',
@@ -36,26 +37,31 @@ def main(_):
         entrypoint=xm.ModuleName('cifar10'),
     )
 
-    [executable] = experiment.package([
-        xm.Packageable(
-            executable_spec=spec,
-            executor_spec=xm_local.Kubernetes.Spec(),
-            args={},
-        ),
-    ])
+    [executable] = experiment.package(
+        [
+            xm.Packageable(
+                executable_spec=spec,
+                executor_spec=xm_local.Kubernetes.Spec(),
+                args={},
+            ),
+        ]
+    )
 
     learning_rates = [0.001]
     trials = list(
         dict([('learning_rate', lr)])
-        for (lr,) in itertools.product(learning_rates))
+        for (lr,) in itertools.product(learning_rates)
+    )
 
     builder = xm_tensorflow.MultiWorkerMirroredStrategyBuilder(
         experiment=experiment,
         worker_executable=executable,
         worker_executor=xm_local.Kubernetes(
-            requirements=xm.JobRequirements(t4=1)),
+            requirements=xm.JobRequirements(t4=1)
+        ),
         worker_name='worker',
-        num_workers=3)
+        num_workers=3,
+    )
 
     for hyperparameters in trials:
       experiment.add(builder.gen_job_group(), args=hyperparameters)

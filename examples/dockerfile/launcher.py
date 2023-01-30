@@ -24,20 +24,25 @@ def main(argv: Sequence[str]) -> None:
   del argv
 
   with xm_local.create_experiment(
-      experiment_title='Example using Dockerfile()') as experiment:
+      experiment_title='Example using Dockerfile()'
+  ) as experiment:
     executable_spec = xm.Dockerfile()
-    [executable] = experiment.package([
-        xm.Packageable(
-            executable_spec=executable_spec,
-            executor_spec=xm_local.Vertex.Spec()),
-    ])
+    [executable] = experiment.package(
+        [
+            xm.Packageable(
+                executable_spec=executable_spec,
+                executor_spec=xm_local.Vertex.Spec(),
+            ),
+        ]
+    )
     experiment.add(
         xm.Job(
             executable=executable,
             executor=xm_local.Vertex(),
             env_vars={'FOO': 'bar'},
             args=['--a=1', '--b=2', '--c=3', '--d=4'],
-        ))
+        )
+    )
 
 
 if __name__ == '__main__':

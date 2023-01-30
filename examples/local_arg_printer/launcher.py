@@ -28,21 +28,25 @@ def main(argv: Sequence[str]) -> None:
   del argv
 
   with xm_local.create_experiment(
-      experiment_title='local_arg_printer') as experiment:
-    [executable] = experiment.package([
-        xm.Packageable(
-            executable_spec=xm.BazelBinary(
-                label='//:arg_printer'
+      experiment_title='local_arg_printer'
+  ) as experiment:
+    [executable] = experiment.package(
+        [
+            xm.Packageable(
+                executable_spec=xm.BazelBinary(
+                    label='//:arg_printer'
+                ),
+                executor_spec=xm_local.Local.Spec(),
             ),
-            executor_spec=xm_local.Local.Spec(),
-        ),
-    ])
+        ]
+    )
     experiment.add(
         xm.Job(
             executable=executable,
             executor=xm_local.Local(),
             env_vars={'OUTPUT_PATH': '/tmp/local_arg_printer.txt'},
-        ))
+        )
+    )
 
 
 if __name__ == '__main__':

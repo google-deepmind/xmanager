@@ -25,10 +25,13 @@ from xmanager import xm
 from xmanager import xm_local
 
 _EXP_NAME = flags.DEFINE_string(
-    'exp_name', 'local-cifar10-gpu', 'Name of the experiment.', short_name='n')
+    'exp_name', 'local-cifar10-gpu', 'Name of the experiment.', short_name='n'
+)
 _INTERACTIVE = flags.DEFINE_bool(
-    'interactive', False,
-    'Launch the container and allow interactive access to it.')
+    'interactive',
+    False,
+    'Launch the container and allow interactive access to it.',
+)
 
 
 def main(argv) -> None:
@@ -37,26 +40,29 @@ def main(argv) -> None:
 
   create_experiment = xm_local.create_experiment
   with create_experiment(experiment_title=_EXP_NAME.value) as experiment:
-    docker_options = xm_local.DockerOptions(
-        interactive=_INTERACTIVE.value)
+    docker_options = xm_local.DockerOptions(interactive=_INTERACTIVE.value)
     # Creating local executor with extra flag to track job's progress.
     executor = xm_local.Local(
         xm.JobRequirements(local_gpu=2),
-        experimental_stream_output=True, docker_options=docker_options)
+        experimental_stream_output=True,
+        docker_options=docker_options,
+    )
 
     # Empty args means nothing is passed into the job.
     executable_args = {}
-    executable, = experiment.package([
-        xm.python_container(
-            executor_spec=executor.Spec(),
-            args=executable_args,
-            # Package the current directory that this script is in.
-            path='.',
-            base_image='gcr.io/deeplearning-platform-release/tf2-gpu.2-6',
-            entrypoint=xm.ModuleName('local_container_gpu.cifar10'),
-            use_deep_module=True,
-        )
-    ])
+    (executable,) = experiment.package(
+        [
+            xm.python_container(
+                executor_spec=executor.Spec(),
+                args=executable_args,
+                # Package the current directory that this script is in.
+                path='.',
+                base_image='gcr.io/deeplearning-platform-release/tf2-gpu.2-6',
+                entrypoint=xm.ModuleName('local_container_gpu.cifar10'),
+                use_deep_module=True,
+            )
+        ]
+    )
     job = xm.Job(executable, executor)
 
     experiment.add(job)

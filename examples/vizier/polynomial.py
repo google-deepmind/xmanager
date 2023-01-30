@@ -34,19 +34,28 @@ flags.DEFINE_float('x', 0, 'The hyperparameter variable X.')
 flags.DEFINE_float('y', 0, 'The hyperparameter variable Y.')
 
 flags.DEFINE_string(
-    'trial_name', None, 'Identifying the current job trial that measurements '
-    'will be submitted to with `add_trial_measurement`. Format: '
-    'projects/{project}/locations/{location}/studies/{study}/trials/{trial}')
+    'trial_name',
+    None,
+    (
+        'Identifying the current job trial that measurements '
+        'will be submitted to with `add_trial_measurement`. Format: '
+        'projects/{project}/locations/{location}/studies/{study}/trials/{trial}'
+    ),
+)
 
 
 def main(_):
   worker = VizierWorker(FLAGS.trial_name)
 
   # dummy training loop: "train" for one epoch
-  metric_value = float(FLAGS.a * FLAGS.x * FLAGS.x +
-                       FLAGS.b * FLAGS.y * FLAGS.y +
-                       FLAGS.c * FLAGS.x * FLAGS.y + FLAGS.d * FLAGS.x +
-                       FLAGS.e * FLAGS.y + FLAGS.f)
+  metric_value = float(
+      FLAGS.a * FLAGS.x * FLAGS.x
+      + FLAGS.b * FLAGS.y * FLAGS.y
+      + FLAGS.c * FLAGS.x * FLAGS.y
+      + FLAGS.d * FLAGS.x
+      + FLAGS.e * FLAGS.y
+      + FLAGS.f
+  )
 
   worker.add_trial_measurement(1, {'loss': metric_value})
 

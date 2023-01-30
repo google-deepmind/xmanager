@@ -23,8 +23,13 @@ import tensorflow as tf
 
 FLAGS = flags.FLAGS
 flags.DEFINE_multi_string(
-    'gin_files', [], 'List of paths to gin configuration files (e.g.'
-    '"dopamine/agents/dqn/dqn.gin").')
+    'gin_files',
+    [],
+    (
+        'List of paths to gin configuration files (e.g.'
+        '"dopamine/agents/dqn/dqn.gin").'
+    ),
+)
 
 # When using Vertex Tensorboard, the tensorboard will be present as a
 # environment variable.

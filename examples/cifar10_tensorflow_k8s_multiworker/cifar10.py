@@ -35,7 +35,8 @@ def main(_):
   with strategy.scope():
     model = models.Sequential()
     model.add(
-        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3))
+    )
     model.add(layers.MaxPooling2D((2, 2)))
     model.add(layers.Conv2D(64, (3, 3), activation='relu'))
     model.add(layers.MaxPooling2D((2, 2)))
@@ -49,7 +50,8 @@ def main(_):
     model.compile(
         optimizer=optimizer,
         loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-        metrics=['accuracy'])
+        metrics=['accuracy'],
+    )
 
     callbacks = []
     if LOG_DIR:
@@ -61,21 +63,25 @@ def main(_):
       ]
 
   (train_images, train_labels), (test_images, test_labels) = (
-      datasets.cifar10.load_data())
+      datasets.cifar10.load_data()
+  )
   # Normalize pixel values to be between 0 and 1
   train_images, test_images = train_images / 255.0, test_images / 255.0
 
   train_dataset = tf.data.Dataset.from_tensor_slices(
-      (train_images, train_labels))
+      (train_images, train_labels)
+  )
   validation_dataset = tf.data.Dataset.from_tensor_slices(
-      (test_images, test_labels))
+      (test_images, test_labels)
+  )
 
   train_dataset = train_dataset.batch(32)
   validation_dataset = validation_dataset.batch(32)
 
   options = tf.data.Options()
   options.experimental_distribute.auto_shard_policy = (
-      tf.data.experimental.AutoShardPolicy.DATA)
+      tf.data.experimental.AutoShardPolicy.DATA
+  )
 
   train_dataset.with_options(options)
   validation_dataset.with_options(options)
@@ -85,7 +91,8 @@ def main(_):
       epochs=FLAGS.epochs,
       validation_data=validation_dataset,
       callbacks=callbacks,
-      verbose=2)
+      verbose=2,
+  )
 
 
 if __name__ == '__main__':

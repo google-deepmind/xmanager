@@ -29,12 +29,16 @@ from xmanager import xm_local
 from xmanager.contrib import tensorboard
 
 _TENSORBOARD_LOG_DIR = flags.DEFINE_string(
-    'tensorboard_log_dir', None,
-    'Log directory to be used by workers and Tensorboard.')
+    'tensorboard_log_dir',
+    None,
+    'Log directory to be used by workers and Tensorboard.',
+)
 
 _TENSORBOARD_TIMEOUT_SECS = flags.DEFINE_integer(
-    'tensorboard_timeout_secs', 60 * 60,
-    'The amount of time the Tensorboard job should run for.')
+    'tensorboard_timeout_secs',
+    60 * 60,
+    'The amount of time the Tensorboard job should run for.',
+)
 
 
 def main(_):
@@ -46,28 +50,34 @@ def main(_):
         entrypoint=xm.ModuleName('cifar10'),
     )
 
-    [executable] = experiment.package([
-        xm.Packageable(
-            executable_spec=spec,
-            executor_spec=xm_local.Kubernetes.Spec(),
-        ),
-    ])
+    [executable] = experiment.package(
+        [
+            xm.Packageable(
+                executable_spec=spec,
+                executor_spec=xm_local.Kubernetes.Spec(),
+            ),
+        ]
+    )
 
     learning_rates = [0.1, 0.001]
     trials = list(
         dict([('learning_rate', lr)])
-        for (lr,) in itertools.product(learning_rates))
+        for (lr,) in itertools.product(learning_rates)
+    )
 
     log_dir = None
     if _TENSORBOARD_LOG_DIR.value:
-      log_dir = f'{_TENSORBOARD_LOG_DIR.value}/{str(experiment.experiment_id)}/logs'
+      log_dir = (
+          f'{_TENSORBOARD_LOG_DIR.value}/{str(experiment.experiment_id)}/logs'
+      )
 
     if log_dir:
       tensorboard.add_tensorboard(
           experiment,
           log_dir,
           executor=xm_local.Kubernetes(),
-          timeout_secs=_TENSORBOARD_TIMEOUT_SECS.value)
+          timeout_secs=_TENSORBOARD_TIMEOUT_SECS.value,
+      )
 
     for i, hyperparameters in enumerate(trials):
       output_dir = os.path.join(log_dir, str(i))
@@ -75,10 +85,9 @@ def main(_):
           xm.Job(
               executable=executable,
               executor=xm_local.Kubernetes(),
-              args=dict({
-                  'tensorboard_log_dir': output_dir,
-                  **hyperparameters
-              })))
+              args=dict({'tensorboard_log_dir': output_dir, **hyperparameters}),
+          )
+      )
 
 
 if __name__ == '__main__':

@@ -47,19 +47,22 @@ def main(_):
           entrypoint=xm.ModuleName('cifar10'),
       )
 
-    [executable] = experiment.package([
-        xm.Packageable(
-            executable_spec=spec,
-            executor_spec=xm_local.Vertex.Spec(),
-            args={'platform': FLAGS.platform},
-        ),
-    ])
+    [executable] = experiment.package(
+        [
+            xm.Packageable(
+                executable_spec=spec,
+                executor_spec=xm_local.Vertex.Spec(),
+                args={'platform': FLAGS.platform},
+            ),
+        ]
+    )
 
     batch_sizes = [64, 1024]
     learning_rates = [0.1, 0.001]
     trials = list(
         dict([('batch_size', bs), ('learning_rate', lr)])
-        for (bs, lr) in itertools.product(batch_sizes, learning_rates))
+        for (bs, lr) in itertools.product(batch_sizes, learning_rates)
+    )
 
     requirements = xm.JobRequirements()
     if FLAGS.platform == 'gpu':

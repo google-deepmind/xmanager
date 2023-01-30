@@ -37,27 +37,32 @@ def main(_):
         job_name=cluster_resolver.task_type,
         task_index=cluster_resolver.task_id,
         protocol=cluster_resolver.rpc_layer or 'grpc',
-        start=True)
+        start=True,
+    )
     server.join()
 
   (train_images, train_labels), _ = datasets.cifar10.load_data()
 
   def dataset_fn(input_context):
     dataset = tf.data.Dataset.from_tensor_slices(
-        (train_images, train_labels)).repeat()
-    dataset = dataset.shard(input_context.num_input_pipelines,
-                            input_context.input_pipeline_id)
+        (train_images, train_labels)
+    ).repeat()
+    dataset = dataset.shard(
+        input_context.num_input_pipelines, input_context.input_pipeline_id
+    )
     dataset = dataset.batch(64)
     dataset = dataset.prefetch(2)
 
     return dataset
 
   strategy = tf.distribute.experimental.ParameterServerStrategy(
-      cluster_resolver)
+      cluster_resolver
+  )
   with strategy.scope():
     model = models.Sequential()
     model.add(
-        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3))
+    )
     model.add(layers.MaxPooling2D((2, 2)))
     model.add(layers.Conv2D(64, (3, 3), activation='relu'))
     model.add(layers.MaxPooling2D((2, 2)))
@@ -71,12 +76,14 @@ def main(_):
     model.compile(
         optimizer=optimizer,
         loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-        metrics=['accuracy'])
+        metrics=['accuracy'],
+    )
 
   model.fit(
       tf.keras.utils.experimental.DatasetCreator(dataset_fn),
       steps_per_epoch=1500,
-      epochs=FLAGS.epochs)
+      epochs=FLAGS.epochs,
+  )
 
 
 if __name__ == '__main__':

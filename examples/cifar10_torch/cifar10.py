@@ -42,8 +42,9 @@ except ModuleNotFoundError:
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('master_addr_port', None, 'master address and port.')
-flags.DEFINE_integer('world_size', 1,
-                     'Number of nodes/clusters participating in the job.')
+flags.DEFINE_integer(
+    'world_size', 1, 'Number of nodes/clusters participating in the job.'
+)
 flags.DEFINE_integer('rank', 0, 'Rank of the current node/cluster.')
 
 flags.DEFINE_string('train_dir', '/tmp/cifar10/train', 'train directory')
@@ -82,8 +83,9 @@ def test(model, device, test_loader):
   return correct / total
 
 
-def main_worker(gpu, master_addr, master_port, world_size, node_rank,
-                ngpus_per_node, args):
+def main_worker(
+    gpu, master_addr, master_port, world_size, node_rank, ngpus_per_node, args
+):
   """The main method each spawned process runs."""
   world_size = world_size * ngpus_per_node
   world_rank = node_rank * ngpus_per_node + gpu
@@ -92,7 +94,8 @@ def main_worker(gpu, master_addr, master_port, world_size, node_rank,
       backend='nccl',
       init_method=tcp_address,
       world_size=world_size,
-      rank=world_rank)
+      rank=world_rank,
+  )
 
   # It is the user's responsibility that each process has the same model.
   torch.manual_seed(0)
@@ -111,21 +114,26 @@ def main_worker(gpu, master_addr, master_port, world_size, node_rank,
       transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
   ])
   train_set = torchvision.datasets.CIFAR10(
-      root=args['train_dir'], train=True, download=False, transform=transform)
+      root=args['train_dir'], train=True, download=False, transform=transform
+  )
   test_set = torchvision.datasets.CIFAR10(
-      root=args['test_dir'], train=False, download=False, transform=transform)
+      root=args['test_dir'], train=False, download=False, transform=transform
+  )
   train_sampler = data.distributed.DistributedSampler(dataset=train_set)
   train_loader = data.DataLoader(
       dataset=train_set,
       pin_memory=True,
       batch_size=batch_size,
-      sampler=train_sampler)
+      sampler=train_sampler,
+  )
   test_loader = data.DataLoader(
-      dataset=test_set, pin_memory=True, shuffle=False)
+      dataset=test_set, pin_memory=True, shuffle=False
+  )
 
   criterion = nn.CrossEntropyLoss()
   optimizer = optim.SGD(
-      model.parameters(), lr=args['learning_rate'], momentum=args['momentum'])
+      model.parameters(), lr=args['learning_rate'], momentum=args['momentum']
+  )
 
   for epoch in range(args['epochs']):
     print('[rank:{}] epoch {}'.format(world_rank, epoch))
@@ -161,8 +169,15 @@ def main(_):
   multiprocessing.spawn(
       main_worker,
       nprocs=ngpus_per_node,
-      args=(master_addr, master_port, world_size, node_rank, ngpus_per_node,
-            args))
+      args=(
+          master_addr,
+          master_port,
+          world_size,
+          node_rank,
+          ngpus_per_node,
+          args,
+      ),
+  )
 
 
 if __name__ == '__main__':

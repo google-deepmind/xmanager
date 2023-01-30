@@ -19,8 +19,7 @@ from tensorflow.keras import datasets
 from tensorflow.keras import layers
 from tensorflow.keras import models
 
-_TENSORBOARD_LOG_DIR = flags.DEFINE_string(
-    'tensorboard_log_dir', None, '')
+_TENSORBOARD_LOG_DIR = flags.DEFINE_string('tensorboard_log_dir', None, '')
 
 FLAGS = flags.FLAGS
 flags.DEFINE_integer('epochs', 5, 'epochs')
@@ -29,7 +28,8 @@ flags.DEFINE_float('learning_rate', 0.001, 'learning rate')
 
 def main(_):
   (train_images, train_labels), (test_images, test_labels) = (
-      datasets.cifar10.load_data())
+      datasets.cifar10.load_data()
+  )
 
   # Normalize pixel values to be between 0 and 1
   train_images, test_images = train_images / 255.0, test_images / 255.0
@@ -38,7 +38,8 @@ def main(_):
   with strategy.scope():
     model = models.Sequential()
     model.add(
-        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+        layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3))
+    )
     model.add(layers.MaxPooling2D((2, 2)))
     model.add(layers.Conv2D(64, (3, 3), activation='relu'))
     model.add(layers.MaxPooling2D((2, 2)))
@@ -52,7 +53,8 @@ def main(_):
     model.compile(
         optimizer=optimizer,
         loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-        metrics=['accuracy'])
+        metrics=['accuracy'],
+    )
 
     callbacks = []
     if _TENSORBOARD_LOG_DIR.value:
@@ -69,7 +71,8 @@ def main(_):
       epochs=FLAGS.epochs,
       validation_data=(test_images, test_labels),
       callbacks=callbacks,
-      verbose=2)
+      verbose=2,
+  )
 
 
 if __name__ == '__main__':
