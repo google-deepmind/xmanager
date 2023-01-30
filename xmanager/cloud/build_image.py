@@ -29,23 +29,37 @@ from xmanager.docker import docker_adapter
 from xmanager.xm import utils
 
 _BUILD_IMAGE_LOCALLY = flags.DEFINE_boolean(
-    'xm_build_image_locally', True,
-    'Use local Docker to build images instead of remote Google Cloud Build. '
-    'This is usually a lot faster but requires docker to be installed.')
+    'xm_build_image_locally',
+    True,
+    (
+        'Use local Docker to build images instead of remote Google Cloud Build.'
+        ' This is usually a lot faster but requires docker to be installed.'
+    ),
+)
 _USE_DOCKER_COMMAND = flags.DEFINE_boolean(
-    'xm_use_docker_command', True,
-    'Call "docker build" in a subprocess rather than using Python docker '
-    'client library when building the docker image locally. This provies a '
-    'much nicer output for interactive use.')
+    'xm_use_docker_command',
+    True,
+    (
+        'Call "docker build" in a subprocess rather than using Python docker '
+        'client library when building the docker image locally. This provies a '
+        'much nicer output for interactive use.'
+    ),
+)
 _SHOW_DOCKER_COMMAND_PROGRESS = flags.DEFINE_boolean(
-    'xm_show_docker_command_progress', False,
-    'Show container output during the "docker build".')
+    'xm_show_docker_command_progress',
+    False,
+    'Show container output during the "docker build".',
+)
 _WRAP_LATE_BINDINGS = flags.DEFINE_boolean(
-    'xm_wrap_late_bindings', False,
-    'Feature flag to wrap and unwrap late bindings for network addresses. '
-    'ONLY works with PythonContainer with default instructions or simple '
-    'instructions that do not modify the file directory. '
-    'REQUIRES ./entrypoint.sh to be the ENTRYPOINT.')
+    'xm_wrap_late_bindings',
+    False,
+    (
+        'Feature flag to wrap and unwrap late bindings for network addresses. '
+        'ONLY works with PythonContainer with default instructions or simple '
+        'instructions that do not modify the file directory. '
+        'REQUIRES ./entrypoint.sh to be the ENTRYPOINT.'
+    ),
+)
 
 # TODO: Find a master image than is compatible with every
 # combination (TF, Torch, JAX) X (CPU, GPU, TPU).
@@ -81,13 +95,15 @@ fi
 """
 
 
-def build(py_executable: xm.PythonContainer,
-          args: xm.SequentialArgs,
-          env_vars: Dict[str, str],
-          image_name: Optional[str] = None,
-          project: Optional[str] = None,
-          bucket: Optional[str] = None,
-          pull_image: bool = False) -> str:
+def build(
+    py_executable: xm.PythonContainer,
+    args: xm.SequentialArgs,
+    env_vars: Dict[str, str],
+    image_name: Optional[str] = None,
+    project: Optional[str] = None,
+    bucket: Optional[str] = None,
+    pull_image: bool = False,
+) -> str:
   """Build a Docker image from a Python project.
 
   Args:
@@ -116,18 +132,27 @@ def build(py_executable: xm.PythonContainer,
       dockerfile = os.path.join(python_path, 'Dockerfile')
 
     with tempfile.TemporaryDirectory() as staging:
-      docker_lib.prepare_directory(staging, python_path, dirname, entrypoint,
-                                   dockerfile)
-      return build_by_dockerfile(staging, os.path.join(staging, 'Dockerfile'),
-                                 image_name, project, bucket, pull_image)
+      docker_lib.prepare_directory(
+          staging, python_path, dirname, entrypoint, dockerfile
+      )
+      return build_by_dockerfile(
+          staging,
+          os.path.join(staging, 'Dockerfile'),
+          image_name,
+          project,
+          bucket,
+          pull_image,
+      )
 
 
-def build_by_dockerfile(path: str,
-                        dockerfile: str,
-                        image_name: str,
-                        project: Optional[str] = None,
-                        bucket: Optional[str] = None,
-                        pull_image: bool = False):
+def build_by_dockerfile(
+    path: str,
+    dockerfile: str,
+    image_name: str,
+    project: Optional[str] = None,
+    bucket: Optional[str] = None,
+    pull_image: bool = False,
+):
   """Build a Docker image from a Docker directory.
 
   Args:
@@ -150,7 +175,8 @@ def build_by_dockerfile(path: str,
           path,
           dockerfile,
           use_docker_command=_USE_DOCKER_COMMAND.value,
-          show_docker_command_progress=_SHOW_DOCKER_COMMAND_PROGRESS.value)
+          show_docker_command_progress=_SHOW_DOCKER_COMMAND_PROGRESS.value,
+      )
     print('Falling back to CloudBuild. See INFO log for details.')
 
   # If Dockerfile is not a direct child of path, then create a temp directory
@@ -188,8 +214,9 @@ def _get_base_image(py_executable: xm.PythonContainer) -> str:
   return _DEFAULT_BASE_IMAGE
 
 
-def _create_instructions(py_executable: xm.PythonContainer,
-                         env_vars: Dict[str, str]) -> str:
+def _create_instructions(
+    py_executable: xm.PythonContainer, env_vars: Dict[str, str]
+) -> str:
   """Create Docker instructions."""
   set_env_vars = [f'ENV {key}="{value}"' for key, value in env_vars.items()]
   if py_executable.docker_instructions:
@@ -197,8 +224,9 @@ def _create_instructions(py_executable: xm.PythonContainer,
 
   directory = os.path.basename(py_executable.path)
   return '\n'.join(
-      list(default_steps(directory, py_executable.use_deep_module)) +
-      set_env_vars)
+      list(default_steps(directory, py_executable.use_deep_module))
+      + set_env_vars
+  )
 
 
 def default_steps(directory: str, use_deep_module: bool) -> List[str]:
@@ -219,28 +247,32 @@ def default_steps(directory: str, use_deep_module: bool) -> List[str]:
         f'WORKDIR {directory}',
     ]
 
-  return workdir_setup_prefix + [
-      # Without setting LANG, RDL ran into an UnicodeDecodeError, similar to
-      # what is described at [1]. This seems to be good practice and not hurt so
-      # we're just always setting it.
-      # [1] https://github.com/spotDL/spotify-downloader/issues/279
-      'ENV LANG=C.UTF-8',
-      # Updating and installing on the same line causes cache-busting.
-      # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
-      'RUN apt-get update && apt-get install -y git netcat',
-      'RUN python -m pip install --upgrade pip',
-      f'COPY {directory}/requirements.txt {project_dir}/requirements.txt',
-      f'RUN python -m pip install -r {directory}/requirements.txt',
-      # It is best practice to copy the project directory as late as possible,
-      # rather than at the beginning. This allows Docker to reuse cached layers.
-      # If copying the project files were the first step, a tiny modification to
-      # the source code will invalidate the cache.
-      # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy
-      f'COPY {directory}/ {project_dir}',
-      # Changing ownwership of project_dir, so that both users: UID 1000
-      # and root are the co-owner of it.
-      f'RUN chown -R 1000:root {project_dir} && chmod -R 775 {project_dir}',
-  ] + workdir_setup_suffix
+  return (
+      workdir_setup_prefix
+      + [
+          # Without setting LANG, RDL ran into an UnicodeDecodeError, similar to
+          # what is described at [1]. This seems to be good practice and not
+          # hurt so we're just always setting it.
+          # [1] https://github.com/spotDL/spotify-downloader/issues/279
+          'ENV LANG=C.UTF-8',
+          # Updating and installing on the same line causes cache-busting.
+          # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
+          'RUN apt-get update && apt-get install -y git netcat',
+          'RUN python -m pip install --upgrade pip',
+          f'COPY {directory}/requirements.txt {project_dir}/requirements.txt',
+          f'RUN python -m pip install -r {directory}/requirements.txt',
+          # It is best practice to copy the project directory as late as
+          # possible, rather than at the beginning. This allows Docker to reuse
+          # cached layers. If copying the project files were the first step, a
+          # tiny modification to the source code will invalidate the cache.
+          # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy
+          f'COPY {directory}/ {project_dir}',
+          # Changing ownwership of project_dir, so that both users: UID 1000
+          # and root are the co-owner of it.
+          f'RUN chown -R 1000:root {project_dir} && chmod -R 775 {project_dir}',
+      ]
+      + workdir_setup_suffix
+  )
 
 
 def _create_dockerfile(
@@ -253,7 +285,8 @@ def _create_dockerfile(
   instructions = _create_instructions(py_executable, env_vars)
   entrypoint = _create_entrypoint_cmd(args)
   contents = _DOCKERFILE_TEMPLATE.format(
-      base_image=base_image, instructions=instructions, entrypoint=entrypoint)
+      base_image=base_image, instructions=instructions, entrypoint=entrypoint
+  )
   print('Dockerfile:', contents, sep='\n')
   t = tempfile.NamedTemporaryFile(delete=False)
   with open(t.name, 'w') as f:
@@ -269,8 +302,9 @@ def _get_entrypoint_commands(py_executable: xm.PythonContainer) -> str:
     # Commands specified by the user are passed unchanged.
     cmds = py_executable.entrypoint.commands
   else:
-    raise ValueError('Unsupported entrypoint type {}'.format(
-        type(py_executable.entrypoint)))
+    raise ValueError(
+        'Unsupported entrypoint type {}'.format(type(py_executable.entrypoint))
+    )
   cmds = '\n'.join(cmds)
   # Allow passing extra parameters to the commands.
   if not cmds.endswith(('$@', '"$@"')):
@@ -281,7 +315,8 @@ def _get_entrypoint_commands(py_executable: xm.PythonContainer) -> str:
 def _create_entrypoint(py_executable: xm.PythonContainer) -> str:
   """Create a bash entrypoint based on the base image."""
   contents = _ENTRYPOINT_TEMPLATE.format(
-      cmds=_get_entrypoint_commands(py_executable))
+      cmds=_get_entrypoint_commands(py_executable)
+  )
 
   t = tempfile.NamedTemporaryFile(delete=False)
   with open(t.name, 'w') as f:
@@ -322,13 +357,16 @@ def _wrap_late_bindings(destination: str, path: str, dockerfile: str) -> None:
 
   shutil.copyfile(
       os.path.join(root_dir, 'cloud', 'data', 'wrapped_entrypoint.sh'),
-      os.path.join(destination, 'wrapped_entrypoint.sh'))
+      os.path.join(destination, 'wrapped_entrypoint.sh'),
+  )
   shutil.copyfile(
       os.path.join(root_dir, 'cloud', 'utils.py'),
-      os.path.join(destination, 'vertex_utils.py'))
+      os.path.join(destination, 'vertex_utils.py'),
+  )
   shutil.copyfile(
       os.path.join(root_dir, 'vizier', 'vizier_cloud', 'vizier_worker.py'),
-      os.path.join(destination, 'vizier_worker.py'))
+      os.path.join(destination, 'vizier_worker.py'),
+  )
 
   new_dockerfile = os.path.join(destination, 'Dockerfile')
   insert_instructions = [
@@ -336,9 +374,11 @@ def _wrap_late_bindings(destination: str, path: str, dockerfile: str) -> None:
   ]
   with open(dockerfile) as f:
     contents = f.read()
-  contents = contents.replace('ENTRYPOINT',
-                              '\n'.join(insert_instructions + ['ENTRYPOINT']))
-  contents = contents.replace('ENTRYPOINT ["./entrypoint.sh',
-                              'ENTRYPOINT ["./wrapped_entrypoint.sh')
+  contents = contents.replace(
+      'ENTRYPOINT', '\n'.join(insert_instructions + ['ENTRYPOINT'])
+  )
+  contents = contents.replace(
+      'ENTRYPOINT ["./entrypoint.sh', 'ENTRYPOINT ["./wrapped_entrypoint.sh'
+  )
   with open(new_dockerfile, 'w') as f:
     f.write(contents)

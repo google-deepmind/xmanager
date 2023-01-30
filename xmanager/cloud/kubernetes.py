@@ -30,9 +30,13 @@ from xmanager.xm_local import status as local_status
 
 
 _K8S_SERVICE_ACCOUNT_NAME = flags.DEFINE_string(
-    'xm_k8s_service_account_name', 'default',
-    'Specifies the Kubernetes Service Account name to be used by XManager in'
-    'the pod specifications.')
+    'xm_k8s_service_account_name',
+    'default',
+    (
+        'Specifies the Kubernetes Service Account name to be used by XManager'
+        ' inthe pod specifications.'
+    ),
+)
 
 
 @functools.lru_cache()
@@ -93,11 +97,15 @@ class Client:
     for job in jobs:
       executable = job.executable
       executor = job.executor
-      if not isinstance(executable,
-                        local_executables.GoogleContainerRegistryImage):
-        raise ValueError('Executable {} has type {}. Executable must be of '
-                         'type GoogleContainerRegistryImage.'.format(
-                             executable, type(executable)))
+      if not isinstance(
+          executable, local_executables.GoogleContainerRegistryImage
+      ):
+        raise ValueError(
+            'Executable {} has type {}. Executable must be of '
+            'type GoogleContainerRegistryImage.'.format(
+                executable, type(executable)
+            )
+        )
       all_env_vars = {**executable.env_vars, **job.env_vars}
       env = [k8s_client.V1EnvVar(k, v) for k, v in all_env_vars.items()]
       job_name = convert_to_valid_label(get_full_job_name(job.name))
@@ -105,9 +113,11 @@ class Client:
           name=job_name,
           image=executable.image_path,
           resources=requirements_from_executor(executor),
-          args=xm.merge_args(executable.args,
-                             job.args).to_list(utils.ARG_ESCAPER),
-          env=env)
+          args=xm.merge_args(executable.args, job.args).to_list(
+              utils.ARG_ESCAPER
+          ),
+          env=env,
+      )
       k8s_job = k8s_client.V1Job()
       k8s_job.metadata = k8s_client.V1ObjectMeta(name=job_name)
       k8s_job.spec = k8s_client.V1JobSpec(
@@ -158,7 +168,8 @@ class Client:
     while True:
       await asyncio.sleep(backoff)
       response = batch_api.read_namespaced_job_status(
-          namespace='default', name=job.metadata.name)
+          namespace='default', name=job.metadata.name
+      )
       if response.status.completion_time:
         return
 
@@ -177,11 +188,13 @@ class KubernetesHandle(local_execution.ExecutionHandle):
 
 
 # Must act on all jobs with `local_executors.Kubernetes` executor.
-def launch(get_full_job_name: Callable[[str], str],
-           job_group: xm.JobGroup) -> List[KubernetesHandle]:
+def launch(
+    get_full_job_name: Callable[[str], str], job_group: xm.JobGroup
+) -> List[KubernetesHandle]:
   """Launch K8s jobs in the job_group and return a handler."""
-  jobs = xm.job_operators.collect_jobs_by_filter(job_group,
-                                                 _kubernetes_job_predicate)
+  jobs = xm.job_operators.collect_jobs_by_filter(
+      job_group, _kubernetes_job_predicate
+  )
   # As client creation may throw, do not initiate it if there are no jobs.
   if not jobs:
     return []
@@ -193,7 +206,8 @@ def launch(get_full_job_name: Callable[[str], str],
 
 
 def requirements_from_executor(
-    executor: local_executors.Kubernetes) -> k8s_client.V1ResourceRequirements:
+    executor: local_executors.Kubernetes,
+) -> k8s_client.V1ResourceRequirements:
   """Get resource limits from the executor."""
   limits = {}
   for resource, value in executor.requirements.task_requirements.items():
@@ -213,9 +227,13 @@ def requirements_from_executor(
 
 
 def annotations_from_executor(
-    executor: local_executors.Kubernetes) -> Dict[str, str]:
+    executor: local_executors.Kubernetes,
+) -> Dict[str, str]:
   """Get Pod annotations from the executor for TPUs."""
-  if executor.cloud_provider != local_executors.GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER:
+  if (
+      executor.cloud_provider
+      != local_executors.GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER
+  ):
     return {}
 
   if executor.requirements.accelerator in xm.TpuType:
@@ -227,15 +245,20 @@ def annotations_from_executor(
 
 
 def node_selector_from_executor(
-    executor: local_executors.Kubernetes) -> Dict[str, str]:
+    executor: local_executors.Kubernetes,
+) -> Dict[str, str]:
   """Get Pod annotations from the executor for TPUs."""
-  if executor.cloud_provider != local_executors.GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER:
+  if (
+      executor.cloud_provider
+      != local_executors.GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER
+  ):
     return {}
 
   for resource in executor.requirements.task_requirements:
     if resource in xm.GpuType:
       return {
-          'cloud.google.com/gke-accelerator':
+          'cloud.google.com/gke-accelerator': (
               'nvidia-tesla-' + str(resource).lower()
+          )
       }
   return {}

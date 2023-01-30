@@ -50,59 +50,61 @@ class VertexTest(unittest.TestCase):
             args=xm.SequentialArgs.from_collection({'a': 1}),
         ),
         executor=local_executors.Vertex(xm.JobRequirements(cpu=1, ram=1, t4=2)),
-        args={
-            'b': 2,
-            'c': 3
-        },
+        args={'b': 2, 'c': 3},
     )
 
     expected_call = {
-        'parent':
-            'projects/test-project/locations/us-central1',
-        'custom_job':
-            aip_v1.CustomJob(
-                display_name='test-experiment',
-                job_spec=aip_v1.CustomJobSpec(
-                    worker_pool_specs=[
-                        aip_v1.WorkerPoolSpec(
-                            machine_spec=aip_v1.MachineSpec(
-                                machine_type='n1-highmem-2',
-                                accelerator_type='NVIDIA_TESLA_T4',
-                                accelerator_count=2,
-                            ),
-                            replica_count=1,
-                            container_spec=aip_v1.ContainerSpec(
-                                image_uri='image-path',
-                                args=['--a=1', '--b=2', '--c=3'],
-                            ))
-                    ],
-                    service_account='test-sa',
-                    base_output_directory=aip_v1.GcsDestination(
-                        output_uri_prefix='gs://test-bucket/aiplatform-custom-job-2022-01-01-00:00:00.000',
-                    ),
-                    enable_web_access=True,
+        'parent': 'projects/test-project/locations/us-central1',
+        'custom_job': aip_v1.CustomJob(
+            display_name='test-experiment',
+            job_spec=aip_v1.CustomJobSpec(
+                worker_pool_specs=[
+                    aip_v1.WorkerPoolSpec(
+                        machine_spec=aip_v1.MachineSpec(
+                            machine_type='n1-highmem-2',
+                            accelerator_type='NVIDIA_TESLA_T4',
+                            accelerator_count=2,
+                        ),
+                        replica_count=1,
+                        container_spec=aip_v1.ContainerSpec(
+                            image_uri='image-path',
+                            args=['--a=1', '--b=2', '--c=3'],
+                        ),
+                    )
+                ],
+                service_account='test-sa',
+                base_output_directory=aip_v1.GcsDestination(
+                    output_uri_prefix='gs://test-bucket/aiplatform-custom-job-2022-01-01-00:00:00.000',
                 ),
+                enable_web_access=True,
             ),
-        'timeout':
-            None,
+        ),
+        'timeout': None,
     }
 
     timestamp = datetime.datetime.strptime('2022/1/1', '%Y/%m/%d')
-    with mock.patch.object(datetime, 'datetime') as mock_timestamp, \
-         mock.patch.object(aip_utils.ClientWithOverride, 'WrappedClient') as job_client, \
-         mock.patch.object(aiplatform.CustomJob, 'resource_name', new_callable=mock.PropertyMock) as name, \
-         mock.patch.object(aiplatform.CustomJob, '_dashboard_uri'):
+    with mock.patch.object(
+        datetime, 'datetime'
+    ) as mock_timestamp, mock.patch.object(
+        aip_utils.ClientWithOverride, 'WrappedClient'
+    ) as job_client, mock.patch.object(
+        aiplatform.CustomJob, 'resource_name', new_callable=mock.PropertyMock
+    ) as name, mock.patch.object(
+        aiplatform.CustomJob, '_dashboard_uri'
+    ):
       mock_timestamp.now.return_value = timestamp
       name.return_value = 'test-resource-name'
       client.launch('test-experiment', [job])
       job_client.return_value.create_custom_job.assert_called_once_with(  # pytype: disable=attribute-error  # py39-upgrade
-          **expected_call)
+          **expected_call
+      )
 
   def test_get_machine_spec_default(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Vertex(),
-        args={})
+        args={},
+    )
     machine_spec = vertex.get_machine_spec(job)
     self.assertDictEqual(machine_spec, {'machine_type': 'n1-standard-4'})
 
@@ -110,8 +112,10 @@ class VertexTest(unittest.TestCase):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Vertex(
-            requirements=xm.JobRequirements(cpu=20, ram=40 * xm.GiB)),
-        args={})
+            requirements=xm.JobRequirements(cpu=20, ram=40 * xm.GiB)
+        ),
+        args={},
+    )
     machine_spec = vertex.get_machine_spec(job)
     self.assertDictEqual(machine_spec, {'machine_type': 'n1-highcpu-64'})
 
@@ -119,36 +123,46 @@ class VertexTest(unittest.TestCase):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Vertex(
-            requirements=xm.JobRequirements(p100=2)),
-        args={})
+            requirements=xm.JobRequirements(p100=2)
+        ),
+        args={},
+    )
     machine_spec = vertex.get_machine_spec(job)
     self.assertDictEqual(
-        machine_spec, {
+        machine_spec,
+        {
             'machine_type': 'n1-standard-4',
             'accelerator_type': vertex.aip_v1.AcceleratorType.NVIDIA_TESLA_P100,
             'accelerator_count': 2,
-        })
+        },
+    )
 
   def test_get_machine_spec_a100(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Vertex(
-            requirements=xm.JobRequirements(a100=2)),
-        args={})
+            requirements=xm.JobRequirements(a100=2)
+        ),
+        args={},
+    )
     machine_spec = vertex.get_machine_spec(job)
     self.assertDictEqual(
-        machine_spec, {
+        machine_spec,
+        {
             'machine_type': 'a2-highgpu-2g',
             'accelerator_type': vertex.aip_v1.AcceleratorType.NVIDIA_TESLA_A100,
             'accelerator_count': 2,
-        })
+        },
+    )
 
   def test_get_machine_spec_tpu(self):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Vertex(
-            requirements=xm.JobRequirements(tpu_v3=8)),
-        args={})
+            requirements=xm.JobRequirements(tpu_v3=8)
+        ),
+        args={},
+    )
     machine_spec = vertex.get_machine_spec(job)
     # TPU_V2 and TPU_V3 removed in
     # https://github.com/googleapis/python-aiplatform/commit/f3a3d03c8509dc49c24139155a572dacbe954f66
@@ -156,27 +170,34 @@ class VertexTest(unittest.TestCase):
     #   'accelerator_type': 7,
     # with
     #   'accelerator_type': vertex.aip_v1.AcceleratorType.TPU_V3,
-    self.assertDictEqual(machine_spec, {
-        'machine_type': 'cloud-tpu',
-        'accelerator_type': 7,
-        'accelerator_count': 8,
-    })
+    self.assertDictEqual(
+        machine_spec,
+        {
+            'machine_type': 'cloud-tpu',
+            'accelerator_type': 7,
+            'accelerator_count': 8,
+        },
+    )
 
   def test_cpu_ram_to_machine_type_exact(self):
-    self.assertEqual('n1-standard-16',
-                     vertex.cpu_ram_to_machine_type(16, 60 * xm.GiB))
+    self.assertEqual(
+        'n1-standard-16', vertex.cpu_ram_to_machine_type(16, 60 * xm.GiB)
+    )
 
   def test_cpu_ram_to_machine_type_highmem(self):
-    self.assertEqual('n1-highmem-64',
-                     vertex.cpu_ram_to_machine_type(1, 415 * xm.GiB))
+    self.assertEqual(
+        'n1-highmem-64', vertex.cpu_ram_to_machine_type(1, 415 * xm.GiB)
+    )
 
   def test_cpu_ram_to_machine_type_mem_only(self):
-    self.assertEqual('n1-highmem-64',
-                     vertex.cpu_ram_to_machine_type(None, 415 * xm.GiB))
+    self.assertEqual(
+        'n1-highmem-64', vertex.cpu_ram_to_machine_type(None, 415 * xm.GiB)
+    )
 
   def test_cpu_ram_to_machine_type_highcpu(self):
-    self.assertEqual('n1-highcpu-64',
-                     vertex.cpu_ram_to_machine_type(63, 1 * xm.GiB))
+    self.assertEqual(
+        'n1-highcpu-64', vertex.cpu_ram_to_machine_type(63, 1 * xm.GiB)
+    )
 
   def test_cpu_ram_to_machine_type_cpu_only(self):
     self.assertEqual('n1-highcpu-64', vertex.cpu_ram_to_machine_type(63, None))

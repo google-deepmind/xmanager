@@ -69,22 +69,30 @@ _CLOUD_TPU_ACCELERATOR_TYPES = {
 }
 
 _STATE_TO_STATUS = {
-    aip_v1.JobState.JOB_STATE_SUCCEEDED:
-        local_status.LocalWorkUnitStatusEnum.COMPLETED,
-    aip_v1.JobState.JOB_STATE_CANCELLED:
-        local_status.LocalWorkUnitStatusEnum.CANCELLED,
-    aip_v1.JobState.JOB_STATE_QUEUED:
-        local_status.LocalWorkUnitStatusEnum.RUNNING,
-    aip_v1.JobState.JOB_STATE_PENDING:
-        local_status.LocalWorkUnitStatusEnum.RUNNING,
-    aip_v1.JobState.JOB_STATE_RUNNING:
-        local_status.LocalWorkUnitStatusEnum.RUNNING,
-    aip_v1.JobState.JOB_STATE_CANCELLING:
-        local_status.LocalWorkUnitStatusEnum.RUNNING,
-    aip_v1.JobState.JOB_STATE_PAUSED:
-        local_status.LocalWorkUnitStatusEnum.RUNNING,
-    aip_v1.JobState.JOB_STATE_FAILED:
-        local_status.LocalWorkUnitStatusEnum.FAILED,
+    aip_v1.JobState.JOB_STATE_SUCCEEDED: (
+        local_status.LocalWorkUnitStatusEnum.COMPLETED
+    ),
+    aip_v1.JobState.JOB_STATE_CANCELLED: (
+        local_status.LocalWorkUnitStatusEnum.CANCELLED
+    ),
+    aip_v1.JobState.JOB_STATE_QUEUED: (
+        local_status.LocalWorkUnitStatusEnum.RUNNING
+    ),
+    aip_v1.JobState.JOB_STATE_PENDING: (
+        local_status.LocalWorkUnitStatusEnum.RUNNING
+    ),
+    aip_v1.JobState.JOB_STATE_RUNNING: (
+        local_status.LocalWorkUnitStatusEnum.RUNNING
+    ),
+    aip_v1.JobState.JOB_STATE_CANCELLING: (
+        local_status.LocalWorkUnitStatusEnum.RUNNING
+    ),
+    aip_v1.JobState.JOB_STATE_PAUSED: (
+        local_status.LocalWorkUnitStatusEnum.RUNNING
+    ),
+    aip_v1.JobState.JOB_STATE_FAILED: (
+        local_status.LocalWorkUnitStatusEnum.FAILED
+    ),
 }
 
 # Hide noisy warning regarding:
@@ -101,9 +109,9 @@ def _vertex_job_predicate(job: xm.Job) -> bool:
 class Client:
   """Client class for interacting with AI Platform (Unified)."""
 
-  def __init__(self,
-               project: Optional[str] = None,
-               location: str = _DEFAULT_LOCATION) -> None:
+  def __init__(
+      self, project: Optional[str] = None, location: str = _DEFAULT_LOCATION
+  ) -> None:
     """Create a client.
 
     Args:
@@ -122,18 +130,24 @@ class Client:
     tensorboard, output_dir = self.get_tensorboard_settings(jobs)
     for i, job in enumerate(jobs):
       executable = job.executable
-      if not isinstance(executable,
-                        local_executables.GoogleContainerRegistryImage):
-        raise ValueError('Executable {} has type {}. Executable must be of '
-                         'type GoogleContainerRegistryImage'.format(
-                             executable, type(executable)))
+      if not isinstance(
+          executable, local_executables.GoogleContainerRegistryImage
+      ):
+        raise ValueError(
+            'Executable {} has type {}. Executable must be of '
+            'type GoogleContainerRegistryImage'.format(
+                executable, type(executable)
+            )
+        )
 
       args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
       env_vars = {**executable.env_vars, **job.env_vars}
       env = [{'name': k, 'value': v} for k, v in env_vars.items()]
       if i == 0 and job.executor.requirements.replicas > 1:
-        raise ValueError('The first job in a JobGroup using the Vertex AI '
-                         'executor cannot have requirements.replicas > 1.')
+        raise ValueError(
+            'The first job in a JobGroup using the Vertex AI '
+            'executor cannot have requirements.replicas > 1.'
+        )
       pool = aip_v1.WorkerPoolSpec(
           machine_spec=get_machine_spec(job),
           container_spec=aip_v1.ContainerSpec(
@@ -152,9 +166,10 @@ class Client:
     # modules based the replica index. A disadvantage of this implementation
     # is that every replica must have the same machine_spec.
     if len(pools) > 4:
-      raise ValueError('Cloud Job for xm jobs {} contains {} worker types. '
-                       'Only 4 worker types are supported'.format(
-                           jobs, len(pools)))
+      raise ValueError(
+          'Cloud Job for xm jobs {} contains {} worker types. '
+          'Only 4 worker types are supported'.format(jobs, len(pools))
+      )
 
     custom_job = aiplatform.CustomJob(
         project=self.project,
@@ -193,23 +208,28 @@ class Client:
 
     if not executors[0].tensorboard:
       raise ValueError(
-          'Jobs in this job group must have the same tensorboard settings. ' +
-          'jobs[0] has no tensorboard settings.')
+          'Jobs in this job group must have the same tensorboard settings. '
+          + 'jobs[0] has no tensorboard settings.'
+      )
     output_dir = executors[0].tensorboard.base_output_directory
     tensorboard = executors[0].tensorboard.name
     for i, executor in enumerate(executors):
       if not executor:
         raise ValueError(
-            'Jobs in this job group must have the same tensorboard settings. ' +
-            'jobs[i] has no tensorboard settings.')
-      if (executor.tensorboard.name != tensorboard or
-          executor.tensorboard.base_output_directory != output_dir):
+            'Jobs in this job group must have the same tensorboard settings. '
+            + 'jobs[i] has no tensorboard settings.'
+        )
+      if (
+          executor.tensorboard.name != tensorboard
+          or executor.tensorboard.base_output_directory != output_dir
+      ):
         raise ValueError(
-            'Jobs in this job group must have the same tensorboard settings. ' +
-            f'jobs[0] has tensorboard = {tensorboard} and output_dir =' +
-            f'{output_dir}. jobs[{i}] has tensorboard = ' +
-            f'{executor.tensorboard.name} and output_dir = '
-            f'{executor.tensorboard.base_output_directory}.')
+            'Jobs in this job group must have the same tensorboard settings. '
+            + f'jobs[0] has tensorboard = {tensorboard} and output_dir ='
+            + f'{output_dir}. jobs[{i}] has tensorboard = '
+            + f'{executor.tensorboard.name} and output_dir = '
+            f'{executor.tensorboard.base_output_directory}.'
+        )
     if output_dir and not output_dir.startswith('gs://'):
       output_dir = os.path.join('gs://', output_dir)
     return tensorboard, output_dir
@@ -224,11 +244,14 @@ class Client:
 
   async def get_or_create_tensorboard(self, name: str) -> str:
     """Gets or creates a Vertex Tensorboard instance."""
-    tensorboard_client = aip_v1.TensorboardServiceAsyncClient(client_options={
-        'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
-    })
+    tensorboard_client = aip_v1.TensorboardServiceAsyncClient(
+        client_options={
+            'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
+        }
+    )
     request = aip_v1.ListTensorboardsRequest(
-        parent=self.parent, filter=f'displayName={name}')
+        parent=self.parent, filter=f'displayName={name}'
+    )
     response = await tensorboard_client.list_tensorboards(request)
     async for page in response.pages:
       if page.tensorboards:
@@ -237,15 +260,18 @@ class Client:
 
   async def create_tensorboard(self, name: str) -> str:
     """Creates a Vertex Tensorboard instance."""
-    tensorboard_client = aip_v1.TensorboardServiceAsyncClient(client_options={
-        'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
-    })
+    tensorboard_client = aip_v1.TensorboardServiceAsyncClient(
+        client_options={
+            'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
+        }
+    )
     tensorboard = aip_v1.Tensorboard(display_name=name)
     op = await tensorboard_client.create_tensorboard(
         aip_v1.CreateTensorboardRequest(
             parent=self.parent,
             tensorboard=tensorboard,
-        ))
+        )
+    )
     return (await op.result()).name
 
   def get_state(self, job_name: str) -> aip_v1.JobState:
@@ -288,19 +314,23 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
       spec['accelerator_count'] = int(value)
   accelerator = spec.get('accelerator_type', None)
   if accelerator and accelerator == aip_v1.AcceleratorType.NVIDIA_TESLA_A100:
-    for (gpus, machine_type) in sorted(_A100_GPUS_TO_MACHINE_TYPE.items()):
+    for gpus, machine_type in sorted(_A100_GPUS_TO_MACHINE_TYPE.items()):
       if spec['accelerator_count'] <= gpus:
         spec['machine_type'] = machine_type
         break
     if not spec.get('machine_type', None):
-      raise ValueError('a100={} does not fit in any valid machine type'.format(
-          spec['accelerator_count']))
+      raise ValueError(
+          'a100={} does not fit in any valid machine type'.format(
+              spec['accelerator_count']
+          )
+      )
   elif accelerator == 6 or accelerator == 7:
     spec['machine_type'] = 'cloud-tpu'
   else:
     spec['machine_type'] = cpu_ram_to_machine_type(
         requirements.task_requirements.get(xm.ResourceType.CPU),
-        requirements.task_requirements.get(xm.ResourceType.RAM))
+        requirements.task_requirements.get(xm.ResourceType.RAM),
+    )
   return spec
 
 
@@ -323,11 +353,13 @@ class VertexHandle(local_execution.ExecutionHandle):
 
 
 # Must act on all jobs with `local_executors.Vertex` executor.
-def launch(experiment_title: str, work_unit_name: str,
-           job_group: xm.JobGroup) -> List[VertexHandle]:
+def launch(
+    experiment_title: str, work_unit_name: str, job_group: xm.JobGroup
+) -> List[VertexHandle]:
   """Launch Vertex jobs in the job_group and return a handler."""
-  jobs = xm.job_operators.collect_jobs_by_filter(job_group,
-                                                 _vertex_job_predicate)
+  jobs = xm.job_operators.collect_jobs_by_filter(
+      job_group, _vertex_job_predicate
+  )
   # As client creation may throw, do not initiate it if there are no jobs.
   if not jobs:
     return []
@@ -348,8 +380,10 @@ def cpu_ram_to_machine_type(cpu: Optional[int], ram: Optional[int]) -> str:
 
   optimal_machine_type = ''
   optimal_excess_resources = math.inf
-  for machine_type, (machine_cpu,
-                     machine_ram) in _MACHINE_TYPE_TO_CPU_RAM.items():
+  for machine_type, (
+      machine_cpu,
+      machine_ram,
+  ) in _MACHINE_TYPE_TO_CPU_RAM.items():
     if machine_cpu >= cpu and machine_ram >= ram:
       excess = machine_cpu + machine_ram - cpu - ram
       if excess < optimal_excess_resources:
@@ -359,5 +393,5 @@ def cpu_ram_to_machine_type(cpu: Optional[int], ram: Optional[int]) -> str:
   if optimal_machine_type:
     return optimal_machine_type
   raise ValueError(
-      '(cpu={}, ram={}) does not fit in any valid machine type'.format(
-          cpu, ram))
+      '(cpu={}, ram={}) does not fit in any valid machine type'.format(cpu, ram)
+  )

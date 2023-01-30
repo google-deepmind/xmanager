@@ -29,22 +29,32 @@ import termcolor
 from xmanager.cloud import auth
 
 _CLOUD_BUILD_TIMEOUT_SECONDS = flags.DEFINE_integer(
-    'xm_cloud_build_timeout_seconds', 1200,
-    'The amount of time that builds should be allowed to run, '
-    'to second granularity.')
+    'xm_cloud_build_timeout_seconds',
+    1200,
+    (
+        'The amount of time that builds should be allowed to run, '
+        'to second granularity.'
+    ),
+)
 _USE_CLOUD_BUILD_CACHE = flags.DEFINE_boolean(
     'xm_use_cloud_build_cache',
     False,
-    'Use Cloud Build cache to speed up the Docker build. '
-    'An image with the same name tagged as :latest should exist.'
-    'More details at https://cloud.google.com/cloud-build/docs/speeding-up-builds#using_a_cached_docker_image'  # pylint:disable=g-line-too-long
+    (  # pylint:disable=g-line-too-long
+        'Use Cloud Build cache to speed up the Docker build. '
+        'An image with the same name tagged as :latest should exist.'
+        'More details at'
+        ' https://cloud.google.com/cloud-build/docs/speeding-up-builds#using_a_cached_docker_image'
+    ),
 )
 
 _USE_KANIKO = flags.DEFINE_boolean(
-    'xm_use_kaniko', False,
-    'Use kaniko backend for Cloud Build and enable caching.')
-_KANIKO_CACHE_TTL = flags.DEFINE_string('xm_kaniko_cache_ttl', '336h',
-                                        'Cache ttl to use for kaniko builds.')
+    'xm_use_kaniko',
+    False,
+    'Use kaniko backend for Cloud Build and enable caching.',
+)
+_KANIKO_CACHE_TTL = flags.DEFINE_string(
+    'xm_kaniko_cache_ttl', '336h', 'Cache ttl to use for kaniko builds.'
+)
 
 _CLOUD_SDK_CREDENTIALS_WARNING = """\
 Your application has authenticated using end user credentials from Google \
@@ -59,14 +69,16 @@ warnings.filterwarnings('ignore', _CLOUD_SDK_CREDENTIALS_WARNING)
 class Client:
   """Cloud Build Client."""
 
-  def __init__(self,
-               project: Optional[str] = None,
-               bucket: Optional[str] = None,
-               credentials=None,
-               cloud_build_timeout_seconds: Optional[int] = None,
-               use_cloud_build_cache: Optional[bool] = None,
-               use_kaniko: Optional[bool] = None,
-               kaniko_cache_ttl: Optional[str] = None):
+  def __init__(
+      self,
+      project: Optional[str] = None,
+      bucket: Optional[str] = None,
+      credentials=None,
+      cloud_build_timeout_seconds: Optional[int] = None,
+      use_cloud_build_cache: Optional[bool] = None,
+      use_kaniko: Optional[bool] = None,
+      kaniko_cache_ttl: Optional[str] = None,
+  ):
     """Create the Cloud Build Client.
 
     Args:
@@ -107,13 +119,15 @@ class Client:
 
   def upload_tar_to_storage(self, archive_path: str, destination_name: str):
     storage_client = storage.Client(
-        project=self.project, credentials=self.credentials)
+        project=self.project, credentials=self.credentials
+    )
     bucket = storage_client.bucket(self.bucket)
     blob = bucket.blob(destination_name)
     blob.upload_from_filename(archive_path)
 
-  def build_docker_image(self, image: str, directory: str,
-                         upload_name: str) -> str:
+  def build_docker_image(
+      self, image: str, directory: str, upload_name: str
+  ) -> str:
     """Create a Docker image via Cloud Build and push to Cloud Repository."""
     repository, tag = docker_utils.parse_repository_tag(image)
     if not tag:
@@ -132,9 +146,14 @@ class Client:
           'cloudbuild',
           'v1',
           credentials=self.credentials,
-          cache_discovery=False)
-    create_op = self.cloudbuild_api.projects().builds().create(
-        projectId=self.project, body=build_body).execute()
+          cache_discovery=False,
+      )
+    create_op = (
+        self.cloudbuild_api.projects()
+        .builds()
+        .create(projectId=self.project, body=build_body)
+        .execute()
+    )
     log_url = create_op['metadata']['build']['logUrl']
     print('Cloud Build link:', termcolor.colored(log_url, color='blue'))
 
@@ -153,33 +172,42 @@ class Client:
         'timeout': str(self.cloud_build_timeout_seconds) + 's',
     }
     if self.use_kaniko:
-      body.update({
-          'steps': [{
-              'name':
-                  'gcr.io/kaniko-project/executor:latest',
-              'args': [
-                  f'--destination={repository}:{tag}',
-                  f'--destination={repository}:latest', '--cache=true',
-                  f'--cache-ttl={self.kaniko_cache_ttl}'
-              ],
-          }]
-      })
+      body.update(
+          {
+              'steps': [{
+                  'name': 'gcr.io/kaniko-project/executor:latest',
+                  'args': [
+                      f'--destination={repository}:{tag}',
+                      f'--destination={repository}:latest',
+                      '--cache=true',
+                      f'--cache-ttl={self.kaniko_cache_ttl}',
+                  ],
+              }]
+          }
+      )
     else:
-      args_for_cached_image = (['--cache-from', f'{repository}:latest']
-                               if self.use_cloud_build_cache else [])
+      args_for_cached_image = (
+          ['--cache-from', f'{repository}:latest']
+          if self.use_cloud_build_cache
+          else []
+      )
       body.update({
           'steps': [{
-              'name':
-                  'gcr.io/cloud-builders/docker',
-              'args': [
-                  'build', '-t', f'{repository}:{tag}', '-t',
-                  f'{repository}:latest'
-              ] + args_for_cached_image + ['.'],
+              'name': 'gcr.io/cloud-builders/docker',
+              'args': (
+                  [
+                      'build',
+                      '-t',
+                      f'{repository}:{tag}',
+                      '-t',
+                      f'{repository}:latest',
+                  ]
+                  + args_for_cached_image
+                  + ['.']
+              ),
           }],
-          'options': {
-              'machineType': 'E2_HIGHCPU_32'
-          },
-          'images': [repository]
+          'options': {'machineType': 'E2_HIGHCPU_32'},
+          'images': [repository],
       })
     return body
 
@@ -188,8 +216,12 @@ class Client:
     backoff = 30  # seconds
     while True:
       time.sleep(backoff)
-      result = self.cloudbuild_api.projects().builds().get(
-          projectId=self.project, id=build_id).execute()
+      result = (
+          self.cloudbuild_api.projects()
+          .builds()
+          .get(projectId=self.project, id=build_id)
+          .execute()
+      )
       status = result['status']
       print('Cloud Build status:', status)
 
@@ -201,8 +233,10 @@ class Client:
           image_uri = f'{image["name"]}@{image["digest"]}'
         break
       elif status == 'FAILURE':
-        print('Build FAILED. See logs for more information:',
-              termcolor.colored(result['logUrl'], color='red'))
+        print(
+            'Build FAILED. See logs for more information:',
+            termcolor.colored(result['logUrl'], color='red'),
+        )
         raise RuntimeError('Build FAILED.')
       elif status == 'QUEUED' or status == 'WORKING':
         continue
@@ -210,11 +244,15 @@ class Client:
         print('Cloud Build tool failure. Status:', status)
         raise RuntimeError('Cloud Build tool failed. Try again.')
       else:
-        print('Build not complete. See logs for more information:',
-              termcolor.colored(result['logUrl'], color='red'))
+        print(
+            'Build not complete. See logs for more information:',
+            termcolor.colored(result['logUrl'], color='red'),
+        )
         raise RuntimeError('Build FAILED.')
 
     print('Your image URI is:', termcolor.colored(image_uri, color='blue'))
-    print('You can run your image locally via:\n' +
-          termcolor.colored('docker run ' + image_uri, color='green'))
+    print(
+        'You can run your image locally via:\n'
+        + termcolor.colored('docker run ' + image_uri, color='green')
+    )
     return image_uri

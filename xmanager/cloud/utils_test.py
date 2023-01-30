@@ -31,7 +31,9 @@ _CLUSTER_SPEC = """{
     "index": 1,
     "trial": ""
   }
-}""".replace('\n', ' ')
+}""".replace(
+    '\n', ' '
+)
 
 
 class UtilsTest(unittest.TestCase):
@@ -68,7 +70,8 @@ class UtilsTest(unittest.TestCase):
     os.environ['CLUSTER_SPEC'] = _CLUSTER_SPEC
     self.assertEqual(
         utils.map_workerpool_address_args([arg]),
-        ['--master=cmle-training-workerpool0-ab-0:2222'])
+        ['--master=cmle-training-workerpool0-ab-0:2222'],
+    )
 
   def test_create_workerpool_address_env_vars_script(self):
     os.environ['MY_WORKER'] = utils.get_workerpool_address('workerpool0')

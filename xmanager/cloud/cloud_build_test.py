@@ -26,14 +26,14 @@ class CloudBuildTest(absltest.TestCase):
         'my-bucket',
         mock.Mock(),
         use_kaniko=False,
-        use_cloud_build_cache=False)
+        use_cloud_build_cache=False,
+    )
     image = client._build_request_body('path/to/project', 'my-image', 'live')
     self.assertEqual(
-        image, {
+        image,
+        {
             'images': ['my-image'],
-            'options': {
-                'machineType': 'E2_HIGHCPU_32'
-            },
+            'options': {'machineType': 'E2_HIGHCPU_32'},
             'source': {
                 'storageSource': {
                     'bucket': 'my-bucket',
@@ -42,12 +42,18 @@ class CloudBuildTest(absltest.TestCase):
             },
             'steps': [{
                 'args': [
-                    'build', '-t', 'my-image:live', '-t', 'my-image:latest', '.'
+                    'build',
+                    '-t',
+                    'my-image:live',
+                    '-t',
+                    'my-image:latest',
+                    '.',
                 ],
                 'name': 'gcr.io/cloud-builders/docker',
             }],
-            'timeout': '1200s'
-        })
+            'timeout': '1200s',
+        },
+    )
 
   def test_build_request_body_use_kaniko(self):
     client = cloud_build.Client(
@@ -55,10 +61,12 @@ class CloudBuildTest(absltest.TestCase):
         'my-bucket',
         mock.Mock(),
         use_kaniko=True,
-        use_cloud_build_cache=False)
+        use_cloud_build_cache=False,
+    )
     image = client._build_request_body('path/to/project', 'my-image', 'live')
     self.assertEqual(
-        image, {
+        image,
+        {
             'source': {
                 'storageSource': {
                     'bucket': 'my-bucket',
@@ -74,8 +82,9 @@ class CloudBuildTest(absltest.TestCase):
                 ],
                 'name': 'gcr.io/kaniko-project/executor:latest',
             }],
-            'timeout': '1200s'
-        })
+            'timeout': '1200s',
+        },
+    )
 
   def test_build_request_body_use_build_cache(self):
     client = cloud_build.Client(
@@ -83,14 +92,14 @@ class CloudBuildTest(absltest.TestCase):
         'my-bucket',
         mock.Mock(),
         use_kaniko=False,
-        use_cloud_build_cache=True)
+        use_cloud_build_cache=True,
+    )
     image = client._build_request_body('path/to/project', 'my-image', 'live')
     self.assertEqual(
-        image, {
+        image,
+        {
             'images': ['my-image'],
-            'options': {
-                'machineType': 'E2_HIGHCPU_32'
-            },
+            'options': {'machineType': 'E2_HIGHCPU_32'},
             'source': {
                 'storageSource': {
                     'bucket': 'my-bucket',
@@ -110,8 +119,9 @@ class CloudBuildTest(absltest.TestCase):
                 ],
                 'name': 'gcr.io/cloud-builders/docker',
             }],
-            'timeout': '1200s'
-        })
+            'timeout': '1200s',
+        },
+    )
 
 
 if __name__ == '__main__':

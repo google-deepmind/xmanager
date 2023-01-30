@@ -25,11 +25,15 @@ from googleapiclient import errors
 _DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
 
 _GCP_SERVICE_ACCOUNT_NAME = flags.DEFINE_string(
-    'xm_gcp_service_account_name', 'xmanager',
-    'Specifies the user-managed service account name to be used by XManager'
-    'Note that user-managed service accounts have the following format: '
-    '`{service-account-name}@{project-id}.iam.gserviceaccount.com`, so only'
-    'the part before @ is required')
+    'xm_gcp_service_account_name',
+    'xmanager',
+    (
+        'Specifies the user-managed service account name to be used by XManager'
+        'Note that user-managed service accounts have the following format: '
+        '`{service-account-name}@{project-id}.iam.gserviceaccount.com`, so only'
+        'the part before @ is required'
+    ),
+)
 
 
 def get_project_name() -> str:
@@ -71,7 +75,8 @@ def enable_apis():
       ]
   }
   resource.services().batchEnable(
-      parent=f'projects/{get_project_number()}', body=body).execute()
+      parent=f'projects/{get_project_number()}', body=body
+  ).execute()
 
 
 def get_service_account() -> str:
@@ -91,8 +96,9 @@ def get_service_account() -> str:
   """
 
   service_account_name = _GCP_SERVICE_ACCOUNT_NAME.value
-  service_account = (f'{service_account_name}@{get_project_name()}'
-                     '.iam.gserviceaccount.com')
+  service_account = (
+      f'{service_account_name}@{get_project_name()}.iam.gserviceaccount.com'
+  )
 
   try:
     _maybe_create_service_account(service_account)
@@ -110,8 +116,12 @@ def get_service_account() -> str:
 def _maybe_create_service_account(service_account: str) -> None:
   """Creates the default service account if it does not exist."""
   iam = discovery.build('iam', 'v1')
-  accounts = iam.projects().serviceAccounts().list(
-      name='projects/' + get_project_name()).execute()
+  accounts = (
+      iam.projects()
+      .serviceAccounts()
+      .list(name='projects/' + get_project_name())
+      .execute()
+  )
   for account in accounts.get('accounts', []):
     if account['email'] == service_account:
       return
@@ -124,8 +134,12 @@ def _maybe_create_service_account(service_account: str) -> None:
           'description': 'XManager service account',
       },
   }
-  accounts = iam.projects().serviceAccounts().create(
-      name='projects/' + get_project_name(), body=body).execute()
+  accounts = (
+      iam.projects()
+      .serviceAccounts()
+      .create(name='projects/' + get_project_name(), body=body)
+      .execute()
+  )
 
 
 def _maybe_grant_service_account_permissions(service_account: str) -> None:
@@ -147,8 +161,9 @@ def _maybe_grant_service_account_permissions(service_account: str) -> None:
   rm.projects().setIamPolicy(resource=get_project_name(), body=body).execute()
 
 
-def _add_member_to_iam_policy(policy: Dict[str, Any], role: str,
-                              member: str) -> bool:
+def _add_member_to_iam_policy(
+    policy: Dict[str, Any], role: str, member: str
+) -> bool:
   """Modifies the IAM policy to add the member with the role."""
   for i, binding in enumerate(policy['bindings']):
     if binding['role'] == role:
@@ -170,4 +185,5 @@ def get_bucket() -> str:
       '`export GOOGLE_CLOUD_BUCKET_NAME=<bucket-name>`, '
       'replacing <bucket-name> with a Google Cloud Storage bucket. '
       'You can create a bucket with '
-      '`gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME`')
+      '`gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME`'
+  )

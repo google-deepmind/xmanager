@@ -68,10 +68,7 @@ def create_cluster_specs(workers: Sequence[str]) -> List[str]:
   for i in range(len(workers)):
     spec = {
         'cluster': cluster,
-        'task': {
-            'type': f'workerpool{i}',
-            'index': i
-        },
+        'task': {'type': f'workerpool{i}', 'index': i},
     }
     specs.append(json.dumps(spec))
   return specs
@@ -99,8 +96,10 @@ def map_workerpool_address_args(args: List[str]) -> List[str]:
     else:
       worker_type = match.group(1)
       result.append(
-          arg.replace(f'%objectname({worker_type})%',
-                      cluster_spec[worker_type][0]))
+          arg.replace(
+              f'%objectname({worker_type})%', cluster_spec[worker_type][0]
+          )
+      )
   return result
 
 
@@ -108,7 +107,9 @@ def print_workerpool_address_args(argv: List[str]) -> None:
   # Note that this is method is called by
   # third_party/py/xmanager/cloud/data/wrapped_entrypoint.sh
   for arg in map_workerpool_address_args(argv[1:]):
-    print(arg,)
+    print(
+        arg,
+    )
 
 
 def create_workerpool_address_env_vars_script(path: str) -> None:
@@ -140,11 +141,12 @@ def get_region() -> str:
   # Default VM instance metadata
   # https://cloud.google.com/compute/docs/metadata/default-metadata-values#vm_instance_metadata
   request = urllib.request.Request(
-      'http://metadata.google.internal/computeMetadata/v1/instance/zone')
+      'http://metadata.google.internal/computeMetadata/v1/instance/zone'
+  )
   request.add_header('Metadata-Flavor', 'Google')
   response = urllib.request.urlopen(request)
   content = str(response.read())
-  zone = content.strip('\'').split('/')[-1]
+  zone = content.strip("'").split('/')[-1]
   region = zone[:-2]
   return region
 
