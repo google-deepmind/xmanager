@@ -41,6 +41,11 @@ def print_none_warning(key: str) -> None:
   )
 
 
+def _is_nested_structure(structure: Union[List[Any], Tuple[Any]]) -> bool:
+  """Returns true if a list or tuple contains a list or tuple."""
+  return any(type(element) in (list, tuple) for element in structure)
+
+
 class SequentialArgs:
   """A sequence of positional and keyword arguments for a binary.
 
@@ -194,9 +199,14 @@ class SequentialArgs:
         return [None]
       elif isinstance(value, bool):
         return [escaper(f"--{'' if value else 'no'}{item.name}")]
-      elif type(value) in (list, tuple):
+      elif type(value) in (list, tuple) and not _is_nested_structure(value):
         # TODO: Cleanup once users have migrated
         if _ENABLE_MULTI_ARG_FLAGS.value:
+          # Pass sequence of arguments in by repeating the flag for each
+          # element to be consistent with absl's handling of multiple flags.
+          # We do not do this for nested sequences, which absl cannot handle,
+          # and instead fallback to quoting the sequence and leaving parsing of
+          # the nested structure to the executable being called.
           return [
               kwargs_joiner(escaper(f'--{item.name}'), escaper(v))
               for v in value
