@@ -205,8 +205,10 @@ class SequentialArgs:
           print(
               '*****BREAKAGE WARNING: Passing `args=dict(flag=[v0, v1])` will'
               ' change behavior on 2023/01/15 to pass args as `--flag=v0'
-              ' --flag=v1` instead of `--flag=[v0, v1]` as currently. To keep'
-              ' the old behavior, simply wrap your list in `str`:'
+              ' --flag=v1` instead of `--flag=[v0, v1]` as currently. If'
+              ' `--flag` is parsed using `ml_collections` and overrides a'
+              ' tuple field, no action is required. Otherwise, to keep the old'
+              ' behavior, simply wrap your list in `str`:'
               ' `args=dict(flag=str([v0, v1,...]))`.\nThe new behavior is more'
               ' consistent:\n `flags.DEFINE_multi_xyz`: `args=dict(x=[v0,'
               ' v1])` match `FLAGS.x == [v0, v1]`.\n `flags.DEFINE_string`:'
