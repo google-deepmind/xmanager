@@ -46,20 +46,23 @@ from xmanager.xm import pattern_matching
 # ContextVars holding the current experiment (when within an Experiment context)
 # and current experiment unit (when inside a JobGenerator).
 _current_experiment: contextvars.ContextVar['Experiment'] = (
-    contextvars.ContextVar('_xm_current_experiment'))
+    contextvars.ContextVar('_xm_current_experiment')
+)
 _current_experiment_unit: contextvars.ContextVar['ExperimentUnit'] = (
-    contextvars.ContextVar('_xm_current_experiment_unit'))
+    contextvars.ContextVar('_xm_current_experiment_unit')
+)
 
 
-def _check_if_unsupported_args_are_present(args: Mapping[str, Any],
-                                           supported_args: Collection[str],
-                                           job_type: str) -> None:
+def _check_if_unsupported_args_are_present(
+    args: Mapping[str, Any], supported_args: Collection[str], job_type: str
+) -> None:
   supported_args = set(supported_args)
   unsupported_args = set(args.keys()) - supported_args
   if unsupported_args:
     raise ValueError(
         f'Arguments {unsupported_args!r} are not supported by {job_type}. Only '
-        f'{supported_args!r} are allowed.')
+        f'{supported_args!r} are allowed.'
+    )
 
 
 def _apply_args_to_job(job: job_blocks.Job, args: Mapping[str, Any]) -> None:
@@ -73,22 +76,28 @@ def _apply_args_to_job(job: job_blocks.Job, args: Mapping[str, Any]) -> None:
     job.env_vars.update(args['env_vars'])
 
 
-def _apply_args_to_job_group(job_group: job_blocks.JobGroup,
-                             args: Mapping[str, Any]) -> None:
+def _apply_args_to_job_group(
+    job_group: job_blocks.JobGroup, args: Mapping[str, Any]
+) -> None:
   """Recursively overrides job group properties."""
   if args:
-    _check_if_unsupported_args_are_present(args, job_group.jobs.keys(),
-                                           'xm.JobGroup')
+    _check_if_unsupported_args_are_present(
+        args, job_group.jobs.keys(), 'xm.JobGroup'
+    )
     for key, job in job_group.jobs.items():
       _apply_args(job, args.get(key, {}))
 
 
 _apply_args = pattern_matching.match(
-    _apply_args_to_job, _apply_args_to_job_group,
-    pattern_matching.Case([job_blocks.JobGeneratorType, Any],
-                          lambda other, args: None),
-    pattern_matching.Case([job_blocks.JobConfig, Any],
-                          lambda other, args: None))
+    _apply_args_to_job,
+    _apply_args_to_job_group,
+    pattern_matching.Case(
+        [job_blocks.JobGeneratorType, Any], lambda other, args: None
+    ),
+    pattern_matching.Case(
+        [job_blocks.JobConfig, Any], lambda other, args: None
+    ),
+)
 
 
 class ExperimentUnitStatus(abc.ABC):
@@ -145,6 +154,7 @@ class ExperimentUnitError(RuntimeError):
   Attrs:
     work_unit: The work unit in which the error occured, if available.
   """
+
   work_unit: Optional['WorkUnit'] = None
 
   def __init__(self, message: Any, *, work_unit: Optional['WorkUnit'] = None):
@@ -199,7 +209,7 @@ def _work_unit_arguments(
   def deduce_args_for_job(job: job_blocks.Job) -> Dict[str, Any]:
     args = {
         'args': job.args.to_dict(kwargs_only=True),
-        'env_vars': job.env_vars
+        'env_vars': job.env_vars,
     }
     return {key: value for key, value in args.items() if value}
 
@@ -212,9 +222,12 @@ def _work_unit_arguments(
     return args
 
   deduce_args = pattern_matching.match(
-      deduce_args_for_job, deduce_args_for_job_group,
-      pattern_matching.Case([job_blocks.JobGeneratorType],
-                            lambda generator: {}))
+      deduce_args_for_job,
+      deduce_args_for_job_group,
+      pattern_matching.Case(
+          [job_blocks.JobGeneratorType], lambda generator: {}
+      ),
+  )
 
   return deduce_args(job)
 
@@ -240,6 +253,7 @@ class LaunchedJob:
     address: The job's address.
     logs: A URL to this job's logs.
   """
+
   name: str
   address: Optional[str] = None
   logs: Optional[str] = None
@@ -275,6 +289,7 @@ class ExperimentUnitRole(abc.ABC):
     importance: how important it is to schedule this executable unit comparing
       to all your executable units (from all your experiments).
   """
+
   importance: Importance = Importance.NORMAL
 
 
@@ -283,10 +298,13 @@ class ExperimentUnit(abc.ABC):
 
   experiment: 'Experiment'
 
-  def __init__(self, experiment: 'Experiment',
-               create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
-               args: Optional[Mapping[str,
-                                      Any]], role: ExperimentUnitRole) -> None:
+  def __init__(
+      self,
+      experiment: 'Experiment',
+      create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
+      args: Optional[Mapping[str, Any]],
+      role: ExperimentUnitRole,
+  ) -> None:
     """Initializes an `ExperimentUnit` instance.
 
     Args:
@@ -308,11 +326,13 @@ class ExperimentUnit(abc.ABC):
     """Returns a unique ID assigned to the experiment."""
     return self.experiment.experiment_id
 
-  def add(self,
-          job: job_blocks.JobType,
-          args: Optional[Mapping[str, Any]] = None,
-          *,
-          identity: str = '') -> Awaitable[None]:
+  def add(
+      self,
+      job: job_blocks.JobType,
+      args: Optional[Mapping[str, Any]] = None,
+      *,
+      identity: str = '',
+  ) -> Awaitable[None]:
     # pyformat: disable
     """Adds a Job / JobGroup to the experiment unit.
 
@@ -349,22 +369,27 @@ class ExperimentUnit(abc.ABC):
       _current_experiment_unit.set(self)
       return self._launch_job_group(
           job_blocks.JobGroup(**{job.name: job}),
-          _work_unit_arguments(job, self._args), identity)
+          _work_unit_arguments(job, self._args),
+          identity,
+      )
 
     def launch_job_group(group: job_blocks.JobGroup) -> Awaitable[None]:
       _current_experiment.set(self.experiment)
       _current_experiment_unit.set(self)
-      return self._launch_job_group(group,
-                                    _work_unit_arguments(group, self._args),
-                                    identity)
+      return self._launch_job_group(
+          group, _work_unit_arguments(group, self._args), identity
+      )
 
     def launch_job_generator(
-        job_generator: job_blocks.JobGeneratorType) -> Awaitable[None]:
-      if (not inspect.iscoroutinefunction(job_generator) and
-          not inspect.iscoroutinefunction(job_generator.__call__)):
+        job_generator: job_blocks.JobGeneratorType,
+    ) -> Awaitable[None]:
+      if not inspect.iscoroutinefunction(
+          job_generator
+      ) and not inspect.iscoroutinefunction(job_generator.__call__):
         raise ValueError(
             'Job generator must be an async function. Signature needs to be '
-            '`async def job_generator(work_unit: xm.WorkUnit) -> None:`')
+            '`async def job_generator(work_unit: xm.WorkUnit) -> None:`'
+        )
       _current_experiment.set(self.experiment)
       _current_experiment_unit.set(self)
       coroutine = job_generator(self, **(args or {}))
@@ -381,8 +406,7 @@ class ExperimentUnit(abc.ABC):
         launch_job_group,
         launch_job_generator,
         launch_job_config,
-    )(
-        job)
+    )(job)
     launch_task = self._create_task(job_awaitable)
     self._launch_tasks.append(launch_task)
     return asyncio.wrap_future(launch_task)
@@ -435,11 +459,13 @@ class ExperimentUnit(abc.ABC):
     """
     raise NotImplementedError
 
-  def stop(self,
-           *,
-           mark_as_failed: bool = False,
-           mark_as_completed: bool = False,
-           message: Optional[str] = None) -> None:
+  def stop(
+      self,
+      *,
+      mark_as_failed: bool = False,
+      mark_as_completed: bool = False,
+      message: Optional[str] = None,
+  ) -> None:
     """Initiate the process to stop the unit from running.
 
     This method will synchronously make a request for the unit to stop.
@@ -484,7 +510,8 @@ class ExperimentUnit(abc.ABC):
     """Returns metadata context for a unit."""
     return metadata_context.MetadataContext(
         creator=getpass.getuser(),
-        annotations=metadata_context.ContextAnnotations())
+        annotations=metadata_context.ContextAnnotations(),
+    )
 
   @property
   def launched_jobs(self) -> List[LaunchedJob]:
@@ -523,8 +550,9 @@ class WorkUnitCompletedAwaitable(Coroutine):
           print(f'Wor unit {wid} failed: {e}.')
   """
 
-  def __init__(self, work_unit: 'WorkUnit', awaitable: Callable[[],
-                                                                Any]) -> None:
+  def __init__(
+      self, work_unit: 'WorkUnit', awaitable: Callable[[], Any]
+  ) -> None:
     self.work_unit = work_unit
     self._awaitable = awaitable
     self._wait_coro = self._wait()
@@ -594,11 +622,13 @@ class AuxiliaryUnitJob(abc.ABC):
   role: AuxiliaryUnitRole
   _job: job_blocks.JobType
 
-  def __init__(self,
-               job: job_blocks.JobType,
-               *,
-               importance: Importance = Importance.NORMAL,
-               termination_delay_secs: int) -> None:
+  def __init__(
+      self,
+      job: job_blocks.JobType,
+      *,
+      importance: Importance = Importance.NORMAL,
+      termination_delay_secs: int,
+  ) -> None:
     self.role = AuxiliaryUnitRole(
         importance=importance,
         termination_delay_secs=termination_delay_secs,
@@ -608,7 +638,8 @@ class AuxiliaryUnitJob(abc.ABC):
   async def __call__(self, aux_unit: ExperimentUnit, **kwargs):
 
     async def launch_generator(
-        job_generator: job_blocks.JobGeneratorType) -> None:
+        job_generator: job_blocks.JobGeneratorType,
+    ) -> None:
       coroutine = job_generator(aux_unit, **kwargs)
       assert coroutine is not None
       await coroutine
@@ -669,14 +700,17 @@ class Experiment(abc.ABC):
     except RuntimeError:
       pass
     if is_coro_context:
-      raise RuntimeError('When using Experiment from a coroutine please use '
-                         '`async with` syntax')
+      raise RuntimeError(
+          'When using Experiment from a coroutine please use '
+          '`async with` syntax'
+      )
 
     self._current_experiment_token = _current_experiment.set(self)
     self._event_loop = asyncio.new_event_loop()
     asyncio.get_child_watcher().attach_loop(self._event_loop)
     self._event_loop_thread = threading.Thread(
-        target=self._event_loop.run_forever, daemon=True)
+        target=self._event_loop.run_forever, daemon=True
+    )
     self._event_loop_thread.start()
 
     # asyncio.run_coroutine_threadsafe doesn't accept class method and wants it
@@ -685,7 +719,8 @@ class Experiment(abc.ABC):
       await self.__aenter__()
 
     asyncio.run_coroutine_threadsafe(
-        async_enter(), loop=self._event_loop).result()
+        async_enter(), loop=self._event_loop
+    ).result()
 
     return self
 
@@ -715,8 +750,9 @@ class Experiment(abc.ABC):
     self._current_async_experiment_token = _current_experiment.set(self)
     self._event_loop = asyncio.get_event_loop()
     self._running_tasks = queue.Queue()
-    self._work_unit_id_predictor = id_predictor.Predictor(1 +
-                                                          self.work_unit_count)
+    self._work_unit_id_predictor = id_predictor.Predictor(
+        1 + self.work_unit_count
+    )
     return self
 
   async def _await_for_tasks(self):
@@ -749,8 +785,8 @@ class Experiment(abc.ABC):
 
   @classmethod
   def package_async(
-      cls,
-      packageable: job_blocks.Packageable) -> Awaitable[job_blocks.Executable]:
+      cls, packageable: job_blocks.Packageable
+  ) -> Awaitable[job_blocks.Executable]:
     """Queues executable spec to be packaged into executable.
 
     If gathering all packageables for a single `package()` call is inconvenient,
@@ -786,7 +822,7 @@ class Experiment(abc.ABC):
       job: AuxiliaryUnitJob,
       args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
-      identity: str = ''
+      identity: str = '',
   ) -> asyncio.Future[ExperimentUnit]:
     ...
 
@@ -797,7 +833,8 @@ class Experiment(abc.ABC):
       args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
       role: WorkUnitRole = ...,
-      identity: str = '') -> asyncio.Future[WorkUnit]:
+      identity: str = '',
+  ) -> asyncio.Future[WorkUnit]:
     ...
 
   @overload
@@ -807,7 +844,8 @@ class Experiment(abc.ABC):
       args: Optional[Mapping[str, Any]],
       *,  # parameters after “*” are keyword-only parameters
       role: ExperimentUnitRole,
-      identity: str = '') -> asyncio.Future[ExperimentUnit]:
+      identity: str = '',
+  ) -> asyncio.Future[ExperimentUnit]:
     ...
 
   @overload
@@ -817,7 +855,8 @@ class Experiment(abc.ABC):
       args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
       role: ExperimentUnitRole,
-      identity: str = '') -> asyncio.Future[ExperimentUnit]:
+      identity: str = '',
+  ) -> asyncio.Future[ExperimentUnit]:
     ...
 
   # The ExperimentUnit return type is determined by the role.
@@ -854,8 +893,7 @@ class Experiment(abc.ABC):
     role = pattern_matching.match(
         pattern_matching.Case([AuxiliaryUnitJob], lambda job: job.role),
         pattern_matching.Case([Any], lambda job: role),
-    )(
-        job)
+    )(job)
     experiment_unit_future = self._create_experiment_unit(args, role, identity)
 
     async def launch():
@@ -866,19 +904,24 @@ class Experiment(abc.ABC):
         try:
           experiment_unit.stop(
               mark_as_failed=True,
-              message=f'Work unit creation failed. {traceback.format_exc()}')
+              message=f'Work unit creation failed. {traceback.format_exc()}',
+          )
         except Exception as stop_exception:  # pylint: disable=broad-except
           logging.error("Couldn't stop experiment unit: %s", stop_exception)
         raise
       return experiment_unit
 
     return asyncio.wrap_future(
-        self._create_task(launch()), loop=self._event_loop)
+        self._create_task(launch()), loop=self._event_loop
+    )
 
   @abc.abstractmethod
-  def _create_experiment_unit(self, args: Optional[Mapping[str, Any]],
-                              role: ExperimentUnitRole,
-                              identity: str) -> Awaitable[ExperimentUnit]:
+  def _create_experiment_unit(
+      self,
+      args: Optional[Mapping[str, Any]],
+      role: ExperimentUnitRole,
+      identity: str,
+  ) -> Awaitable[ExperimentUnit]:
     """Creates a new experiment unit.
 
     Synchronously starts the experiment unit creation, ensuring that IDs would
@@ -900,7 +943,8 @@ class Experiment(abc.ABC):
     if not self._event_loop.is_running():
       raise RuntimeError(
           'Event loop is not running. Have you entered Experiment context '
-          'manager (e.g. with xm.create-experiment() as experiment:)?')
+          'manager (e.g. with xm.create-experiment() as experiment:)?'
+      )
     future = asyncio.run_coroutine_threadsafe(task, loop=self._event_loop)
     self._running_tasks.put_nowait(future)
     return future
@@ -920,7 +964,8 @@ class Experiment(abc.ABC):
     """Returns metadata context for the experiment."""
     return metadata_context.MetadataContext(
         creator=getpass.getuser(),
-        annotations=metadata_context.ContextAnnotations())
+        annotations=metadata_context.ContextAnnotations(),
+    )
 
 
 @abc.abstractmethod

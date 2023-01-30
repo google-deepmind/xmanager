@@ -72,7 +72,8 @@ def generate_docstring(executable: Type[job_blocks.ExecutableSpec]) -> str:
   docstring = executable.__doc__
   if _ATTRIBUTES_SECTION_HEADER not in docstring:
     raise Exception(
-        f'Please add Attributes: section to {executable.__name__} docstring.')
+        f'Please add Attributes: section to {executable.__name__} docstring.'
+    )
   docstring = re.sub(_ATTRIBUTES_SECTION_HEADER, _ARGS_DOCSTRING, docstring)
   docstring = docstring.rstrip() + _DOCSTRING_SUFFIX.rstrip()
   return docstring
@@ -91,14 +92,18 @@ def generate_factory_parameters(parameters: List[inspect.Parameter]) -> str:
 
   keyword_args_started = False
   for parameter in parameters:
-    if (parameter.kind == inspect.Parameter.KEYWORD_ONLY and
-        not keyword_args_started):
+    if (
+        parameter.kind == inspect.Parameter.KEYWORD_ONLY
+        and not keyword_args_started
+    ):
       keyword_args_started = True
       source += '    *,\n'
 
     parameter_source = _KNOWN_ARGS_DICT[parameter.name]
-    if (parameter.default != inspect.Parameter.empty and
-        '=' not in parameter_source):
+    if (
+        parameter.default != inspect.Parameter.empty
+        and '=' not in parameter_source
+    ):
       parameter_source += f' = {parameter.default!r}'
 
     source += f'    {parameter_source},\n'
@@ -124,7 +129,8 @@ def generate_factory_method(executable: Type[job_blocks.ExecutableSpec]) -> str:
   parameters = list(signature.parameters.values())[1:]
 
   executable_args = '\n'.join(
-      f'          {p.name}={p.name},' for p in parameters)
+      f'          {p.name}={p.name},' for p in parameters
+  )
 
   return f'''
 def {factory_name}(
@@ -141,7 +147,9 @@ def {factory_name}(
       executor_spec=executor_spec,
       args=args,
       env_vars=env_vars,
-  )'''.strip('\n')
+  )'''.strip(
+      '\n'
+  )
 
 
 def main(argv: Sequence[str]) -> None:

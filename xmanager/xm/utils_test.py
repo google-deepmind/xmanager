@@ -35,7 +35,8 @@ class UtilsTest(unittest.TestCase):
 
   def test_run_in_asyncio_loop_returns_value(self):
     self.assertEqual(
-        utils.run_in_asyncio_loop(make_me_a_sandwich)(), 'sandwich')
+        utils.run_in_asyncio_loop(make_me_a_sandwich)(), 'sandwich'
+    )
 
   def test_arg_escaper(self):
     self.assertEqual(utils.ARG_ESCAPER(1.0), '1.0')

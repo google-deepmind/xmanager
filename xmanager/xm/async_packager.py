@@ -26,7 +26,8 @@ class PackageHasNotBeenCalledError(RuntimeError):
 
 
 def _return_executable(
-    executable: job_blocks.Executable) -> Awaitable[job_blocks.Executable]:
+    executable: job_blocks.Executable,
+) -> Awaitable[job_blocks.Executable]:
   """Returns an awaitable for an already known executable."""
   future = asyncio.Future()
   future.set_result(executable)
@@ -44,8 +45,10 @@ class AsyncPackager:
   """
 
   def __init__(
-      self, package_batch: Callable[[Sequence[job_blocks.Packageable]],
-                                    Sequence[job_blocks.Executable]]
+      self,
+      package_batch: Callable[
+          [Sequence[job_blocks.Packageable]], Sequence[job_blocks.Executable]
+      ],
   ) -> None:
     """Creates the async packager.
 
@@ -59,8 +62,8 @@ class AsyncPackager:
     self._futures = []
 
   def add(
-      self,
-      packageable: job_blocks.Packageable) -> Awaitable[job_blocks.Executable]:
+      self, packageable: job_blocks.Packageable
+  ) -> Awaitable[job_blocks.Executable]:
     """Adds new packageable to the batch."""
     with self._lock:
       future = concurrent_futures.Future()
@@ -72,7 +75,8 @@ class AsyncPackager:
         if packageable in self._packageables:
           raise PackageHasNotBeenCalledError(
               '.package() must be called before awaiting on the packaging '
-              'result')
+              'result'
+          )
 
     async def package_impl() -> job_blocks.Executable:
       check_is_packaged()
@@ -114,7 +118,7 @@ class AsyncPackager:
       executables = self._package_batch(packageables)
       for executable, future in zip(executables, futures):
         future.set_result(executable)
-      return executables[len(futures):]
+      return executables[len(futures) :]
     except Exception as e:
       for future in futures:
         future.set_exception(e)

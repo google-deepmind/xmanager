@@ -14,6 +14,7 @@
 """Utility functions needed for XManager API implementation.
 
 This module is private and can only be used by the API itself, but not by users.
+
 """
 
 import abc
@@ -55,7 +56,8 @@ class ShellSafeArg(SpecialArg):
   def __str__(self) -> str:
     """Prevents ShellSafeArg from being used in f-strings."""
     raise RuntimeError(
-        f'Converting {self!r} to a string would strip the ShellSafe semantics.')
+        f'Converting {self!r} to a string would strip the ShellSafe semantics.'
+    )
 
 
 ARG_ESCAPER = pattern_matching.match(
@@ -123,7 +125,7 @@ def find_launch_script_path() -> str:
     # If the launch script is built with subpar we are interested in the name
     # of the main module, rather than subpar binary.
     main_file_path = getattr(sys.modules['__main__'], '__file__', None)
-    if (main_file_path and os.access(main_file_path, os.R_OK)):
+    if main_file_path and os.access(main_file_path, os.R_OK):
       launch_script_path = main_file_path
 
   if not launch_script_path:
@@ -153,10 +155,12 @@ def resolve_path_relative_to_launcher(path: str) -> str:
 
   launch_script_path = find_launch_script_path()
   if not os.access(launch_script_path, os.R_OK):
-    raise RuntimeError(f'Unable to determine launch script path. '
-                       f'The script is not present at {launch_script_path!r}. '
-                       'This may happen if launch script changes the '
-                       'working directory.')
+    raise RuntimeError(
+        'Unable to determine launch script path. '
+        f'The script is not present at {launch_script_path!r}. '
+        'This may happen if launch script changes the '
+        'working directory.'
+    )
   caller_file_path = os.path.realpath(launch_script_path)
   caller_dir = os.path.dirname(caller_file_path)
   return os.path.realpath(os.path.join(caller_dir, path))

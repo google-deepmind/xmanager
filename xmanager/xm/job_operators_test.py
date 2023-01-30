@@ -23,7 +23,8 @@ def construct_job(name=None):
   return job_blocks.Job(
       name=name,
       executable=xm_mock.MockExecutable(),
-      executor=xm_mock.MockExecutor())
+      executor=xm_mock.MockExecutor(),
+  )
 
 
 class JobOperatorsTest(unittest.TestCase):

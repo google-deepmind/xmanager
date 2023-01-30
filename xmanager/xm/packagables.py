@@ -136,7 +136,9 @@ def container(
   """
   # pyformat: enable
   return job_blocks.Packageable(
-      executable_spec=executables.Container(image_path=image_path,),
+      executable_spec=executables.Container(
+          image_path=image_path,
+      ),
       executor_spec=executor_spec,
       args=args,
       env_vars=env_vars,

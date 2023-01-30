@@ -38,7 +38,8 @@ class ResourceDictTest(unittest.TestCase):
     resource_dict[ResourceType.MEMORY] = 16.5 * xm.GiB
 
     self.assertEqual(
-        str(resource_dict), 'CPU: 4.2, MEMORY: 17716740096.0, V100: 8')
+        str(resource_dict), 'CPU: 4.2, MEMORY: 17716740096.0, V100: 8'
+    )
 
   def test_resource_dict_from_job_requirements(self):
     requirements = JobRequirements(cpu=0.5 * xm.vCPU, memory=2 * xm.MiB, v100=8)
@@ -55,8 +56,9 @@ class ResourceDictTest(unittest.TestCase):
     first = resources.JobRequirements(cpu=1, tpu_v2='2x2')
     second = resources.JobRequirements(ram=4 * xm.GiB, replicas=10)
     total = (
-        first.replicas * first.task_requirements +
-        second.replicas * second.task_requirements)
+        first.replicas * first.task_requirements
+        + second.replicas * second.task_requirements
+    )
     self.assertEqual(total[ResourceType.CPU], 1)
     self.assertEqual(total[ResourceType.RAM], 40 * xm.GiB)
     self.assertEqual(total[ResourceType.TPU_V2], 4)
@@ -64,8 +66,9 @@ class ResourceDictTest(unittest.TestCase):
 
 class TopologyTest(parameterized.TestCase):
 
-  @parameterized.parameters(('2', 2), ('4x4', 16), ('2x3x5', 30),
-                            ('4x4_twisted', 16))
+  @parameterized.parameters(
+      ('2', 2), ('4x4', 16), ('2x3x5', 30), ('4x4_twisted', 16)
+  )
   def test_resource_type_by_name(self, topology, chip_count):
     self.assertEqual(resources.Topology(topology).chip_count, chip_count)
 
@@ -81,24 +84,28 @@ class TopologyTest(parameterized.TestCase):
     self.assertNotEqual(resources.Topology('2x2'), resources.Topology('4x4'))
 
     self.assertEqual(
-        hash(resources.Topology('4x4')), hash(resources.Topology('4x4')))
+        hash(resources.Topology('4x4')), hash(resources.Topology('4x4'))
+    )
 
 
 class JobRequirementsTest(parameterized.TestCase):
 
   def test_cpu_job(self):
     requirements = resources.JobRequirements(cpu=1.2, ram=1 * xm.GiB)
-    self.assertEqual(requirements.task_requirements[resources.ResourceType.CPU],
-                     1.2)
-    self.assertEqual(requirements.task_requirements[resources.ResourceType.RAM],
-                     1 * xm.GiB)
+    self.assertEqual(
+        requirements.task_requirements[resources.ResourceType.CPU], 1.2
+    )
+    self.assertEqual(
+        requirements.task_requirements[resources.ResourceType.RAM], 1 * xm.GiB
+    )
     self.assertIsNone(requirements.accelerator)
     self.assertIsNone(requirements.topology)
     self.assertEqual(requirements.replicas, 1)
 
   def test_construct_requirements(self):
-    requirements = resources.JobRequirements({resources.ResourceType.CPU: 4},
-                                             v100=1)
+    requirements = resources.JobRequirements(
+        {resources.ResourceType.CPU: 4}, v100=1
+    )
     task_requirements = requirements.task_requirements
     self.assertEqual(task_requirements[resources.ResourceType.CPU], 4)
     self.assertEqual(task_requirements[resources.ResourceType.V100], 1)
@@ -135,12 +142,14 @@ class JobRequirementsTest(parameterized.TestCase):
 
   def test_service_tier(self):
     requirements = resources.JobRequirements(
-        service_tier=resources.ServiceTier.PROD)
+        service_tier=resources.ServiceTier.PROD
+    )
     self.assertEqual(requirements.service_tier, resources.ServiceTier.PROD)
 
   def test_service_tier_mutable(self):
     requirements = resources.JobRequirements(
-        service_tier=resources.ServiceTier.PROD)
+        service_tier=resources.ServiceTier.PROD
+    )
     requirements.service_tier = resources.ServiceTier.BATCH
     self.assertEqual(requirements.service_tier, resources.ServiceTier.BATCH)
 
@@ -163,13 +172,19 @@ class JobRequirementsTest(parameterized.TestCase):
                 cpu=1,
                 location='lon_r7',
                 service_tier=resources.ServiceTier.BATCH,
-                replicas=2)),
-        "xm.JobRequirements(cpu=1.0, location='lon_r7', service_tier=xm.ServiceTier.BATCH, replicas=2)"
+                replicas=2,
+            )
+        ),
+        (
+            "xm.JobRequirements(cpu=1.0, location='lon_r7',"
+            ' service_tier=xm.ServiceTier.BATCH, replicas=2)'
+        ),
     )
 
   def test_str_omits_empty_fields(self):
     self.assertEqual(
-        repr(resources.JobRequirements(cpu=1)), 'xm.JobRequirements(cpu=1.0)')
+        repr(resources.JobRequirements(cpu=1)), 'xm.JobRequirements(cpu=1.0)'
+    )
 
   def test_is_gpu_tpu_given_cpu(self):
     requirements = resources.JobRequirements(cpu=1, ram=4 * xm.GiB)

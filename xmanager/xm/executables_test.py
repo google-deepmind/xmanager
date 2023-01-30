@@ -32,7 +32,8 @@ class ExecutablesTest(unittest.TestCase):
 
   def test_container_name(self):
     executable = executables.Container(
-        image_path='/home/user/project/image.tar')
+        image_path='/home/user/project/image.tar'
+    )
 
     self.assertEqual(executable.name, 'image_tar')
 

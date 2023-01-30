@@ -95,13 +95,15 @@ class Predictor:
     """
     async with self._last_created_id_condition:
       await self._last_created_id_condition.wait_for(
-          lambda: self._is_broken or self._last_created_id == id_to_submit - 1)
+          lambda: self._is_broken or self._last_created_id == id_to_submit - 1
+      )
 
       try:
         if self._is_broken:
           raise BrokenSequenceError(
               f'Id {id} would never be ready to submit as'
-              ' submission of the previous one has failed')
+              ' submission of the previous one has failed'
+          )
         yield
         self._last_created_id = id_to_submit
       except:

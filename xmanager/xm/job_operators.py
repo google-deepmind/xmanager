@@ -23,7 +23,8 @@ from xmanager.xm import pattern_matching
 
 
 def shallow_copy_job_type(
-    job_type: job_blocks.JobTypeVar) -> job_blocks.JobTypeVar:
+    job_type: job_blocks.JobTypeVar,
+) -> job_blocks.JobTypeVar:
   """Creates a shallow copy of the job structure."""
 
   def apply_to_job_group(job_group: job_blocks.JobGroup) -> job_blocks.JobGroup:
@@ -34,8 +35,9 @@ def shallow_copy_job_type(
   matcher = pattern_matching.match(
       pattern_matching.Case([job_blocks.Job], copy.copy),
       apply_to_job_group,
-      pattern_matching.Case([job_blocks.JobGeneratorType],
-                            lambda generator: generator),
+      pattern_matching.Case(
+          [job_blocks.JobGeneratorType], lambda generator: generator
+      ),
       pattern_matching.Case([job_blocks.JobConfig], copy.copy),
   )
   return matcher(job_type)
@@ -48,8 +50,9 @@ def populate_job_names(job_type: job_blocks.JobTypeVar) -> None:
     if target.name is None:
       target.name = '_'.join(prefix) if prefix else target.executable.name
 
-  def apply_to_job_group(prefix: Sequence[str],
-                         target: job_blocks.JobGroup) -> None:
+  def apply_to_job_group(
+      prefix: Sequence[str], target: job_blocks.JobGroup
+  ) -> None:
     for key, job in target.jobs.items():
       matcher([*prefix, key], job)
 
@@ -76,7 +79,9 @@ def collect_jobs_by_filter(
   def match_job_group(job_group: job_blocks.JobGroup) -> List[job_blocks.Job]:
     return list(
         itertools.chain.from_iterable(
-            [job_collector(job) for job in job_group.jobs.values()]))
+            [job_collector(job) for job in job_group.jobs.values()]
+        )
+    )
 
   job_collector = pattern_matching.match(match_job_group, match_job)
   return job_collector(job_group)
@@ -91,7 +96,8 @@ class ConstraintClique:
 
 
 def aggregate_constraint_cliques(
-    job_group: job_blocks.JobGroup) -> List[ConstraintClique]:
+    job_group: job_blocks.JobGroup,
+) -> List[ConstraintClique]:
   """Forms constraint cliques.
 
   For each constraint met, collects all jobs it applies to.
@@ -104,12 +110,12 @@ def aggregate_constraint_cliques(
   """
 
   def match_job(
-      job: job_blocks.Job
+      job: job_blocks.Job,
   ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
     return [], [job]
 
   def match_job_group(
-      job_group: job_blocks.JobGroup
+      job_group: job_blocks.JobGroup,
   ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
     cliques: List[ConstraintClique] = []
     jobs: List[job_blocks.Job] = []

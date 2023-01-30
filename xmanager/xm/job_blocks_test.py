@@ -71,7 +71,8 @@ class JobBlocksTest(unittest.TestCase):
     )
 
     self.assertEqual(
-        args.to_list(str), ['1', '--a=z', '--b=x', '2', '--c=t', '3'])
+        args.to_list(str), ['1', '--a=z', '--b=x', '2', '--c=t', '3']
+    )
 
   def test_to_dict(self):
     args = job_blocks.merge_args(['--knob'], {1: False})
@@ -84,18 +85,20 @@ class JobBlocksTest(unittest.TestCase):
     self.assertEqual(args.to_list(str), ['--yes', '--nono'])
 
   def test_to_list_none(self):
-    args = job_blocks.SequentialArgs.from_collection({
-        'skip_me': None,
-        'pass_me': 'None'
-    })
+    args = job_blocks.SequentialArgs.from_collection(
+        {'skip_me': None, 'pass_me': 'None'}
+    )
 
     self.assertEqual(args.to_list(str), ['--pass_me=None'])
 
   def test_sequential_args_from_string(self):
     with self.assertRaisesRegex(
         ValueError,
-        "Tried to construct xm.SequentialArgs from a string: '--foo'. "
-        "Wrap it in a list: \\['--foo'\\] to make it a single argument."):
+        (
+            "Tried to construct xm.SequentialArgs from a string: '--foo'. "
+            "Wrap it in a list: \\['--foo'\\] to make it a single argument."
+        ),
+    ):
       job_blocks.SequentialArgs.from_collection('--foo')
 
   def test_get_args_for_all_jobs(self):
@@ -111,21 +114,13 @@ class JobBlocksTest(unittest.TestCase):
     )
     logdir = {'logdir': '/logdir/1'}
     expected = {
-        'a': {
-            'args': logdir
-        },
+        'a': {'args': logdir},
         'b': {
             'b1': {
-                'b1i': {
-                    'args': logdir
-                },
-                'b1ii': {
-                    'args': logdir
-                },
+                'b1i': {'args': logdir},
+                'b1ii': {'args': logdir},
             },
-            'b2': {
-                'args': logdir
-            },
+            'b2': {'args': logdir},
         },
     }
     args = job_blocks.get_args_for_all_jobs(group, logdir)

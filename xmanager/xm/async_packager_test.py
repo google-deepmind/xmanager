@@ -22,7 +22,7 @@ from xmanager.xm import utils
 
 
 def _package_batch(
-    packageables: Sequence[job_blocks.Packageable]
+    packageables: Sequence[job_blocks.Packageable],
 ) -> Sequence[job_blocks.Executable]:
   return [
       job_blocks.Executable(name=packageable.executable_spec.name)
@@ -43,7 +43,8 @@ class _TestExecutableSpec(job_blocks.ExecutableSpec):
 def _make_packageable(name: str) -> job_blocks.Packageable:
   return job_blocks.Packageable(
       executable_spec=_TestExecutableSpec(name),
-      executor_spec=job_blocks.ExecutorSpec())
+      executor_spec=job_blocks.ExecutorSpec(),
+  )
 
 
 class AsyncPackagerTest(unittest.TestCase):

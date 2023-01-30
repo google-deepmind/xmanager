@@ -36,7 +36,6 @@ class UtilsTest(unittest.TestCase):
       matcher(0)
 
   def testMatch_earlierOptionWins(self):
-
     class P:
       pass
 
@@ -51,7 +50,6 @@ class UtilsTest(unittest.TestCase):
     self.assertEqual(matcher(C()), 'P')
 
   def testMatch_asVisitor(self):
-
     def visit_int(n: int):
       return n * 2
 
@@ -64,7 +62,6 @@ class UtilsTest(unittest.TestCase):
     self.assertEqual(matcher('zzz'), 3)
 
   def testMatch_multipleArguments(self):
-
     def visit_just_one(k: int):
       return k * 2
 
@@ -74,8 +71,9 @@ class UtilsTest(unittest.TestCase):
     def visit_just_right(k: int, l: int):
       return k * l
 
-    matcher = pattern_matching.match(visit_just_one, visit_too_many,
-                                     visit_just_right)
+    matcher = pattern_matching.match(
+        visit_just_one, visit_too_many, visit_just_right
+    )
 
     self.assertEqual(matcher(2, 3), 6)
 
@@ -97,7 +95,6 @@ class UtilsTest(unittest.TestCase):
 
   @utils.run_in_asyncio_loop
   async def testMatch_async(self):
-
     async def visit_int(n: int):
       return n * 2
 

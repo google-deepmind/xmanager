@@ -48,7 +48,8 @@ class Case(Generic[R]):
       handler: A handler to be called in case of a match.
     """
     self.kind = tuple(
-        getattr(arg_type, '__origin__', arg_type) for arg_type in kind)
+        getattr(arg_type, '__origin__', arg_type) for arg_type in kind
+    )
     self.handle = handler
 
   def matches(self, *values: Any) -> bool:
@@ -58,7 +59,8 @@ class Case(Generic[R]):
 
     return all(
         expected_type is Any or isinstance(value, expected_type)
-        for expected_type, value in zip(self.kind, values))
+        for expected_type, value in zip(self.kind, values)
+    )
 
 
 def _deduce_types(handler: Callable[..., Any]) -> Tuple[Type[Any]]:
@@ -69,7 +71,8 @@ def _deduce_types(handler: Callable[..., Any]) -> Tuple[Type[Any]]:
     """Returns argument type or raises a user-friendly exception."""
     if arg not in argspec.annotations:
       raise ValueError(
-          f'{arg} argument of a {handler} is missing a type annotation.')
+          f'{arg} argument of a {handler} is missing a type annotation.'
+      )
     return argspec.annotations[arg]
 
   return tuple(map(get_arg_type, argspec.args))
@@ -103,8 +106,10 @@ def match(*handlers: Union[Case[R], Callable[..., R]]) -> Callable[..., R]:
   """
 
   cases = [
-      handler if isinstance(handler, Case) else Case(
-          _deduce_types(handler), handler) for handler in handlers
+      handler
+      if isinstance(handler, Case)
+      else Case(_deduce_types(handler), handler)
+      for handler in handlers
   ]
 
   def apply(*values: Any) -> R:
@@ -114,11 +119,13 @@ def match(*handlers: Union[Case[R], Callable[..., R]]) -> Callable[..., R]:
 
     value_types = tuple(type(value) for value in values)
     known_types = '\n'.join(str(case.kind) for case in cases)
-    raise TypeError(f'{values} did not match any type pattern. Values have '
-                    f'following types:\n'
-                    f'{value_types}\n'
-                    f'Which does not match any of:\n'
-                    f'{known_types}')
+    raise TypeError(
+        f'{values} did not match any type pattern. Values have '
+        'following types:\n'
+        f'{value_types}\n'
+        'Which does not match any of:\n'
+        f'{known_types}'
+    )
 
   return apply
 
