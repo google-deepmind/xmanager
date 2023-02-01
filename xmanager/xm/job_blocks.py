@@ -200,32 +200,14 @@ class SequentialArgs:
       elif isinstance(value, bool):
         return [escaper(f"--{'' if value else 'no'}{item.name}")]
       elif type(value) in (list, tuple) and not _is_nested_structure(value):
-        # TODO: Cleanup once users have migrated
-        if _ENABLE_MULTI_ARG_FLAGS.value:
-          # Pass sequence of arguments in by repeating the flag for each
-          # element to be consistent with absl's handling of multiple flags.
-          # We do not do this for nested sequences, which absl cannot handle,
-          # and instead fallback to quoting the sequence and leaving parsing of
-          # the nested structure to the executable being called.
-          return [
-              kwargs_joiner(escaper(f'--{item.name}'), escaper(v))
-              for v in value
-          ]
-        else:
-          print(
-              '*****BREAKAGE WARNING: Passing `args=dict(flag=[v0, v1])` will'
-              ' change behavior on 2023/01/15 to pass args as `--flag=v0'
-              ' --flag=v1` instead of `--flag=[v0, v1]` as currently. If'
-              ' `--flag` is parsed using `ml_collections` and overrides a'
-              ' tuple field, no action is required. Otherwise, to keep the old'
-              ' behavior, simply wrap your list in `str`:'
-              ' `args=dict(flag=str([v0, v1,...]))`.\nThe new behavior is more'
-              ' consistent:\n `flags.DEFINE_multi_xyz`: `args=dict(x=[v0,'
-              ' v1])` match `FLAGS.x == [v0, v1]`.\n `flags.DEFINE_string`:'
-              " `args=dict(x='[v0, v1]')` match `FLAGS.x == '[v0, v1]'`.\n***"
-              f' Impacted args: --{item.name}={str(value):.20} ***'
-          )
-          return [kwargs_joiner(escaper(f'--{item.name}'), escaper(value))]
+        # Pass sequence of arguments in by repeating the flag for each
+        # element to be consistent with absl's handling of multiple flags.
+        # We do not do this for nested sequences, which absl cannot handle,
+        # and instead fallback to quoting the sequence and leaving parsing of
+        # the nested structure to the executable being called.
+        return [
+            kwargs_joiner(escaper(f'--{item.name}'), escaper(v)) for v in value
+        ]
       else:
         return [kwargs_joiner(escaper(f'--{item.name}'), escaper(value))]
 

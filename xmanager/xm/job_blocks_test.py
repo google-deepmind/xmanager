@@ -16,7 +16,6 @@ import unittest
 from unittest import mock
 
 from absl.testing import absltest
-from absl.testing import flagsaver
 from xmanager.xm import job_blocks
 
 
@@ -31,7 +30,6 @@ class JobBlocksTest(unittest.TestCase):
 
     self.assertEqual(args.to_list(str), ['--a=1', '--b=2', '--c=3'])
 
-  @flagsaver.flagsaver(xm_to_list_multi_arg_behavior=True)
   def test_from_mapping_multi(self):
     args = job_blocks.SequentialArgs.from_collection({
         'a': 1,
@@ -40,7 +38,6 @@ class JobBlocksTest(unittest.TestCase):
 
     self.assertEqual(args.to_list(str), ['--a=1', '--c=3', '--c=4'])
 
-  @flagsaver.flagsaver(xm_to_list_multi_arg_behavior=True)
   def test_from_mapping_nested_multi(self):
     args = job_blocks.SequentialArgs.from_collection({'a': [[1, 2, 3]]})
 
