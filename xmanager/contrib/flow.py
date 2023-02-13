@@ -7,6 +7,7 @@ import asyncio
 from collections.abc import Sequence
 from typing import Callable, Optional
 
+from absl import logging
 from xmanager import xm
 from xmanager.contrib import parameter_controller
 
@@ -77,6 +78,9 @@ def executable_graph(
 
   _assert_valid_graph(jobs_deps=jobs_deps, jobs=jobs)
 
+  log(f'jobs: {list(jobs)}')
+  log(f'jobs_deps: {jobs_deps}')
+
   controller = controller or parameter_controller.controller(
   )
 
@@ -86,28 +90,37 @@ def executable_graph(
     jobs_launched = {job_name: asyncio.Future() for job_name in jobs}
 
     async def job_finished(job_name: str) -> bool:
+      log(f'`Waiting for {job_name}` to be added to `experiment.add`')
       op = await jobs_launched[job_name]  # Wait for the `experiment.add`
       try:
+        log(f'`{job_name}` is running, waiting to finish')
         await op.wait_until_complete()  # Wait for the job to complete
       except xm.ExperimentUnitError:
+        log(f'`{job_name}` has failed.')
         if terminate_on_failure:
           raise
         return False
       else:
+        log(f'`{job_name}` has finished successfully.')
         return True
 
     async def launch_single_job(job_name: str) -> None:
+      log(f'`Launching: {job_name}`, waiting for all the deps to schedule.')
+
       # Wait for all the deps to complete
       deps_finished = await asyncio.gather(
           *(job_finished(dep) for dep in jobs_deps[job_name])
       )
       # Schedule the job
+      log(f'`All deps finished for: {job_name}`. Launching...')
       if all(deps_finished):
         op = await experiment.add(jobs[job_name], identity=job_name)
       else:
         op = _UnlaunchedJob()
+      log(f'`{job_name}` launched. Notify other waiting jobs...')
       # Notify other waiting jobs
       jobs_launched[job_name].set_result(op)
+      log(f'`{job_name}` complete.')
 
     await asyncio.gather(*(launch_single_job(job_name) for job_name in jobs))
 
@@ -146,3 +159,8 @@ def _assert_valid_graph(
         f'`jobs=`: {extra_jobs}'
     )
   # Could also detect cycles, but likely over-engineered
+
+
+def log(msg: str) -> None:
+  """Log messages."""
+  logging.info(msg)
