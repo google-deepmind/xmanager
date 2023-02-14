@@ -19,18 +19,11 @@ import itertools
 import re
 from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
-from absl import flags as absl_flags
 import attr
 from xmanager.xm import pattern_matching
 from xmanager.xm import utils
 
 UserArgs = Union[Mapping, Sequence, 'SequentialArgs']
-
-_ENABLE_MULTI_ARG_FLAGS = absl_flags.DEFINE_bool(
-    'xm_to_list_multi_arg_behavior',
-    False,
-    'If True, pass `args=dict(x=[v0, v1])` as --x=v0, --x=v1',
-)
 
 
 @functools.cache
