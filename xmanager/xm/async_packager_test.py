@@ -87,6 +87,15 @@ class AsyncPackagerTest(unittest.TestCase):
 
     wait_for_it()
 
+  def test_awaitable_is_repeatedly_picklable(self):
+    packager = async_packager.AsyncPackager(_package_batch)
+    executable = packager.add(_make_packageable(''))
+    packager.package()
+    executable_str = pickle.dumps(executable)
+    executable_reconstructed = pickle.loads(executable_str)
+    executable_str2 = pickle.dumps(executable_reconstructed)
+    self.assertEqual(executable_str, executable_str2)
+
 
 if __name__ == '__main__':
   unittest.main()

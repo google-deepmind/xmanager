@@ -16,7 +16,7 @@
 import asyncio
 import concurrent.futures as concurrent_futures
 import threading
-from typing import Awaitable, Callable, Sequence
+from typing import Awaitable, Callable, Sequence, TypeVar
 
 from xmanager.xm import job_blocks
 
@@ -25,13 +25,38 @@ class PackageHasNotBeenCalledError(RuntimeError):
   """Access to package_async() awaitable prior to calling .package()."""
 
 
-def _return_executable(
-    executable: job_blocks.Executable,
-) -> Awaitable[job_blocks.Executable]:
-  """Returns an awaitable for an already known executable."""
-  future = asyncio.Future()
-  future.set_result(executable)
-  return future
+Awaited = TypeVar('Awaited')
+
+
+class PicklableAwaitableImpl:
+  """Awaitable type with known value which can be pickled."""
+
+  def __init__(
+      self,
+      get_future: Callable[
+          [], asyncio.Future[Awaited] | concurrent_futures.Future[Awaited]
+      ],
+  ):
+    self._get_future = get_future
+
+  def __await__(self):
+    return asyncio.wrap_future(self._get_future()).__await__()
+
+  def __reduce__(self):
+    return _return_awaited, (self._get_future().result(),)
+
+
+def _return_awaited(
+    awaited: Awaited,
+) -> Awaitable[Awaited]:
+  """Returns a picklable awaitable for an already known value."""
+
+  def get_future() -> asyncio.Future[Awaited]:
+    future = asyncio.Future()
+    future.set_result(awaited)
+    return future
+
+  return PicklableAwaitableImpl(get_future)
 
 
 class AsyncPackager:
@@ -78,20 +103,11 @@ class AsyncPackager:
               'result'
           )
 
-    async def package_impl() -> job_blocks.Executable:
+    def get_future() -> concurrent_futures.Future[job_blocks.Executable]:
       check_is_packaged()
-      return await asyncio.wrap_future(future)
+      return future
 
-    class PicklablePackageImpl:
-
-      def __await__(self):
-        return package_impl().__await__()
-
-      def __reduce__(self):
-        check_is_packaged()
-        return (_return_executable, (future.result(),))
-
-    return PicklablePackageImpl()
+    return PicklableAwaitableImpl(get_future)
 
   def package(
       self, extra_packageables: Sequence[job_blocks.Packageable] = ()
