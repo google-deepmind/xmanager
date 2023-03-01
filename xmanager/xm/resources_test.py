@@ -13,7 +13,7 @@
 # limitations under the License.
 """Tests for xmanager.xm.resources."""
 
-import unittest
+from absl.testing import absltest
 from absl.testing import parameterized
 
 from xmanager import xm
@@ -22,7 +22,7 @@ from xmanager.xm.resources import JobRequirements
 from xmanager.xm.resources import ResourceType
 
 
-class ResourceDictTest(unittest.TestCase):
+class ResourceDictTest(absltest.TestCase):
 
   def test_resource_type_by_name(self):
     self.assertEqual(ResourceType['cpu'], ResourceType.CPU)
@@ -225,4 +225,4 @@ class EnumSubsetTest(parameterized.TestCase):
 
 
 if __name__ == '__main__':
-  unittest.main()
+  absltest.main()
