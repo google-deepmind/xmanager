@@ -17,11 +17,9 @@
 # pylint: skip-file
 # source: src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto
 """Generated protocol buffer code."""
-from google.protobuf.internal import enum_type_wrapper
+from google.protobuf.internal import builder as _builder
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
-from google.protobuf import message as _message
-from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
 # @@protoc_insertion_point(imports)
 
@@ -35,678 +33,10 @@ from . import failure_details_pb2 as src_dot_main_dot_protobuf_dot_failure__deta
 from . import invocation_policy_pb2 as src_dot_main_dot_protobuf_dot_invocation__policy__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n[src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto\x12\x12\x62uild_event_stream\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$src/main/protobuf/command_line.proto\x1a\'src/main/protobuf/failure_details.proto\x1a)src/main/protobuf/invocation_policy.proto\"\x86\x1a\n\x0c\x42uildEventId\x12G\n\x07unknown\x18\x01 \x01(\x0b\x32\x34.build_event_stream.BuildEventId.UnknownBuildEventIdH\x00\x12?\n\x08progress\x18\x02 \x01(\x0b\x32+.build_event_stream.BuildEventId.ProgressIdH\x00\x12\x42\n\x07started\x18\x03 \x01(\x0b\x32/.build_event_stream.BuildEventId.BuildStartedIdH\x00\x12_\n\x19unstructured_command_line\x18\x0b \x01(\x0b\x32:.build_event_stream.BuildEventId.UnstructuredCommandLineIdH\x00\x12[\n\x17structured_command_line\x18\x12 \x01(\x0b\x32\x38.build_event_stream.BuildEventId.StructuredCommandLineIdH\x00\x12N\n\x10workspace_status\x18\x0e \x01(\x0b\x32\x32.build_event_stream.BuildEventId.WorkspaceStatusIdH\x00\x12J\n\x0eoptions_parsed\x18\x0c \x01(\x0b\x32\x30.build_event_stream.BuildEventId.OptionsParsedIdH\x00\x12\x39\n\x05\x66\x65tch\x18\x11 \x01(\x0b\x32(.build_event_stream.BuildEventId.FetchIdH\x00\x12I\n\rconfiguration\x18\x0f \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationIdH\x00\x12P\n\x11target_configured\x18\x10 \x01(\x0b\x32\x33.build_event_stream.BuildEventId.TargetConfiguredIdH\x00\x12\x45\n\x07pattern\x18\x04 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.PatternExpandedIdH\x00\x12M\n\x0fpattern_skipped\x18\n \x01(\x0b\x32\x32.build_event_stream.BuildEventId.PatternExpandedIdH\x00\x12G\n\tnamed_set\x18\r \x01(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesIdH\x00\x12N\n\x10target_completed\x18\x05 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.TargetCompletedIdH\x00\x12N\n\x10\x61\x63tion_completed\x18\x06 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.ActionCompletedIdH\x00\x12R\n\x12unconfigured_label\x18\x13 \x01(\x0b\x32\x34.build_event_stream.BuildEventId.UnconfiguredLabelIdH\x00\x12N\n\x10\x63onfigured_label\x18\x15 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.ConfiguredLabelIdH\x00\x12\x44\n\x0btest_result\x18\x08 \x01(\x0b\x32-.build_event_stream.BuildEventId.TestResultIdH\x00\x12\x46\n\x0ctest_summary\x18\x07 \x01(\x0b\x32..build_event_stream.BuildEventId.TestSummaryIdH\x00\x12J\n\x0etarget_summary\x18\x1a \x01(\x0b\x32\x30.build_event_stream.BuildEventId.TargetSummaryIdH\x00\x12J\n\x0e\x62uild_finished\x18\t \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildFinishedIdH\x00\x12K\n\x0f\x62uild_tool_logs\x18\x14 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildToolLogsIdH\x00\x12H\n\rbuild_metrics\x18\x16 \x01(\x0b\x32/.build_event_stream.BuildEventId.BuildMetricsIdH\x00\x12G\n\tworkspace\x18\x17 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.WorkspaceConfigIdH\x00\x12J\n\x0e\x62uild_metadata\x18\x18 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildMetadataIdH\x00\x12k\n\x1f\x63onvenience_symlinks_identified\x18\x19 \x01(\x0b\x32@.build_event_stream.BuildEventId.ConvenienceSymlinksIdentifiedIdH\x00\x1a&\n\x13UnknownBuildEventId\x12\x0f\n\x07\x64\x65tails\x18\x01 \x01(\t\x1a\"\n\nProgressId\x12\x14\n\x0copaque_count\x18\x01 \x01(\x05\x1a\x10\n\x0e\x42uildStartedId\x1a\x1b\n\x19UnstructuredCommandLineId\x1a\x35\n\x17StructuredCommandLineId\x12\x1a\n\x12\x63ommand_line_label\x18\x01 \x01(\t\x1a\x13\n\x11WorkspaceStatusId\x1a\x11\n\x0fOptionsParsedId\x1a\x16\n\x07\x46\x65tchId\x12\x0b\n\x03url\x18\x01 \x01(\t\x1a$\n\x11PatternExpandedId\x12\x0f\n\x07pattern\x18\x01 \x03(\t\x1a\x13\n\x11WorkspaceConfigId\x1a\x11\n\x0f\x42uildMetadataId\x1a\x33\n\x12TargetConfiguredId\x12\r\n\x05label\x18\x01 \x01(\t\x12\x0e\n\x06\x61spect\x18\x02 \x01(\t\x1a\x1f\n\x11NamedSetOfFilesId\x12\n\n\x02id\x18\x01 \x01(\t\x1a\x1d\n\x0f\x43onfigurationId\x12\n\n\x02id\x18\x01 \x01(\t\x1a{\n\x11TargetCompletedId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x03 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x12\x0e\n\x06\x61spect\x18\x02 \x01(\t\x1a\x83\x01\n\x11\x41\x63tionCompletedId\x12\x16\n\x0eprimary_output\x18\x01 \x01(\t\x12\r\n\x05label\x18\x02 \x01(\t\x12G\n\rconfiguration\x18\x03 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a$\n\x13UnconfiguredLabelId\x12\r\n\x05label\x18\x01 \x01(\t\x1ak\n\x11\x43onfiguredLabelId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a\x93\x01\n\x0cTestResultId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x05 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x12\x0b\n\x03run\x18\x02 \x01(\x05\x12\r\n\x05shard\x18\x03 \x01(\x05\x12\x0f\n\x07\x61ttempt\x18\x04 \x01(\x05\x1ag\n\rTestSummaryId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1ai\n\x0fTargetSummaryId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a\x11\n\x0f\x42uildFinishedId\x1a\x11\n\x0f\x42uildToolLogsId\x1a\x10\n\x0e\x42uildMetricsId\x1a!\n\x1f\x43onvenienceSymlinksIdentifiedIdB\x04\n\x02id\"*\n\x08Progress\x12\x0e\n\x06stdout\x18\x01 \x01(\t\x12\x0e\n\x06stderr\x18\x02 \x01(\t\"\xbf\x02\n\x07\x41\x62orted\x12\x37\n\x06reason\x18\x01 \x01(\x0e\x32\'.build_event_stream.Aborted.AbortReason\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"\xe5\x01\n\x0b\x41\x62ortReason\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x14\n\x10USER_INTERRUPTED\x10\x01\x12\x0e\n\nNO_ANALYZE\x10\x08\x12\x0c\n\x08NO_BUILD\x10\t\x12\x0c\n\x08TIME_OUT\x10\x02\x12\x1e\n\x1aREMOTE_ENVIRONMENT_FAILURE\x10\x03\x12\x0c\n\x08INTERNAL\x10\x04\x12\x13\n\x0fLOADING_FAILURE\x10\x05\x12\x14\n\x10\x41NALYSIS_FAILURE\x10\x06\x12\x0b\n\x07SKIPPED\x10\x07\x12\x0e\n\nINCOMPLETE\x10\n\x12\x11\n\rOUT_OF_MEMORY\x10\x0b\"\x81\x02\n\x0c\x42uildStarted\x12\x0c\n\x04uuid\x18\x01 \x01(\t\x12\x1d\n\x11start_time_millis\x18\x02 \x01(\x03\x42\x02\x18\x01\x12.\n\nstart_time\x18\t \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x1a\n\x12\x62uild_tool_version\x18\x03 \x01(\t\x12\x1b\n\x13options_description\x18\x04 \x01(\t\x12\x0f\n\x07\x63ommand\x18\x05 \x01(\t\x12\x19\n\x11working_directory\x18\x06 \x01(\t\x12\x1b\n\x13workspace_directory\x18\x07 \x01(\t\x12\x12\n\nserver_pid\x18\x08 \x01(\x03\"*\n\x0fWorkspaceConfig\x12\x17\n\x0flocal_exec_root\x18\x01 \x01(\t\"\'\n\x17UnstructuredCommandLine\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\t\"\xcf\x01\n\rOptionsParsed\x12\x17\n\x0fstartup_options\x18\x01 \x03(\t\x12 \n\x18\x65xplicit_startup_options\x18\x02 \x03(\t\x12\x10\n\x08\x63md_line\x18\x03 \x03(\t\x12\x19\n\x11\x65xplicit_cmd_line\x18\x04 \x03(\t\x12\x44\n\x11invocation_policy\x18\x05 \x01(\x0b\x32).blaze.invocation_policy.InvocationPolicy\x12\x10\n\x08tool_tag\x18\x06 \x01(\t\"\x18\n\x05\x46\x65tch\x12\x0f\n\x07success\x18\x01 \x01(\x08\"m\n\x0fWorkspaceStatus\x12\x36\n\x04item\x18\x01 \x03(\x0b\x32(.build_event_stream.WorkspaceStatus.Item\x1a\"\n\x04Item\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x83\x01\n\rBuildMetadata\x12\x41\n\x08metadata\x18\x01 \x03(\x0b\x32/.build_event_stream.BuildMetadata.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xd7\x01\n\rConfiguration\x12\x10\n\x08mnemonic\x18\x01 \x01(\t\x12\x15\n\rplatform_name\x18\x02 \x01(\t\x12\x0b\n\x03\x63pu\x18\x03 \x01(\t\x12J\n\rmake_variable\x18\x04 \x03(\x0b\x32\x33.build_event_stream.Configuration.MakeVariableEntry\x12\x0f\n\x07is_tool\x18\x05 \x01(\x08\x1a\x33\n\x11MakeVariableEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xa8\x01\n\x0fPatternExpanded\x12U\n\x15test_suite_expansions\x18\x01 \x03(\x0b\x32\x36.build_event_stream.PatternExpanded.TestSuiteExpansion\x1a>\n\x12TestSuiteExpansion\x12\x13\n\x0bsuite_label\x18\x01 \x01(\t\x12\x13\n\x0btest_labels\x18\x02 \x03(\t\"e\n\x10TargetConfigured\x12\x13\n\x0btarget_kind\x18\x01 \x01(\t\x12/\n\ttest_size\x18\x02 \x01(\x0e\x32\x1c.build_event_stream.TestSize\x12\x0b\n\x03tag\x18\x03 \x03(\t\"t\n\x04\x46ile\x12\x13\n\x0bpath_prefix\x18\x04 \x03(\t\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x03uri\x18\x02 \x01(\tH\x00\x12\x12\n\x08\x63ontents\x18\x03 \x01(\x0cH\x00\x12\x0e\n\x06\x64igest\x18\x05 \x01(\t\x12\x0e\n\x06length\x18\x06 \x01(\x03\x42\x06\n\x04\x66ile\"\x81\x01\n\x0fNamedSetOfFiles\x12\'\n\x05\x66iles\x18\x01 \x03(\x0b\x32\x18.build_event_stream.File\x12\x45\n\tfile_sets\x18\x02 \x03(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesId\"\xae\x03\n\x0e\x41\x63tionExecuted\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0c\n\x04type\x18\x08 \x01(\t\x12\x11\n\texit_code\x18\x02 \x01(\x05\x12(\n\x06stdout\x18\x03 \x01(\x0b\x32\x18.build_event_stream.File\x12(\n\x06stderr\x18\x04 \x01(\x0b\x32\x18.build_event_stream.File\x12\x11\n\x05label\x18\x05 \x01(\tB\x02\x18\x01\x12K\n\rconfiguration\x18\x07 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationIdB\x02\x18\x01\x12\x30\n\x0eprimary_output\x18\x06 \x01(\x0b\x32\x18.build_event_stream.File\x12\x14\n\x0c\x63ommand_line\x18\t \x03(\t\x12\x36\n\x14\x61\x63tion_metadata_logs\x18\n \x03(\x0b\x32\x18.build_event_stream.File\x12\x36\n\x0e\x66\x61ilure_detail\x18\x0b \x01(\x0b\x32\x1e.failure_details.FailureDetail\"|\n\x0bOutputGroup\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x45\n\tfile_sets\x18\x03 \x03(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesId\x12\x12\n\nincomplete\x18\x04 \x01(\x08J\x04\x08\x02\x10\x03\"\xaa\x03\n\x0eTargetComplete\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x17\n\x0btarget_kind\x18\x05 \x01(\tB\x02\x18\x01\x12\x33\n\ttest_size\x18\x06 \x01(\x0e\x32\x1c.build_event_stream.TestSizeB\x02\x18\x01\x12\x35\n\x0coutput_group\x18\x02 \x03(\x0b\x32\x1f.build_event_stream.OutputGroup\x12\x36\n\x10important_output\x18\x04 \x03(\x0b\x32\x18.build_event_stream.FileB\x02\x18\x01\x12\x32\n\x10\x64irectory_output\x18\x08 \x03(\x0b\x32\x18.build_event_stream.File\x12\x0b\n\x03tag\x18\x03 \x03(\t\x12 \n\x14test_timeout_seconds\x18\x07 \x01(\x03\x42\x02\x18\x01\x12/\n\x0ctest_timeout\x18\n \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x36\n\x0e\x66\x61ilure_detail\x18\t \x01(\x0b\x32\x1e.failure_details.FailureDetail\"\xd2\x07\n\nTestResult\x12.\n\x06status\x18\x05 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\x12\x16\n\x0estatus_details\x18\t \x01(\t\x12\x16\n\x0e\x63\x61\x63hed_locally\x18\x04 \x01(\x08\x12+\n\x1ftest_attempt_start_millis_epoch\x18\x06 \x01(\x03\x42\x02\x18\x01\x12\x36\n\x12test_attempt_start\x18\n \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x1ctest_attempt_duration_millis\x18\x03 \x01(\x03\x42\x02\x18\x01\x12\x38\n\x15test_attempt_duration\x18\x0b \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x34\n\x12test_action_output\x18\x02 \x03(\x0b\x32\x18.build_event_stream.File\x12\x0f\n\x07warning\x18\x07 \x03(\t\x12\x44\n\x0e\x65xecution_info\x18\x08 \x01(\x0b\x32,.build_event_stream.TestResult.ExecutionInfo\x1a\x87\x04\n\rExecutionInfo\x12\x1b\n\x0ftimeout_seconds\x18\x01 \x01(\x05\x42\x02\x18\x01\x12\x10\n\x08strategy\x18\x02 \x01(\t\x12\x17\n\x0f\x63\x61\x63hed_remotely\x18\x06 \x01(\x08\x12\x11\n\texit_code\x18\x07 \x01(\x05\x12\x10\n\x08hostname\x18\x03 \x01(\t\x12V\n\x10timing_breakdown\x18\x04 \x01(\x0b\x32<.build_event_stream.TestResult.ExecutionInfo.TimingBreakdown\x12R\n\x0eresource_usage\x18\x05 \x03(\x0b\x32:.build_event_stream.TestResult.ExecutionInfo.ResourceUsage\x1a\xae\x01\n\x0fTimingBreakdown\x12K\n\x05\x63hild\x18\x01 \x03(\x0b\x32<.build_event_stream.TestResult.ExecutionInfo.TimingBreakdown\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x17\n\x0btime_millis\x18\x03 \x01(\x03\x42\x02\x18\x01\x12\'\n\x04time\x18\x04 \x01(\x0b\x32\x19.google.protobuf.Duration\x1a,\n\rResourceUsage\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03J\x04\x08\x01\x10\x02\"\x9b\x04\n\x0bTestSummary\x12\x36\n\x0eoverall_status\x18\x05 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\x12\x17\n\x0ftotal_run_count\x18\x01 \x01(\x05\x12\x11\n\trun_count\x18\n \x01(\x05\x12\x15\n\rattempt_count\x18\x0f \x01(\x05\x12\x13\n\x0bshard_count\x18\x0b \x01(\x05\x12(\n\x06passed\x18\x03 \x03(\x0b\x32\x18.build_event_stream.File\x12(\n\x06\x66\x61iled\x18\x04 \x03(\x0b\x32\x18.build_event_stream.File\x12\x18\n\x10total_num_cached\x18\x06 \x01(\x05\x12#\n\x17\x66irst_start_time_millis\x18\x07 \x01(\x03\x42\x02\x18\x01\x12\x34\n\x10\x66irst_start_time\x18\r \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12!\n\x15last_stop_time_millis\x18\x08 \x01(\x03\x42\x02\x18\x01\x12\x32\n\x0elast_stop_time\x18\x0e \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12%\n\x19total_run_duration_millis\x18\t \x01(\x03\x42\x02\x18\x01\x12\x35\n\x12total_run_duration\x18\x0c \x01(\x0b\x32\x19.google.protobuf.Duration\"k\n\rTargetSummary\x12\x1d\n\x15overall_build_success\x18\x01 \x01(\x08\x12;\n\x13overall_test_status\x18\x02 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\"\xd9\x02\n\rBuildFinished\x12\x1b\n\x0foverall_success\x18\x01 \x01(\x08\x42\x02\x18\x01\x12=\n\texit_code\x18\x03 \x01(\x0b\x32*.build_event_stream.BuildFinished.ExitCode\x12\x1e\n\x12\x66inish_time_millis\x18\x02 \x01(\x03\x42\x02\x18\x01\x12/\n\x0b\x66inish_time\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12K\n\x0e\x61nomaly_report\x18\x04 \x01(\x0b\x32/.build_event_stream.BuildFinished.AnomalyReportB\x02\x18\x01\x1a&\n\x08\x45xitCode\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\x05\x1a&\n\rAnomalyReport\x12\x15\n\rwas_suspended\x18\x01 \x01(\x08\"\xc9\x16\n\x0c\x42uildMetrics\x12\x46\n\x0e\x61\x63tion_summary\x18\x01 \x01(\x0b\x32..build_event_stream.BuildMetrics.ActionSummary\x12\x46\n\x0ememory_metrics\x18\x02 \x01(\x0b\x32..build_event_stream.BuildMetrics.MemoryMetrics\x12\x46\n\x0etarget_metrics\x18\x03 \x01(\x0b\x32..build_event_stream.BuildMetrics.TargetMetrics\x12H\n\x0fpackage_metrics\x18\x04 \x01(\x0b\x32/.build_event_stream.BuildMetrics.PackageMetrics\x12\x46\n\x0etiming_metrics\x18\x05 \x01(\x0b\x32..build_event_stream.BuildMetrics.TimingMetrics\x12N\n\x12\x63umulative_metrics\x18\x06 \x01(\x0b\x32\x32.build_event_stream.BuildMetrics.CumulativeMetrics\x12J\n\x10\x61rtifact_metrics\x18\x07 \x01(\x0b\x32\x30.build_event_stream.BuildMetrics.ArtifactMetrics\x12O\n\x13\x62uild_graph_metrics\x18\x08 \x01(\x0b\x32\x32.build_event_stream.BuildMetrics.BuildGraphMetrics\x12\x46\n\x0eworker_metrics\x18\t \x03(\x0b\x32..build_event_stream.BuildMetrics.WorkerMetrics\x1a\xc9\x03\n\rActionSummary\x12\x17\n\x0f\x61\x63tions_created\x18\x01 \x01(\x03\x12-\n%actions_created_not_including_aspects\x18\x03 \x01(\x03\x12\x18\n\x10\x61\x63tions_executed\x18\x02 \x01(\x03\x12N\n\x0b\x61\x63tion_data\x18\x04 \x03(\x0b\x32\x39.build_event_stream.BuildMetrics.ActionSummary.ActionData\x12\x1d\n\x11remote_cache_hits\x18\x05 \x01(\x03\x42\x02\x18\x01\x12P\n\x0crunner_count\x18\x06 \x03(\x0b\x32:.build_event_stream.BuildMetrics.ActionSummary.RunnerCount\x1ai\n\nActionData\x12\x10\n\x08mnemonic\x18\x01 \x01(\t\x12\x18\n\x10\x61\x63tions_executed\x18\x02 \x01(\x03\x12\x18\n\x10\x66irst_started_ms\x18\x03 \x01(\x03\x12\x15\n\rlast_ended_ms\x18\x04 \x01(\x03\x1a*\n\x0bRunnerCount\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x02 \x01(\x05\x1a\x93\x02\n\rMemoryMetrics\x12!\n\x19used_heap_size_post_build\x18\x01 \x01(\x03\x12\x1e\n\x16peak_post_gc_heap_size\x18\x02 \x01(\x03\x12,\n$peak_post_gc_tenured_space_heap_size\x18\x04 \x01(\x03\x12V\n\x0fgarbage_metrics\x18\x03 \x03(\x0b\x32=.build_event_stream.BuildMetrics.MemoryMetrics.GarbageMetrics\x1a\x39\n\x0eGarbageMetrics\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x19\n\x11garbage_collected\x18\x02 \x01(\x03\x1au\n\rTargetMetrics\x12\x16\n\x0etargets_loaded\x18\x01 \x01(\x03\x12\x1a\n\x12targets_configured\x18\x02 \x01(\x03\x12\x30\n(targets_configured_not_including_aspects\x18\x03 \x01(\x03\x1a)\n\x0ePackageMetrics\x12\x17\n\x0fpackages_loaded\x18\x01 \x01(\x03\x1a\x63\n\rTimingMetrics\x12\x16\n\x0e\x63pu_time_in_ms\x18\x01 \x01(\x03\x12\x17\n\x0fwall_time_in_ms\x18\x02 \x01(\x03\x12!\n\x19\x61nalysis_phase_time_in_ms\x18\x03 \x01(\x03\x1a=\n\x11\x43umulativeMetrics\x12\x14\n\x0cnum_analyses\x18\x0b \x01(\x05\x12\x12\n\nnum_builds\x18\x0c \x01(\x05\x1a\xcb\x03\n\x0f\x41rtifactMetrics\x12[\n\x15source_artifacts_read\x18\x02 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12[\n\x15output_artifacts_seen\x18\x03 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12h\n\"output_artifacts_from_action_cache\x18\x04 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12Y\n\x13top_level_artifacts\x18\x05 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x1a\x33\n\x0b\x46ilesMetric\x12\x15\n\rsize_in_bytes\x18\x01 \x01(\x03\x12\r\n\x05\x63ount\x18\x02 \x01(\x05J\x04\x08\x01\x10\x02\x1a\xfd\x02\n\x11\x42uildGraphMetrics\x12!\n\x19\x61\x63tion_lookup_value_count\x18\x01 \x01(\x05\x12\x37\n/action_lookup_value_count_not_including_aspects\x18\x05 \x01(\x05\x12\x14\n\x0c\x61\x63tion_count\x18\x02 \x01(\x05\x12*\n\"action_count_not_including_aspects\x18\x06 \x01(\x05\x12*\n\"input_file_configured_target_count\x18\x07 \x01(\x05\x12+\n#output_file_configured_target_count\x18\x08 \x01(\x05\x12%\n\x1dother_configured_target_count\x18\t \x01(\x05\x12\x1d\n\x15output_artifact_count\x18\x03 \x01(\x05\x12+\n#post_invocation_skyframe_node_count\x18\x04 \x01(\x05\x1a\xa3\x02\n\rWorkerMetrics\x12\x11\n\tworker_id\x18\x01 \x01(\x05\x12\x12\n\nprocess_id\x18\x02 \x01(\r\x12\x10\n\x08mnemonic\x18\x03 \x01(\t\x12\x14\n\x0cis_multiplex\x18\x04 \x01(\x08\x12\x12\n\nis_sandbox\x18\x05 \x01(\x08\x12\x15\n\ris_measurable\x18\x06 \x01(\x08\x12P\n\x0cworker_stats\x18\x07 \x03(\x0b\x32:.build_event_stream.BuildMetrics.WorkerMetrics.WorkerStats\x1a\x46\n\x0bWorkerStats\x12\x1a\n\x12\x63ollect_time_in_ms\x18\x01 \x01(\x03\x12\x1b\n\x13worker_memory_in_kb\x18\x02 \x01(\x05\"6\n\rBuildToolLogs\x12%\n\x03log\x18\x01 \x03(\x0b\x32\x18.build_event_stream.File\"e\n\x1d\x43onvenienceSymlinksIdentified\x12\x44\n\x14\x63onvenience_symlinks\x18\x01 \x03(\x0b\x32&.build_event_stream.ConvenienceSymlink\"\xa0\x01\n\x12\x43onvenienceSymlink\x12\x0c\n\x04path\x18\x01 \x01(\t\x12=\n\x06\x61\x63tion\x18\x02 \x01(\x0e\x32-.build_event_stream.ConvenienceSymlink.Action\x12\x0e\n\x06target\x18\x03 \x01(\t\"-\n\x06\x41\x63tion\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06\x43REATE\x10\x01\x12\n\n\x06\x44\x45LETE\x10\x02\"\x86\x0c\n\nBuildEvent\x12,\n\x02id\x18\x01 \x01(\x0b\x32 .build_event_stream.BuildEventId\x12\x32\n\x08\x63hildren\x18\x02 \x03(\x0b\x32 .build_event_stream.BuildEventId\x12\x14\n\x0clast_message\x18\x14 \x01(\x08\x12\x30\n\x08progress\x18\x03 \x01(\x0b\x32\x1c.build_event_stream.ProgressH\x00\x12.\n\x07\x61\x62orted\x18\x04 \x01(\x0b\x32\x1b.build_event_stream.AbortedH\x00\x12\x33\n\x07started\x18\x05 \x01(\x0b\x32 .build_event_stream.BuildStartedH\x00\x12P\n\x19unstructured_command_line\x18\x0c \x01(\x0b\x32+.build_event_stream.UnstructuredCommandLineH\x00\x12<\n\x17structured_command_line\x18\x16 \x01(\x0b\x32\x19.command_line.CommandLineH\x00\x12;\n\x0eoptions_parsed\x18\r \x01(\x0b\x32!.build_event_stream.OptionsParsedH\x00\x12?\n\x10workspace_status\x18\x10 \x01(\x0b\x32#.build_event_stream.WorkspaceStatusH\x00\x12*\n\x05\x66\x65tch\x18\x15 \x01(\x0b\x32\x19.build_event_stream.FetchH\x00\x12:\n\rconfiguration\x18\x11 \x01(\x0b\x32!.build_event_stream.ConfigurationH\x00\x12\x37\n\x08\x65xpanded\x18\x06 \x01(\x0b\x32#.build_event_stream.PatternExpandedH\x00\x12:\n\nconfigured\x18\x12 \x01(\x0b\x32$.build_event_stream.TargetConfiguredH\x00\x12\x34\n\x06\x61\x63tion\x18\x07 \x01(\x0b\x32\".build_event_stream.ActionExecutedH\x00\x12\x41\n\x12named_set_of_files\x18\x0f \x01(\x0b\x32#.build_event_stream.NamedSetOfFilesH\x00\x12\x37\n\tcompleted\x18\x08 \x01(\x0b\x32\".build_event_stream.TargetCompleteH\x00\x12\x35\n\x0btest_result\x18\n \x01(\x0b\x32\x1e.build_event_stream.TestResultH\x00\x12\x37\n\x0ctest_summary\x18\t \x01(\x0b\x32\x1f.build_event_stream.TestSummaryH\x00\x12;\n\x0etarget_summary\x18\x1c \x01(\x0b\x32!.build_event_stream.TargetSummaryH\x00\x12\x35\n\x08\x66inished\x18\x0e \x01(\x0b\x32!.build_event_stream.BuildFinishedH\x00\x12<\n\x0f\x62uild_tool_logs\x18\x17 \x01(\x0b\x32!.build_event_stream.BuildToolLogsH\x00\x12\x39\n\rbuild_metrics\x18\x18 \x01(\x0b\x32 .build_event_stream.BuildMetricsH\x00\x12=\n\x0eworkspace_info\x18\x19 \x01(\x0b\x32#.build_event_stream.WorkspaceConfigH\x00\x12;\n\x0e\x62uild_metadata\x18\x1a \x01(\x0b\x32!.build_event_stream.BuildMetadataH\x00\x12\\\n\x1f\x63onvenience_symlinks_identified\x18\x1b \x01(\x0b\x32\x31.build_event_stream.ConvenienceSymlinksIdentifiedH\x00\x42\t\n\x07payloadJ\x04\x08\x0b\x10\x0cJ\x04\x08\x13\x10\x14*G\n\x08TestSize\x12\x0b\n\x07UNKNOWN\x10\x00\x12\t\n\x05SMALL\x10\x01\x12\n\n\x06MEDIUM\x10\x02\x12\t\n\x05LARGE\x10\x03\x12\x0c\n\x08\x45NORMOUS\x10\x04*\xa4\x01\n\nTestStatus\x12\r\n\tNO_STATUS\x10\x00\x12\n\n\x06PASSED\x10\x01\x12\t\n\x05\x46LAKY\x10\x02\x12\x0b\n\x07TIMEOUT\x10\x03\x12\n\n\x06\x46\x41ILED\x10\x04\x12\x0e\n\nINCOMPLETE\x10\x05\x12\x12\n\x0eREMOTE_FAILURE\x10\x06\x12\x13\n\x0f\x46\x41ILED_TO_BUILD\x10\x07\x12\x1e\n\x1aTOOL_HALTED_BEFORE_TESTING\x10\x08\x42H\n.com.google.devtools.build.lib.buildeventstreamB\x16\x42uildEventStreamProtosb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n[src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto\x12\x12\x62uild_event_stream\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$src/main/protobuf/command_line.proto\x1a\'src/main/protobuf/failure_details.proto\x1a)src/main/protobuf/invocation_policy.proto\"\x86\x1a\n\x0c\x42uildEventId\x12G\n\x07unknown\x18\x01 \x01(\x0b\x32\x34.build_event_stream.BuildEventId.UnknownBuildEventIdH\x00\x12?\n\x08progress\x18\x02 \x01(\x0b\x32+.build_event_stream.BuildEventId.ProgressIdH\x00\x12\x42\n\x07started\x18\x03 \x01(\x0b\x32/.build_event_stream.BuildEventId.BuildStartedIdH\x00\x12_\n\x19unstructured_command_line\x18\x0b \x01(\x0b\x32:.build_event_stream.BuildEventId.UnstructuredCommandLineIdH\x00\x12[\n\x17structured_command_line\x18\x12 \x01(\x0b\x32\x38.build_event_stream.BuildEventId.StructuredCommandLineIdH\x00\x12N\n\x10workspace_status\x18\x0e \x01(\x0b\x32\x32.build_event_stream.BuildEventId.WorkspaceStatusIdH\x00\x12J\n\x0eoptions_parsed\x18\x0c \x01(\x0b\x32\x30.build_event_stream.BuildEventId.OptionsParsedIdH\x00\x12\x39\n\x05\x66\x65tch\x18\x11 \x01(\x0b\x32(.build_event_stream.BuildEventId.FetchIdH\x00\x12I\n\rconfiguration\x18\x0f \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationIdH\x00\x12P\n\x11target_configured\x18\x10 \x01(\x0b\x32\x33.build_event_stream.BuildEventId.TargetConfiguredIdH\x00\x12\x45\n\x07pattern\x18\x04 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.PatternExpandedIdH\x00\x12M\n\x0fpattern_skipped\x18\n \x01(\x0b\x32\x32.build_event_stream.BuildEventId.PatternExpandedIdH\x00\x12G\n\tnamed_set\x18\r \x01(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesIdH\x00\x12N\n\x10target_completed\x18\x05 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.TargetCompletedIdH\x00\x12N\n\x10\x61\x63tion_completed\x18\x06 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.ActionCompletedIdH\x00\x12R\n\x12unconfigured_label\x18\x13 \x01(\x0b\x32\x34.build_event_stream.BuildEventId.UnconfiguredLabelIdH\x00\x12N\n\x10\x63onfigured_label\x18\x15 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.ConfiguredLabelIdH\x00\x12\x44\n\x0btest_result\x18\x08 \x01(\x0b\x32-.build_event_stream.BuildEventId.TestResultIdH\x00\x12\x46\n\x0ctest_summary\x18\x07 \x01(\x0b\x32..build_event_stream.BuildEventId.TestSummaryIdH\x00\x12J\n\x0etarget_summary\x18\x1a \x01(\x0b\x32\x30.build_event_stream.BuildEventId.TargetSummaryIdH\x00\x12J\n\x0e\x62uild_finished\x18\t \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildFinishedIdH\x00\x12K\n\x0f\x62uild_tool_logs\x18\x14 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildToolLogsIdH\x00\x12H\n\rbuild_metrics\x18\x16 \x01(\x0b\x32/.build_event_stream.BuildEventId.BuildMetricsIdH\x00\x12G\n\tworkspace\x18\x17 \x01(\x0b\x32\x32.build_event_stream.BuildEventId.WorkspaceConfigIdH\x00\x12J\n\x0e\x62uild_metadata\x18\x18 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.BuildMetadataIdH\x00\x12k\n\x1f\x63onvenience_symlinks_identified\x18\x19 \x01(\x0b\x32@.build_event_stream.BuildEventId.ConvenienceSymlinksIdentifiedIdH\x00\x1a&\n\x13UnknownBuildEventId\x12\x0f\n\x07\x64\x65tails\x18\x01 \x01(\t\x1a\"\n\nProgressId\x12\x14\n\x0copaque_count\x18\x01 \x01(\x05\x1a\x10\n\x0e\x42uildStartedId\x1a\x1b\n\x19UnstructuredCommandLineId\x1a\x35\n\x17StructuredCommandLineId\x12\x1a\n\x12\x63ommand_line_label\x18\x01 \x01(\t\x1a\x13\n\x11WorkspaceStatusId\x1a\x11\n\x0fOptionsParsedId\x1a\x16\n\x07\x46\x65tchId\x12\x0b\n\x03url\x18\x01 \x01(\t\x1a$\n\x11PatternExpandedId\x12\x0f\n\x07pattern\x18\x01 \x03(\t\x1a\x13\n\x11WorkspaceConfigId\x1a\x11\n\x0f\x42uildMetadataId\x1a\x33\n\x12TargetConfiguredId\x12\r\n\x05label\x18\x01 \x01(\t\x12\x0e\n\x06\x61spect\x18\x02 \x01(\t\x1a\x1f\n\x11NamedSetOfFilesId\x12\n\n\x02id\x18\x01 \x01(\t\x1a\x1d\n\x0f\x43onfigurationId\x12\n\n\x02id\x18\x01 \x01(\t\x1a{\n\x11TargetCompletedId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x03 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x12\x0e\n\x06\x61spect\x18\x02 \x01(\t\x1a\x83\x01\n\x11\x41\x63tionCompletedId\x12\x16\n\x0eprimary_output\x18\x01 \x01(\t\x12\r\n\x05label\x18\x02 \x01(\t\x12G\n\rconfiguration\x18\x03 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a$\n\x13UnconfiguredLabelId\x12\r\n\x05label\x18\x01 \x01(\t\x1ak\n\x11\x43onfiguredLabelId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a\x93\x01\n\x0cTestResultId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x05 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x12\x0b\n\x03run\x18\x02 \x01(\x05\x12\r\n\x05shard\x18\x03 \x01(\x05\x12\x0f\n\x07\x61ttempt\x18\x04 \x01(\x05\x1ag\n\rTestSummaryId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1ai\n\x0fTargetSummaryId\x12\r\n\x05label\x18\x01 \x01(\t\x12G\n\rconfiguration\x18\x02 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationId\x1a\x11\n\x0f\x42uildFinishedId\x1a\x11\n\x0f\x42uildToolLogsId\x1a\x10\n\x0e\x42uildMetricsId\x1a!\n\x1f\x43onvenienceSymlinksIdentifiedIdB\x04\n\x02id\"*\n\x08Progress\x12\x0e\n\x06stdout\x18\x01 \x01(\t\x12\x0e\n\x06stderr\x18\x02 \x01(\t\"\xbf\x02\n\x07\x41\x62orted\x12\x37\n\x06reason\x18\x01 \x01(\x0e\x32\'.build_event_stream.Aborted.AbortReason\x12\x13\n\x0b\x64\x65scription\x18\x02 \x01(\t\"\xe5\x01\n\x0b\x41\x62ortReason\x12\x0b\n\x07UNKNOWN\x10\x00\x12\x14\n\x10USER_INTERRUPTED\x10\x01\x12\x0e\n\nNO_ANALYZE\x10\x08\x12\x0c\n\x08NO_BUILD\x10\t\x12\x0c\n\x08TIME_OUT\x10\x02\x12\x1e\n\x1aREMOTE_ENVIRONMENT_FAILURE\x10\x03\x12\x0c\n\x08INTERNAL\x10\x04\x12\x13\n\x0fLOADING_FAILURE\x10\x05\x12\x14\n\x10\x41NALYSIS_FAILURE\x10\x06\x12\x0b\n\x07SKIPPED\x10\x07\x12\x0e\n\nINCOMPLETE\x10\n\x12\x11\n\rOUT_OF_MEMORY\x10\x0b\"\x81\x02\n\x0c\x42uildStarted\x12\x0c\n\x04uuid\x18\x01 \x01(\t\x12\x1d\n\x11start_time_millis\x18\x02 \x01(\x03\x42\x02\x18\x01\x12.\n\nstart_time\x18\t \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x1a\n\x12\x62uild_tool_version\x18\x03 \x01(\t\x12\x1b\n\x13options_description\x18\x04 \x01(\t\x12\x0f\n\x07\x63ommand\x18\x05 \x01(\t\x12\x19\n\x11working_directory\x18\x06 \x01(\t\x12\x1b\n\x13workspace_directory\x18\x07 \x01(\t\x12\x12\n\nserver_pid\x18\x08 \x01(\x03\"*\n\x0fWorkspaceConfig\x12\x17\n\x0flocal_exec_root\x18\x01 \x01(\t\"\'\n\x17UnstructuredCommandLine\x12\x0c\n\x04\x61rgs\x18\x01 \x03(\t\"\xcf\x01\n\rOptionsParsed\x12\x17\n\x0fstartup_options\x18\x01 \x03(\t\x12 \n\x18\x65xplicit_startup_options\x18\x02 \x03(\t\x12\x10\n\x08\x63md_line\x18\x03 \x03(\t\x12\x19\n\x11\x65xplicit_cmd_line\x18\x04 \x03(\t\x12\x44\n\x11invocation_policy\x18\x05 \x01(\x0b\x32).blaze.invocation_policy.InvocationPolicy\x12\x10\n\x08tool_tag\x18\x06 \x01(\t\"\x18\n\x05\x46\x65tch\x12\x0f\n\x07success\x18\x01 \x01(\x08\"m\n\x0fWorkspaceStatus\x12\x36\n\x04item\x18\x01 \x03(\x0b\x32(.build_event_stream.WorkspaceStatus.Item\x1a\"\n\x04Item\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t\"\x83\x01\n\rBuildMetadata\x12\x41\n\x08metadata\x18\x01 \x03(\x0b\x32/.build_event_stream.BuildMetadata.MetadataEntry\x1a/\n\rMetadataEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xd7\x01\n\rConfiguration\x12\x10\n\x08mnemonic\x18\x01 \x01(\t\x12\x15\n\rplatform_name\x18\x02 \x01(\t\x12\x0b\n\x03\x63pu\x18\x03 \x01(\t\x12J\n\rmake_variable\x18\x04 \x03(\x0b\x32\x33.build_event_stream.Configuration.MakeVariableEntry\x12\x0f\n\x07is_tool\x18\x05 \x01(\x08\x1a\x33\n\x11MakeVariableEntry\x12\x0b\n\x03key\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\t:\x02\x38\x01\"\xa8\x01\n\x0fPatternExpanded\x12U\n\x15test_suite_expansions\x18\x01 \x03(\x0b\x32\x36.build_event_stream.PatternExpanded.TestSuiteExpansion\x1a>\n\x12TestSuiteExpansion\x12\x13\n\x0bsuite_label\x18\x01 \x01(\t\x12\x13\n\x0btest_labels\x18\x02 \x03(\t\"e\n\x10TargetConfigured\x12\x13\n\x0btarget_kind\x18\x01 \x01(\t\x12/\n\ttest_size\x18\x02 \x01(\x0e\x32\x1c.build_event_stream.TestSize\x12\x0b\n\x03tag\x18\x03 \x03(\t\"t\n\x04\x46ile\x12\x13\n\x0bpath_prefix\x18\x04 \x03(\t\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x03uri\x18\x02 \x01(\tH\x00\x12\x12\n\x08\x63ontents\x18\x03 \x01(\x0cH\x00\x12\x0e\n\x06\x64igest\x18\x05 \x01(\t\x12\x0e\n\x06length\x18\x06 \x01(\x03\x42\x06\n\x04\x66ile\"\x81\x01\n\x0fNamedSetOfFiles\x12\'\n\x05\x66iles\x18\x01 \x03(\x0b\x32\x18.build_event_stream.File\x12\x45\n\tfile_sets\x18\x02 \x03(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesId\"\xae\x03\n\x0e\x41\x63tionExecuted\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0c\n\x04type\x18\x08 \x01(\t\x12\x11\n\texit_code\x18\x02 \x01(\x05\x12(\n\x06stdout\x18\x03 \x01(\x0b\x32\x18.build_event_stream.File\x12(\n\x06stderr\x18\x04 \x01(\x0b\x32\x18.build_event_stream.File\x12\x11\n\x05label\x18\x05 \x01(\tB\x02\x18\x01\x12K\n\rconfiguration\x18\x07 \x01(\x0b\x32\x30.build_event_stream.BuildEventId.ConfigurationIdB\x02\x18\x01\x12\x30\n\x0eprimary_output\x18\x06 \x01(\x0b\x32\x18.build_event_stream.File\x12\x14\n\x0c\x63ommand_line\x18\t \x03(\t\x12\x36\n\x14\x61\x63tion_metadata_logs\x18\n \x03(\x0b\x32\x18.build_event_stream.File\x12\x36\n\x0e\x66\x61ilure_detail\x18\x0b \x01(\x0b\x32\x1e.failure_details.FailureDetail\"|\n\x0bOutputGroup\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x45\n\tfile_sets\x18\x03 \x03(\x0b\x32\x32.build_event_stream.BuildEventId.NamedSetOfFilesId\x12\x12\n\nincomplete\x18\x04 \x01(\x08J\x04\x08\x02\x10\x03\"\xaa\x03\n\x0eTargetComplete\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x17\n\x0btarget_kind\x18\x05 \x01(\tB\x02\x18\x01\x12\x33\n\ttest_size\x18\x06 \x01(\x0e\x32\x1c.build_event_stream.TestSizeB\x02\x18\x01\x12\x35\n\x0coutput_group\x18\x02 \x03(\x0b\x32\x1f.build_event_stream.OutputGroup\x12\x36\n\x10important_output\x18\x04 \x03(\x0b\x32\x18.build_event_stream.FileB\x02\x18\x01\x12\x32\n\x10\x64irectory_output\x18\x08 \x03(\x0b\x32\x18.build_event_stream.File\x12\x0b\n\x03tag\x18\x03 \x03(\t\x12 \n\x14test_timeout_seconds\x18\x07 \x01(\x03\x42\x02\x18\x01\x12/\n\x0ctest_timeout\x18\n \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x36\n\x0e\x66\x61ilure_detail\x18\t \x01(\x0b\x32\x1e.failure_details.FailureDetail\"\xd2\x07\n\nTestResult\x12.\n\x06status\x18\x05 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\x12\x16\n\x0estatus_details\x18\t \x01(\t\x12\x16\n\x0e\x63\x61\x63hed_locally\x18\x04 \x01(\x08\x12+\n\x1ftest_attempt_start_millis_epoch\x18\x06 \x01(\x03\x42\x02\x18\x01\x12\x36\n\x12test_attempt_start\x18\n \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x1ctest_attempt_duration_millis\x18\x03 \x01(\x03\x42\x02\x18\x01\x12\x38\n\x15test_attempt_duration\x18\x0b \x01(\x0b\x32\x19.google.protobuf.Duration\x12\x34\n\x12test_action_output\x18\x02 \x03(\x0b\x32\x18.build_event_stream.File\x12\x0f\n\x07warning\x18\x07 \x03(\t\x12\x44\n\x0e\x65xecution_info\x18\x08 \x01(\x0b\x32,.build_event_stream.TestResult.ExecutionInfo\x1a\x87\x04\n\rExecutionInfo\x12\x1b\n\x0ftimeout_seconds\x18\x01 \x01(\x05\x42\x02\x18\x01\x12\x10\n\x08strategy\x18\x02 \x01(\t\x12\x17\n\x0f\x63\x61\x63hed_remotely\x18\x06 \x01(\x08\x12\x11\n\texit_code\x18\x07 \x01(\x05\x12\x10\n\x08hostname\x18\x03 \x01(\t\x12V\n\x10timing_breakdown\x18\x04 \x01(\x0b\x32<.build_event_stream.TestResult.ExecutionInfo.TimingBreakdown\x12R\n\x0eresource_usage\x18\x05 \x03(\x0b\x32:.build_event_stream.TestResult.ExecutionInfo.ResourceUsage\x1a\xae\x01\n\x0fTimingBreakdown\x12K\n\x05\x63hild\x18\x01 \x03(\x0b\x32<.build_event_stream.TestResult.ExecutionInfo.TimingBreakdown\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x17\n\x0btime_millis\x18\x03 \x01(\x03\x42\x02\x18\x01\x12\'\n\x04time\x18\x04 \x01(\x0b\x32\x19.google.protobuf.Duration\x1a,\n\rResourceUsage\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05value\x18\x02 \x01(\x03J\x04\x08\x01\x10\x02\"\x9b\x04\n\x0bTestSummary\x12\x36\n\x0eoverall_status\x18\x05 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\x12\x17\n\x0ftotal_run_count\x18\x01 \x01(\x05\x12\x11\n\trun_count\x18\n \x01(\x05\x12\x15\n\rattempt_count\x18\x0f \x01(\x05\x12\x13\n\x0bshard_count\x18\x0b \x01(\x05\x12(\n\x06passed\x18\x03 \x03(\x0b\x32\x18.build_event_stream.File\x12(\n\x06\x66\x61iled\x18\x04 \x03(\x0b\x32\x18.build_event_stream.File\x12\x18\n\x10total_num_cached\x18\x06 \x01(\x05\x12#\n\x17\x66irst_start_time_millis\x18\x07 \x01(\x03\x42\x02\x18\x01\x12\x34\n\x10\x66irst_start_time\x18\r \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12!\n\x15last_stop_time_millis\x18\x08 \x01(\x03\x42\x02\x18\x01\x12\x32\n\x0elast_stop_time\x18\x0e \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12%\n\x19total_run_duration_millis\x18\t \x01(\x03\x42\x02\x18\x01\x12\x35\n\x12total_run_duration\x18\x0c \x01(\x0b\x32\x19.google.protobuf.Duration\"k\n\rTargetSummary\x12\x1d\n\x15overall_build_success\x18\x01 \x01(\x08\x12;\n\x13overall_test_status\x18\x02 \x01(\x0e\x32\x1e.build_event_stream.TestStatus\"\xd9\x02\n\rBuildFinished\x12\x1b\n\x0foverall_success\x18\x01 \x01(\x08\x42\x02\x18\x01\x12=\n\texit_code\x18\x03 \x01(\x0b\x32*.build_event_stream.BuildFinished.ExitCode\x12\x1e\n\x12\x66inish_time_millis\x18\x02 \x01(\x03\x42\x02\x18\x01\x12/\n\x0b\x66inish_time\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12K\n\x0e\x61nomaly_report\x18\x04 \x01(\x0b\x32/.build_event_stream.BuildFinished.AnomalyReportB\x02\x18\x01\x1a&\n\x08\x45xitCode\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04\x63ode\x18\x02 \x01(\x05\x1a&\n\rAnomalyReport\x12\x15\n\rwas_suspended\x18\x01 \x01(\x08\"\xb9\x1a\n\x0c\x42uildMetrics\x12\x46\n\x0e\x61\x63tion_summary\x18\x01 \x01(\x0b\x32..build_event_stream.BuildMetrics.ActionSummary\x12\x46\n\x0ememory_metrics\x18\x02 \x01(\x0b\x32..build_event_stream.BuildMetrics.MemoryMetrics\x12\x46\n\x0etarget_metrics\x18\x03 \x01(\x0b\x32..build_event_stream.BuildMetrics.TargetMetrics\x12H\n\x0fpackage_metrics\x18\x04 \x01(\x0b\x32/.build_event_stream.BuildMetrics.PackageMetrics\x12\x46\n\x0etiming_metrics\x18\x05 \x01(\x0b\x32..build_event_stream.BuildMetrics.TimingMetrics\x12N\n\x12\x63umulative_metrics\x18\x06 \x01(\x0b\x32\x32.build_event_stream.BuildMetrics.CumulativeMetrics\x12J\n\x10\x61rtifact_metrics\x18\x07 \x01(\x0b\x32\x30.build_event_stream.BuildMetrics.ArtifactMetrics\x12O\n\x13\x62uild_graph_metrics\x18\x08 \x01(\x0b\x32\x32.build_event_stream.BuildMetrics.BuildGraphMetrics\x12\x46\n\x0eworker_metrics\x18\t \x03(\x0b\x32..build_event_stream.BuildMetrics.WorkerMetrics\x12H\n\x0fnetwork_metrics\x18\n \x01(\x0b\x32/.build_event_stream.BuildMetrics.NetworkMetrics\x1a\xc9\x03\n\rActionSummary\x12\x17\n\x0f\x61\x63tions_created\x18\x01 \x01(\x03\x12-\n%actions_created_not_including_aspects\x18\x03 \x01(\x03\x12\x18\n\x10\x61\x63tions_executed\x18\x02 \x01(\x03\x12N\n\x0b\x61\x63tion_data\x18\x04 \x03(\x0b\x32\x39.build_event_stream.BuildMetrics.ActionSummary.ActionData\x12\x1d\n\x11remote_cache_hits\x18\x05 \x01(\x03\x42\x02\x18\x01\x12P\n\x0crunner_count\x18\x06 \x03(\x0b\x32:.build_event_stream.BuildMetrics.ActionSummary.RunnerCount\x1ai\n\nActionData\x12\x10\n\x08mnemonic\x18\x01 \x01(\t\x12\x18\n\x10\x61\x63tions_executed\x18\x02 \x01(\x03\x12\x18\n\x10\x66irst_started_ms\x18\x03 \x01(\x03\x12\x15\n\rlast_ended_ms\x18\x04 \x01(\x03\x1a*\n\x0bRunnerCount\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\r\n\x05\x63ount\x18\x02 \x01(\x05\x1a\x93\x02\n\rMemoryMetrics\x12!\n\x19used_heap_size_post_build\x18\x01 \x01(\x03\x12\x1e\n\x16peak_post_gc_heap_size\x18\x02 \x01(\x03\x12,\n$peak_post_gc_tenured_space_heap_size\x18\x04 \x01(\x03\x12V\n\x0fgarbage_metrics\x18\x03 \x03(\x0b\x32=.build_event_stream.BuildMetrics.MemoryMetrics.GarbageMetrics\x1a\x39\n\x0eGarbageMetrics\x12\x0c\n\x04type\x18\x01 \x01(\t\x12\x19\n\x11garbage_collected\x18\x02 \x01(\x03\x1au\n\rTargetMetrics\x12\x16\n\x0etargets_loaded\x18\x01 \x01(\x03\x12\x1a\n\x12targets_configured\x18\x02 \x01(\x03\x12\x30\n(targets_configured_not_including_aspects\x18\x03 \x01(\x03\x1a)\n\x0ePackageMetrics\x12\x17\n\x0fpackages_loaded\x18\x01 \x01(\x03\x1a\x63\n\rTimingMetrics\x12\x16\n\x0e\x63pu_time_in_ms\x18\x01 \x01(\x03\x12\x17\n\x0fwall_time_in_ms\x18\x02 \x01(\x03\x12!\n\x19\x61nalysis_phase_time_in_ms\x18\x03 \x01(\x03\x1a=\n\x11\x43umulativeMetrics\x12\x14\n\x0cnum_analyses\x18\x0b \x01(\x05\x12\x12\n\nnum_builds\x18\x0c \x01(\x05\x1a\xcb\x03\n\x0f\x41rtifactMetrics\x12[\n\x15source_artifacts_read\x18\x02 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12[\n\x15output_artifacts_seen\x18\x03 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12h\n\"output_artifacts_from_action_cache\x18\x04 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x12Y\n\x13top_level_artifacts\x18\x05 \x01(\x0b\x32<.build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric\x1a\x33\n\x0b\x46ilesMetric\x12\x15\n\rsize_in_bytes\x18\x01 \x01(\x03\x12\r\n\x05\x63ount\x18\x02 \x01(\x05J\x04\x08\x01\x10\x02\x1a\xfd\x02\n\x11\x42uildGraphMetrics\x12!\n\x19\x61\x63tion_lookup_value_count\x18\x01 \x01(\x05\x12\x37\n/action_lookup_value_count_not_including_aspects\x18\x05 \x01(\x05\x12\x14\n\x0c\x61\x63tion_count\x18\x02 \x01(\x05\x12*\n\"action_count_not_including_aspects\x18\x06 \x01(\x05\x12*\n\"input_file_configured_target_count\x18\x07 \x01(\x05\x12+\n#output_file_configured_target_count\x18\x08 \x01(\x05\x12%\n\x1dother_configured_target_count\x18\t \x01(\x05\x12\x1d\n\x15output_artifact_count\x18\x03 \x01(\x05\x12+\n#post_invocation_skyframe_node_count\x18\x04 \x01(\x05\x1a\xe1\x02\n\rWorkerMetrics\x12\x15\n\tworker_id\x18\x01 \x01(\x05\x42\x02\x18\x01\x12\x12\n\nworker_ids\x18\x08 \x03(\r\x12\x12\n\nprocess_id\x18\x02 \x01(\r\x12\x10\n\x08mnemonic\x18\x03 \x01(\t\x12\x14\n\x0cis_multiplex\x18\x04 \x01(\x08\x12\x12\n\nis_sandbox\x18\x05 \x01(\x08\x12\x15\n\ris_measurable\x18\x06 \x01(\x08\x12P\n\x0cworker_stats\x18\x07 \x03(\x0b\x32:.build_event_stream.BuildMetrics.WorkerMetrics.WorkerStats\x1al\n\x0bWorkerStats\x12\x1a\n\x12\x63ollect_time_in_ms\x18\x01 \x01(\x03\x12\x1b\n\x13worker_memory_in_kb\x18\x02 \x01(\x05\x12$\n\x1clast_action_start_time_in_ms\x18\x03 \x01(\x03\x1a\xe5\x02\n\x0eNetworkMetrics\x12`\n\x14system_network_stats\x18\x01 \x01(\x0b\x32\x42.build_event_stream.BuildMetrics.NetworkMetrics.SystemNetworkStats\x1a\xf0\x01\n\x12SystemNetworkStats\x12\x12\n\nbytes_sent\x18\x01 \x01(\x04\x12\x12\n\nbytes_recv\x18\x02 \x01(\x04\x12\x14\n\x0cpackets_sent\x18\x03 \x01(\x04\x12\x14\n\x0cpackets_recv\x18\x04 \x01(\x04\x12\x1f\n\x17peak_bytes_sent_per_sec\x18\x05 \x01(\x04\x12\x1f\n\x17peak_bytes_recv_per_sec\x18\x06 \x01(\x04\x12!\n\x19peak_packets_sent_per_sec\x18\x07 \x01(\x04\x12!\n\x19peak_packets_recv_per_sec\x18\x08 \x01(\x04\"6\n\rBuildToolLogs\x12%\n\x03log\x18\x01 \x03(\x0b\x32\x18.build_event_stream.File\"e\n\x1d\x43onvenienceSymlinksIdentified\x12\x44\n\x14\x63onvenience_symlinks\x18\x01 \x03(\x0b\x32&.build_event_stream.ConvenienceSymlink\"\xa0\x01\n\x12\x43onvenienceSymlink\x12\x0c\n\x04path\x18\x01 \x01(\t\x12=\n\x06\x61\x63tion\x18\x02 \x01(\x0e\x32-.build_event_stream.ConvenienceSymlink.Action\x12\x0e\n\x06target\x18\x03 \x01(\t\"-\n\x06\x41\x63tion\x12\x0b\n\x07UNKNOWN\x10\x00\x12\n\n\x06\x43REATE\x10\x01\x12\n\n\x06\x44\x45LETE\x10\x02\"\x86\x0c\n\nBuildEvent\x12,\n\x02id\x18\x01 \x01(\x0b\x32 .build_event_stream.BuildEventId\x12\x32\n\x08\x63hildren\x18\x02 \x03(\x0b\x32 .build_event_stream.BuildEventId\x12\x14\n\x0clast_message\x18\x14 \x01(\x08\x12\x30\n\x08progress\x18\x03 \x01(\x0b\x32\x1c.build_event_stream.ProgressH\x00\x12.\n\x07\x61\x62orted\x18\x04 \x01(\x0b\x32\x1b.build_event_stream.AbortedH\x00\x12\x33\n\x07started\x18\x05 \x01(\x0b\x32 .build_event_stream.BuildStartedH\x00\x12P\n\x19unstructured_command_line\x18\x0c \x01(\x0b\x32+.build_event_stream.UnstructuredCommandLineH\x00\x12<\n\x17structured_command_line\x18\x16 \x01(\x0b\x32\x19.command_line.CommandLineH\x00\x12;\n\x0eoptions_parsed\x18\r \x01(\x0b\x32!.build_event_stream.OptionsParsedH\x00\x12?\n\x10workspace_status\x18\x10 \x01(\x0b\x32#.build_event_stream.WorkspaceStatusH\x00\x12*\n\x05\x66\x65tch\x18\x15 \x01(\x0b\x32\x19.build_event_stream.FetchH\x00\x12:\n\rconfiguration\x18\x11 \x01(\x0b\x32!.build_event_stream.ConfigurationH\x00\x12\x37\n\x08\x65xpanded\x18\x06 \x01(\x0b\x32#.build_event_stream.PatternExpandedH\x00\x12:\n\nconfigured\x18\x12 \x01(\x0b\x32$.build_event_stream.TargetConfiguredH\x00\x12\x34\n\x06\x61\x63tion\x18\x07 \x01(\x0b\x32\".build_event_stream.ActionExecutedH\x00\x12\x41\n\x12named_set_of_files\x18\x0f \x01(\x0b\x32#.build_event_stream.NamedSetOfFilesH\x00\x12\x37\n\tcompleted\x18\x08 \x01(\x0b\x32\".build_event_stream.TargetCompleteH\x00\x12\x35\n\x0btest_result\x18\n \x01(\x0b\x32\x1e.build_event_stream.TestResultH\x00\x12\x37\n\x0ctest_summary\x18\t \x01(\x0b\x32\x1f.build_event_stream.TestSummaryH\x00\x12;\n\x0etarget_summary\x18\x1c \x01(\x0b\x32!.build_event_stream.TargetSummaryH\x00\x12\x35\n\x08\x66inished\x18\x0e \x01(\x0b\x32!.build_event_stream.BuildFinishedH\x00\x12<\n\x0f\x62uild_tool_logs\x18\x17 \x01(\x0b\x32!.build_event_stream.BuildToolLogsH\x00\x12\x39\n\rbuild_metrics\x18\x18 \x01(\x0b\x32 .build_event_stream.BuildMetricsH\x00\x12=\n\x0eworkspace_info\x18\x19 \x01(\x0b\x32#.build_event_stream.WorkspaceConfigH\x00\x12;\n\x0e\x62uild_metadata\x18\x1a \x01(\x0b\x32!.build_event_stream.BuildMetadataH\x00\x12\\\n\x1f\x63onvenience_symlinks_identified\x18\x1b \x01(\x0b\x32\x31.build_event_stream.ConvenienceSymlinksIdentifiedH\x00\x42\t\n\x07payloadJ\x04\x08\x0b\x10\x0cJ\x04\x08\x13\x10\x14*G\n\x08TestSize\x12\x0b\n\x07UNKNOWN\x10\x00\x12\t\n\x05SMALL\x10\x01\x12\n\n\x06MEDIUM\x10\x02\x12\t\n\x05LARGE\x10\x03\x12\x0c\n\x08\x45NORMOUS\x10\x04*\xa4\x01\n\nTestStatus\x12\r\n\tNO_STATUS\x10\x00\x12\n\n\x06PASSED\x10\x01\x12\t\n\x05\x46LAKY\x10\x02\x12\x0b\n\x07TIMEOUT\x10\x03\x12\n\n\x06\x46\x41ILED\x10\x04\x12\x0e\n\nINCOMPLETE\x10\x05\x12\x12\n\x0eREMOTE_FAILURE\x10\x06\x12\x13\n\x0f\x46\x41ILED_TO_BUILD\x10\x07\x12\x1e\n\x1aTOOL_HALTED_BEFORE_TESTING\x10\x08\x42H\n.com.google.devtools.build.lib.buildeventstreamB\x16\x42uildEventStreamProtosb\x06proto3')
 
-_TESTSIZE = DESCRIPTOR.enum_types_by_name['TestSize']
-TestSize = enum_type_wrapper.EnumTypeWrapper(_TESTSIZE)
-_TESTSTATUS = DESCRIPTOR.enum_types_by_name['TestStatus']
-TestStatus = enum_type_wrapper.EnumTypeWrapper(_TESTSTATUS)
-UNKNOWN = 0
-SMALL = 1
-MEDIUM = 2
-LARGE = 3
-ENORMOUS = 4
-NO_STATUS = 0
-PASSED = 1
-FLAKY = 2
-TIMEOUT = 3
-FAILED = 4
-INCOMPLETE = 5
-REMOTE_FAILURE = 6
-FAILED_TO_BUILD = 7
-TOOL_HALTED_BEFORE_TESTING = 8
-
-
-_BUILDEVENTID = DESCRIPTOR.message_types_by_name['BuildEventId']
-_BUILDEVENTID_UNKNOWNBUILDEVENTID = _BUILDEVENTID.nested_types_by_name['UnknownBuildEventId']
-_BUILDEVENTID_PROGRESSID = _BUILDEVENTID.nested_types_by_name['ProgressId']
-_BUILDEVENTID_BUILDSTARTEDID = _BUILDEVENTID.nested_types_by_name['BuildStartedId']
-_BUILDEVENTID_UNSTRUCTUREDCOMMANDLINEID = _BUILDEVENTID.nested_types_by_name['UnstructuredCommandLineId']
-_BUILDEVENTID_STRUCTUREDCOMMANDLINEID = _BUILDEVENTID.nested_types_by_name['StructuredCommandLineId']
-_BUILDEVENTID_WORKSPACESTATUSID = _BUILDEVENTID.nested_types_by_name['WorkspaceStatusId']
-_BUILDEVENTID_OPTIONSPARSEDID = _BUILDEVENTID.nested_types_by_name['OptionsParsedId']
-_BUILDEVENTID_FETCHID = _BUILDEVENTID.nested_types_by_name['FetchId']
-_BUILDEVENTID_PATTERNEXPANDEDID = _BUILDEVENTID.nested_types_by_name['PatternExpandedId']
-_BUILDEVENTID_WORKSPACECONFIGID = _BUILDEVENTID.nested_types_by_name['WorkspaceConfigId']
-_BUILDEVENTID_BUILDMETADATAID = _BUILDEVENTID.nested_types_by_name['BuildMetadataId']
-_BUILDEVENTID_TARGETCONFIGUREDID = _BUILDEVENTID.nested_types_by_name['TargetConfiguredId']
-_BUILDEVENTID_NAMEDSETOFFILESID = _BUILDEVENTID.nested_types_by_name['NamedSetOfFilesId']
-_BUILDEVENTID_CONFIGURATIONID = _BUILDEVENTID.nested_types_by_name['ConfigurationId']
-_BUILDEVENTID_TARGETCOMPLETEDID = _BUILDEVENTID.nested_types_by_name['TargetCompletedId']
-_BUILDEVENTID_ACTIONCOMPLETEDID = _BUILDEVENTID.nested_types_by_name['ActionCompletedId']
-_BUILDEVENTID_UNCONFIGUREDLABELID = _BUILDEVENTID.nested_types_by_name['UnconfiguredLabelId']
-_BUILDEVENTID_CONFIGUREDLABELID = _BUILDEVENTID.nested_types_by_name['ConfiguredLabelId']
-_BUILDEVENTID_TESTRESULTID = _BUILDEVENTID.nested_types_by_name['TestResultId']
-_BUILDEVENTID_TESTSUMMARYID = _BUILDEVENTID.nested_types_by_name['TestSummaryId']
-_BUILDEVENTID_TARGETSUMMARYID = _BUILDEVENTID.nested_types_by_name['TargetSummaryId']
-_BUILDEVENTID_BUILDFINISHEDID = _BUILDEVENTID.nested_types_by_name['BuildFinishedId']
-_BUILDEVENTID_BUILDTOOLLOGSID = _BUILDEVENTID.nested_types_by_name['BuildToolLogsId']
-_BUILDEVENTID_BUILDMETRICSID = _BUILDEVENTID.nested_types_by_name['BuildMetricsId']
-_BUILDEVENTID_CONVENIENCESYMLINKSIDENTIFIEDID = _BUILDEVENTID.nested_types_by_name['ConvenienceSymlinksIdentifiedId']
-_PROGRESS = DESCRIPTOR.message_types_by_name['Progress']
-_ABORTED = DESCRIPTOR.message_types_by_name['Aborted']
-_BUILDSTARTED = DESCRIPTOR.message_types_by_name['BuildStarted']
-_WORKSPACECONFIG = DESCRIPTOR.message_types_by_name['WorkspaceConfig']
-_UNSTRUCTUREDCOMMANDLINE = DESCRIPTOR.message_types_by_name['UnstructuredCommandLine']
-_OPTIONSPARSED = DESCRIPTOR.message_types_by_name['OptionsParsed']
-_FETCH = DESCRIPTOR.message_types_by_name['Fetch']
-_WORKSPACESTATUS = DESCRIPTOR.message_types_by_name['WorkspaceStatus']
-_WORKSPACESTATUS_ITEM = _WORKSPACESTATUS.nested_types_by_name['Item']
-_BUILDMETADATA = DESCRIPTOR.message_types_by_name['BuildMetadata']
-_BUILDMETADATA_METADATAENTRY = _BUILDMETADATA.nested_types_by_name['MetadataEntry']
-_CONFIGURATION = DESCRIPTOR.message_types_by_name['Configuration']
-_CONFIGURATION_MAKEVARIABLEENTRY = _CONFIGURATION.nested_types_by_name['MakeVariableEntry']
-_PATTERNEXPANDED = DESCRIPTOR.message_types_by_name['PatternExpanded']
-_PATTERNEXPANDED_TESTSUITEEXPANSION = _PATTERNEXPANDED.nested_types_by_name['TestSuiteExpansion']
-_TARGETCONFIGURED = DESCRIPTOR.message_types_by_name['TargetConfigured']
-_FILE = DESCRIPTOR.message_types_by_name['File']
-_NAMEDSETOFFILES = DESCRIPTOR.message_types_by_name['NamedSetOfFiles']
-_ACTIONEXECUTED = DESCRIPTOR.message_types_by_name['ActionExecuted']
-_OUTPUTGROUP = DESCRIPTOR.message_types_by_name['OutputGroup']
-_TARGETCOMPLETE = DESCRIPTOR.message_types_by_name['TargetComplete']
-_TESTRESULT = DESCRIPTOR.message_types_by_name['TestResult']
-_TESTRESULT_EXECUTIONINFO = _TESTRESULT.nested_types_by_name['ExecutionInfo']
-_TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN = _TESTRESULT_EXECUTIONINFO.nested_types_by_name['TimingBreakdown']
-_TESTRESULT_EXECUTIONINFO_RESOURCEUSAGE = _TESTRESULT_EXECUTIONINFO.nested_types_by_name['ResourceUsage']
-_TESTSUMMARY = DESCRIPTOR.message_types_by_name['TestSummary']
-_TARGETSUMMARY = DESCRIPTOR.message_types_by_name['TargetSummary']
-_BUILDFINISHED = DESCRIPTOR.message_types_by_name['BuildFinished']
-_BUILDFINISHED_EXITCODE = _BUILDFINISHED.nested_types_by_name['ExitCode']
-_BUILDFINISHED_ANOMALYREPORT = _BUILDFINISHED.nested_types_by_name['AnomalyReport']
-_BUILDMETRICS = DESCRIPTOR.message_types_by_name['BuildMetrics']
-_BUILDMETRICS_ACTIONSUMMARY = _BUILDMETRICS.nested_types_by_name['ActionSummary']
-_BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA = _BUILDMETRICS_ACTIONSUMMARY.nested_types_by_name['ActionData']
-_BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT = _BUILDMETRICS_ACTIONSUMMARY.nested_types_by_name['RunnerCount']
-_BUILDMETRICS_MEMORYMETRICS = _BUILDMETRICS.nested_types_by_name['MemoryMetrics']
-_BUILDMETRICS_MEMORYMETRICS_GARBAGEMETRICS = _BUILDMETRICS_MEMORYMETRICS.nested_types_by_name['GarbageMetrics']
-_BUILDMETRICS_TARGETMETRICS = _BUILDMETRICS.nested_types_by_name['TargetMetrics']
-_BUILDMETRICS_PACKAGEMETRICS = _BUILDMETRICS.nested_types_by_name['PackageMetrics']
-_BUILDMETRICS_TIMINGMETRICS = _BUILDMETRICS.nested_types_by_name['TimingMetrics']
-_BUILDMETRICS_CUMULATIVEMETRICS = _BUILDMETRICS.nested_types_by_name['CumulativeMetrics']
-_BUILDMETRICS_ARTIFACTMETRICS = _BUILDMETRICS.nested_types_by_name['ArtifactMetrics']
-_BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC = _BUILDMETRICS_ARTIFACTMETRICS.nested_types_by_name['FilesMetric']
-_BUILDMETRICS_BUILDGRAPHMETRICS = _BUILDMETRICS.nested_types_by_name['BuildGraphMetrics']
-_BUILDMETRICS_WORKERMETRICS = _BUILDMETRICS.nested_types_by_name['WorkerMetrics']
-_BUILDMETRICS_WORKERMETRICS_WORKERSTATS = _BUILDMETRICS_WORKERMETRICS.nested_types_by_name['WorkerStats']
-_BUILDTOOLLOGS = DESCRIPTOR.message_types_by_name['BuildToolLogs']
-_CONVENIENCESYMLINKSIDENTIFIED = DESCRIPTOR.message_types_by_name['ConvenienceSymlinksIdentified']
-_CONVENIENCESYMLINK = DESCRIPTOR.message_types_by_name['ConvenienceSymlink']
-_BUILDEVENT = DESCRIPTOR.message_types_by_name['BuildEvent']
-_ABORTED_ABORTREASON = _ABORTED.enum_types_by_name['AbortReason']
-_CONVENIENCESYMLINK_ACTION = _CONVENIENCESYMLINK.enum_types_by_name['Action']
-BuildEventId = _reflection.GeneratedProtocolMessageType('BuildEventId', (_message.Message,), {
-
-  'UnknownBuildEventId' : _reflection.GeneratedProtocolMessageType('UnknownBuildEventId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_UNKNOWNBUILDEVENTID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.UnknownBuildEventId)
-    })
-  ,
-
-  'ProgressId' : _reflection.GeneratedProtocolMessageType('ProgressId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_PROGRESSID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ProgressId)
-    })
-  ,
-
-  'BuildStartedId' : _reflection.GeneratedProtocolMessageType('BuildStartedId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_BUILDSTARTEDID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildStartedId)
-    })
-  ,
-
-  'UnstructuredCommandLineId' : _reflection.GeneratedProtocolMessageType('UnstructuredCommandLineId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_UNSTRUCTUREDCOMMANDLINEID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.UnstructuredCommandLineId)
-    })
-  ,
-
-  'StructuredCommandLineId' : _reflection.GeneratedProtocolMessageType('StructuredCommandLineId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_STRUCTUREDCOMMANDLINEID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.StructuredCommandLineId)
-    })
-  ,
-
-  'WorkspaceStatusId' : _reflection.GeneratedProtocolMessageType('WorkspaceStatusId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_WORKSPACESTATUSID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.WorkspaceStatusId)
-    })
-  ,
-
-  'OptionsParsedId' : _reflection.GeneratedProtocolMessageType('OptionsParsedId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_OPTIONSPARSEDID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.OptionsParsedId)
-    })
-  ,
-
-  'FetchId' : _reflection.GeneratedProtocolMessageType('FetchId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_FETCHID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.FetchId)
-    })
-  ,
-
-  'PatternExpandedId' : _reflection.GeneratedProtocolMessageType('PatternExpandedId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_PATTERNEXPANDEDID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.PatternExpandedId)
-    })
-  ,
-
-  'WorkspaceConfigId' : _reflection.GeneratedProtocolMessageType('WorkspaceConfigId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_WORKSPACECONFIGID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.WorkspaceConfigId)
-    })
-  ,
-
-  'BuildMetadataId' : _reflection.GeneratedProtocolMessageType('BuildMetadataId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_BUILDMETADATAID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildMetadataId)
-    })
-  ,
-
-  'TargetConfiguredId' : _reflection.GeneratedProtocolMessageType('TargetConfiguredId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_TARGETCONFIGUREDID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TargetConfiguredId)
-    })
-  ,
-
-  'NamedSetOfFilesId' : _reflection.GeneratedProtocolMessageType('NamedSetOfFilesId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_NAMEDSETOFFILESID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.NamedSetOfFilesId)
-    })
-  ,
-
-  'ConfigurationId' : _reflection.GeneratedProtocolMessageType('ConfigurationId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_CONFIGURATIONID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ConfigurationId)
-    })
-  ,
-
-  'TargetCompletedId' : _reflection.GeneratedProtocolMessageType('TargetCompletedId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_TARGETCOMPLETEDID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TargetCompletedId)
-    })
-  ,
-
-  'ActionCompletedId' : _reflection.GeneratedProtocolMessageType('ActionCompletedId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_ACTIONCOMPLETEDID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ActionCompletedId)
-    })
-  ,
-
-  'UnconfiguredLabelId' : _reflection.GeneratedProtocolMessageType('UnconfiguredLabelId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_UNCONFIGUREDLABELID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.UnconfiguredLabelId)
-    })
-  ,
-
-  'ConfiguredLabelId' : _reflection.GeneratedProtocolMessageType('ConfiguredLabelId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_CONFIGUREDLABELID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ConfiguredLabelId)
-    })
-  ,
-
-  'TestResultId' : _reflection.GeneratedProtocolMessageType('TestResultId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_TESTRESULTID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TestResultId)
-    })
-  ,
-
-  'TestSummaryId' : _reflection.GeneratedProtocolMessageType('TestSummaryId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_TESTSUMMARYID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TestSummaryId)
-    })
-  ,
-
-  'TargetSummaryId' : _reflection.GeneratedProtocolMessageType('TargetSummaryId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_TARGETSUMMARYID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.TargetSummaryId)
-    })
-  ,
-
-  'BuildFinishedId' : _reflection.GeneratedProtocolMessageType('BuildFinishedId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_BUILDFINISHEDID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildFinishedId)
-    })
-  ,
-
-  'BuildToolLogsId' : _reflection.GeneratedProtocolMessageType('BuildToolLogsId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_BUILDTOOLLOGSID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildToolLogsId)
-    })
-  ,
-
-  'BuildMetricsId' : _reflection.GeneratedProtocolMessageType('BuildMetricsId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_BUILDMETRICSID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.BuildMetricsId)
-    })
-  ,
-
-  'ConvenienceSymlinksIdentifiedId' : _reflection.GeneratedProtocolMessageType('ConvenienceSymlinksIdentifiedId', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDEVENTID_CONVENIENCESYMLINKSIDENTIFIEDID,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId.ConvenienceSymlinksIdentifiedId)
-    })
-  ,
-  'DESCRIPTOR' : _BUILDEVENTID,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.BuildEventId)
-  })
-_sym_db.RegisterMessage(BuildEventId)
-_sym_db.RegisterMessage(BuildEventId.UnknownBuildEventId)
-_sym_db.RegisterMessage(BuildEventId.ProgressId)
-_sym_db.RegisterMessage(BuildEventId.BuildStartedId)
-_sym_db.RegisterMessage(BuildEventId.UnstructuredCommandLineId)
-_sym_db.RegisterMessage(BuildEventId.StructuredCommandLineId)
-_sym_db.RegisterMessage(BuildEventId.WorkspaceStatusId)
-_sym_db.RegisterMessage(BuildEventId.OptionsParsedId)
-_sym_db.RegisterMessage(BuildEventId.FetchId)
-_sym_db.RegisterMessage(BuildEventId.PatternExpandedId)
-_sym_db.RegisterMessage(BuildEventId.WorkspaceConfigId)
-_sym_db.RegisterMessage(BuildEventId.BuildMetadataId)
-_sym_db.RegisterMessage(BuildEventId.TargetConfiguredId)
-_sym_db.RegisterMessage(BuildEventId.NamedSetOfFilesId)
-_sym_db.RegisterMessage(BuildEventId.ConfigurationId)
-_sym_db.RegisterMessage(BuildEventId.TargetCompletedId)
-_sym_db.RegisterMessage(BuildEventId.ActionCompletedId)
-_sym_db.RegisterMessage(BuildEventId.UnconfiguredLabelId)
-_sym_db.RegisterMessage(BuildEventId.ConfiguredLabelId)
-_sym_db.RegisterMessage(BuildEventId.TestResultId)
-_sym_db.RegisterMessage(BuildEventId.TestSummaryId)
-_sym_db.RegisterMessage(BuildEventId.TargetSummaryId)
-_sym_db.RegisterMessage(BuildEventId.BuildFinishedId)
-_sym_db.RegisterMessage(BuildEventId.BuildToolLogsId)
-_sym_db.RegisterMessage(BuildEventId.BuildMetricsId)
-_sym_db.RegisterMessage(BuildEventId.ConvenienceSymlinksIdentifiedId)
-
-Progress = _reflection.GeneratedProtocolMessageType('Progress', (_message.Message,), {
-  'DESCRIPTOR' : _PROGRESS,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.Progress)
-  })
-_sym_db.RegisterMessage(Progress)
-
-Aborted = _reflection.GeneratedProtocolMessageType('Aborted', (_message.Message,), {
-  'DESCRIPTOR' : _ABORTED,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.Aborted)
-  })
-_sym_db.RegisterMessage(Aborted)
-
-BuildStarted = _reflection.GeneratedProtocolMessageType('BuildStarted', (_message.Message,), {
-  'DESCRIPTOR' : _BUILDSTARTED,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.BuildStarted)
-  })
-_sym_db.RegisterMessage(BuildStarted)
-
-WorkspaceConfig = _reflection.GeneratedProtocolMessageType('WorkspaceConfig', (_message.Message,), {
-  'DESCRIPTOR' : _WORKSPACECONFIG,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.WorkspaceConfig)
-  })
-_sym_db.RegisterMessage(WorkspaceConfig)
-
-UnstructuredCommandLine = _reflection.GeneratedProtocolMessageType('UnstructuredCommandLine', (_message.Message,), {
-  'DESCRIPTOR' : _UNSTRUCTUREDCOMMANDLINE,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.UnstructuredCommandLine)
-  })
-_sym_db.RegisterMessage(UnstructuredCommandLine)
-
-OptionsParsed = _reflection.GeneratedProtocolMessageType('OptionsParsed', (_message.Message,), {
-  'DESCRIPTOR' : _OPTIONSPARSED,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.OptionsParsed)
-  })
-_sym_db.RegisterMessage(OptionsParsed)
-
-Fetch = _reflection.GeneratedProtocolMessageType('Fetch', (_message.Message,), {
-  'DESCRIPTOR' : _FETCH,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.Fetch)
-  })
-_sym_db.RegisterMessage(Fetch)
-
-WorkspaceStatus = _reflection.GeneratedProtocolMessageType('WorkspaceStatus', (_message.Message,), {
-
-  'Item' : _reflection.GeneratedProtocolMessageType('Item', (_message.Message,), {
-    'DESCRIPTOR' : _WORKSPACESTATUS_ITEM,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.WorkspaceStatus.Item)
-    })
-  ,
-  'DESCRIPTOR' : _WORKSPACESTATUS,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.WorkspaceStatus)
-  })
-_sym_db.RegisterMessage(WorkspaceStatus)
-_sym_db.RegisterMessage(WorkspaceStatus.Item)
-
-BuildMetadata = _reflection.GeneratedProtocolMessageType('BuildMetadata', (_message.Message,), {
-
-  'MetadataEntry' : _reflection.GeneratedProtocolMessageType('MetadataEntry', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDMETADATA_METADATAENTRY,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetadata.MetadataEntry)
-    })
-  ,
-  'DESCRIPTOR' : _BUILDMETADATA,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetadata)
-  })
-_sym_db.RegisterMessage(BuildMetadata)
-_sym_db.RegisterMessage(BuildMetadata.MetadataEntry)
-
-Configuration = _reflection.GeneratedProtocolMessageType('Configuration', (_message.Message,), {
-
-  'MakeVariableEntry' : _reflection.GeneratedProtocolMessageType('MakeVariableEntry', (_message.Message,), {
-    'DESCRIPTOR' : _CONFIGURATION_MAKEVARIABLEENTRY,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.Configuration.MakeVariableEntry)
-    })
-  ,
-  'DESCRIPTOR' : _CONFIGURATION,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.Configuration)
-  })
-_sym_db.RegisterMessage(Configuration)
-_sym_db.RegisterMessage(Configuration.MakeVariableEntry)
-
-PatternExpanded = _reflection.GeneratedProtocolMessageType('PatternExpanded', (_message.Message,), {
-
-  'TestSuiteExpansion' : _reflection.GeneratedProtocolMessageType('TestSuiteExpansion', (_message.Message,), {
-    'DESCRIPTOR' : _PATTERNEXPANDED_TESTSUITEEXPANSION,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.PatternExpanded.TestSuiteExpansion)
-    })
-  ,
-  'DESCRIPTOR' : _PATTERNEXPANDED,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.PatternExpanded)
-  })
-_sym_db.RegisterMessage(PatternExpanded)
-_sym_db.RegisterMessage(PatternExpanded.TestSuiteExpansion)
-
-TargetConfigured = _reflection.GeneratedProtocolMessageType('TargetConfigured', (_message.Message,), {
-  'DESCRIPTOR' : _TARGETCONFIGURED,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.TargetConfigured)
-  })
-_sym_db.RegisterMessage(TargetConfigured)
-
-File = _reflection.GeneratedProtocolMessageType('File', (_message.Message,), {
-  'DESCRIPTOR' : _FILE,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.File)
-  })
-_sym_db.RegisterMessage(File)
-
-NamedSetOfFiles = _reflection.GeneratedProtocolMessageType('NamedSetOfFiles', (_message.Message,), {
-  'DESCRIPTOR' : _NAMEDSETOFFILES,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.NamedSetOfFiles)
-  })
-_sym_db.RegisterMessage(NamedSetOfFiles)
-
-ActionExecuted = _reflection.GeneratedProtocolMessageType('ActionExecuted', (_message.Message,), {
-  'DESCRIPTOR' : _ACTIONEXECUTED,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.ActionExecuted)
-  })
-_sym_db.RegisterMessage(ActionExecuted)
-
-OutputGroup = _reflection.GeneratedProtocolMessageType('OutputGroup', (_message.Message,), {
-  'DESCRIPTOR' : _OUTPUTGROUP,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.OutputGroup)
-  })
-_sym_db.RegisterMessage(OutputGroup)
-
-TargetComplete = _reflection.GeneratedProtocolMessageType('TargetComplete', (_message.Message,), {
-  'DESCRIPTOR' : _TARGETCOMPLETE,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.TargetComplete)
-  })
-_sym_db.RegisterMessage(TargetComplete)
-
-TestResult = _reflection.GeneratedProtocolMessageType('TestResult', (_message.Message,), {
-
-  'ExecutionInfo' : _reflection.GeneratedProtocolMessageType('ExecutionInfo', (_message.Message,), {
-
-    'TimingBreakdown' : _reflection.GeneratedProtocolMessageType('TimingBreakdown', (_message.Message,), {
-      'DESCRIPTOR' : _TESTRESULT_EXECUTIONINFO_TIMINGBREAKDOWN,
-      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-      # @@protoc_insertion_point(class_scope:build_event_stream.TestResult.ExecutionInfo.TimingBreakdown)
-      })
-    ,
-
-    'ResourceUsage' : _reflection.GeneratedProtocolMessageType('ResourceUsage', (_message.Message,), {
-      'DESCRIPTOR' : _TESTRESULT_EXECUTIONINFO_RESOURCEUSAGE,
-      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-      # @@protoc_insertion_point(class_scope:build_event_stream.TestResult.ExecutionInfo.ResourceUsage)
-      })
-    ,
-    'DESCRIPTOR' : _TESTRESULT_EXECUTIONINFO,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.TestResult.ExecutionInfo)
-    })
-  ,
-  'DESCRIPTOR' : _TESTRESULT,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.TestResult)
-  })
-_sym_db.RegisterMessage(TestResult)
-_sym_db.RegisterMessage(TestResult.ExecutionInfo)
-_sym_db.RegisterMessage(TestResult.ExecutionInfo.TimingBreakdown)
-_sym_db.RegisterMessage(TestResult.ExecutionInfo.ResourceUsage)
-
-TestSummary = _reflection.GeneratedProtocolMessageType('TestSummary', (_message.Message,), {
-  'DESCRIPTOR' : _TESTSUMMARY,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.TestSummary)
-  })
-_sym_db.RegisterMessage(TestSummary)
-
-TargetSummary = _reflection.GeneratedProtocolMessageType('TargetSummary', (_message.Message,), {
-  'DESCRIPTOR' : _TARGETSUMMARY,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.TargetSummary)
-  })
-_sym_db.RegisterMessage(TargetSummary)
-
-BuildFinished = _reflection.GeneratedProtocolMessageType('BuildFinished', (_message.Message,), {
-
-  'ExitCode' : _reflection.GeneratedProtocolMessageType('ExitCode', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDFINISHED_EXITCODE,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildFinished.ExitCode)
-    })
-  ,
-
-  'AnomalyReport' : _reflection.GeneratedProtocolMessageType('AnomalyReport', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDFINISHED_ANOMALYREPORT,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildFinished.AnomalyReport)
-    })
-  ,
-  'DESCRIPTOR' : _BUILDFINISHED,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.BuildFinished)
-  })
-_sym_db.RegisterMessage(BuildFinished)
-_sym_db.RegisterMessage(BuildFinished.ExitCode)
-_sym_db.RegisterMessage(BuildFinished.AnomalyReport)
-
-BuildMetrics = _reflection.GeneratedProtocolMessageType('BuildMetrics', (_message.Message,), {
-
-  'ActionSummary' : _reflection.GeneratedProtocolMessageType('ActionSummary', (_message.Message,), {
-
-    'ActionData' : _reflection.GeneratedProtocolMessageType('ActionData', (_message.Message,), {
-      'DESCRIPTOR' : _BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA,
-      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-      # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ActionSummary.ActionData)
-      })
-    ,
-
-    'RunnerCount' : _reflection.GeneratedProtocolMessageType('RunnerCount', (_message.Message,), {
-      'DESCRIPTOR' : _BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT,
-      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-      # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ActionSummary.RunnerCount)
-      })
-    ,
-    'DESCRIPTOR' : _BUILDMETRICS_ACTIONSUMMARY,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ActionSummary)
-    })
-  ,
-
-  'MemoryMetrics' : _reflection.GeneratedProtocolMessageType('MemoryMetrics', (_message.Message,), {
-
-    'GarbageMetrics' : _reflection.GeneratedProtocolMessageType('GarbageMetrics', (_message.Message,), {
-      'DESCRIPTOR' : _BUILDMETRICS_MEMORYMETRICS_GARBAGEMETRICS,
-      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-      # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.MemoryMetrics.GarbageMetrics)
-      })
-    ,
-    'DESCRIPTOR' : _BUILDMETRICS_MEMORYMETRICS,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.MemoryMetrics)
-    })
-  ,
-
-  'TargetMetrics' : _reflection.GeneratedProtocolMessageType('TargetMetrics', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDMETRICS_TARGETMETRICS,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.TargetMetrics)
-    })
-  ,
-
-  'PackageMetrics' : _reflection.GeneratedProtocolMessageType('PackageMetrics', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDMETRICS_PACKAGEMETRICS,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.PackageMetrics)
-    })
-  ,
-
-  'TimingMetrics' : _reflection.GeneratedProtocolMessageType('TimingMetrics', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDMETRICS_TIMINGMETRICS,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.TimingMetrics)
-    })
-  ,
-
-  'CumulativeMetrics' : _reflection.GeneratedProtocolMessageType('CumulativeMetrics', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDMETRICS_CUMULATIVEMETRICS,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.CumulativeMetrics)
-    })
-  ,
-
-  'ArtifactMetrics' : _reflection.GeneratedProtocolMessageType('ArtifactMetrics', (_message.Message,), {
-
-    'FilesMetric' : _reflection.GeneratedProtocolMessageType('FilesMetric', (_message.Message,), {
-      'DESCRIPTOR' : _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC,
-      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-      # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ArtifactMetrics.FilesMetric)
-      })
-    ,
-    'DESCRIPTOR' : _BUILDMETRICS_ARTIFACTMETRICS,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.ArtifactMetrics)
-    })
-  ,
-
-  'BuildGraphMetrics' : _reflection.GeneratedProtocolMessageType('BuildGraphMetrics', (_message.Message,), {
-    'DESCRIPTOR' : _BUILDMETRICS_BUILDGRAPHMETRICS,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.BuildGraphMetrics)
-    })
-  ,
-
-  'WorkerMetrics' : _reflection.GeneratedProtocolMessageType('WorkerMetrics', (_message.Message,), {
-
-    'WorkerStats' : _reflection.GeneratedProtocolMessageType('WorkerStats', (_message.Message,), {
-      'DESCRIPTOR' : _BUILDMETRICS_WORKERMETRICS_WORKERSTATS,
-      '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-      # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.WorkerMetrics.WorkerStats)
-      })
-    ,
-    'DESCRIPTOR' : _BUILDMETRICS_WORKERMETRICS,
-    '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-    # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics.WorkerMetrics)
-    })
-  ,
-  'DESCRIPTOR' : _BUILDMETRICS,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.BuildMetrics)
-  })
-_sym_db.RegisterMessage(BuildMetrics)
-_sym_db.RegisterMessage(BuildMetrics.ActionSummary)
-_sym_db.RegisterMessage(BuildMetrics.ActionSummary.ActionData)
-_sym_db.RegisterMessage(BuildMetrics.ActionSummary.RunnerCount)
-_sym_db.RegisterMessage(BuildMetrics.MemoryMetrics)
-_sym_db.RegisterMessage(BuildMetrics.MemoryMetrics.GarbageMetrics)
-_sym_db.RegisterMessage(BuildMetrics.TargetMetrics)
-_sym_db.RegisterMessage(BuildMetrics.PackageMetrics)
-_sym_db.RegisterMessage(BuildMetrics.TimingMetrics)
-_sym_db.RegisterMessage(BuildMetrics.CumulativeMetrics)
-_sym_db.RegisterMessage(BuildMetrics.ArtifactMetrics)
-_sym_db.RegisterMessage(BuildMetrics.ArtifactMetrics.FilesMetric)
-_sym_db.RegisterMessage(BuildMetrics.BuildGraphMetrics)
-_sym_db.RegisterMessage(BuildMetrics.WorkerMetrics)
-_sym_db.RegisterMessage(BuildMetrics.WorkerMetrics.WorkerStats)
-
-BuildToolLogs = _reflection.GeneratedProtocolMessageType('BuildToolLogs', (_message.Message,), {
-  'DESCRIPTOR' : _BUILDTOOLLOGS,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.BuildToolLogs)
-  })
-_sym_db.RegisterMessage(BuildToolLogs)
-
-ConvenienceSymlinksIdentified = _reflection.GeneratedProtocolMessageType('ConvenienceSymlinksIdentified', (_message.Message,), {
-  'DESCRIPTOR' : _CONVENIENCESYMLINKSIDENTIFIED,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.ConvenienceSymlinksIdentified)
-  })
-_sym_db.RegisterMessage(ConvenienceSymlinksIdentified)
-
-ConvenienceSymlink = _reflection.GeneratedProtocolMessageType('ConvenienceSymlink', (_message.Message,), {
-  'DESCRIPTOR' : _CONVENIENCESYMLINK,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.ConvenienceSymlink)
-  })
-_sym_db.RegisterMessage(ConvenienceSymlink)
-
-BuildEvent = _reflection.GeneratedProtocolMessageType('BuildEvent', (_message.Message,), {
-  'DESCRIPTOR' : _BUILDEVENT,
-  '__module__' : 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2'
-  # @@protoc_insertion_point(class_scope:build_event_stream.BuildEvent)
-  })
-_sym_db.RegisterMessage(BuildEvent)
-
+_builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'src.main.java.com.google.devtools.build.lib.buildeventstream.proto.build_event_stream_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
@@ -751,10 +81,12 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _BUILDFINISHED.fields_by_name['anomaly_report']._serialized_options = b'\030\001'
   _BUILDMETRICS_ACTIONSUMMARY.fields_by_name['remote_cache_hits']._options = None
   _BUILDMETRICS_ACTIONSUMMARY.fields_by_name['remote_cache_hits']._serialized_options = b'\030\001'
-  _TESTSIZE._serialized_start=13300
-  _TESTSIZE._serialized_end=13371
-  _TESTSTATUS._serialized_start=13374
-  _TESTSTATUS._serialized_end=13538
+  _BUILDMETRICS_WORKERMETRICS.fields_by_name['worker_id']._options = None
+  _BUILDMETRICS_WORKERMETRICS.fields_by_name['worker_id']._serialized_options = b'\030\001'
+  _TESTSIZE._serialized_start=13796
+  _TESTSIZE._serialized_end=13867
+  _TESTSTATUS._serialized_start=13870
+  _TESTSTATUS._serialized_end=14034
   _BUILDEVENTID._serialized_start=303
   _BUILDEVENTID._serialized_end=3637
   _BUILDEVENTID_UNKNOWNBUILDEVENTID._serialized_start=2337
@@ -870,43 +202,47 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _BUILDFINISHED_ANOMALYREPORT._serialized_start=8501
   _BUILDFINISHED_ANOMALYREPORT._serialized_end=8539
   _BUILDMETRICS._serialized_start=8542
-  _BUILDMETRICS._serialized_end=11431
-  _BUILDMETRICS_ACTIONSUMMARY._serialized_start=9230
-  _BUILDMETRICS_ACTIONSUMMARY._serialized_end=9687
-  _BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA._serialized_start=9538
-  _BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA._serialized_end=9643
-  _BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT._serialized_start=9645
-  _BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT._serialized_end=9687
-  _BUILDMETRICS_MEMORYMETRICS._serialized_start=9690
-  _BUILDMETRICS_MEMORYMETRICS._serialized_end=9965
-  _BUILDMETRICS_MEMORYMETRICS_GARBAGEMETRICS._serialized_start=9908
-  _BUILDMETRICS_MEMORYMETRICS_GARBAGEMETRICS._serialized_end=9965
-  _BUILDMETRICS_TARGETMETRICS._serialized_start=9967
-  _BUILDMETRICS_TARGETMETRICS._serialized_end=10084
-  _BUILDMETRICS_PACKAGEMETRICS._serialized_start=10086
-  _BUILDMETRICS_PACKAGEMETRICS._serialized_end=10127
-  _BUILDMETRICS_TIMINGMETRICS._serialized_start=10129
-  _BUILDMETRICS_TIMINGMETRICS._serialized_end=10228
-  _BUILDMETRICS_CUMULATIVEMETRICS._serialized_start=10230
-  _BUILDMETRICS_CUMULATIVEMETRICS._serialized_end=10291
-  _BUILDMETRICS_ARTIFACTMETRICS._serialized_start=10294
-  _BUILDMETRICS_ARTIFACTMETRICS._serialized_end=10753
-  _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC._serialized_start=10696
-  _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC._serialized_end=10747
-  _BUILDMETRICS_BUILDGRAPHMETRICS._serialized_start=10756
-  _BUILDMETRICS_BUILDGRAPHMETRICS._serialized_end=11137
-  _BUILDMETRICS_WORKERMETRICS._serialized_start=11140
-  _BUILDMETRICS_WORKERMETRICS._serialized_end=11431
-  _BUILDMETRICS_WORKERMETRICS_WORKERSTATS._serialized_start=11361
-  _BUILDMETRICS_WORKERMETRICS_WORKERSTATS._serialized_end=11431
-  _BUILDTOOLLOGS._serialized_start=11433
-  _BUILDTOOLLOGS._serialized_end=11487
-  _CONVENIENCESYMLINKSIDENTIFIED._serialized_start=11489
-  _CONVENIENCESYMLINKSIDENTIFIED._serialized_end=11590
-  _CONVENIENCESYMLINK._serialized_start=11593
-  _CONVENIENCESYMLINK._serialized_end=11753
-  _CONVENIENCESYMLINK_ACTION._serialized_start=11708
-  _CONVENIENCESYMLINK_ACTION._serialized_end=11753
-  _BUILDEVENT._serialized_start=11756
-  _BUILDEVENT._serialized_end=13298
+  _BUILDMETRICS._serialized_end=11927
+  _BUILDMETRICS_ACTIONSUMMARY._serialized_start=9304
+  _BUILDMETRICS_ACTIONSUMMARY._serialized_end=9761
+  _BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA._serialized_start=9612
+  _BUILDMETRICS_ACTIONSUMMARY_ACTIONDATA._serialized_end=9717
+  _BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT._serialized_start=9719
+  _BUILDMETRICS_ACTIONSUMMARY_RUNNERCOUNT._serialized_end=9761
+  _BUILDMETRICS_MEMORYMETRICS._serialized_start=9764
+  _BUILDMETRICS_MEMORYMETRICS._serialized_end=10039
+  _BUILDMETRICS_MEMORYMETRICS_GARBAGEMETRICS._serialized_start=9982
+  _BUILDMETRICS_MEMORYMETRICS_GARBAGEMETRICS._serialized_end=10039
+  _BUILDMETRICS_TARGETMETRICS._serialized_start=10041
+  _BUILDMETRICS_TARGETMETRICS._serialized_end=10158
+  _BUILDMETRICS_PACKAGEMETRICS._serialized_start=10160
+  _BUILDMETRICS_PACKAGEMETRICS._serialized_end=10201
+  _BUILDMETRICS_TIMINGMETRICS._serialized_start=10203
+  _BUILDMETRICS_TIMINGMETRICS._serialized_end=10302
+  _BUILDMETRICS_CUMULATIVEMETRICS._serialized_start=10304
+  _BUILDMETRICS_CUMULATIVEMETRICS._serialized_end=10365
+  _BUILDMETRICS_ARTIFACTMETRICS._serialized_start=10368
+  _BUILDMETRICS_ARTIFACTMETRICS._serialized_end=10827
+  _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC._serialized_start=10770
+  _BUILDMETRICS_ARTIFACTMETRICS_FILESMETRIC._serialized_end=10821
+  _BUILDMETRICS_BUILDGRAPHMETRICS._serialized_start=10830
+  _BUILDMETRICS_BUILDGRAPHMETRICS._serialized_end=11211
+  _BUILDMETRICS_WORKERMETRICS._serialized_start=11214
+  _BUILDMETRICS_WORKERMETRICS._serialized_end=11567
+  _BUILDMETRICS_WORKERMETRICS_WORKERSTATS._serialized_start=11459
+  _BUILDMETRICS_WORKERMETRICS_WORKERSTATS._serialized_end=11567
+  _BUILDMETRICS_NETWORKMETRICS._serialized_start=11570
+  _BUILDMETRICS_NETWORKMETRICS._serialized_end=11927
+  _BUILDMETRICS_NETWORKMETRICS_SYSTEMNETWORKSTATS._serialized_start=11687
+  _BUILDMETRICS_NETWORKMETRICS_SYSTEMNETWORKSTATS._serialized_end=11927
+  _BUILDTOOLLOGS._serialized_start=11929
+  _BUILDTOOLLOGS._serialized_end=11983
+  _CONVENIENCESYMLINKSIDENTIFIED._serialized_start=11985
+  _CONVENIENCESYMLINKSIDENTIFIED._serialized_end=12086
+  _CONVENIENCESYMLINK._serialized_start=12089
+  _CONVENIENCESYMLINK._serialized_end=12249
+  _CONVENIENCESYMLINK_ACTION._serialized_start=12204
+  _CONVENIENCESYMLINK_ACTION._serialized_end=12249
+  _BUILDEVENT._serialized_start=12252
+  _BUILDEVENT._serialized_end=13794
 # @@protoc_insertion_point(module_scope)

@@ -17,10 +17,9 @@
 # pylint: skip-file
 # source: src/main/protobuf/failure_details.proto
 """Generated protocol buffer code."""
+from google.protobuf.internal import builder as _builder
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
-from google.protobuf import message as _message
-from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
 # @@protoc_insertion_point(imports)
 
@@ -30,585 +29,10 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import descriptor_pb2 as google_dot_protobuf_dot_descriptor__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\'src/main/protobuf/failure_details.proto\x12\x0f\x66\x61ilure_details\x1a google/protobuf/descriptor.proto\"*\n\x15\x46\x61ilureDetailMetadata\x12\x11\n\texit_code\x18\x01 \x01(\r\"\xaa\x1c\n\rFailureDetail\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x33\n\x0binterrupted\x18\x65 \x01(\x0b\x32\x1c.failure_details.InterruptedH\x00\x12\x42\n\x13\x65xternal_repository\x18g \x01(\x0b\x32#.failure_details.ExternalRepositoryH\x00\x12\x38\n\x0e\x62uild_progress\x18h \x01(\x0b\x32\x1e.failure_details.BuildProgressH\x00\x12\x38\n\x0eremote_options\x18j \x01(\x0b\x32\x1e.failure_details.RemoteOptionsH\x00\x12@\n\x12\x63lient_environment\x18k \x01(\x0b\x32\".failure_details.ClientEnvironmentH\x00\x12\'\n\x05\x63rash\x18l \x01(\x0b\x32\x16.failure_details.CrashH\x00\x12\x38\n\x0esymlink_forest\x18n \x01(\x0b\x32\x1e.failure_details.SymlinkForestH\x00\x12:\n\x0fpackage_options\x18r \x01(\x0b\x32\x1f.failure_details.PackageOptionsH\x00\x12<\n\x10remote_execution\x18s \x01(\x0b\x32 .failure_details.RemoteExecutionH\x00\x12/\n\texecution\x18t \x01(\x0b\x32\x1a.failure_details.ExecutionH\x00\x12\x31\n\nworkspaces\x18u \x01(\x0b\x32\x1b.failure_details.WorkspacesH\x00\x12\x36\n\rcrash_options\x18v \x01(\x0b\x32\x1d.failure_details.CrashOptionsH\x00\x12\x31\n\nfilesystem\x18w \x01(\x0b\x32\x1b.failure_details.FilesystemH\x00\x12>\n\x11\x65xecution_options\x18y \x01(\x0b\x32!.failure_details.ExecutionOptionsH\x00\x12+\n\x07\x63ommand\x18z \x01(\x0b\x32\x18.failure_details.CommandH\x00\x12\'\n\x05spawn\x18{ \x01(\x0b\x32\x16.failure_details.SpawnH\x00\x12\x32\n\x0bgrpc_server\x18| \x01(\x0b\x32\x1b.failure_details.GrpcServerH\x00\x12@\n\x12\x63\x61nonicalize_flags\x18} \x01(\x0b\x32\".failure_details.CanonicalizeFlagsH\x00\x12\x42\n\x13\x62uild_configuration\x18~ \x01(\x0b\x32#.failure_details.BuildConfigurationH\x00\x12\x34\n\x0cinfo_command\x18\x7f \x01(\x0b\x32\x1c.failure_details.InfoCommandH\x00\x12\x39\n\x0ememory_options\x18\x81\x01 \x01(\x0b\x32\x1e.failure_details.MemoryOptionsH\x00\x12(\n\x05query\x18\x82\x01 \x01(\x0b\x32\x16.failure_details.QueryH\x00\x12;\n\x0flocal_execution\x18\x84\x01 \x01(\x0b\x32\x1f.failure_details.LocalExecutionH\x00\x12\x35\n\x0c\x61\x63tion_cache\x18\x86\x01 \x01(\x0b\x32\x1c.failure_details.ActionCacheH\x00\x12\x37\n\rfetch_command\x18\x87\x01 \x01(\x0b\x32\x1d.failure_details.FetchCommandH\x00\x12\x35\n\x0csync_command\x18\x88\x01 \x01(\x0b\x32\x1c.failure_details.SyncCommandH\x00\x12,\n\x07sandbox\x18\x89\x01 \x01(\x0b\x32\x18.failure_details.SandboxH\x00\x12=\n\x10include_scanning\x18\x8b\x01 \x01(\x0b\x32 .failure_details.IncludeScanningH\x00\x12\x35\n\x0ctest_command\x18\x8c\x01 \x01(\x0b\x32\x1c.failure_details.TestCommandH\x00\x12\x35\n\x0c\x61\x63tion_query\x18\x8d\x01 \x01(\x0b\x32\x1c.failure_details.ActionQueryH\x00\x12;\n\x0ftarget_patterns\x18\x8e\x01 \x01(\x0b\x32\x1f.failure_details.TargetPatternsH\x00\x12\x37\n\rclean_command\x18\x90\x01 \x01(\x0b\x32\x1d.failure_details.CleanCommandH\x00\x12\x39\n\x0e\x63onfig_command\x18\x91\x01 \x01(\x0b\x32\x1e.failure_details.ConfigCommandH\x00\x12\x41\n\x12\x63onfigurable_query\x18\x92\x01 \x01(\x0b\x32\".failure_details.ConfigurableQueryH\x00\x12\x35\n\x0c\x64ump_command\x18\x93\x01 \x01(\x0b\x32\x1c.failure_details.DumpCommandH\x00\x12\x35\n\x0chelp_command\x18\x94\x01 \x01(\x0b\x32\x1c.failure_details.HelpCommandH\x00\x12\x39\n\x0emobile_install\x18\x96\x01 \x01(\x0b\x32\x1e.failure_details.MobileInstallH\x00\x12;\n\x0fprofile_command\x18\x97\x01 \x01(\x0b\x32\x1f.failure_details.ProfileCommandH\x00\x12\x33\n\x0brun_command\x18\x98\x01 \x01(\x0b\x32\x1b.failure_details.RunCommandH\x00\x12;\n\x0fversion_command\x18\x99\x01 \x01(\x0b\x32\x1f.failure_details.VersionCommandH\x00\x12\x44\n\x14print_action_command\x18\x9a\x01 \x01(\x0b\x32#.failure_details.PrintActionCommandH\x00\x12=\n\x10workspace_status\x18\x9e\x01 \x01(\x0b\x32 .failure_details.WorkspaceStatusH\x00\x12\x35\n\x0cjava_compile\x18\x9f\x01 \x01(\x0b\x32\x1c.failure_details.JavaCompileH\x00\x12=\n\x10\x61\x63tion_rewinding\x18\xa0\x01 \x01(\x0b\x32 .failure_details.ActionRewindingH\x00\x12\x33\n\x0b\x63pp_compile\x18\xa1\x01 \x01(\x0b\x32\x1b.failure_details.CppCompileH\x00\x12;\n\x0fstarlark_action\x18\xa2\x01 \x01(\x0b\x32\x1f.failure_details.StarlarkActionH\x00\x12\x35\n\x0cninja_action\x18\xa3\x01 \x01(\x0b\x32\x1c.failure_details.NinjaActionH\x00\x12?\n\x11\x64ynamic_execution\x18\xa4\x01 \x01(\x0b\x32!.failure_details.DynamicExecutionH\x00\x12\x33\n\x0b\x66\x61il_action\x18\xa6\x01 \x01(\x0b\x32\x1b.failure_details.FailActionH\x00\x12\x39\n\x0esymlink_action\x18\xa7\x01 \x01(\x0b\x32\x1e.failure_details.SymlinkActionH\x00\x12-\n\x08\x63pp_link\x18\xa8\x01 \x01(\x0b\x32\x18.failure_details.CppLinkH\x00\x12\x31\n\nlto_action\x18\xa9\x01 \x01(\x0b\x32\x1a.failure_details.LtoActionH\x00\x12\x33\n\x0btest_action\x18\xac\x01 \x01(\x0b\x32\x1b.failure_details.TestActionH\x00\x12*\n\x06worker\x18\xad\x01 \x01(\x0b\x32\x17.failure_details.WorkerH\x00\x12.\n\x08\x61nalysis\x18\xae\x01 \x01(\x0b\x32\x19.failure_details.AnalysisH\x00\x12;\n\x0fpackage_loading\x18\xaf\x01 \x01(\x0b\x32\x1f.failure_details.PackageLoadingH\x00\x12\x30\n\ttoolchain\x18\xb1\x01 \x01(\x0b\x32\x1a.failure_details.ToolchainH\x00\x12=\n\x10starlark_loading\x18\xb3\x01 \x01(\x0b\x32 .failure_details.StarlarkLoadingH\x00\x12\x37\n\rexternal_deps\x18\xb5\x01 \x01(\x0b\x32\x1d.failure_details.ExternalDepsH\x00\x12\x39\n\x0e\x64iff_awareness\x18\xb6\x01 \x01(\x0b\x32\x1e.failure_details.DiffAwarenessH\x00\x12=\n\x10modquery_command\x18\xb7\x01 \x01(\x0b\x32 .failure_details.ModqueryCommandH\x00\x42\n\n\x08\x63\x61tegoryJ\x04\x08\x02\x10\x65J\x04\x08\x66\x10gJ\x04\x08i\x10jJ\x04\x08m\x10nJ\x04\x08o\x10rJ\x04\x08x\x10yJ\x06\x08\x80\x01\x10\x81\x01J\x06\x08\x83\x01\x10\x84\x01J\x06\x08\x85\x01\x10\x86\x01J\x06\x08\x8a\x01\x10\x8b\x01J\x06\x08\x8f\x01\x10\x90\x01J\x06\x08\x95\x01\x10\x96\x01J\x06\x08\x9b\x01\x10\x9e\x01J\x06\x08\xa5\x01\x10\xa6\x01J\x06\x08\xaa\x01\x10\xac\x01J\x06\x08\xb0\x01\x10\xb1\x01J\x06\x08\xb2\x01\x10\xb3\x01J\x06\x08\xb4\x01\x10\xb5\x01\"\xa2\x05\n\x0bInterrupted\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.Interrupted.Code\"\xe1\x04\n\x04\x43ode\x12\x1e\n\x13INTERRUPTED_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08\x08\x12\x16\n\x0bINTERRUPTED\x10\x1c\x1a\x05\xb2\x43\x02\x08\x08\x12\x1b\n\x10\x44\x45PRECATED_BUILD\x10\x04\x1a\x05\xb2\x43\x02\x08\x08\x12&\n\x1b\x44\x45PRECATED_BUILD_COMPLETION\x10\x05\x1a\x05\xb2\x43\x02\x08\x08\x12*\n\x1f\x44\x45PRECATED_PACKAGE_LOADING_SYNC\x10\x06\x1a\x05\xb2\x43\x02\x08\x08\x12)\n\x1e\x44\x45PRECATED_EXECUTOR_COMPLETION\x10\x07\x1a\x05\xb2\x43\x02\x08\x08\x12&\n\x1b\x44\x45PRECATED_COMMAND_DISPATCH\x10\x08\x1a\x05\xb2\x43\x02\x08\x08\x12\x1f\n\x14\x44\x45PRECATED_INFO_ITEM\x10\t\x1a\x05\xb2\x43\x02\x08\x08\x12!\n\x16\x44\x45PRECATED_AFTER_QUERY\x10\n\x1a\x05\xb2\x43\x02\x08\x08\x12#\n\x18\x44\x45PRECATED_FETCH_COMMAND\x10\x11\x1a\x05\xb2\x43\x02\x08\x08\x12\"\n\x17\x44\x45PRECATED_SYNC_COMMAND\x10\x12\x1a\x05\xb2\x43\x02\x08\x08\x12#\n\x18\x44\x45PRECATED_CLEAN_COMMAND\x10\x14\x1a\x05\xb2\x43\x02\x08\x08\x12,\n!DEPRECATED_MOBILE_INSTALL_COMMAND\x10\x15\x1a\x05\xb2\x43\x02\x08\x08\x12\x1b\n\x10\x44\x45PRECATED_QUERY\x10\x16\x1a\x05\xb2\x43\x02\x08\x08\x12!\n\x16\x44\x45PRECATED_RUN_COMMAND\x10\x17\x1a\x05\xb2\x43\x02\x08\x08\x12%\n\x1a\x44\x45PRECATED_OPTIONS_PARSING\x10\x1b\x1a\x05\xb2\x43\x02\x08\x08\"\x04\x08\x01\x10\x03\"\x04\x08\x0b\x10\x10\"\x04\x08\x13\x10\x13\"\x04\x08\x18\x10\x1a\"\xa6\x04\n\x05Spawn\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Spawn.Code\x12\x14\n\x0c\x63\x61tastrophic\x18\x02 \x01(\x08\x12\x17\n\x0fspawn_exit_code\x18\x03 \x01(\x05\"\xc2\x03\n\x04\x43ode\x12\x18\n\rSPAWN_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNON_ZERO_EXIT\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x12\n\x07TIMEOUT\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rOUT_OF_MEMORY\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10\x45XECUTION_FAILED\x10\x04\x1a\x05\xb2\x43\x02\x08\"\x12\x1b\n\x10\x45XECUTION_DENIED\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13REMOTE_CACHE_FAILED\x10\x06\x1a\x05\xb2\x43\x02\x08\"\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x45XEC_IO_EXCEPTION\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0fINVALID_TIMEOUT\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#INVALID_REMOTE_EXECUTION_PROPERTIES\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NO_USABLE_STRATEGY_FOUND\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dUNSPECIFIED_EXECUTION_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x46ORBIDDEN_INPUT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\"\xd3\x01\n\x12\x45xternalRepository\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.ExternalRepository.Code\"\x84\x01\n\x04\x43ode\x12&\n\x1b\x45XTERNAL_REPOSITORY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x32\n\'OVERRIDE_DISALLOWED_MANAGED_DIRECTORIES\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x42\x41\x44_DOWNLOADER_CONFIG\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xa7\x06\n\rBuildProgress\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.BuildProgress.Code\"\xe2\x05\n\x04\x43ode\x12!\n\x16\x42UILD_PROGRESS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12 \n\x15OUTPUT_INITIALIZATION\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12.\n#BES_RUNS_PER_TEST_LIMIT_UNSUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x42\x45S_LOCAL_WRITE_ERROR\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18\x42\x45S_INITIALIZATION_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18\x42\x45S_UPLOAD_TIMEOUT_ERROR\x10\x07\x1a\x05\xb2\x43\x02\x08&\x12!\n\x16\x42\x45S_FILE_WRITE_TIMEOUT\x10\x08\x1a\x05\xb2\x43\x02\x08&\x12\"\n\x17\x42\x45S_FILE_WRITE_IO_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08&\x12%\n\x1a\x42\x45S_FILE_WRITE_INTERRUPTED\x10\n\x1a\x05\xb2\x43\x02\x08&\x12\"\n\x17\x42\x45S_FILE_WRITE_CANCELED\x10\x0b\x1a\x05\xb2\x43\x02\x08&\x12\'\n\x1c\x42\x45S_FILE_WRITE_UNKNOWN_ERROR\x10\x0c\x1a\x05\xb2\x43\x02\x08&\x12&\n\x1b\x42\x45S_UPLOAD_LOCAL_FILE_ERROR\x10\r\x1a\x05\xb2\x43\x02\x08&\x12*\n\x1f\x42\x45S_STREAM_NOT_RETRYING_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08-\x12\x37\n,BES_STREAM_COMPLETED_WITH_UNACK_EVENTS_ERROR\x10\x0f\x1a\x05\xb2\x43\x02\x08-\x12\x38\n-BES_STREAM_COMPLETED_WITH_UNSENT_EVENTS_ERROR\x10\x10\x1a\x05\xb2\x43\x02\x08-\x12\x31\n&BES_STREAM_COMPLETED_WITH_REMOTE_ERROR\x10\x13\x1a\x05\xb2\x43\x02\x08-\x12\x32\n\'BES_UPLOAD_RETRY_LIMIT_EXCEEDED_FAILURE\x10\x11\x1a\x05\xb2\x43\x02\x08&\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x04\x08\x12\x10\x12\"\xc3\x02\n\rRemoteOptions\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.RemoteOptions.Code\"\xfe\x01\n\x04\x43ode\x12!\n\x16REMOTE_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x35\n*REMOTE_DEFAULT_EXEC_PROPERTIES_LOGIC_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x43REDENTIALS_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19\x43REDENTIALS_WRITE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1d\x44OWNLOADER_WITHOUT_GRPC_CACHE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1c\x45XECUTION_WITH_INVALID_CACHE\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\"\x9a\x01\n\x11\x43lientEnvironment\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.ClientEnvironment.Code\"N\n\x04\x43ode\x12%\n\x1a\x43LIENT_ENVIRONMENT_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14\x43LIENT_CWD_MALFORMED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x96\x01\n\x05\x43rash\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Crash.Code\x12*\n\x06\x63\x61uses\x18\x02 \x03(\x0b\x32\x1a.failure_details.Throwable\"6\n\x04\x43ode\x12\x18\n\rCRASH_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x14\n\tCRASH_OOM\x10\x01\x1a\x05\xb2\x43\x02\x08!\"J\n\tThrowable\x12\x17\n\x0fthrowable_class\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x13\n\x0bstack_trace\x18\x03 \x03(\t\"\xe7\x01\n\rSymlinkForest\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.SymlinkForest.Code\"\xa2\x01\n\x04\x43ode\x12!\n\x16SYMLINK_FOREST_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%TOPLEVEL_OUTDIR_PACKAGE_PATH_CONFLICT\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eTOPLEVEL_OUTDIR_USED_AS_SOURCE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0f\x43REATION_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\"\x9d\x01\n\x0ePackageOptions\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.PackageOptions.Code\"W\n\x04\x43ode\x12\"\n\x17PACKAGE_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14PACKAGE_PATH_INVALID\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x02\x10\x02\"\x04\x08\x03\x10\x03\"\xb3\x06\n\x0fRemoteExecution\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.RemoteExecution.Code\"\xea\x05\n\x04\x43ode\x12#\n\x18REMOTE_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1a\x43\x41PABILITIES_QUERY_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\"\x12#\n\x18\x43REDENTIALS_INIT_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12\x43\x41\x43HE_INIT_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0fRPC_LOG_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19\x45XEC_CHANNEL_INIT_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1a\x43\x41\x43HE_CHANNEL_INIT_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1f\x44OWNLOADER_CHANNEL_INIT_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17LOG_DIR_CLEANUP_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x43LIENT_SERVER_INCOMPATIBLE\x10\t\x1a\x05\xb2\x43\x02\x08\"\x12-\n\"DOWNLOADED_INPUTS_DELETION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\"\x12@\n5REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_DOTD\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x41\n6REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_JDEPS\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\x12\x35\n*INCOMPLETE_OUTPUT_DOWNLOAD_CLEANUP_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12;\n0REMOTE_DEFAULT_PLATFORM_PROPERTIES_PARSE_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0eILLEGAL_OUTPUT\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12/\n$INVALID_EXEC_AND_PLATFORM_PROPERTIES\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\"\xd8\r\n\tExecution\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.Execution.Code\"\x9b\r\n\x04\x43ode\x12\x1c\n\x11\x45XECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12/\n$EXECUTION_LOG_INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12&\n\x1b\x45XECUTION_LOG_WRITE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19\x45XECROOT_CREATION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-TEMP_ACTION_OUTPUT_DIRECTORY_DELETION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-TEMP_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12>\n3PERSISTENT_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x31\n&LOCAL_OUTPUT_DIRECTORY_SYMLINK_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12+\n LOCAL_TEMPLATE_EXPANSION_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08$\x12-\n\"INPUT_DIRECTORY_CHECK_IO_EXCEPTION\x10\n\x1a\x05\xb2\x43\x02\x08$\x12/\n$EXTRA_ACTION_OUTPUT_CREATION_FAILURE\x10\x0b\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18TEST_RUNNER_IO_EXCEPTION\x10\x0c\x1a\x05\xb2\x43\x02\x08$\x12\"\n\x17\x46ILE_WRITE_IO_EXCEPTION\x10\r\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19TEST_OUT_ERR_IO_EXCEPTION\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_MANIFEST_COPY_IO_EXCEPTION\x10\x0f\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_MANIFEST_LINK_IO_EXCEPTION\x10\x10\x1a\x05\xb2\x43\x02\x08$\x12-\n\"SYMLINK_TREE_CREATION_IO_EXCEPTION\x10\x11\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_CREATION_COMMAND_EXCEPTION\x10\x12\x1a\x05\xb2\x43\x02\x08$\x12)\n\x1e\x41\x43TION_INPUT_READ_IO_EXCEPTION\x10\x13\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15\x41\x43TION_NOT_UP_TO_DATE\x10\x14\x1a\x05\xb2\x43\x02\x08\x01\x12-\n\"PSEUDO_ACTION_EXECUTION_PROHIBITED\x10\x15\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x44ISCOVERED_INPUT_DOES_NOT_EXIST\x10\x16\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1f\x41\x43TION_OUTPUTS_DELETION_FAILURE\x10\x17\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x41\x43TION_OUTPUTS_NOT_CREATED\x10\x18\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x41\x43TION_FINALIZATION_FAILURE\x10\x19\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x41\x43TION_INPUT_LOST\x10\x1a\x1a\x05\xb2\x43\x02\x08\x01\x12,\n!FILESYSTEM_CONTEXT_UPDATE_FAILURE\x10\x1b\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x41\x43TION_OUTPUT_CLOSE_FAILURE\x10\x1c\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cINPUT_DISCOVERY_IO_EXCEPTION\x10\x1d\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(TREE_ARTIFACT_DIRECTORY_CREATION_FAILURE\x10\x1e\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x1f\x1a\x05\xb2\x43\x02\x08\x01\x12\x36\n+ACTION_FS_OUTPUT_DIRECTORY_CREATION_FAILURE\x10 \x1a\x05\xb2\x43\x02\x08\x01\x12\x37\n,ACTION_FS_OUT_ERR_DIRECTORY_CREATION_FAILURE\x10!\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cNON_ACTION_EXECUTION_FAILURE\x10\"\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10#\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14SOURCE_INPUT_MISSING\x10$\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14UNEXPECTED_EXCEPTION\x10%\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19SOURCE_INPUT_IO_EXCEPTION\x10\'\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x08\x10\x08\"\x04\x08&\x10&\"\xc4\x02\n\nWorkspaces\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.Workspaces.Code\"\x85\x02\n\x04\x43ode\x12\x1d\n\x12WORKSPACES_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%WORKSPACES_LOG_INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cWORKSPACES_LOG_WRITE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12\x42\n7ILLEGAL_WORKSPACE_FILE_SYMLINK_WITH_MANAGED_DIRECTORIES\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12?\n4WORKSPACE_FILE_READ_FAILURE_WITH_MANAGED_DIRECTORIES\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\"p\n\x0c\x43rashOptions\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.CrashOptions.Code\".\n\x04\x43ode\x12 \n\x15\x43RASH_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\"\x04\x08\x01\x10\x01\"\xb2\x02\n\nFilesystem\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.Filesystem.Code\"\xf3\x01\n\x04\x43ode\x12\x1d\n\x12\x46ILESYSTEM_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%EMBEDDED_BINARIES_ENUMERATION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12+\n SERVER_PID_TXT_FILE_READ_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19SERVER_FILE_WRITE_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x35\n*DEFAULT_DIGEST_HASH_FUNCTION_INVALID_VALUE\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x04\x08\x07\x10\x07\"\xea\x03\n\x10\x45xecutionOptions\x12\x34\n\x04\x63ode\x18\x01 \x01(\x0e\x32&.failure_details.ExecutionOptions.Code\"\x9f\x03\n\x04\x43ode\x12$\n\x19\x45XECUTION_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10INVALID_STRATEGY\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12:\n/REQUESTED_STRATEGY_INCOMPATIBLE_WITH_SANDBOXING\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1f\x44\x45PRECATED_LOCAL_RESOURCES_USED\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1fINVALID_CYCLIC_DYNAMIC_STRATEGY\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'RESTRICTION_UNMATCHED_TO_ACTION_CONTEXT\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+REMOTE_FALLBACK_STRATEGY_NOT_ABSTRACT_SPAWN\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12STRATEGY_NOT_FOUND\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1e\x44YNAMIC_STRATEGY_NOT_SANDBOXED\x10\n\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x96\x05\n\x07\x43ommand\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.Command.Code\"\xdd\x04\n\x04\x43ode\x12\"\n\x17\x43OMMAND_FAILURE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1c\n\x11\x43OMMAND_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17\x41NOTHER_COMMAND_RUNNING\x10\x02\x1a\x05\xb2\x43\x02\x08\t\x12\x1e\n\x13PREVIOUSLY_SHUTDOWN\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12;\n0STARLARK_CPU_PROFILE_FILE_INITIALIZATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-STARLARK_CPU_PROFILING_INITIALIZATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'STARLARK_CPU_PROFILE_FILE_WRITE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1fINVOCATION_POLICY_PARSE_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19INVOCATION_POLICY_INVALID\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15OPTIONS_PARSE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eSTARLARK_OPTIONS_PARSE_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x41RGUMENTS_NOT_RECOGNIZED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10NOT_IN_WORKSPACE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18SPACES_IN_WORKSPACE_PATH\x10\r\x1a\x05\xb2\x43\x02\x08$\x12\x1e\n\x13IN_OUTPUT_DIRECTORY\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\"\xec\x01\n\nGrpcServer\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.GrpcServer.Code\"\xad\x01\n\x04\x43ode\x12\x1e\n\x13GRPC_SERVER_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12&\n\x1bGRPC_SERVER_NOT_COMPILED_IN\x10\x01\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13SERVER_BIND_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x15\n\nBAD_COOKIE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15NO_CLIENT_DESCRIPTION\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\x04\x08\x05\x10\x05\"\x99\x01\n\x11\x43\x61nonicalizeFlags\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.CanonicalizeFlags.Code\"M\n\x04\x43ode\x12%\n\x1a\x43\x41NONICALIZE_FLAGS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13\x46OR_COMMAND_INVALID\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\xc2\x04\n\x12\x42uildConfiguration\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.BuildConfiguration.Code\"\xf3\x03\n\x04\x43ode\x12&\n\x1b\x42UILD_CONFIGURATION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12.\n#PLATFORM_MAPPING_EVALUATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12.\n#PLATFORM_MAPPINGS_FILE_IS_DIRECTORY\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12+\n PLATFORM_MAPPINGS_FILE_NOT_FOUND\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(TOP_LEVEL_CONFIGURATION_CREATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15INVALID_CONFIGURATION\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15INVALID_BUILD_OPTIONS\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16MULTI_CPU_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\x33\n(HEURISTIC_INSTRUMENTATION_FILTER_INVALID\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x10\n\x05\x43YCLE\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1a\x43ONFLICTING_CONFIGURATIONS\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12,\n!INVALID_OUTPUT_DIRECTORY_MNEMONIC\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\"\xe9\x01\n\x0bInfoCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.InfoCommand.Code\"\xa8\x01\n\x04\x43ode\x12\x1f\n\x14INFO_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rTOO_MANY_KEYS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12KEY_NOT_RECOGNIZED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18INFO_BLOCK_WRITE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12!\n\x16\x41LL_INFO_WRITE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\xf6\x01\n\rMemoryOptions\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.MemoryOptions.Code\"\xb1\x01\n\x04\x43ode\x12!\n\x16MEMORY_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12@\n5EXPERIMENTAL_OOM_MORE_EAGERLY_THRESHOLD_INVALID_VALUE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x44\n9EXPERIMENTAL_OOM_MORE_EAGERLY_NO_TENURED_COLLECTORS_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xf2\x0b\n\x05Query\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Query.Code\"\xbd\x0b\n\x04\x43ode\x12\x18\n\rQUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x32\n\'QUERY_FILE_WITH_COMMAND_LINE_EXPRESSION\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17QUERY_FILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15OUTPUT_FORMAT_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16GRAPHLESS_PREREQ_UNMET\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aQUERY_OUTPUT_WRITE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aQUERY_STDOUT_FLUSH_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12&\n\x1b\x41NALYSIS_QUERY_PREREQ_UNMET\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\x12&\n\x1bQUERY_RESULTS_FLUSH_FAILURE\x10\x0f\x1a\x05\xb2\x43\x02\x08$\x12\x39\n.DEPRECATED_UNCLOSED_QUOTATION_EXPRESSION_ERROR\x10\x10\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15VARIABLE_NAME_INVALID\x10\x11\x1a\x05\xb2\x43\x02\x08\x07\x12\x1d\n\x12VARIABLE_UNDEFINED\x10\x12\x1a\x05\xb2\x43\x02\x08\x07\x12\x44\n9BUILDFILES_AND_LOADFILES_CANNOT_USE_OUTPUT_LOCATION_ERROR\x10\x13\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10\x42UILD_FILE_ERROR\x10\x14\x1a\x05\xb2\x43\x02\x08\x07\x12\x10\n\x05\x43YCLE\x10\x15\x1a\x05\xb2\x43\x02\x08\x07\x12+\n UNIQUE_SKYKEY_THRESHOLD_EXCEEDED\x10\x16\x1a\x05\xb2\x43\x02\x08\x07\x12\'\n\x1cTARGET_NOT_IN_UNIVERSE_SCOPE\x10\x17\x1a\x05\xb2\x43\x02\x08\x02\x12+\n INVALID_FULL_UNIVERSE_EXPRESSION\x10\x18\x1a\x05\xb2\x43\x02\x08\x07\x12(\n\x1dUNIVERSE_SCOPE_LIMIT_EXCEEDED\x10\x19\x1a\x05\xb2\x43\x02\x08\x07\x12&\n\x1bINVALIDATION_LIMIT_EXCEEDED\x10\x1a\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1aOUTPUT_FORMAT_PREREQ_UNMET\x10\x1b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x41RGUMENTS_MISSING\x10\x1c\x1a\x05\xb2\x43\x02\x08\x07\x12\x31\n&RBUILDFILES_FUNCTION_REQUIRES_SKYQUERY\x10\x1d\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1a\x46ULL_TARGETS_NOT_SUPPORTED\x10\x1e\x1a\x05\xb2\x43\x02\x08\x07\x12,\n!DEPRECATED_UNEXPECTED_TOKEN_ERROR\x10\x1f\x1a\x05\xb2\x43\x02\x08\x02\x12-\n\"DEPRECATED_INTEGER_LITERAL_MISSING\x10 \x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+DEPRECATED_INVALID_STARTING_CHARACTER_ERROR\x10!\x1a\x05\xb2\x43\x02\x08\x02\x12\x32\n\'DEPRECATED_PREMATURE_END_OF_INPUT_ERROR\x10\"\x1a\x05\xb2\x43\x02\x08\x02\x12\x17\n\x0cSYNTAX_ERROR\x10#\x1a\x05\xb2\x43\x02\x08\x02\x12(\n\x1dOUTPUT_FORMATTER_IO_EXCEPTION\x10$\x1a\x05\xb2\x43\x02\x08$\x12+\n SKYQUERY_TRANSITIVE_TARGET_ERROR\x10%\x1a\x05\xb2\x43\x02\x08\x07\x12$\n\x19SKYQUERY_TARGET_EXCEPTION\x10&\x1a\x05\xb2\x43\x02\x08\x07\x12&\n\x1bINVALID_LABEL_IN_TEST_SUITE\x10\'\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18ILLEGAL_FLAG_COMBINATION\x10(\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12NON_DETAILED_ERROR\x10)\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x07\x10\x0c\"\x99\x01\n\x0eLocalExecution\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.LocalExecution.Code\"S\n\x04\x43ode\x12\"\n\x17LOCAL_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\'\n\x1cLOCKFREE_OUTPUT_PREREQ_UNMET\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x8a\x01\n\x0b\x41\x63tionCache\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.ActionCache.Code\"J\n\x04\x43ode\x12\x1f\n\x14\x41\x43TION_CACHE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12!\n\x16INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\"\xe7\x01\n\x0c\x46\x65tchCommand\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.FetchCommand.Code\"\xa4\x01\n\x04\x43ode\x12 \n\x15\x46\x45TCH_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1d\n\x12\x45XPRESSION_MISSING\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0fOPTIONS_INVALID\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11QUERY_PARSE_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16QUERY_EVALUATION_ERROR\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\"\xf8\x01\n\x0bSyncCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.SyncCommand.Code\"\xb7\x01\n\x04\x43ode\x12\x1f\n\x14SYNC_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14PACKAGE_LOOKUP_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1aWORKSPACE_EVALUATION_ERROR\x10\x02\x1a\x05\xb2\x43\x02\x08\x07\x12\"\n\x17REPOSITORY_FETCH_ERRORS\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12\"\n\x17REPOSITORY_NAME_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x07\"\xfb\x03\n\x07Sandbox\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.Sandbox.Code\"\xc2\x03\n\x04\x43ode\x12\"\n\x17SANDBOX_FAILURE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12!\n\x16INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12!\n\x16\x45XECUTION_IO_EXCEPTION\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12!\n\x16\x44OCKER_COMMAND_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fNO_DOCKER_IMAGE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12+\n DOCKER_IMAGE_PREPARATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x42IND_MOUNT_ANALYSIS_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bMOUNT_SOURCE_DOES_NOT_EXIST\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12,\n!MOUNT_SOURCE_TARGET_TYPE_MISMATCH\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bMOUNT_TARGET_DOES_NOT_EXIST\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17SUBPROCESS_START_FAILED\x10\n\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0f\x46ORBIDDEN_INPUT\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\"\x9d\x04\n\x0fIncludeScanning\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.IncludeScanning.Code\x12\x42\n\x14package_loading_code\x18\x02 \x01(\x0e\x32$.failure_details.PackageLoading.Code\"\x90\x03\n\x04\x43ode\x12#\n\x18INCLUDE_SCANNING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1eINITIALIZE_INCLUDE_HINTS_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15SCANNING_IO_EXCEPTION\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12,\n!INCLUDE_HINTS_FILE_NOT_IN_PACKAGE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aINCLUDE_HINTS_READ_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15ILLEGAL_ABSOLUTE_PATH\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_LOAD_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19USER_PACKAGE_LOAD_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bSYSTEM_PACKAGE_LOAD_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12\x30\n%UNDIFFERENTIATED_PACKAGE_LOAD_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\"\xbc\x01\n\x0bTestCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.TestCommand.Code\"|\n\x04\x43ode\x12\x1f\n\x14TEST_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1a\n\x0fNO_TEST_TARGETS\x10\x01\x1a\x05\xb2\x43\x02\x08\x04\x12\x1e\n\x13TEST_WITH_NOANALYZE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x17\n\x0cTESTS_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x03\"\xa6\x05\n\x0b\x41\x63tionQuery\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.ActionQuery.Code\"\xe5\x04\n\x04\x43ode\x12\x1f\n\x14\x41\x43TION_QUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x19\n\x0eOUTPUT_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x06\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x45XPRESSION_PARSE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+SKYFRAME_STATE_WITH_COMMAND_LINE_EXPRESSION\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19INVALID_AQUERY_EXPRESSION\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bSKYFRAME_STATE_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x41QUERY_OUTPUT_TOO_BIG\x10\x08\x1a\x05\xb2\x43\x02\x08\x07\x12!\n\x16ILLEGAL_PATTERN_SYNTAX\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13INCORRECT_ARGUMENTS\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12>\n3TOP_LEVEL_TARGETS_WITH_SKYFRAME_STATE_NOT_SUPPORTED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eSKYFRAME_STATE_AFTER_EXECUTION\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dLABELS_FUNCTION_NOT_SUPPORTED\x10\r\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aTEMPLATE_EXPANSION_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\"\xd7\x06\n\x0eTargetPatterns\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.TargetPatterns.Code\"\x90\x06\n\x04\x43ode\x12\"\n\x17TARGET_PATTERNS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x38\n-TARGET_PATTERN_FILE_WITH_COMMAND_LINE_PATTERN\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12+\n TARGET_PATTERN_FILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cTARGET_PATTERN_PARSE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11PACKAGE_NOT_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15TARGET_FORMAT_INVALID\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x41\x42SOLUTE_TARGET_PATTERN_INVALID\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%CANNOT_DETERMINE_TARGET_FROM_FILENAME\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12LABEL_SYNTAX_ERROR\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dTARGET_CANNOT_BE_EMPTY_STRING\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12+\n PACKAGE_PART_CANNOT_END_IN_SLASH\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15\x43\x41NNOT_PRELOAD_TARGET\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fTARGETS_MISSING\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%RECURSIVE_TARGET_PATTERNS_NOT_ALLOWED\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1fUP_LEVEL_REFERENCES_NOT_ALLOWED\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#NEGATIVE_TARGET_PATTERN_NOT_ALLOWED\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15TARGET_MUST_BE_A_FILE\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x44\x45PENDENCY_NOT_FOUND\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_NAME_INVALID\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\"\xf5\x03\n\x0c\x43leanCommand\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.CleanCommand.Code\"\xb2\x03\n\x04\x43ode\x12 \n\x15\x43LEAN_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\'\n\x1cOUTPUT_SERVICE_CLEAN_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x06\x12%\n\x1a\x41\x43TION_CACHE_CLEAN_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15OUT_ERR_CLOSE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aOUTPUT_BASE_DELETE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1dOUTPUT_BASE_TEMP_MOVE_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12+\n ASYNC_OUTPUT_BASE_DELETE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x06\x12\"\n\x17\x45XECROOT_DELETE_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x45XECROOT_TEMP_MOVE_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1d\x41SYNC_EXECROOT_DELETE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x06\x12#\n\x18\x41RGUMENTS_NOT_RECOGNIZED\x10\n\x1a\x05\xb2\x43\x02\x08\x02\"\xb1\x01\n\rConfigCommand\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.ConfigCommand.Code\"m\n\x04\x43ode\x12!\n\x16\x43ONFIG_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13TOO_MANY_CONFIG_IDS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17\x43ONFIGURATION_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xbb\x04\n\x11\x43onfigurableQuery\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.ConfigurableQuery.Code\"\xee\x03\n\x04\x43ode\x12%\n\x1a\x43ONFIGURABLE_QUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x45XPRESSION_PARSE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x46ILTERS_NOT_SUPPORTED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12,\n!BUILDFILES_FUNCTION_NOT_SUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1fSIBLINGS_FUNCTION_NOT_SUPPORTED\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eVISIBLE_FUNCTION_NOT_SUPPORTED\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x41TTRIBUTE_MISSING\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1fINCORRECT_CONFIG_ARGUMENT_ERROR\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x19\n\x0eTARGET_MISSING\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15STARLARK_SYNTAX_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13STARLARK_EVAL_ERROR\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x46ORMAT_FUNCTION_ERROR\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\"\xa9\x02\n\x0b\x44umpCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.DumpCommand.Code\"\xe8\x01\n\x04\x43ode\x12\x1f\n\x14\x44UMP_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13NO_OUTPUT_SPECIFIED\x10\x01\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18\x41\x43TION_CACHE_DUMP_FAILED\x10\x02\x1a\x05\xb2\x43\x02\x08\x07\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18\x41\x43TION_GRAPH_DUMP_FAILED\x10\x04\x1a\x05\xb2\x43\x02\x08\x07\x12$\n\x19STARLARK_HEAP_DUMP_FAILED\x10\x05\x1a\x05\xb2\x43\x02\x08\x08\"\x04\x08\x06\x10\x06\"\xa2\x01\n\x0bHelpCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.HelpCommand.Code\"b\n\x04\x43ode\x12\x1f\n\x14HELP_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MISSING_ARGUMENT\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x43OMMAND_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xb1\x02\n\rMobileInstall\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.MobileInstall.Code\"\xec\x01\n\x04\x43ode\x12!\n\x16MOBILE_INSTALL_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13\x43LASSIC_UNSUPPORTED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13NO_TARGET_SPECIFIED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aMULTIPLE_TARGETS_SPECIFIED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13TARGET_TYPE_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x06\x12\x18\n\rNON_ZERO_EXIT\x10\x05\x1a\x05\xb2\x43\x02\x08\x06\x12 \n\x15\x45RROR_RUNNING_PROGRAM\x10\x06\x1a\x05\xb2\x43\x02\x08\x06\"\xb8\x01\n\x0eProfileCommand\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.ProfileCommand.Code\"r\n\x04\x43ode\x12\"\n\x17PROFILE_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12(\n\x1dOLD_BINARY_FORMAT_UNSUPPORTED\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x46ILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xc6\x05\n\nRunCommand\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.RunCommand.Code\"\x87\x05\n\x04\x43ode\x12\x1e\n\x13RUN_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13NO_TARGET_SPECIFIED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aTOO_MANY_TARGETS_SPECIFIED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15TARGET_NOT_EXECUTABLE\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12/\n$TARGET_BUILT_BUT_PATH_NOT_EXECUTABLE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x32\n\'TARGET_BUILT_BUT_PATH_VALIDATION_FAILED\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aRUN_UNDER_TARGET_NOT_BUILT\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10RUN_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cTOO_MANY_TEST_SHARDS_OR_RUNS\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eTEST_ENVIRONMENT_SETUP_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08$\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08$\x12\x1d\n\x12NO_SHELL_SPECIFIED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1f\n\x14SCRIPT_WRITE_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x06\x12\x30\n%RUNFILES_DIRECTORIES_CREATION_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12-\n\"RUNFILES_SYMLINKS_CREATION_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12-\n\"TEST_ENVIRONMENT_SETUP_INTERRUPTED\x10\x0f\x1a\x05\xb2\x43\x02\x08\x08\"\x8a\x01\n\x0eVersionCommand\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.VersionCommand.Code\"D\n\x04\x43ode\x12\"\n\x17VERSION_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNOT_AVAILABLE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x88\x02\n\x12PrintActionCommand\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.PrintActionCommand.Code\"\xb9\x01\n\x04\x43ode\x12\'\n\x1cPRINT_ACTION_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10TARGET_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17TARGET_KIND_UNSUPPORTED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x41\x43TIONS_NOT_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\"\xc8\x02\n\x0fWorkspaceStatus\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.WorkspaceStatus.Code\"\xff\x01\n\x04\x43ode\x12#\n\x18WORKSPACE_STATUS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNON_ZERO_EXIT\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x41\x42NORMAL_TERMINATION\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0b\x45XEC_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rPARSE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x1d\n\x12VALIDATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x43ONTENT_UPDATE_IO_EXCEPTION\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13STDERR_IO_EXCEPTION\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\"\x94\x02\n\x0bJavaCompile\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.JavaCompile.Code\"\xd3\x01\n\x04\x43ode\x12\x1f\n\x14JAVA_COMPILE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19REDUCED_CLASSPATH_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17JDEPS_READ_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12\x35\n*REDUCED_CLASSPATH_FALLBACK_CLEANUP_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\xba\x01\n\x0f\x41\x63tionRewinding\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.ActionRewinding.Code\"r\n\x04\x43ode\x12#\n\x18\x41\x43TION_REWINDING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19LOST_INPUT_TOO_MANY_TIMES\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14LOST_INPUT_IS_SOURCE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\x8d\x04\n\nCppCompile\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.CppCompile.Code\"\xce\x03\n\x04\x43ode\x12\x1e\n\x13\x43PP_COMPILE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1e\x46IND_USED_HEADERS_IO_EXCEPTION\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\x1f\n\x14\x43OPY_OUT_ERR_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12\x1e\n\x13\x44_FILE_READ_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x43OMMAND_GENERATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18MODULE_EXPANSION_TIMEOUT\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eINCLUDE_PATH_OUTSIDE_EXEC_ROOT\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x46\x41KE_COMMAND_GENERATION_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15UNDECLARED_INCLUSIONS\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x44_FILE_PARSE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x43OVERAGE_NOTES_CREATION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dMODULE_EXPANSION_MISSING_DATA\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\"\xc9\x01\n\x0eStarlarkAction\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.StarlarkAction.Code\"\x82\x01\n\x04\x43ode\x12\"\n\x17STARLARK_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1eUNUSED_INPUT_LIST_READ_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12+\n UNUSED_INPUT_LIST_FILE_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xb8\x01\n\x0bNinjaAction\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.NinjaAction.Code\"x\n\x04\x43ode\x12\x1f\n\x14NINJA_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12.\n#INVALID_DEPFILE_DECLARED_DEPENDENCY\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\x1f\n\x14\x44_FILE_PARSE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\"\xff\x01\n\x10\x44ynamicExecution\x12\x34\n\x04\x63ode\x18\x01 \x01(\x0e\x32&.failure_details.DynamicExecution.Code\"\xb4\x01\n\x04\x43ode\x12$\n\x19\x44YNAMIC_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1aXCODE_RELATED_PREREQ_UNMET\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\"\n\x17\x41\x43TION_LOG_MOVE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bRUN_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NO_USABLE_STRATEGY_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\"\x92\x03\n\nFailAction\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.FailAction.Code\"\xd3\x02\n\x04\x43ode\x12\x1e\n\x13\x46\x41IL_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13INTENTIONAL_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18INCORRECT_PYTHON_VERSION\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16PROGUARD_SPECS_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1d\x44YNAMIC_LINKING_NOT_SUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14SOURCE_FILES_MISSING\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13INCORRECT_TOOLCHAIN\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16\x46RAGMENT_CLASS_MISSING\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43\x41NT_BUILD_INCOMPATIBLE_TARGET\x10\n\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x08\x10\x08\"\x04\x08\t\x10\t\"\xb3\x02\n\rSymlinkAction\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.SymlinkAction.Code\"\xee\x01\n\x04\x43ode\x12!\n\x16SYMLINK_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19\x45XECUTABLE_INPUT_NOT_FILE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17\x45XECUTABLE_INPUT_IS_NOT\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#EXECUTABLE_INPUT_CHECK_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aLINK_CREATION_IO_EXCEPTION\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17LINK_TOUCH_IO_EXCEPTION\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\"\xae\x01\n\x07\x43ppLink\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.CppLink.Code\"v\n\x04\x43ode\x12\x1b\n\x10\x43PP_LINK_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1a\x43OMMAND_GENERATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x46\x41KE_COMMAND_GENERATION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xd7\x01\n\tLtoAction\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.LtoAction.Code\"\x9a\x01\n\x04\x43ode\x12\x1d\n\x12LTO_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12+\n INVALID_ABSOLUTE_PATH_IN_IMPORTS\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15MISSING_BITCODE_FILES\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19IMPORTS_READ_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\"\x96\x02\n\nTestAction\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.TestAction.Code\"\xd7\x01\n\x04\x43ode\x12\x1e\n\x13TEST_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1aNO_KEEP_GOING_TEST_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17LOCAL_TEST_PREREQ_UNMET\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x44UPLICATE_CPU_TAGS\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fINVALID_CPU_TAG\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\"\xf1\x03\n\x06Worker\x12*\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1c.failure_details.Worker.Code\"\xba\x03\n\x04\x43ode\x12\x19\n\x0eWORKER_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12/\n$MULTIPLEXER_INSTANCE_REMOVAL_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aMULTIPLEXER_DOES_NOT_EXIST\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x13\n\x08NO_TOOLS\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bNO_FLAGFILE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%VIRTUAL_INPUT_MATERIALIZATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x42ORROW_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10PREFETCH_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0fPREPARE_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fREQUEST_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16PARSE_RESPONSE_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bNO_RESPONSE\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x46INISH_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x46ORBIDDEN_INPUT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\"\x8e\x06\n\x08\x41nalysis\x12,\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1e.failure_details.Analysis.Code\"\xd3\x05\n\x04\x43ode\x12\x1b\n\x10\x41NALYSIS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x17\n\x0cLOAD_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dGENERIC_LOADING_PHASE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NOT_ALL_TARGETS_ANALYZED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x31\n&PARAMETERIZED_TOP_LEVEL_ASPECT_INVALID\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19\x41SPECT_LABEL_SYNTAX_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13\x41SPECT_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10\x41SPECT_NOT_FOUND\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x41\x43TION_CONFLICT\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x41RTIFACT_PREFIX_CONFLICT\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dUNEXPECTED_ANALYSIS_EXCEPTION\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cTARGETS_MISSING_ENVIRONMENTS\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13INVALID_ENVIRONMENT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x45NVIRONMENT_MISSING_FROM_GROUPS\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x45XEC_GROUP_MISSING\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aINVALID_EXECUTION_PLATFORM\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16\x41SPECT_CREATION_FAILED\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12+\n CONFIGURED_VALUE_CREATION_FAILED\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dINCOMPATIBLE_TARGET_REQUESTED\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\"\xb8\t\n\x0ePackageLoading\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.PackageLoading.Code\"\xf1\x08\n\x04\x43ode\x12\"\n\x17PACKAGE_LOADING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14WORKSPACE_FILE_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eMAX_COMPUTATION_STEPS_EXCEEDED\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x42UILD_FILE_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12REPOSITORY_MISSING\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(PERSISTENT_INCONSISTENT_FILESYSTEM_ERROR\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'TRANSIENT_INCONSISTENT_FILESYSTEM_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x17\n\x0cINVALID_NAME\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x45VAL_GLOBS_SYMLINK_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aIMPORT_STARLARK_FILE_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fPACKAGE_MISSING\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0eTARGET_MISSING\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rNO_SUCH_THING\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11GLOB_IO_EXCEPTION\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0f\x44UPLICATE_LABEL\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dINVALID_PACKAGE_SPECIFICATION\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12\x17\n\x0cSYNTAX_ERROR\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12+\n ENVIRONMENT_IN_DIFFERENT_PACKAGE\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x44\x45\x46\x41ULT_ENVIRONMENT_UNDECLARED\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x45NVIRONMENT_IN_MULTIPLE_GROUPS\x10\x14\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x45NVIRONMENT_DOES_NOT_EXIST\x10\x15\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13\x45NVIRONMENT_INVALID\x10\x16\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x45NVIRONMENT_NOT_IN_GROUP\x10\x17\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_NAME_INVALID\x10\x18\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13STARLARK_EVAL_ERROR\x10\x19\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15LICENSE_PARSE_FAILURE\x10\x1a\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x44ISTRIBUTIONS_PARSE_FAILURE\x10\x1b\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eLABEL_CROSSES_PACKAGE_BOUNDARY\x10\x1c\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x42UILTINS_INJECTION_FAILURE\x10\x1d\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#SYMLINK_CYCLE_OR_INFINITE_EXPANSION\x10\x1e\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12OTHER_IO_EXCEPTION\x10\x1f\x1a\x05\xb2\x43\x02\x08$\"\x04\x08\x08\x10\x08\"\xd4\x02\n\tToolchain\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.Toolchain.Code\"\x97\x02\n\x04\x43ode\x12\x1c\n\x11TOOLCHAIN_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MISSING_PROVIDER\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18INVALID_CONSTRAINT_VALUE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16INVALID_PLATFORM_VALUE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11INVALID_TOOLCHAIN\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eNO_MATCHING_EXECUTION_PLATFORM\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15NO_MATCHING_TOOLCHAIN\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16INVALID_TOOLCHAIN_TYPE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\"\x8e\x03\n\x0fStarlarkLoading\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.StarlarkLoading.Code\"\xc5\x02\n\x04\x43ode\x12#\n\x18STARLARK_LOADING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x10\n\x05\x43YCLE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rCOMPILE_ERROR\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bPARSE_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x15\n\nEVAL_ERROR\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1c\x43ONTAINING_PACKAGE_NOT_FOUND\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11PACKAGE_NOT_FOUND\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x13\n\x08IO_ERROR\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eLABEL_CROSSES_PACKAGE_BOUNDARY\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x42UILTINS_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10VISIBILITY_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x01\"\x8a\x02\n\x0c\x45xternalDeps\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.ExternalDeps.Code\"\xc7\x01\n\x04\x43ode\x12 \n\x15\x45XTERNAL_DEPS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MODULE_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x30\x12\x15\n\nBAD_MODULE\x10\x02\x1a\x05\xb2\x43\x02\x08\x30\x12#\n\x18VERSION_RESOLUTION_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x30\x12\x1f\n\x14INVALID_REGISTRY_URL\x10\x04\x1a\x05\xb2\x43\x02\x08\x30\x12#\n\x18\x45RROR_ACCESSING_REGISTRY\x10\x05\x1a\x05\xb2\x43\x02\x08 \"\x8a\x01\n\rDiffAwareness\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.DiffAwareness.Code\"F\n\x04\x43ode\x12!\n\x16\x44IFF_AWARENESS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10\x44IFF_STAT_FAILED\x10\x01\x1a\x05\xb2\x43\x02\x08$\"\xcf\x01\n\x0fModqueryCommand\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.ModqueryCommand.Code\"\x86\x01\n\x04\x43ode\x12#\n\x18MODQUERY_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1c\n\x11MISSING_ARGUMENTS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12TOO_MANY_ARGUMENTS\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11INVALID_ARGUMENTS\x10\x03\x1a\x05\xb2\x43\x02\x08\x02:\\\n\x08metadata\x12!.google.protobuf.EnumValueOptions\x18\xb6\x08 \x01(\x0b\x32&.failure_details.FailureDetailMetadataB&\n$com.google.devtools.build.lib.serverb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\'src/main/protobuf/failure_details.proto\x12\x0f\x66\x61ilure_details\x1a google/protobuf/descriptor.proto\"*\n\x15\x46\x61ilureDetailMetadata\x12\x11\n\texit_code\x18\x01 \x01(\r\"\xe1\x1c\n\rFailureDetail\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x33\n\x0binterrupted\x18\x65 \x01(\x0b\x32\x1c.failure_details.InterruptedH\x00\x12\x42\n\x13\x65xternal_repository\x18g \x01(\x0b\x32#.failure_details.ExternalRepositoryH\x00\x12\x38\n\x0e\x62uild_progress\x18h \x01(\x0b\x32\x1e.failure_details.BuildProgressH\x00\x12\x38\n\x0eremote_options\x18j \x01(\x0b\x32\x1e.failure_details.RemoteOptionsH\x00\x12@\n\x12\x63lient_environment\x18k \x01(\x0b\x32\".failure_details.ClientEnvironmentH\x00\x12\'\n\x05\x63rash\x18l \x01(\x0b\x32\x16.failure_details.CrashH\x00\x12\x38\n\x0esymlink_forest\x18n \x01(\x0b\x32\x1e.failure_details.SymlinkForestH\x00\x12:\n\x0fpackage_options\x18r \x01(\x0b\x32\x1f.failure_details.PackageOptionsH\x00\x12<\n\x10remote_execution\x18s \x01(\x0b\x32 .failure_details.RemoteExecutionH\x00\x12/\n\texecution\x18t \x01(\x0b\x32\x1a.failure_details.ExecutionH\x00\x12\x31\n\nworkspaces\x18u \x01(\x0b\x32\x1b.failure_details.WorkspacesH\x00\x12\x36\n\rcrash_options\x18v \x01(\x0b\x32\x1d.failure_details.CrashOptionsH\x00\x12\x31\n\nfilesystem\x18w \x01(\x0b\x32\x1b.failure_details.FilesystemH\x00\x12>\n\x11\x65xecution_options\x18y \x01(\x0b\x32!.failure_details.ExecutionOptionsH\x00\x12+\n\x07\x63ommand\x18z \x01(\x0b\x32\x18.failure_details.CommandH\x00\x12\'\n\x05spawn\x18{ \x01(\x0b\x32\x16.failure_details.SpawnH\x00\x12\x32\n\x0bgrpc_server\x18| \x01(\x0b\x32\x1b.failure_details.GrpcServerH\x00\x12@\n\x12\x63\x61nonicalize_flags\x18} \x01(\x0b\x32\".failure_details.CanonicalizeFlagsH\x00\x12\x42\n\x13\x62uild_configuration\x18~ \x01(\x0b\x32#.failure_details.BuildConfigurationH\x00\x12\x34\n\x0cinfo_command\x18\x7f \x01(\x0b\x32\x1c.failure_details.InfoCommandH\x00\x12\x39\n\x0ememory_options\x18\x81\x01 \x01(\x0b\x32\x1e.failure_details.MemoryOptionsH\x00\x12(\n\x05query\x18\x82\x01 \x01(\x0b\x32\x16.failure_details.QueryH\x00\x12;\n\x0flocal_execution\x18\x84\x01 \x01(\x0b\x32\x1f.failure_details.LocalExecutionH\x00\x12\x35\n\x0c\x61\x63tion_cache\x18\x86\x01 \x01(\x0b\x32\x1c.failure_details.ActionCacheH\x00\x12\x37\n\rfetch_command\x18\x87\x01 \x01(\x0b\x32\x1d.failure_details.FetchCommandH\x00\x12\x35\n\x0csync_command\x18\x88\x01 \x01(\x0b\x32\x1c.failure_details.SyncCommandH\x00\x12,\n\x07sandbox\x18\x89\x01 \x01(\x0b\x32\x18.failure_details.SandboxH\x00\x12=\n\x10include_scanning\x18\x8b\x01 \x01(\x0b\x32 .failure_details.IncludeScanningH\x00\x12\x35\n\x0ctest_command\x18\x8c\x01 \x01(\x0b\x32\x1c.failure_details.TestCommandH\x00\x12\x35\n\x0c\x61\x63tion_query\x18\x8d\x01 \x01(\x0b\x32\x1c.failure_details.ActionQueryH\x00\x12;\n\x0ftarget_patterns\x18\x8e\x01 \x01(\x0b\x32\x1f.failure_details.TargetPatternsH\x00\x12\x37\n\rclean_command\x18\x90\x01 \x01(\x0b\x32\x1d.failure_details.CleanCommandH\x00\x12\x39\n\x0e\x63onfig_command\x18\x91\x01 \x01(\x0b\x32\x1e.failure_details.ConfigCommandH\x00\x12\x41\n\x12\x63onfigurable_query\x18\x92\x01 \x01(\x0b\x32\".failure_details.ConfigurableQueryH\x00\x12\x35\n\x0c\x64ump_command\x18\x93\x01 \x01(\x0b\x32\x1c.failure_details.DumpCommandH\x00\x12\x35\n\x0chelp_command\x18\x94\x01 \x01(\x0b\x32\x1c.failure_details.HelpCommandH\x00\x12\x39\n\x0emobile_install\x18\x96\x01 \x01(\x0b\x32\x1e.failure_details.MobileInstallH\x00\x12;\n\x0fprofile_command\x18\x97\x01 \x01(\x0b\x32\x1f.failure_details.ProfileCommandH\x00\x12\x33\n\x0brun_command\x18\x98\x01 \x01(\x0b\x32\x1b.failure_details.RunCommandH\x00\x12;\n\x0fversion_command\x18\x99\x01 \x01(\x0b\x32\x1f.failure_details.VersionCommandH\x00\x12\x44\n\x14print_action_command\x18\x9a\x01 \x01(\x0b\x32#.failure_details.PrintActionCommandH\x00\x12=\n\x10workspace_status\x18\x9e\x01 \x01(\x0b\x32 .failure_details.WorkspaceStatusH\x00\x12\x35\n\x0cjava_compile\x18\x9f\x01 \x01(\x0b\x32\x1c.failure_details.JavaCompileH\x00\x12=\n\x10\x61\x63tion_rewinding\x18\xa0\x01 \x01(\x0b\x32 .failure_details.ActionRewindingH\x00\x12\x33\n\x0b\x63pp_compile\x18\xa1\x01 \x01(\x0b\x32\x1b.failure_details.CppCompileH\x00\x12;\n\x0fstarlark_action\x18\xa2\x01 \x01(\x0b\x32\x1f.failure_details.StarlarkActionH\x00\x12\x35\n\x0cninja_action\x18\xa3\x01 \x01(\x0b\x32\x1c.failure_details.NinjaActionH\x00\x12?\n\x11\x64ynamic_execution\x18\xa4\x01 \x01(\x0b\x32!.failure_details.DynamicExecutionH\x00\x12\x33\n\x0b\x66\x61il_action\x18\xa6\x01 \x01(\x0b\x32\x1b.failure_details.FailActionH\x00\x12\x39\n\x0esymlink_action\x18\xa7\x01 \x01(\x0b\x32\x1e.failure_details.SymlinkActionH\x00\x12-\n\x08\x63pp_link\x18\xa8\x01 \x01(\x0b\x32\x18.failure_details.CppLinkH\x00\x12\x31\n\nlto_action\x18\xa9\x01 \x01(\x0b\x32\x1a.failure_details.LtoActionH\x00\x12\x33\n\x0btest_action\x18\xac\x01 \x01(\x0b\x32\x1b.failure_details.TestActionH\x00\x12*\n\x06worker\x18\xad\x01 \x01(\x0b\x32\x17.failure_details.WorkerH\x00\x12.\n\x08\x61nalysis\x18\xae\x01 \x01(\x0b\x32\x19.failure_details.AnalysisH\x00\x12;\n\x0fpackage_loading\x18\xaf\x01 \x01(\x0b\x32\x1f.failure_details.PackageLoadingH\x00\x12\x30\n\ttoolchain\x18\xb1\x01 \x01(\x0b\x32\x1a.failure_details.ToolchainH\x00\x12=\n\x10starlark_loading\x18\xb3\x01 \x01(\x0b\x32 .failure_details.StarlarkLoadingH\x00\x12\x37\n\rexternal_deps\x18\xb5\x01 \x01(\x0b\x32\x1d.failure_details.ExternalDepsH\x00\x12\x39\n\x0e\x64iff_awareness\x18\xb6\x01 \x01(\x0b\x32\x1e.failure_details.DiffAwarenessH\x00\x12=\n\x10modquery_command\x18\xb7\x01 \x01(\x0b\x32 .failure_details.ModqueryCommandH\x00\x12\x35\n\x0c\x62uild_report\x18\xb8\x01 \x01(\x0b\x32\x1c.failure_details.BuildReportH\x00\x42\n\n\x08\x63\x61tegoryJ\x04\x08\x02\x10\x65J\x04\x08\x66\x10gJ\x04\x08i\x10jJ\x04\x08m\x10nJ\x04\x08o\x10rJ\x04\x08x\x10yJ\x06\x08\x80\x01\x10\x81\x01J\x06\x08\x83\x01\x10\x84\x01J\x06\x08\x85\x01\x10\x86\x01J\x06\x08\x8a\x01\x10\x8b\x01J\x06\x08\x8f\x01\x10\x90\x01J\x06\x08\x95\x01\x10\x96\x01J\x06\x08\x9b\x01\x10\x9e\x01J\x06\x08\xa5\x01\x10\xa6\x01J\x06\x08\xaa\x01\x10\xac\x01J\x06\x08\xb0\x01\x10\xb1\x01J\x06\x08\xb2\x01\x10\xb3\x01J\x06\x08\xb4\x01\x10\xb5\x01\"\xa2\x05\n\x0bInterrupted\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.Interrupted.Code\"\xe1\x04\n\x04\x43ode\x12\x1e\n\x13INTERRUPTED_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08\x08\x12\x16\n\x0bINTERRUPTED\x10\x1c\x1a\x05\xb2\x43\x02\x08\x08\x12\x1b\n\x10\x44\x45PRECATED_BUILD\x10\x04\x1a\x05\xb2\x43\x02\x08\x08\x12&\n\x1b\x44\x45PRECATED_BUILD_COMPLETION\x10\x05\x1a\x05\xb2\x43\x02\x08\x08\x12*\n\x1f\x44\x45PRECATED_PACKAGE_LOADING_SYNC\x10\x06\x1a\x05\xb2\x43\x02\x08\x08\x12)\n\x1e\x44\x45PRECATED_EXECUTOR_COMPLETION\x10\x07\x1a\x05\xb2\x43\x02\x08\x08\x12&\n\x1b\x44\x45PRECATED_COMMAND_DISPATCH\x10\x08\x1a\x05\xb2\x43\x02\x08\x08\x12\x1f\n\x14\x44\x45PRECATED_INFO_ITEM\x10\t\x1a\x05\xb2\x43\x02\x08\x08\x12!\n\x16\x44\x45PRECATED_AFTER_QUERY\x10\n\x1a\x05\xb2\x43\x02\x08\x08\x12#\n\x18\x44\x45PRECATED_FETCH_COMMAND\x10\x11\x1a\x05\xb2\x43\x02\x08\x08\x12\"\n\x17\x44\x45PRECATED_SYNC_COMMAND\x10\x12\x1a\x05\xb2\x43\x02\x08\x08\x12#\n\x18\x44\x45PRECATED_CLEAN_COMMAND\x10\x14\x1a\x05\xb2\x43\x02\x08\x08\x12,\n!DEPRECATED_MOBILE_INSTALL_COMMAND\x10\x15\x1a\x05\xb2\x43\x02\x08\x08\x12\x1b\n\x10\x44\x45PRECATED_QUERY\x10\x16\x1a\x05\xb2\x43\x02\x08\x08\x12!\n\x16\x44\x45PRECATED_RUN_COMMAND\x10\x17\x1a\x05\xb2\x43\x02\x08\x08\x12%\n\x1a\x44\x45PRECATED_OPTIONS_PARSING\x10\x1b\x1a\x05\xb2\x43\x02\x08\x08\"\x04\x08\x01\x10\x03\"\x04\x08\x0b\x10\x10\"\x04\x08\x13\x10\x13\"\x04\x08\x18\x10\x1a\"\xc7\x04\n\x05Spawn\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Spawn.Code\x12\x14\n\x0c\x63\x61tastrophic\x18\x02 \x01(\x08\x12\x17\n\x0fspawn_exit_code\x18\x03 \x01(\x05\"\xe3\x03\n\x04\x43ode\x12\x18\n\rSPAWN_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNON_ZERO_EXIT\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x12\n\x07TIMEOUT\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rOUT_OF_MEMORY\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10\x45XECUTION_FAILED\x10\x04\x1a\x05\xb2\x43\x02\x08\"\x12\x1b\n\x10\x45XECUTION_DENIED\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13REMOTE_CACHE_FAILED\x10\x06\x1a\x05\xb2\x43\x02\x08\"\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x45XEC_IO_EXCEPTION\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0fINVALID_TIMEOUT\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#INVALID_REMOTE_EXECUTION_PROPERTIES\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NO_USABLE_STRATEGY_FOUND\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dUNSPECIFIED_EXECUTION_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x46ORBIDDEN_INPUT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14REMOTE_CACHE_EVICTED\x10\x0e\x1a\x05\xb2\x43\x02\x08\'\"\x84\x02\n\x12\x45xternalRepository\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.ExternalRepository.Code\"\xb5\x01\n\x04\x43ode\x12&\n\x1b\x45XTERNAL_REPOSITORY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x32\n\'OVERRIDE_DISALLOWED_MANAGED_DIRECTORIES\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x42\x41\x44_DOWNLOADER_CONFIG\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12/\n$REPOSITORY_MAPPING_RESOLUTION_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08%\"\xa7\x06\n\rBuildProgress\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.BuildProgress.Code\"\xe2\x05\n\x04\x43ode\x12!\n\x16\x42UILD_PROGRESS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12 \n\x15OUTPUT_INITIALIZATION\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12.\n#BES_RUNS_PER_TEST_LIMIT_UNSUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x42\x45S_LOCAL_WRITE_ERROR\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18\x42\x45S_INITIALIZATION_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18\x42\x45S_UPLOAD_TIMEOUT_ERROR\x10\x07\x1a\x05\xb2\x43\x02\x08&\x12!\n\x16\x42\x45S_FILE_WRITE_TIMEOUT\x10\x08\x1a\x05\xb2\x43\x02\x08&\x12\"\n\x17\x42\x45S_FILE_WRITE_IO_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08&\x12%\n\x1a\x42\x45S_FILE_WRITE_INTERRUPTED\x10\n\x1a\x05\xb2\x43\x02\x08&\x12\"\n\x17\x42\x45S_FILE_WRITE_CANCELED\x10\x0b\x1a\x05\xb2\x43\x02\x08&\x12\'\n\x1c\x42\x45S_FILE_WRITE_UNKNOWN_ERROR\x10\x0c\x1a\x05\xb2\x43\x02\x08&\x12&\n\x1b\x42\x45S_UPLOAD_LOCAL_FILE_ERROR\x10\r\x1a\x05\xb2\x43\x02\x08&\x12*\n\x1f\x42\x45S_STREAM_NOT_RETRYING_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08-\x12\x37\n,BES_STREAM_COMPLETED_WITH_UNACK_EVENTS_ERROR\x10\x0f\x1a\x05\xb2\x43\x02\x08-\x12\x38\n-BES_STREAM_COMPLETED_WITH_UNSENT_EVENTS_ERROR\x10\x10\x1a\x05\xb2\x43\x02\x08-\x12\x31\n&BES_STREAM_COMPLETED_WITH_REMOTE_ERROR\x10\x13\x1a\x05\xb2\x43\x02\x08-\x12\x32\n\'BES_UPLOAD_RETRY_LIMIT_EXCEEDED_FAILURE\x10\x11\x1a\x05\xb2\x43\x02\x08&\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x04\x08\x12\x10\x12\"\xc3\x02\n\rRemoteOptions\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.RemoteOptions.Code\"\xfe\x01\n\x04\x43ode\x12!\n\x16REMOTE_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x35\n*REMOTE_DEFAULT_EXEC_PROPERTIES_LOGIC_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x43REDENTIALS_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19\x43REDENTIALS_WRITE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1d\x44OWNLOADER_WITHOUT_GRPC_CACHE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1c\x45XECUTION_WITH_INVALID_CACHE\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\"\x9a\x01\n\x11\x43lientEnvironment\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.ClientEnvironment.Code\"N\n\x04\x43ode\x12%\n\x1a\x43LIENT_ENVIRONMENT_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14\x43LIENT_CWD_MALFORMED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\xb5\x01\n\x05\x43rash\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Crash.Code\x12*\n\x06\x63\x61uses\x18\x02 \x03(\x0b\x32\x1a.failure_details.Throwable\x12\x1d\n\x15oom_detector_override\x18\x03 \x01(\x08\"6\n\x04\x43ode\x12\x18\n\rCRASH_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x14\n\tCRASH_OOM\x10\x01\x1a\x05\xb2\x43\x02\x08!\"J\n\tThrowable\x12\x17\n\x0fthrowable_class\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x13\n\x0bstack_trace\x18\x03 \x03(\t\"\xe7\x01\n\rSymlinkForest\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.SymlinkForest.Code\"\xa2\x01\n\x04\x43ode\x12!\n\x16SYMLINK_FOREST_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%TOPLEVEL_OUTDIR_PACKAGE_PATH_CONFLICT\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eTOPLEVEL_OUTDIR_USED_AS_SOURCE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0f\x43REATION_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\"\xc4\x01\n\x0b\x42uildReport\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.BuildReport.Code\"\x83\x01\n\x04\x43ode\x12\x1f\n\x14\x42UILD_REPORT_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x34\n)BUILD_REPORT_UPLOADER_NEEDS_PACKAGE_PATHS\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19\x42UILD_REPORT_WRITE_FAILED\x10\x02\x1a\x05\xb2\x43\x02\x08$\"\x9d\x01\n\x0ePackageOptions\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.PackageOptions.Code\"W\n\x04\x43ode\x12\"\n\x17PACKAGE_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14PACKAGE_PATH_INVALID\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x02\x10\x02\"\x04\x08\x03\x10\x03\"\xb3\x06\n\x0fRemoteExecution\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.RemoteExecution.Code\"\xea\x05\n\x04\x43ode\x12#\n\x18REMOTE_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1a\x43\x41PABILITIES_QUERY_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\"\x12#\n\x18\x43REDENTIALS_INIT_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12\x43\x41\x43HE_INIT_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0fRPC_LOG_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19\x45XEC_CHANNEL_INIT_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1a\x43\x41\x43HE_CHANNEL_INIT_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1f\x44OWNLOADER_CHANNEL_INIT_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17LOG_DIR_CLEANUP_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x43LIENT_SERVER_INCOMPATIBLE\x10\t\x1a\x05\xb2\x43\x02\x08\"\x12-\n\"DOWNLOADED_INPUTS_DELETION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\"\x12@\n5REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_DOTD\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x41\n6REMOTE_DOWNLOAD_OUTPUTS_MINIMAL_WITHOUT_INMEMORY_JDEPS\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\x12\x35\n*INCOMPLETE_OUTPUT_DOWNLOAD_CLEANUP_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12;\n0REMOTE_DEFAULT_PLATFORM_PROPERTIES_PARSE_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0eILLEGAL_OUTPUT\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12/\n$INVALID_EXEC_AND_PLATFORM_PROPERTIES\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\"\xd8\r\n\tExecution\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.Execution.Code\"\x9b\r\n\x04\x43ode\x12\x1c\n\x11\x45XECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12/\n$EXECUTION_LOG_INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12&\n\x1b\x45XECUTION_LOG_WRITE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19\x45XECROOT_CREATION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-TEMP_ACTION_OUTPUT_DIRECTORY_DELETION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-TEMP_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12>\n3PERSISTENT_ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x31\n&LOCAL_OUTPUT_DIRECTORY_SYMLINK_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12+\n LOCAL_TEMPLATE_EXPANSION_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08$\x12-\n\"INPUT_DIRECTORY_CHECK_IO_EXCEPTION\x10\n\x1a\x05\xb2\x43\x02\x08$\x12/\n$EXTRA_ACTION_OUTPUT_CREATION_FAILURE\x10\x0b\x1a\x05\xb2\x43\x02\x08$\x12#\n\x18TEST_RUNNER_IO_EXCEPTION\x10\x0c\x1a\x05\xb2\x43\x02\x08$\x12\"\n\x17\x46ILE_WRITE_IO_EXCEPTION\x10\r\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19TEST_OUT_ERR_IO_EXCEPTION\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_MANIFEST_COPY_IO_EXCEPTION\x10\x0f\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_MANIFEST_LINK_IO_EXCEPTION\x10\x10\x1a\x05\xb2\x43\x02\x08$\x12-\n\"SYMLINK_TREE_CREATION_IO_EXCEPTION\x10\x11\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'SYMLINK_TREE_CREATION_COMMAND_EXCEPTION\x10\x12\x1a\x05\xb2\x43\x02\x08$\x12)\n\x1e\x41\x43TION_INPUT_READ_IO_EXCEPTION\x10\x13\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15\x41\x43TION_NOT_UP_TO_DATE\x10\x14\x1a\x05\xb2\x43\x02\x08\x01\x12-\n\"PSEUDO_ACTION_EXECUTION_PROHIBITED\x10\x15\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x44ISCOVERED_INPUT_DOES_NOT_EXIST\x10\x16\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1f\x41\x43TION_OUTPUTS_DELETION_FAILURE\x10\x17\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x41\x43TION_OUTPUTS_NOT_CREATED\x10\x18\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x41\x43TION_FINALIZATION_FAILURE\x10\x19\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x41\x43TION_INPUT_LOST\x10\x1a\x1a\x05\xb2\x43\x02\x08\x01\x12,\n!FILESYSTEM_CONTEXT_UPDATE_FAILURE\x10\x1b\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x41\x43TION_OUTPUT_CLOSE_FAILURE\x10\x1c\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cINPUT_DISCOVERY_IO_EXCEPTION\x10\x1d\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(TREE_ARTIFACT_DIRECTORY_CREATION_FAILURE\x10\x1e\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(ACTION_OUTPUT_DIRECTORY_CREATION_FAILURE\x10\x1f\x1a\x05\xb2\x43\x02\x08\x01\x12\x36\n+ACTION_FS_OUTPUT_DIRECTORY_CREATION_FAILURE\x10 \x1a\x05\xb2\x43\x02\x08\x01\x12\x37\n,ACTION_FS_OUT_ERR_DIRECTORY_CREATION_FAILURE\x10!\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cNON_ACTION_EXECUTION_FAILURE\x10\"\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10#\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14SOURCE_INPUT_MISSING\x10$\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14UNEXPECTED_EXCEPTION\x10%\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19SOURCE_INPUT_IO_EXCEPTION\x10\'\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x08\x10\x08\"\x04\x08&\x10&\"\xc4\x02\n\nWorkspaces\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.Workspaces.Code\"\x85\x02\n\x04\x43ode\x12\x1d\n\x12WORKSPACES_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%WORKSPACES_LOG_INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cWORKSPACES_LOG_WRITE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12\x42\n7ILLEGAL_WORKSPACE_FILE_SYMLINK_WITH_MANAGED_DIRECTORIES\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12?\n4WORKSPACE_FILE_READ_FAILURE_WITH_MANAGED_DIRECTORIES\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\"p\n\x0c\x43rashOptions\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.CrashOptions.Code\".\n\x04\x43ode\x12 \n\x15\x43RASH_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\"\x04\x08\x01\x10\x01\"\xb2\x02\n\nFilesystem\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.Filesystem.Code\"\xf3\x01\n\x04\x43ode\x12\x1d\n\x12\x46ILESYSTEM_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x30\n%EMBEDDED_BINARIES_ENUMERATION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12+\n SERVER_PID_TXT_FILE_READ_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12$\n\x19SERVER_FILE_WRITE_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x35\n*DEFAULT_DIGEST_HASH_FUNCTION_INVALID_VALUE\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x04\x08\x07\x10\x07\"\xea\x03\n\x10\x45xecutionOptions\x12\x34\n\x04\x63ode\x18\x01 \x01(\x0e\x32&.failure_details.ExecutionOptions.Code\"\x9f\x03\n\x04\x43ode\x12$\n\x19\x45XECUTION_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10INVALID_STRATEGY\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12:\n/REQUESTED_STRATEGY_INCOMPATIBLE_WITH_SANDBOXING\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1f\x44\x45PRECATED_LOCAL_RESOURCES_USED\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1fINVALID_CYCLIC_DYNAMIC_STRATEGY\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'RESTRICTION_UNMATCHED_TO_ACTION_CONTEXT\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+REMOTE_FALLBACK_STRATEGY_NOT_ABSTRACT_SPAWN\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12STRATEGY_NOT_FOUND\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1e\x44YNAMIC_STRATEGY_NOT_SANDBOXED\x10\n\x1a\x05\xb2\x43\x02\x08\x02\"\x04\x08\x01\x10\x01\"\x04\x08\x02\x10\x02\"\x96\x05\n\x07\x43ommand\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.Command.Code\"\xdd\x04\n\x04\x43ode\x12\"\n\x17\x43OMMAND_FAILURE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1c\n\x11\x43OMMAND_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17\x41NOTHER_COMMAND_RUNNING\x10\x02\x1a\x05\xb2\x43\x02\x08\t\x12\x1e\n\x13PREVIOUSLY_SHUTDOWN\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12;\n0STARLARK_CPU_PROFILE_FILE_INITIALIZATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x38\n-STARLARK_CPU_PROFILING_INITIALIZATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'STARLARK_CPU_PROFILE_FILE_WRITE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12*\n\x1fINVOCATION_POLICY_PARSE_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19INVOCATION_POLICY_INVALID\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15OPTIONS_PARSE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eSTARLARK_OPTIONS_PARSE_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x41RGUMENTS_NOT_RECOGNIZED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10NOT_IN_WORKSPACE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18SPACES_IN_WORKSPACE_PATH\x10\r\x1a\x05\xb2\x43\x02\x08$\x12\x1e\n\x13IN_OUTPUT_DIRECTORY\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\"\xec\x01\n\nGrpcServer\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.GrpcServer.Code\"\xad\x01\n\x04\x43ode\x12\x1e\n\x13GRPC_SERVER_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12&\n\x1bGRPC_SERVER_NOT_COMPILED_IN\x10\x01\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13SERVER_BIND_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x15\n\nBAD_COOKIE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15NO_CLIENT_DESCRIPTION\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\x04\x08\x05\x10\x05\"\x99\x01\n\x11\x43\x61nonicalizeFlags\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.CanonicalizeFlags.Code\"M\n\x04\x43ode\x12%\n\x1a\x43\x41NONICALIZE_FLAGS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13\x46OR_COMMAND_INVALID\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\xc2\x04\n\x12\x42uildConfiguration\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.BuildConfiguration.Code\"\xf3\x03\n\x04\x43ode\x12&\n\x1b\x42UILD_CONFIGURATION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12.\n#PLATFORM_MAPPING_EVALUATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12.\n#PLATFORM_MAPPINGS_FILE_IS_DIRECTORY\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12+\n PLATFORM_MAPPINGS_FILE_NOT_FOUND\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(TOP_LEVEL_CONFIGURATION_CREATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15INVALID_CONFIGURATION\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15INVALID_BUILD_OPTIONS\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16MULTI_CPU_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\x33\n(HEURISTIC_INSTRUMENTATION_FILTER_INVALID\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x10\n\x05\x43YCLE\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1a\x43ONFLICTING_CONFIGURATIONS\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12,\n!INVALID_OUTPUT_DIRECTORY_MNEMONIC\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\"\xe9\x01\n\x0bInfoCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.InfoCommand.Code\"\xa8\x01\n\x04\x43ode\x12\x1f\n\x14INFO_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rTOO_MANY_KEYS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12KEY_NOT_RECOGNIZED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18INFO_BLOCK_WRITE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12!\n\x16\x41LL_INFO_WRITE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\x83\x02\n\rMemoryOptions\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.MemoryOptions.Code\"\xbe\x01\n\x04\x43ode\x12!\n\x16MEMORY_OPTIONS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12@\n5EXPERIMENTAL_OOM_MORE_EAGERLY_THRESHOLD_INVALID_VALUE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12Q\nDDEPRECATED_EXPERIMENTAL_OOM_MORE_EAGERLY_NO_TENURED_COLLECTORS_FOUND\x10\x02\x1a\x07\x08\x01\xb2\x43\x02\x08\x02\"\xf2\x0b\n\x05Query\x12)\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1b.failure_details.Query.Code\"\xbd\x0b\n\x04\x43ode\x12\x18\n\rQUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x32\n\'QUERY_FILE_WITH_COMMAND_LINE_EXPRESSION\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17QUERY_FILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15OUTPUT_FORMAT_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16GRAPHLESS_PREREQ_UNMET\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aQUERY_OUTPUT_WRITE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aQUERY_STDOUT_FLUSH_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12&\n\x1b\x41NALYSIS_QUERY_PREREQ_UNMET\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\x12&\n\x1bQUERY_RESULTS_FLUSH_FAILURE\x10\x0f\x1a\x05\xb2\x43\x02\x08$\x12\x39\n.DEPRECATED_UNCLOSED_QUOTATION_EXPRESSION_ERROR\x10\x10\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15VARIABLE_NAME_INVALID\x10\x11\x1a\x05\xb2\x43\x02\x08\x07\x12\x1d\n\x12VARIABLE_UNDEFINED\x10\x12\x1a\x05\xb2\x43\x02\x08\x07\x12\x44\n9BUILDFILES_AND_LOADFILES_CANNOT_USE_OUTPUT_LOCATION_ERROR\x10\x13\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10\x42UILD_FILE_ERROR\x10\x14\x1a\x05\xb2\x43\x02\x08\x07\x12\x10\n\x05\x43YCLE\x10\x15\x1a\x05\xb2\x43\x02\x08\x07\x12+\n UNIQUE_SKYKEY_THRESHOLD_EXCEEDED\x10\x16\x1a\x05\xb2\x43\x02\x08\x07\x12\'\n\x1cTARGET_NOT_IN_UNIVERSE_SCOPE\x10\x17\x1a\x05\xb2\x43\x02\x08\x02\x12+\n INVALID_FULL_UNIVERSE_EXPRESSION\x10\x18\x1a\x05\xb2\x43\x02\x08\x07\x12(\n\x1dUNIVERSE_SCOPE_LIMIT_EXCEEDED\x10\x19\x1a\x05\xb2\x43\x02\x08\x07\x12&\n\x1bINVALIDATION_LIMIT_EXCEEDED\x10\x1a\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1aOUTPUT_FORMAT_PREREQ_UNMET\x10\x1b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x41RGUMENTS_MISSING\x10\x1c\x1a\x05\xb2\x43\x02\x08\x07\x12\x31\n&RBUILDFILES_FUNCTION_REQUIRES_SKYQUERY\x10\x1d\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1a\x46ULL_TARGETS_NOT_SUPPORTED\x10\x1e\x1a\x05\xb2\x43\x02\x08\x07\x12,\n!DEPRECATED_UNEXPECTED_TOKEN_ERROR\x10\x1f\x1a\x05\xb2\x43\x02\x08\x02\x12-\n\"DEPRECATED_INTEGER_LITERAL_MISSING\x10 \x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+DEPRECATED_INVALID_STARTING_CHARACTER_ERROR\x10!\x1a\x05\xb2\x43\x02\x08\x02\x12\x32\n\'DEPRECATED_PREMATURE_END_OF_INPUT_ERROR\x10\"\x1a\x05\xb2\x43\x02\x08\x02\x12\x17\n\x0cSYNTAX_ERROR\x10#\x1a\x05\xb2\x43\x02\x08\x02\x12(\n\x1dOUTPUT_FORMATTER_IO_EXCEPTION\x10$\x1a\x05\xb2\x43\x02\x08$\x12+\n SKYQUERY_TRANSITIVE_TARGET_ERROR\x10%\x1a\x05\xb2\x43\x02\x08\x07\x12$\n\x19SKYQUERY_TARGET_EXCEPTION\x10&\x1a\x05\xb2\x43\x02\x08\x07\x12&\n\x1bINVALID_LABEL_IN_TEST_SUITE\x10\'\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18ILLEGAL_FLAG_COMBINATION\x10(\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12NON_DETAILED_ERROR\x10)\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x07\x10\x0c\"\x99\x01\n\x0eLocalExecution\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.LocalExecution.Code\"S\n\x04\x43ode\x12\"\n\x17LOCAL_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\'\n\x1cLOCKFREE_OUTPUT_PREREQ_UNMET\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x8a\x01\n\x0b\x41\x63tionCache\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.ActionCache.Code\"J\n\x04\x43ode\x12\x1f\n\x14\x41\x43TION_CACHE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12!\n\x16INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\"\xe7\x01\n\x0c\x46\x65tchCommand\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.FetchCommand.Code\"\xa4\x01\n\x04\x43ode\x12 \n\x15\x46\x45TCH_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1d\n\x12\x45XPRESSION_MISSING\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1a\n\x0fOPTIONS_INVALID\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11QUERY_PARSE_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12!\n\x16QUERY_EVALUATION_ERROR\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\"\xf8\x01\n\x0bSyncCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.SyncCommand.Code\"\xb7\x01\n\x04\x43ode\x12\x1f\n\x14SYNC_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14PACKAGE_LOOKUP_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x07\x12%\n\x1aWORKSPACE_EVALUATION_ERROR\x10\x02\x1a\x05\xb2\x43\x02\x08\x07\x12\"\n\x17REPOSITORY_FETCH_ERRORS\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12\"\n\x17REPOSITORY_NAME_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x07\"\xfb\x03\n\x07Sandbox\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.Sandbox.Code\"\xc2\x03\n\x04\x43ode\x12\"\n\x17SANDBOX_FAILURE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12!\n\x16INITIALIZATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12!\n\x16\x45XECUTION_IO_EXCEPTION\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12!\n\x16\x44OCKER_COMMAND_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fNO_DOCKER_IMAGE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12+\n DOCKER_IMAGE_PREPARATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x42IND_MOUNT_ANALYSIS_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bMOUNT_SOURCE_DOES_NOT_EXIST\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12,\n!MOUNT_SOURCE_TARGET_TYPE_MISMATCH\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bMOUNT_TARGET_DOES_NOT_EXIST\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17SUBPROCESS_START_FAILED\x10\n\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0f\x46ORBIDDEN_INPUT\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\"\x9d\x04\n\x0fIncludeScanning\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.IncludeScanning.Code\x12\x42\n\x14package_loading_code\x18\x02 \x01(\x0e\x32$.failure_details.PackageLoading.Code\"\x90\x03\n\x04\x43ode\x12#\n\x18INCLUDE_SCANNING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1eINITIALIZE_INCLUDE_HINTS_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15SCANNING_IO_EXCEPTION\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12,\n!INCLUDE_HINTS_FILE_NOT_IN_PACKAGE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aINCLUDE_HINTS_READ_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15ILLEGAL_ABSOLUTE_PATH\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_LOAD_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19USER_PACKAGE_LOAD_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bSYSTEM_PACKAGE_LOAD_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12\x30\n%UNDIFFERENTIATED_PACKAGE_LOAD_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\"\xbc\x01\n\x0bTestCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.TestCommand.Code\"|\n\x04\x43ode\x12\x1f\n\x14TEST_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1a\n\x0fNO_TEST_TARGETS\x10\x01\x1a\x05\xb2\x43\x02\x08\x04\x12\x1e\n\x13TEST_WITH_NOANALYZE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x17\n\x0cTESTS_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x03\"\xa6\x05\n\x0b\x41\x63tionQuery\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.ActionQuery.Code\"\xe5\x04\n\x04\x43ode\x12\x1f\n\x14\x41\x43TION_QUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x19\n\x0eOUTPUT_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x06\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x45XPRESSION_PARSE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12\x36\n+SKYFRAME_STATE_WITH_COMMAND_LINE_EXPRESSION\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12$\n\x19INVALID_AQUERY_EXPRESSION\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1bSKYFRAME_STATE_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x41QUERY_OUTPUT_TOO_BIG\x10\x08\x1a\x05\xb2\x43\x02\x08\x07\x12!\n\x16ILLEGAL_PATTERN_SYNTAX\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13INCORRECT_ARGUMENTS\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12>\n3TOP_LEVEL_TARGETS_WITH_SKYFRAME_STATE_NOT_SUPPORTED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eSKYFRAME_STATE_AFTER_EXECUTION\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dLABELS_FUNCTION_NOT_SUPPORTED\x10\r\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aTEMPLATE_EXPANSION_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08\x02\"\xd7\x06\n\x0eTargetPatterns\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.TargetPatterns.Code\"\x90\x06\n\x04\x43ode\x12\"\n\x17TARGET_PATTERNS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x38\n-TARGET_PATTERN_FILE_WITH_COMMAND_LINE_PATTERN\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12+\n TARGET_PATTERN_FILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cTARGET_PATTERN_PARSE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11PACKAGE_NOT_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15TARGET_FORMAT_INVALID\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x41\x42SOLUTE_TARGET_PATTERN_INVALID\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%CANNOT_DETERMINE_TARGET_FROM_FILENAME\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12LABEL_SYNTAX_ERROR\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dTARGET_CANNOT_BE_EMPTY_STRING\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12+\n PACKAGE_PART_CANNOT_END_IN_SLASH\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15\x43\x41NNOT_PRELOAD_TARGET\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fTARGETS_MISSING\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%RECURSIVE_TARGET_PATTERNS_NOT_ALLOWED\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1fUP_LEVEL_REFERENCES_NOT_ALLOWED\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#NEGATIVE_TARGET_PATTERN_NOT_ALLOWED\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15TARGET_MUST_BE_A_FILE\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x44\x45PENDENCY_NOT_FOUND\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_NAME_INVALID\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\"\xf5\x03\n\x0c\x43leanCommand\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.CleanCommand.Code\"\xb2\x03\n\x04\x43ode\x12 \n\x15\x43LEAN_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\'\n\x1cOUTPUT_SERVICE_CLEAN_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x06\x12%\n\x1a\x41\x43TION_CACHE_CLEAN_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12 \n\x15OUT_ERR_CLOSE_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aOUTPUT_BASE_DELETE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1dOUTPUT_BASE_TEMP_MOVE_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12+\n ASYNC_OUTPUT_BASE_DELETE_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x06\x12\"\n\x17\x45XECROOT_DELETE_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x45XECROOT_TEMP_MOVE_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08$\x12(\n\x1d\x41SYNC_EXECROOT_DELETE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x06\x12#\n\x18\x41RGUMENTS_NOT_RECOGNIZED\x10\n\x1a\x05\xb2\x43\x02\x08\x02\"\xb1\x01\n\rConfigCommand\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.ConfigCommand.Code\"m\n\x04\x43ode\x12!\n\x16\x43ONFIG_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13TOO_MANY_CONFIG_IDS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\"\n\x17\x43ONFIGURATION_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xbb\x04\n\x11\x43onfigurableQuery\x12\x35\n\x04\x63ode\x18\x01 \x01(\x0e\x32\'.failure_details.ConfigurableQuery.Code\"\xee\x03\n\x04\x43ode\x12%\n\x1a\x43ONFIGURABLE_QUERY_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12*\n\x1f\x43OMMAND_LINE_EXPRESSION_MISSING\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12#\n\x18\x45XPRESSION_PARSE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x46ILTERS_NOT_SUPPORTED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12,\n!BUILDFILES_FUNCTION_NOT_SUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1fSIBLINGS_FUNCTION_NOT_SUPPORTED\x10\x05\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eVISIBLE_FUNCTION_NOT_SUPPORTED\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x41TTRIBUTE_MISSING\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12*\n\x1fINCORRECT_CONFIG_ARGUMENT_ERROR\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12\x19\n\x0eTARGET_MISSING\x10\t\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15STARLARK_SYNTAX_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13STARLARK_EVAL_ERROR\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15\x46ORMAT_FUNCTION_ERROR\x10\x0c\x1a\x05\xb2\x43\x02\x08\x02\"\xa9\x02\n\x0b\x44umpCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.DumpCommand.Code\"\xe8\x01\n\x04\x43ode\x12\x1f\n\x14\x44UMP_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13NO_OUTPUT_SPECIFIED\x10\x01\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18\x41\x43TION_CACHE_DUMP_FAILED\x10\x02\x1a\x05\xb2\x43\x02\x08\x07\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x07\x12#\n\x18\x41\x43TION_GRAPH_DUMP_FAILED\x10\x04\x1a\x05\xb2\x43\x02\x08\x07\x12$\n\x19STARLARK_HEAP_DUMP_FAILED\x10\x05\x1a\x05\xb2\x43\x02\x08\x08\"\x04\x08\x06\x10\x06\"\xa2\x01\n\x0bHelpCommand\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.HelpCommand.Code\"b\n\x04\x43ode\x12\x1f\n\x14HELP_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MISSING_ARGUMENT\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11\x43OMMAND_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\"\xb1\x02\n\rMobileInstall\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.MobileInstall.Code\"\xec\x01\n\x04\x43ode\x12!\n\x16MOBILE_INSTALL_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13\x43LASSIC_UNSUPPORTED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13NO_TARGET_SPECIFIED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aMULTIPLE_TARGETS_SPECIFIED\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12\x1e\n\x13TARGET_TYPE_INVALID\x10\x04\x1a\x05\xb2\x43\x02\x08\x06\x12\x18\n\rNON_ZERO_EXIT\x10\x05\x1a\x05\xb2\x43\x02\x08\x06\x12 \n\x15\x45RROR_RUNNING_PROGRAM\x10\x06\x1a\x05\xb2\x43\x02\x08\x06\"\xb8\x01\n\x0eProfileCommand\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.ProfileCommand.Code\"r\n\x04\x43ode\x12\"\n\x17PROFILE_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12(\n\x1dOLD_BINARY_FORMAT_UNSUPPORTED\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x46ILE_READ_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xc6\x05\n\nRunCommand\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.RunCommand.Code\"\x87\x05\n\x04\x43ode\x12\x1e\n\x13RUN_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13NO_TARGET_SPECIFIED\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12%\n\x1aTOO_MANY_TARGETS_SPECIFIED\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12 \n\x15TARGET_NOT_EXECUTABLE\x10\x03\x1a\x05\xb2\x43\x02\x08\x02\x12/\n$TARGET_BUILT_BUT_PATH_NOT_EXECUTABLE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x32\n\'TARGET_BUILT_BUT_PATH_VALIDATION_FAILED\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1aRUN_UNDER_TARGET_NOT_BUILT\x10\x06\x1a\x05\xb2\x43\x02\x08\x02\x12\x1b\n\x10RUN_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x02\x12\'\n\x1cTOO_MANY_TEST_SHARDS_OR_RUNS\x10\x08\x1a\x05\xb2\x43\x02\x08\x02\x12)\n\x1eTEST_ENVIRONMENT_SETUP_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08$\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08$\x12\x1d\n\x12NO_SHELL_SPECIFIED\x10\x0b\x1a\x05\xb2\x43\x02\x08\x02\x12\x1f\n\x14SCRIPT_WRITE_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x06\x12\x30\n%RUNFILES_DIRECTORIES_CREATION_FAILURE\x10\r\x1a\x05\xb2\x43\x02\x08$\x12-\n\"RUNFILES_SYMLINKS_CREATION_FAILURE\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12-\n\"TEST_ENVIRONMENT_SETUP_INTERRUPTED\x10\x0f\x1a\x05\xb2\x43\x02\x08\x08\"\x8a\x01\n\x0eVersionCommand\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.VersionCommand.Code\"D\n\x04\x43ode\x12\"\n\x17VERSION_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNOT_AVAILABLE\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\"\x88\x02\n\x12PrintActionCommand\x12\x36\n\x04\x63ode\x18\x01 \x01(\x0e\x32(.failure_details.PrintActionCommand.Code\"\xb9\x01\n\x04\x43ode\x12\'\n\x1cPRINT_ACTION_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10TARGET_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17TARGET_KIND_UNSUPPORTED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11\x41\x43TIONS_NOT_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\"\xc8\x02\n\x0fWorkspaceStatus\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.WorkspaceStatus.Code\"\xff\x01\n\x04\x43ode\x12#\n\x18WORKSPACE_STATUS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x18\n\rNON_ZERO_EXIT\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x41\x42NORMAL_TERMINATION\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0b\x45XEC_FAILED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rPARSE_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\x12\x1d\n\x12VALIDATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x43ONTENT_UPDATE_IO_EXCEPTION\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13STDERR_IO_EXCEPTION\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\"\x94\x02\n\x0bJavaCompile\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.JavaCompile.Code\"\xd3\x01\n\x04\x43ode\x12\x1f\n\x14JAVA_COMPILE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19REDUCED_CLASSPATH_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17JDEPS_READ_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12\x35\n*REDUCED_CLASSPATH_FALLBACK_CLEANUP_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08$\"\xba\x01\n\x0f\x41\x63tionRewinding\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.ActionRewinding.Code\"r\n\x04\x43ode\x12#\n\x18\x41\x43TION_REWINDING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19LOST_INPUT_TOO_MANY_TIMES\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14LOST_INPUT_IS_SOURCE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\x8d\x04\n\nCppCompile\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.CppCompile.Code\"\xce\x03\n\x04\x43ode\x12\x1e\n\x13\x43PP_COMPILE_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1e\x46IND_USED_HEADERS_IO_EXCEPTION\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\x1f\n\x14\x43OPY_OUT_ERR_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\x12\x1e\n\x13\x44_FILE_READ_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08$\x12%\n\x1a\x43OMMAND_GENERATION_FAILURE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18MODULE_EXPANSION_TIMEOUT\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eINCLUDE_PATH_OUTSIDE_EXEC_ROOT\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x46\x41KE_COMMAND_GENERATION_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15UNDECLARED_INCLUSIONS\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14\x44_FILE_PARSE_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x43OVERAGE_NOTES_CREATION_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dMODULE_EXPANSION_MISSING_DATA\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\"\xc9\x01\n\x0eStarlarkAction\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.StarlarkAction.Code\"\x82\x01\n\x04\x43ode\x12\"\n\x17STARLARK_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12)\n\x1eUNUSED_INPUT_LIST_READ_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12+\n UNUSED_INPUT_LIST_FILE_NOT_FOUND\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xb8\x01\n\x0bNinjaAction\x12/\n\x04\x63ode\x18\x01 \x01(\x0e\x32!.failure_details.NinjaAction.Code\"x\n\x04\x43ode\x12\x1f\n\x14NINJA_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12.\n#INVALID_DEPFILE_DECLARED_DEPENDENCY\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\x1f\n\x14\x44_FILE_PARSE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08$\"\xff\x01\n\x10\x44ynamicExecution\x12\x34\n\x04\x63ode\x18\x01 \x01(\x0e\x32&.failure_details.DynamicExecution.Code\"\xb4\x01\n\x04\x43ode\x12$\n\x19\x44YNAMIC_EXECUTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1aXCODE_RELATED_PREREQ_UNMET\x10\x01\x1a\x05\xb2\x43\x02\x08$\x12\"\n\x17\x41\x43TION_LOG_MOVE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bRUN_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NO_USABLE_STRATEGY_FOUND\x10\x04\x1a\x05\xb2\x43\x02\x08\x02\"\x92\x03\n\nFailAction\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.FailAction.Code\"\xd3\x02\n\x04\x43ode\x12\x1e\n\x13\x46\x41IL_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1e\n\x13INTENTIONAL_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18INCORRECT_PYTHON_VERSION\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16PROGUARD_SPECS_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1d\x44YNAMIC_LINKING_NOT_SUPPORTED\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14SOURCE_FILES_MISSING\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13INCORRECT_TOOLCHAIN\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16\x46RAGMENT_CLASS_MISSING\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43\x41NT_BUILD_INCOMPATIBLE_TARGET\x10\n\x1a\x05\xb2\x43\x02\x08\x01\"\x04\x08\x08\x10\x08\"\x04\x08\t\x10\t\"\xb3\x02\n\rSymlinkAction\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.SymlinkAction.Code\"\xee\x01\n\x04\x43ode\x12!\n\x16SYMLINK_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12$\n\x19\x45XECUTABLE_INPUT_NOT_FILE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17\x45XECUTABLE_INPUT_IS_NOT\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#EXECUTABLE_INPUT_CHECK_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aLINK_CREATION_IO_EXCEPTION\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17LINK_TOUCH_IO_EXCEPTION\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\"\xae\x01\n\x07\x43ppLink\x12+\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1d.failure_details.CppLink.Code\"v\n\x04\x43ode\x12\x1b\n\x10\x43PP_LINK_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1a\x43OMMAND_GENERATION_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x46\x41KE_COMMAND_GENERATION_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\"\xd7\x01\n\tLtoAction\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.LtoAction.Code\"\x9a\x01\n\x04\x43ode\x12\x1d\n\x12LTO_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12+\n INVALID_ABSOLUTE_PATH_IN_IMPORTS\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15MISSING_BITCODE_FILES\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19IMPORTS_READ_IO_EXCEPTION\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\"\x96\x02\n\nTestAction\x12.\n\x04\x63ode\x18\x01 \x01(\x0e\x32 .failure_details.TestAction.Code\"\xd7\x01\n\x04\x43ode\x12\x1e\n\x13TEST_ACTION_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12%\n\x1aNO_KEEP_GOING_TEST_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\"\n\x17LOCAL_TEST_PREREQ_UNMET\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x43OMMAND_LINE_EXPANSION_FAILURE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x44UPLICATE_CPU_TAGS\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fINVALID_CPU_TAG\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\"\xf1\x03\n\x06Worker\x12*\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1c.failure_details.Worker.Code\"\xba\x03\n\x04\x43ode\x12\x19\n\x0eWORKER_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12/\n$MULTIPLEXER_INSTANCE_REMOVAL_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aMULTIPLEXER_DOES_NOT_EXIST\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x13\n\x08NO_TOOLS\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bNO_FLAGFILE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x30\n%VIRTUAL_INPUT_MATERIALIZATION_FAILURE\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x42ORROW_FAILURE\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10PREFETCH_FAILURE\x10\x07\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0fPREPARE_FAILURE\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fREQUEST_FAILURE\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16PARSE_RESPONSE_FAILURE\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bNO_RESPONSE\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x46INISH_FAILURE\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x46ORBIDDEN_INPUT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\"\xbe\x06\n\x08\x41nalysis\x12,\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1e.failure_details.Analysis.Code\"\x83\x06\n\x04\x43ode\x12\x1b\n\x10\x41NALYSIS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x17\n\x0cLOAD_FAILURE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dGENERIC_LOADING_PHASE_FAILURE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18NOT_ALL_TARGETS_ANALYZED\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x10\n\x05\x43YCLE\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x31\n&PARAMETERIZED_TOP_LEVEL_ASPECT_INVALID\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12$\n\x19\x41SPECT_LABEL_SYNTAX_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13\x41SPECT_PREREQ_UNMET\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10\x41SPECT_NOT_FOUND\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0f\x41\x43TION_CONFLICT\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x41RTIFACT_PREFIX_CONFLICT\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dUNEXPECTED_ANALYSIS_EXCEPTION\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1cTARGETS_MISSING_ENVIRONMENTS\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13INVALID_ENVIRONMENT\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12*\n\x1f\x45NVIRONMENT_MISSING_FROM_GROUPS\x10\x0e\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x45XEC_GROUP_MISSING\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aINVALID_EXECUTION_PLATFORM\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16\x41SPECT_CREATION_FAILED\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12+\n CONFIGURED_VALUE_CREATION_FAILED\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dINCOMPATIBLE_TARGET_REQUESTED\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#ANALYSIS_FAILURE_PROPAGATION_FAILED\x10\x14\x1a\x05\xb2\x43\x02\x08\x01\"\xb8\t\n\x0ePackageLoading\x12\x32\n\x04\x63ode\x18\x01 \x01(\x0e\x32$.failure_details.PackageLoading.Code\"\xf1\x08\n\x04\x43ode\x12\"\n\x17PACKAGE_LOADING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1f\n\x14WORKSPACE_FILE_ERROR\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eMAX_COMPUTATION_STEPS_EXCEEDED\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12\x42UILD_FILE_MISSING\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12REPOSITORY_MISSING\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\x33\n(PERSISTENT_INCONSISTENT_FILESYSTEM_ERROR\x10\x05\x1a\x05\xb2\x43\x02\x08$\x12\x32\n\'TRANSIENT_INCONSISTENT_FILESYSTEM_ERROR\x10\x06\x1a\x05\xb2\x43\x02\x08$\x12\x17\n\x0cINVALID_NAME\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x45VAL_GLOBS_SYMLINK_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1aIMPORT_STARLARK_FILE_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x01\x12\x1a\n\x0fPACKAGE_MISSING\x10\x0b\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0eTARGET_MISSING\x10\x0c\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rNO_SUCH_THING\x10\r\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11GLOB_IO_EXCEPTION\x10\x0e\x1a\x05\xb2\x43\x02\x08$\x12\x1a\n\x0f\x44UPLICATE_LABEL\x10\x0f\x1a\x05\xb2\x43\x02\x08\x01\x12(\n\x1dINVALID_PACKAGE_SPECIFICATION\x10\x10\x1a\x05\xb2\x43\x02\x08\x01\x12\x17\n\x0cSYNTAX_ERROR\x10\x11\x1a\x05\xb2\x43\x02\x08\x01\x12+\n ENVIRONMENT_IN_DIFFERENT_PACKAGE\x10\x12\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x44\x45\x46\x41ULT_ENVIRONMENT_UNDECLARED\x10\x13\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1e\x45NVIRONMENT_IN_MULTIPLE_GROUPS\x10\x14\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x45NVIRONMENT_DOES_NOT_EXIST\x10\x15\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13\x45NVIRONMENT_INVALID\x10\x16\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18\x45NVIRONMENT_NOT_IN_GROUP\x10\x17\x1a\x05\xb2\x43\x02\x08\x01\x12\x1f\n\x14PACKAGE_NAME_INVALID\x10\x18\x1a\x05\xb2\x43\x02\x08\x01\x12\x1e\n\x13STARLARK_EVAL_ERROR\x10\x19\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15LICENSE_PARSE_FAILURE\x10\x1a\x1a\x05\xb2\x43\x02\x08\x01\x12&\n\x1b\x44ISTRIBUTIONS_PARSE_FAILURE\x10\x1b\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eLABEL_CROSSES_PACKAGE_BOUNDARY\x10\x1c\x1a\x05\xb2\x43\x02\x08\x01\x12%\n\x1a\x42UILTINS_INJECTION_FAILURE\x10\x1d\x1a\x05\xb2\x43\x02\x08\x01\x12.\n#SYMLINK_CYCLE_OR_INFINITE_EXPANSION\x10\x1e\x1a\x05\xb2\x43\x02\x08\x01\x12\x1d\n\x12OTHER_IO_EXCEPTION\x10\x1f\x1a\x05\xb2\x43\x02\x08$\"\x04\x08\x08\x10\x08\"\xd4\x02\n\tToolchain\x12-\n\x04\x63ode\x18\x01 \x01(\x0e\x32\x1f.failure_details.Toolchain.Code\"\x97\x02\n\x04\x43ode\x12\x1c\n\x11TOOLCHAIN_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MISSING_PROVIDER\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12#\n\x18INVALID_CONSTRAINT_VALUE\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16INVALID_PLATFORM_VALUE\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11INVALID_TOOLCHAIN\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eNO_MATCHING_EXECUTION_PLATFORM\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12 \n\x15NO_MATCHING_TOOLCHAIN\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12!\n\x16INVALID_TOOLCHAIN_TYPE\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\"\x8e\x03\n\x0fStarlarkLoading\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.StarlarkLoading.Code\"\xc5\x02\n\x04\x43ode\x12#\n\x18STARLARK_LOADING_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x10\n\x05\x43YCLE\x10\x01\x1a\x05\xb2\x43\x02\x08\x01\x12\x18\n\rCOMPILE_ERROR\x10\x02\x1a\x05\xb2\x43\x02\x08\x01\x12\x16\n\x0bPARSE_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x01\x12\x15\n\nEVAL_ERROR\x10\x04\x1a\x05\xb2\x43\x02\x08\x01\x12\'\n\x1c\x43ONTAINING_PACKAGE_NOT_FOUND\x10\x05\x1a\x05\xb2\x43\x02\x08\x01\x12\x1c\n\x11PACKAGE_NOT_FOUND\x10\x06\x1a\x05\xb2\x43\x02\x08\x01\x12\x13\n\x08IO_ERROR\x10\x07\x1a\x05\xb2\x43\x02\x08\x01\x12)\n\x1eLABEL_CROSSES_PACKAGE_BOUNDARY\x10\x08\x1a\x05\xb2\x43\x02\x08\x01\x12\x19\n\x0e\x42UILTINS_ERROR\x10\t\x1a\x05\xb2\x43\x02\x08\x01\x12\x1b\n\x10VISIBILITY_ERROR\x10\n\x1a\x05\xb2\x43\x02\x08\x01\"\x8a\x02\n\x0c\x45xternalDeps\x12\x30\n\x04\x63ode\x18\x01 \x01(\x0e\x32\".failure_details.ExternalDeps.Code\"\xc7\x01\n\x04\x43ode\x12 \n\x15\x45XTERNAL_DEPS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10MODULE_NOT_FOUND\x10\x01\x1a\x05\xb2\x43\x02\x08\x30\x12\x15\n\nBAD_MODULE\x10\x02\x1a\x05\xb2\x43\x02\x08\x30\x12#\n\x18VERSION_RESOLUTION_ERROR\x10\x03\x1a\x05\xb2\x43\x02\x08\x30\x12\x1f\n\x14INVALID_REGISTRY_URL\x10\x04\x1a\x05\xb2\x43\x02\x08\x30\x12#\n\x18\x45RROR_ACCESSING_REGISTRY\x10\x05\x1a\x05\xb2\x43\x02\x08 \"\x8a\x01\n\rDiffAwareness\x12\x31\n\x04\x63ode\x18\x01 \x01(\x0e\x32#.failure_details.DiffAwareness.Code\"F\n\x04\x43ode\x12!\n\x16\x44IFF_AWARENESS_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1b\n\x10\x44IFF_STAT_FAILED\x10\x01\x1a\x05\xb2\x43\x02\x08$\"\xcf\x01\n\x0fModqueryCommand\x12\x33\n\x04\x63ode\x18\x01 \x01(\x0e\x32%.failure_details.ModqueryCommand.Code\"\x86\x01\n\x04\x43ode\x12#\n\x18MODQUERY_COMMAND_UNKNOWN\x10\x00\x1a\x05\xb2\x43\x02\x08%\x12\x1c\n\x11MISSING_ARGUMENTS\x10\x01\x1a\x05\xb2\x43\x02\x08\x02\x12\x1d\n\x12TOO_MANY_ARGUMENTS\x10\x02\x1a\x05\xb2\x43\x02\x08\x02\x12\x1c\n\x11INVALID_ARGUMENTS\x10\x03\x1a\x05\xb2\x43\x02\x08\x02:\\\n\x08metadata\x12!.google.protobuf.EnumValueOptions\x18\xb6\x08 \x01(\x0b\x32&.failure_details.FailureDetailMetadataB&\n$com.google.devtools.build.lib.serverb\x06proto3')
 
-
-METADATA_FIELD_NUMBER = 1078
-metadata = DESCRIPTOR.extensions_by_name['metadata']
-
-_FAILUREDETAILMETADATA = DESCRIPTOR.message_types_by_name['FailureDetailMetadata']
-_FAILUREDETAIL = DESCRIPTOR.message_types_by_name['FailureDetail']
-_INTERRUPTED = DESCRIPTOR.message_types_by_name['Interrupted']
-_SPAWN = DESCRIPTOR.message_types_by_name['Spawn']
-_EXTERNALREPOSITORY = DESCRIPTOR.message_types_by_name['ExternalRepository']
-_BUILDPROGRESS = DESCRIPTOR.message_types_by_name['BuildProgress']
-_REMOTEOPTIONS = DESCRIPTOR.message_types_by_name['RemoteOptions']
-_CLIENTENVIRONMENT = DESCRIPTOR.message_types_by_name['ClientEnvironment']
-_CRASH = DESCRIPTOR.message_types_by_name['Crash']
-_THROWABLE = DESCRIPTOR.message_types_by_name['Throwable']
-_SYMLINKFOREST = DESCRIPTOR.message_types_by_name['SymlinkForest']
-_PACKAGEOPTIONS = DESCRIPTOR.message_types_by_name['PackageOptions']
-_REMOTEEXECUTION = DESCRIPTOR.message_types_by_name['RemoteExecution']
-_EXECUTION = DESCRIPTOR.message_types_by_name['Execution']
-_WORKSPACES = DESCRIPTOR.message_types_by_name['Workspaces']
-_CRASHOPTIONS = DESCRIPTOR.message_types_by_name['CrashOptions']
-_FILESYSTEM = DESCRIPTOR.message_types_by_name['Filesystem']
-_EXECUTIONOPTIONS = DESCRIPTOR.message_types_by_name['ExecutionOptions']
-_COMMAND = DESCRIPTOR.message_types_by_name['Command']
-_GRPCSERVER = DESCRIPTOR.message_types_by_name['GrpcServer']
-_CANONICALIZEFLAGS = DESCRIPTOR.message_types_by_name['CanonicalizeFlags']
-_BUILDCONFIGURATION = DESCRIPTOR.message_types_by_name['BuildConfiguration']
-_INFOCOMMAND = DESCRIPTOR.message_types_by_name['InfoCommand']
-_MEMORYOPTIONS = DESCRIPTOR.message_types_by_name['MemoryOptions']
-_QUERY = DESCRIPTOR.message_types_by_name['Query']
-_LOCALEXECUTION = DESCRIPTOR.message_types_by_name['LocalExecution']
-_ACTIONCACHE = DESCRIPTOR.message_types_by_name['ActionCache']
-_FETCHCOMMAND = DESCRIPTOR.message_types_by_name['FetchCommand']
-_SYNCCOMMAND = DESCRIPTOR.message_types_by_name['SyncCommand']
-_SANDBOX = DESCRIPTOR.message_types_by_name['Sandbox']
-_INCLUDESCANNING = DESCRIPTOR.message_types_by_name['IncludeScanning']
-_TESTCOMMAND = DESCRIPTOR.message_types_by_name['TestCommand']
-_ACTIONQUERY = DESCRIPTOR.message_types_by_name['ActionQuery']
-_TARGETPATTERNS = DESCRIPTOR.message_types_by_name['TargetPatterns']
-_CLEANCOMMAND = DESCRIPTOR.message_types_by_name['CleanCommand']
-_CONFIGCOMMAND = DESCRIPTOR.message_types_by_name['ConfigCommand']
-_CONFIGURABLEQUERY = DESCRIPTOR.message_types_by_name['ConfigurableQuery']
-_DUMPCOMMAND = DESCRIPTOR.message_types_by_name['DumpCommand']
-_HELPCOMMAND = DESCRIPTOR.message_types_by_name['HelpCommand']
-_MOBILEINSTALL = DESCRIPTOR.message_types_by_name['MobileInstall']
-_PROFILECOMMAND = DESCRIPTOR.message_types_by_name['ProfileCommand']
-_RUNCOMMAND = DESCRIPTOR.message_types_by_name['RunCommand']
-_VERSIONCOMMAND = DESCRIPTOR.message_types_by_name['VersionCommand']
-_PRINTACTIONCOMMAND = DESCRIPTOR.message_types_by_name['PrintActionCommand']
-_WORKSPACESTATUS = DESCRIPTOR.message_types_by_name['WorkspaceStatus']
-_JAVACOMPILE = DESCRIPTOR.message_types_by_name['JavaCompile']
-_ACTIONREWINDING = DESCRIPTOR.message_types_by_name['ActionRewinding']
-_CPPCOMPILE = DESCRIPTOR.message_types_by_name['CppCompile']
-_STARLARKACTION = DESCRIPTOR.message_types_by_name['StarlarkAction']
-_NINJAACTION = DESCRIPTOR.message_types_by_name['NinjaAction']
-_DYNAMICEXECUTION = DESCRIPTOR.message_types_by_name['DynamicExecution']
-_FAILACTION = DESCRIPTOR.message_types_by_name['FailAction']
-_SYMLINKACTION = DESCRIPTOR.message_types_by_name['SymlinkAction']
-_CPPLINK = DESCRIPTOR.message_types_by_name['CppLink']
-_LTOACTION = DESCRIPTOR.message_types_by_name['LtoAction']
-_TESTACTION = DESCRIPTOR.message_types_by_name['TestAction']
-_WORKER = DESCRIPTOR.message_types_by_name['Worker']
-_ANALYSIS = DESCRIPTOR.message_types_by_name['Analysis']
-_PACKAGELOADING = DESCRIPTOR.message_types_by_name['PackageLoading']
-_TOOLCHAIN = DESCRIPTOR.message_types_by_name['Toolchain']
-_STARLARKLOADING = DESCRIPTOR.message_types_by_name['StarlarkLoading']
-_EXTERNALDEPS = DESCRIPTOR.message_types_by_name['ExternalDeps']
-_DIFFAWARENESS = DESCRIPTOR.message_types_by_name['DiffAwareness']
-_MODQUERYCOMMAND = DESCRIPTOR.message_types_by_name['ModqueryCommand']
-_INTERRUPTED_CODE = _INTERRUPTED.enum_types_by_name['Code']
-_SPAWN_CODE = _SPAWN.enum_types_by_name['Code']
-_EXTERNALREPOSITORY_CODE = _EXTERNALREPOSITORY.enum_types_by_name['Code']
-_BUILDPROGRESS_CODE = _BUILDPROGRESS.enum_types_by_name['Code']
-_REMOTEOPTIONS_CODE = _REMOTEOPTIONS.enum_types_by_name['Code']
-_CLIENTENVIRONMENT_CODE = _CLIENTENVIRONMENT.enum_types_by_name['Code']
-_CRASH_CODE = _CRASH.enum_types_by_name['Code']
-_SYMLINKFOREST_CODE = _SYMLINKFOREST.enum_types_by_name['Code']
-_PACKAGEOPTIONS_CODE = _PACKAGEOPTIONS.enum_types_by_name['Code']
-_REMOTEEXECUTION_CODE = _REMOTEEXECUTION.enum_types_by_name['Code']
-_EXECUTION_CODE = _EXECUTION.enum_types_by_name['Code']
-_WORKSPACES_CODE = _WORKSPACES.enum_types_by_name['Code']
-_CRASHOPTIONS_CODE = _CRASHOPTIONS.enum_types_by_name['Code']
-_FILESYSTEM_CODE = _FILESYSTEM.enum_types_by_name['Code']
-_EXECUTIONOPTIONS_CODE = _EXECUTIONOPTIONS.enum_types_by_name['Code']
-_COMMAND_CODE = _COMMAND.enum_types_by_name['Code']
-_GRPCSERVER_CODE = _GRPCSERVER.enum_types_by_name['Code']
-_CANONICALIZEFLAGS_CODE = _CANONICALIZEFLAGS.enum_types_by_name['Code']
-_BUILDCONFIGURATION_CODE = _BUILDCONFIGURATION.enum_types_by_name['Code']
-_INFOCOMMAND_CODE = _INFOCOMMAND.enum_types_by_name['Code']
-_MEMORYOPTIONS_CODE = _MEMORYOPTIONS.enum_types_by_name['Code']
-_QUERY_CODE = _QUERY.enum_types_by_name['Code']
-_LOCALEXECUTION_CODE = _LOCALEXECUTION.enum_types_by_name['Code']
-_ACTIONCACHE_CODE = _ACTIONCACHE.enum_types_by_name['Code']
-_FETCHCOMMAND_CODE = _FETCHCOMMAND.enum_types_by_name['Code']
-_SYNCCOMMAND_CODE = _SYNCCOMMAND.enum_types_by_name['Code']
-_SANDBOX_CODE = _SANDBOX.enum_types_by_name['Code']
-_INCLUDESCANNING_CODE = _INCLUDESCANNING.enum_types_by_name['Code']
-_TESTCOMMAND_CODE = _TESTCOMMAND.enum_types_by_name['Code']
-_ACTIONQUERY_CODE = _ACTIONQUERY.enum_types_by_name['Code']
-_TARGETPATTERNS_CODE = _TARGETPATTERNS.enum_types_by_name['Code']
-_CLEANCOMMAND_CODE = _CLEANCOMMAND.enum_types_by_name['Code']
-_CONFIGCOMMAND_CODE = _CONFIGCOMMAND.enum_types_by_name['Code']
-_CONFIGURABLEQUERY_CODE = _CONFIGURABLEQUERY.enum_types_by_name['Code']
-_DUMPCOMMAND_CODE = _DUMPCOMMAND.enum_types_by_name['Code']
-_HELPCOMMAND_CODE = _HELPCOMMAND.enum_types_by_name['Code']
-_MOBILEINSTALL_CODE = _MOBILEINSTALL.enum_types_by_name['Code']
-_PROFILECOMMAND_CODE = _PROFILECOMMAND.enum_types_by_name['Code']
-_RUNCOMMAND_CODE = _RUNCOMMAND.enum_types_by_name['Code']
-_VERSIONCOMMAND_CODE = _VERSIONCOMMAND.enum_types_by_name['Code']
-_PRINTACTIONCOMMAND_CODE = _PRINTACTIONCOMMAND.enum_types_by_name['Code']
-_WORKSPACESTATUS_CODE = _WORKSPACESTATUS.enum_types_by_name['Code']
-_JAVACOMPILE_CODE = _JAVACOMPILE.enum_types_by_name['Code']
-_ACTIONREWINDING_CODE = _ACTIONREWINDING.enum_types_by_name['Code']
-_CPPCOMPILE_CODE = _CPPCOMPILE.enum_types_by_name['Code']
-_STARLARKACTION_CODE = _STARLARKACTION.enum_types_by_name['Code']
-_NINJAACTION_CODE = _NINJAACTION.enum_types_by_name['Code']
-_DYNAMICEXECUTION_CODE = _DYNAMICEXECUTION.enum_types_by_name['Code']
-_FAILACTION_CODE = _FAILACTION.enum_types_by_name['Code']
-_SYMLINKACTION_CODE = _SYMLINKACTION.enum_types_by_name['Code']
-_CPPLINK_CODE = _CPPLINK.enum_types_by_name['Code']
-_LTOACTION_CODE = _LTOACTION.enum_types_by_name['Code']
-_TESTACTION_CODE = _TESTACTION.enum_types_by_name['Code']
-_WORKER_CODE = _WORKER.enum_types_by_name['Code']
-_ANALYSIS_CODE = _ANALYSIS.enum_types_by_name['Code']
-_PACKAGELOADING_CODE = _PACKAGELOADING.enum_types_by_name['Code']
-_TOOLCHAIN_CODE = _TOOLCHAIN.enum_types_by_name['Code']
-_STARLARKLOADING_CODE = _STARLARKLOADING.enum_types_by_name['Code']
-_EXTERNALDEPS_CODE = _EXTERNALDEPS.enum_types_by_name['Code']
-_DIFFAWARENESS_CODE = _DIFFAWARENESS.enum_types_by_name['Code']
-_MODQUERYCOMMAND_CODE = _MODQUERYCOMMAND.enum_types_by_name['Code']
-FailureDetailMetadata = _reflection.GeneratedProtocolMessageType('FailureDetailMetadata', (_message.Message,), {
-  'DESCRIPTOR' : _FAILUREDETAILMETADATA,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.FailureDetailMetadata)
-  })
-_sym_db.RegisterMessage(FailureDetailMetadata)
-
-FailureDetail = _reflection.GeneratedProtocolMessageType('FailureDetail', (_message.Message,), {
-  'DESCRIPTOR' : _FAILUREDETAIL,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.FailureDetail)
-  })
-_sym_db.RegisterMessage(FailureDetail)
-
-Interrupted = _reflection.GeneratedProtocolMessageType('Interrupted', (_message.Message,), {
-  'DESCRIPTOR' : _INTERRUPTED,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Interrupted)
-  })
-_sym_db.RegisterMessage(Interrupted)
-
-Spawn = _reflection.GeneratedProtocolMessageType('Spawn', (_message.Message,), {
-  'DESCRIPTOR' : _SPAWN,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Spawn)
-  })
-_sym_db.RegisterMessage(Spawn)
-
-ExternalRepository = _reflection.GeneratedProtocolMessageType('ExternalRepository', (_message.Message,), {
-  'DESCRIPTOR' : _EXTERNALREPOSITORY,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ExternalRepository)
-  })
-_sym_db.RegisterMessage(ExternalRepository)
-
-BuildProgress = _reflection.GeneratedProtocolMessageType('BuildProgress', (_message.Message,), {
-  'DESCRIPTOR' : _BUILDPROGRESS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.BuildProgress)
-  })
-_sym_db.RegisterMessage(BuildProgress)
-
-RemoteOptions = _reflection.GeneratedProtocolMessageType('RemoteOptions', (_message.Message,), {
-  'DESCRIPTOR' : _REMOTEOPTIONS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.RemoteOptions)
-  })
-_sym_db.RegisterMessage(RemoteOptions)
-
-ClientEnvironment = _reflection.GeneratedProtocolMessageType('ClientEnvironment', (_message.Message,), {
-  'DESCRIPTOR' : _CLIENTENVIRONMENT,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ClientEnvironment)
-  })
-_sym_db.RegisterMessage(ClientEnvironment)
-
-Crash = _reflection.GeneratedProtocolMessageType('Crash', (_message.Message,), {
-  'DESCRIPTOR' : _CRASH,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Crash)
-  })
-_sym_db.RegisterMessage(Crash)
-
-Throwable = _reflection.GeneratedProtocolMessageType('Throwable', (_message.Message,), {
-  'DESCRIPTOR' : _THROWABLE,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Throwable)
-  })
-_sym_db.RegisterMessage(Throwable)
-
-SymlinkForest = _reflection.GeneratedProtocolMessageType('SymlinkForest', (_message.Message,), {
-  'DESCRIPTOR' : _SYMLINKFOREST,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.SymlinkForest)
-  })
-_sym_db.RegisterMessage(SymlinkForest)
-
-PackageOptions = _reflection.GeneratedProtocolMessageType('PackageOptions', (_message.Message,), {
-  'DESCRIPTOR' : _PACKAGEOPTIONS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.PackageOptions)
-  })
-_sym_db.RegisterMessage(PackageOptions)
-
-RemoteExecution = _reflection.GeneratedProtocolMessageType('RemoteExecution', (_message.Message,), {
-  'DESCRIPTOR' : _REMOTEEXECUTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.RemoteExecution)
-  })
-_sym_db.RegisterMessage(RemoteExecution)
-
-Execution = _reflection.GeneratedProtocolMessageType('Execution', (_message.Message,), {
-  'DESCRIPTOR' : _EXECUTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Execution)
-  })
-_sym_db.RegisterMessage(Execution)
-
-Workspaces = _reflection.GeneratedProtocolMessageType('Workspaces', (_message.Message,), {
-  'DESCRIPTOR' : _WORKSPACES,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Workspaces)
-  })
-_sym_db.RegisterMessage(Workspaces)
-
-CrashOptions = _reflection.GeneratedProtocolMessageType('CrashOptions', (_message.Message,), {
-  'DESCRIPTOR' : _CRASHOPTIONS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.CrashOptions)
-  })
-_sym_db.RegisterMessage(CrashOptions)
-
-Filesystem = _reflection.GeneratedProtocolMessageType('Filesystem', (_message.Message,), {
-  'DESCRIPTOR' : _FILESYSTEM,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Filesystem)
-  })
-_sym_db.RegisterMessage(Filesystem)
-
-ExecutionOptions = _reflection.GeneratedProtocolMessageType('ExecutionOptions', (_message.Message,), {
-  'DESCRIPTOR' : _EXECUTIONOPTIONS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ExecutionOptions)
-  })
-_sym_db.RegisterMessage(ExecutionOptions)
-
-Command = _reflection.GeneratedProtocolMessageType('Command', (_message.Message,), {
-  'DESCRIPTOR' : _COMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Command)
-  })
-_sym_db.RegisterMessage(Command)
-
-GrpcServer = _reflection.GeneratedProtocolMessageType('GrpcServer', (_message.Message,), {
-  'DESCRIPTOR' : _GRPCSERVER,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.GrpcServer)
-  })
-_sym_db.RegisterMessage(GrpcServer)
-
-CanonicalizeFlags = _reflection.GeneratedProtocolMessageType('CanonicalizeFlags', (_message.Message,), {
-  'DESCRIPTOR' : _CANONICALIZEFLAGS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.CanonicalizeFlags)
-  })
-_sym_db.RegisterMessage(CanonicalizeFlags)
-
-BuildConfiguration = _reflection.GeneratedProtocolMessageType('BuildConfiguration', (_message.Message,), {
-  'DESCRIPTOR' : _BUILDCONFIGURATION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.BuildConfiguration)
-  })
-_sym_db.RegisterMessage(BuildConfiguration)
-
-InfoCommand = _reflection.GeneratedProtocolMessageType('InfoCommand', (_message.Message,), {
-  'DESCRIPTOR' : _INFOCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.InfoCommand)
-  })
-_sym_db.RegisterMessage(InfoCommand)
-
-MemoryOptions = _reflection.GeneratedProtocolMessageType('MemoryOptions', (_message.Message,), {
-  'DESCRIPTOR' : _MEMORYOPTIONS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.MemoryOptions)
-  })
-_sym_db.RegisterMessage(MemoryOptions)
-
-Query = _reflection.GeneratedProtocolMessageType('Query', (_message.Message,), {
-  'DESCRIPTOR' : _QUERY,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Query)
-  })
-_sym_db.RegisterMessage(Query)
-
-LocalExecution = _reflection.GeneratedProtocolMessageType('LocalExecution', (_message.Message,), {
-  'DESCRIPTOR' : _LOCALEXECUTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.LocalExecution)
-  })
-_sym_db.RegisterMessage(LocalExecution)
-
-ActionCache = _reflection.GeneratedProtocolMessageType('ActionCache', (_message.Message,), {
-  'DESCRIPTOR' : _ACTIONCACHE,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ActionCache)
-  })
-_sym_db.RegisterMessage(ActionCache)
-
-FetchCommand = _reflection.GeneratedProtocolMessageType('FetchCommand', (_message.Message,), {
-  'DESCRIPTOR' : _FETCHCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.FetchCommand)
-  })
-_sym_db.RegisterMessage(FetchCommand)
-
-SyncCommand = _reflection.GeneratedProtocolMessageType('SyncCommand', (_message.Message,), {
-  'DESCRIPTOR' : _SYNCCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.SyncCommand)
-  })
-_sym_db.RegisterMessage(SyncCommand)
-
-Sandbox = _reflection.GeneratedProtocolMessageType('Sandbox', (_message.Message,), {
-  'DESCRIPTOR' : _SANDBOX,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Sandbox)
-  })
-_sym_db.RegisterMessage(Sandbox)
-
-IncludeScanning = _reflection.GeneratedProtocolMessageType('IncludeScanning', (_message.Message,), {
-  'DESCRIPTOR' : _INCLUDESCANNING,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.IncludeScanning)
-  })
-_sym_db.RegisterMessage(IncludeScanning)
-
-TestCommand = _reflection.GeneratedProtocolMessageType('TestCommand', (_message.Message,), {
-  'DESCRIPTOR' : _TESTCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.TestCommand)
-  })
-_sym_db.RegisterMessage(TestCommand)
-
-ActionQuery = _reflection.GeneratedProtocolMessageType('ActionQuery', (_message.Message,), {
-  'DESCRIPTOR' : _ACTIONQUERY,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ActionQuery)
-  })
-_sym_db.RegisterMessage(ActionQuery)
-
-TargetPatterns = _reflection.GeneratedProtocolMessageType('TargetPatterns', (_message.Message,), {
-  'DESCRIPTOR' : _TARGETPATTERNS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.TargetPatterns)
-  })
-_sym_db.RegisterMessage(TargetPatterns)
-
-CleanCommand = _reflection.GeneratedProtocolMessageType('CleanCommand', (_message.Message,), {
-  'DESCRIPTOR' : _CLEANCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.CleanCommand)
-  })
-_sym_db.RegisterMessage(CleanCommand)
-
-ConfigCommand = _reflection.GeneratedProtocolMessageType('ConfigCommand', (_message.Message,), {
-  'DESCRIPTOR' : _CONFIGCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ConfigCommand)
-  })
-_sym_db.RegisterMessage(ConfigCommand)
-
-ConfigurableQuery = _reflection.GeneratedProtocolMessageType('ConfigurableQuery', (_message.Message,), {
-  'DESCRIPTOR' : _CONFIGURABLEQUERY,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ConfigurableQuery)
-  })
-_sym_db.RegisterMessage(ConfigurableQuery)
-
-DumpCommand = _reflection.GeneratedProtocolMessageType('DumpCommand', (_message.Message,), {
-  'DESCRIPTOR' : _DUMPCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.DumpCommand)
-  })
-_sym_db.RegisterMessage(DumpCommand)
-
-HelpCommand = _reflection.GeneratedProtocolMessageType('HelpCommand', (_message.Message,), {
-  'DESCRIPTOR' : _HELPCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.HelpCommand)
-  })
-_sym_db.RegisterMessage(HelpCommand)
-
-MobileInstall = _reflection.GeneratedProtocolMessageType('MobileInstall', (_message.Message,), {
-  'DESCRIPTOR' : _MOBILEINSTALL,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.MobileInstall)
-  })
-_sym_db.RegisterMessage(MobileInstall)
-
-ProfileCommand = _reflection.GeneratedProtocolMessageType('ProfileCommand', (_message.Message,), {
-  'DESCRIPTOR' : _PROFILECOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ProfileCommand)
-  })
-_sym_db.RegisterMessage(ProfileCommand)
-
-RunCommand = _reflection.GeneratedProtocolMessageType('RunCommand', (_message.Message,), {
-  'DESCRIPTOR' : _RUNCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.RunCommand)
-  })
-_sym_db.RegisterMessage(RunCommand)
-
-VersionCommand = _reflection.GeneratedProtocolMessageType('VersionCommand', (_message.Message,), {
-  'DESCRIPTOR' : _VERSIONCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.VersionCommand)
-  })
-_sym_db.RegisterMessage(VersionCommand)
-
-PrintActionCommand = _reflection.GeneratedProtocolMessageType('PrintActionCommand', (_message.Message,), {
-  'DESCRIPTOR' : _PRINTACTIONCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.PrintActionCommand)
-  })
-_sym_db.RegisterMessage(PrintActionCommand)
-
-WorkspaceStatus = _reflection.GeneratedProtocolMessageType('WorkspaceStatus', (_message.Message,), {
-  'DESCRIPTOR' : _WORKSPACESTATUS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.WorkspaceStatus)
-  })
-_sym_db.RegisterMessage(WorkspaceStatus)
-
-JavaCompile = _reflection.GeneratedProtocolMessageType('JavaCompile', (_message.Message,), {
-  'DESCRIPTOR' : _JAVACOMPILE,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.JavaCompile)
-  })
-_sym_db.RegisterMessage(JavaCompile)
-
-ActionRewinding = _reflection.GeneratedProtocolMessageType('ActionRewinding', (_message.Message,), {
-  'DESCRIPTOR' : _ACTIONREWINDING,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ActionRewinding)
-  })
-_sym_db.RegisterMessage(ActionRewinding)
-
-CppCompile = _reflection.GeneratedProtocolMessageType('CppCompile', (_message.Message,), {
-  'DESCRIPTOR' : _CPPCOMPILE,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.CppCompile)
-  })
-_sym_db.RegisterMessage(CppCompile)
-
-StarlarkAction = _reflection.GeneratedProtocolMessageType('StarlarkAction', (_message.Message,), {
-  'DESCRIPTOR' : _STARLARKACTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.StarlarkAction)
-  })
-_sym_db.RegisterMessage(StarlarkAction)
-
-NinjaAction = _reflection.GeneratedProtocolMessageType('NinjaAction', (_message.Message,), {
-  'DESCRIPTOR' : _NINJAACTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.NinjaAction)
-  })
-_sym_db.RegisterMessage(NinjaAction)
-
-DynamicExecution = _reflection.GeneratedProtocolMessageType('DynamicExecution', (_message.Message,), {
-  'DESCRIPTOR' : _DYNAMICEXECUTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.DynamicExecution)
-  })
-_sym_db.RegisterMessage(DynamicExecution)
-
-FailAction = _reflection.GeneratedProtocolMessageType('FailAction', (_message.Message,), {
-  'DESCRIPTOR' : _FAILACTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.FailAction)
-  })
-_sym_db.RegisterMessage(FailAction)
-
-SymlinkAction = _reflection.GeneratedProtocolMessageType('SymlinkAction', (_message.Message,), {
-  'DESCRIPTOR' : _SYMLINKACTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.SymlinkAction)
-  })
-_sym_db.RegisterMessage(SymlinkAction)
-
-CppLink = _reflection.GeneratedProtocolMessageType('CppLink', (_message.Message,), {
-  'DESCRIPTOR' : _CPPLINK,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.CppLink)
-  })
-_sym_db.RegisterMessage(CppLink)
-
-LtoAction = _reflection.GeneratedProtocolMessageType('LtoAction', (_message.Message,), {
-  'DESCRIPTOR' : _LTOACTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.LtoAction)
-  })
-_sym_db.RegisterMessage(LtoAction)
-
-TestAction = _reflection.GeneratedProtocolMessageType('TestAction', (_message.Message,), {
-  'DESCRIPTOR' : _TESTACTION,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.TestAction)
-  })
-_sym_db.RegisterMessage(TestAction)
-
-Worker = _reflection.GeneratedProtocolMessageType('Worker', (_message.Message,), {
-  'DESCRIPTOR' : _WORKER,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Worker)
-  })
-_sym_db.RegisterMessage(Worker)
-
-Analysis = _reflection.GeneratedProtocolMessageType('Analysis', (_message.Message,), {
-  'DESCRIPTOR' : _ANALYSIS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Analysis)
-  })
-_sym_db.RegisterMessage(Analysis)
-
-PackageLoading = _reflection.GeneratedProtocolMessageType('PackageLoading', (_message.Message,), {
-  'DESCRIPTOR' : _PACKAGELOADING,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.PackageLoading)
-  })
-_sym_db.RegisterMessage(PackageLoading)
-
-Toolchain = _reflection.GeneratedProtocolMessageType('Toolchain', (_message.Message,), {
-  'DESCRIPTOR' : _TOOLCHAIN,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.Toolchain)
-  })
-_sym_db.RegisterMessage(Toolchain)
-
-StarlarkLoading = _reflection.GeneratedProtocolMessageType('StarlarkLoading', (_message.Message,), {
-  'DESCRIPTOR' : _STARLARKLOADING,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.StarlarkLoading)
-  })
-_sym_db.RegisterMessage(StarlarkLoading)
-
-ExternalDeps = _reflection.GeneratedProtocolMessageType('ExternalDeps', (_message.Message,), {
-  'DESCRIPTOR' : _EXTERNALDEPS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ExternalDeps)
-  })
-_sym_db.RegisterMessage(ExternalDeps)
-
-DiffAwareness = _reflection.GeneratedProtocolMessageType('DiffAwareness', (_message.Message,), {
-  'DESCRIPTOR' : _DIFFAWARENESS,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.DiffAwareness)
-  })
-_sym_db.RegisterMessage(DiffAwareness)
-
-ModqueryCommand = _reflection.GeneratedProtocolMessageType('ModqueryCommand', (_message.Message,), {
-  'DESCRIPTOR' : _MODQUERYCOMMAND,
-  '__module__' : 'src.main.protobuf.failure_details_pb2'
-  # @@protoc_insertion_point(class_scope:failure_details.ModqueryCommand)
-  })
-_sym_db.RegisterMessage(ModqueryCommand)
-
+_builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'src.main.protobuf.failure_details_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
   google_dot_protobuf_dot_descriptor__pb2.EnumValueOptions.RegisterExtension(metadata)
 
@@ -674,12 +98,16 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _SPAWN_CODE.values_by_name["UNSPECIFIED_EXECUTION_FAILURE"]._serialized_options = b'\262C\002\010\001'
   _SPAWN_CODE.values_by_name["FORBIDDEN_INPUT"]._options = None
   _SPAWN_CODE.values_by_name["FORBIDDEN_INPUT"]._serialized_options = b'\262C\002\010\001'
+  _SPAWN_CODE.values_by_name["REMOTE_CACHE_EVICTED"]._options = None
+  _SPAWN_CODE.values_by_name["REMOTE_CACHE_EVICTED"]._serialized_options = b'\262C\002\010\''
   _EXTERNALREPOSITORY_CODE.values_by_name["EXTERNAL_REPOSITORY_UNKNOWN"]._options = None
   _EXTERNALREPOSITORY_CODE.values_by_name["EXTERNAL_REPOSITORY_UNKNOWN"]._serialized_options = b'\262C\002\010%'
   _EXTERNALREPOSITORY_CODE.values_by_name["OVERRIDE_DISALLOWED_MANAGED_DIRECTORIES"]._options = None
   _EXTERNALREPOSITORY_CODE.values_by_name["OVERRIDE_DISALLOWED_MANAGED_DIRECTORIES"]._serialized_options = b'\262C\002\010\002'
   _EXTERNALREPOSITORY_CODE.values_by_name["BAD_DOWNLOADER_CONFIG"]._options = None
   _EXTERNALREPOSITORY_CODE.values_by_name["BAD_DOWNLOADER_CONFIG"]._serialized_options = b'\262C\002\010\002'
+  _EXTERNALREPOSITORY_CODE.values_by_name["REPOSITORY_MAPPING_RESOLUTION_FAILED"]._options = None
+  _EXTERNALREPOSITORY_CODE.values_by_name["REPOSITORY_MAPPING_RESOLUTION_FAILED"]._serialized_options = b'\262C\002\010%'
   _BUILDPROGRESS_CODE.values_by_name["BUILD_PROGRESS_UNKNOWN"]._options = None
   _BUILDPROGRESS_CODE.values_by_name["BUILD_PROGRESS_UNKNOWN"]._serialized_options = b'\262C\002\010%'
   _BUILDPROGRESS_CODE.values_by_name["OUTPUT_INITIALIZATION"]._options = None
@@ -742,6 +170,12 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _SYMLINKFOREST_CODE.values_by_name["TOPLEVEL_OUTDIR_USED_AS_SOURCE"]._serialized_options = b'\262C\002\010\002'
   _SYMLINKFOREST_CODE.values_by_name["CREATION_FAILED"]._options = None
   _SYMLINKFOREST_CODE.values_by_name["CREATION_FAILED"]._serialized_options = b'\262C\002\010\002'
+  _BUILDREPORT_CODE.values_by_name["BUILD_REPORT_UNKNOWN"]._options = None
+  _BUILDREPORT_CODE.values_by_name["BUILD_REPORT_UNKNOWN"]._serialized_options = b'\262C\002\010%'
+  _BUILDREPORT_CODE.values_by_name["BUILD_REPORT_UPLOADER_NEEDS_PACKAGE_PATHS"]._options = None
+  _BUILDREPORT_CODE.values_by_name["BUILD_REPORT_UPLOADER_NEEDS_PACKAGE_PATHS"]._serialized_options = b'\262C\002\010$'
+  _BUILDREPORT_CODE.values_by_name["BUILD_REPORT_WRITE_FAILED"]._options = None
+  _BUILDREPORT_CODE.values_by_name["BUILD_REPORT_WRITE_FAILED"]._serialized_options = b'\262C\002\010$'
   _PACKAGEOPTIONS_CODE.values_by_name["PACKAGE_OPTIONS_UNKNOWN"]._options = None
   _PACKAGEOPTIONS_CODE.values_by_name["PACKAGE_OPTIONS_UNKNOWN"]._serialized_options = b'\262C\002\010%'
   _PACKAGEOPTIONS_CODE.values_by_name["PACKAGE_PATH_INVALID"]._options = None
@@ -978,8 +412,8 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _MEMORYOPTIONS_CODE.values_by_name["MEMORY_OPTIONS_UNKNOWN"]._serialized_options = b'\262C\002\010%'
   _MEMORYOPTIONS_CODE.values_by_name["EXPERIMENTAL_OOM_MORE_EAGERLY_THRESHOLD_INVALID_VALUE"]._options = None
   _MEMORYOPTIONS_CODE.values_by_name["EXPERIMENTAL_OOM_MORE_EAGERLY_THRESHOLD_INVALID_VALUE"]._serialized_options = b'\262C\002\010\002'
-  _MEMORYOPTIONS_CODE.values_by_name["EXPERIMENTAL_OOM_MORE_EAGERLY_NO_TENURED_COLLECTORS_FOUND"]._options = None
-  _MEMORYOPTIONS_CODE.values_by_name["EXPERIMENTAL_OOM_MORE_EAGERLY_NO_TENURED_COLLECTORS_FOUND"]._serialized_options = b'\262C\002\010\002'
+  _MEMORYOPTIONS_CODE.values_by_name["DEPRECATED_EXPERIMENTAL_OOM_MORE_EAGERLY_NO_TENURED_COLLECTORS_FOUND"]._options = None
+  _MEMORYOPTIONS_CODE.values_by_name["DEPRECATED_EXPERIMENTAL_OOM_MORE_EAGERLY_NO_TENURED_COLLECTORS_FOUND"]._serialized_options = b'\010\001\262C\002\010\002'
   _QUERY_CODE.values_by_name["QUERY_UNKNOWN"]._options = None
   _QUERY_CODE.values_by_name["QUERY_UNKNOWN"]._serialized_options = b'\262C\002\010%'
   _QUERY_CODE.values_by_name["QUERY_FILE_WITH_COMMAND_LINE_EXPRESSION"]._options = None
@@ -1542,6 +976,8 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _ANALYSIS_CODE.values_by_name["CONFIGURED_VALUE_CREATION_FAILED"]._serialized_options = b'\262C\002\010\001'
   _ANALYSIS_CODE.values_by_name["INCOMPATIBLE_TARGET_REQUESTED"]._options = None
   _ANALYSIS_CODE.values_by_name["INCOMPATIBLE_TARGET_REQUESTED"]._serialized_options = b'\262C\002\010\001'
+  _ANALYSIS_CODE.values_by_name["ANALYSIS_FAILURE_PROPAGATION_FAILED"]._options = None
+  _ANALYSIS_CODE.values_by_name["ANALYSIS_FAILURE_PROPAGATION_FAILED"]._serialized_options = b'\262C\002\010\001'
   _PACKAGELOADING_CODE.values_by_name["PACKAGE_LOADING_UNKNOWN"]._options = None
   _PACKAGELOADING_CODE.values_by_name["PACKAGE_LOADING_UNKNOWN"]._serialized_options = b'\262C\002\010%'
   _PACKAGELOADING_CODE.values_by_name["WORKSPACE_FILE_ERROR"]._options = None
@@ -1669,251 +1105,255 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _FAILUREDETAILMETADATA._serialized_start=94
   _FAILUREDETAILMETADATA._serialized_end=136
   _FAILUREDETAIL._serialized_start=139
-  _FAILUREDETAIL._serialized_end=3765
-  _INTERRUPTED._serialized_start=3768
-  _INTERRUPTED._serialized_end=4442
-  _INTERRUPTED_CODE._serialized_start=3833
-  _INTERRUPTED_CODE._serialized_end=4442
-  _SPAWN._serialized_start=4445
-  _SPAWN._serialized_end=4995
-  _SPAWN_CODE._serialized_start=4545
-  _SPAWN_CODE._serialized_end=4995
-  _EXTERNALREPOSITORY._serialized_start=4998
-  _EXTERNALREPOSITORY._serialized_end=5209
-  _EXTERNALREPOSITORY_CODE._serialized_start=5077
-  _EXTERNALREPOSITORY_CODE._serialized_end=5209
-  _BUILDPROGRESS._serialized_start=5212
-  _BUILDPROGRESS._serialized_end=6019
-  _BUILDPROGRESS_CODE._serialized_start=5281
-  _BUILDPROGRESS_CODE._serialized_end=6019
-  _REMOTEOPTIONS._serialized_start=6022
-  _REMOTEOPTIONS._serialized_end=6345
-  _REMOTEOPTIONS_CODE._serialized_start=6091
-  _REMOTEOPTIONS_CODE._serialized_end=6345
-  _CLIENTENVIRONMENT._serialized_start=6348
-  _CLIENTENVIRONMENT._serialized_end=6502
-  _CLIENTENVIRONMENT_CODE._serialized_start=6424
-  _CLIENTENVIRONMENT_CODE._serialized_end=6502
-  _CRASH._serialized_start=6505
-  _CRASH._serialized_end=6655
-  _CRASH_CODE._serialized_start=6601
-  _CRASH_CODE._serialized_end=6655
-  _THROWABLE._serialized_start=6657
-  _THROWABLE._serialized_end=6731
-  _SYMLINKFOREST._serialized_start=6734
-  _SYMLINKFOREST._serialized_end=6965
-  _SYMLINKFOREST_CODE._serialized_start=6803
-  _SYMLINKFOREST_CODE._serialized_end=6965
-  _PACKAGEOPTIONS._serialized_start=6968
-  _PACKAGEOPTIONS._serialized_end=7125
-  _PACKAGEOPTIONS_CODE._serialized_start=7038
-  _PACKAGEOPTIONS_CODE._serialized_end=7125
-  _REMOTEEXECUTION._serialized_start=7128
-  _REMOTEEXECUTION._serialized_end=7947
-  _REMOTEEXECUTION_CODE._serialized_start=7201
-  _REMOTEEXECUTION_CODE._serialized_end=7947
-  _EXECUTION._serialized_start=7950
-  _EXECUTION._serialized_end=9702
-  _EXECUTION_CODE._serialized_start=8011
-  _EXECUTION_CODE._serialized_end=9702
-  _WORKSPACES._serialized_start=9705
-  _WORKSPACES._serialized_end=10029
-  _WORKSPACES_CODE._serialized_start=9768
-  _WORKSPACES_CODE._serialized_end=10029
-  _CRASHOPTIONS._serialized_start=10031
-  _CRASHOPTIONS._serialized_end=10143
-  _CRASHOPTIONS_CODE._serialized_start=10097
-  _CRASHOPTIONS_CODE._serialized_end=10143
-  _FILESYSTEM._serialized_start=10146
-  _FILESYSTEM._serialized_end=10452
-  _FILESYSTEM_CODE._serialized_start=10209
-  _FILESYSTEM_CODE._serialized_end=10452
-  _EXECUTIONOPTIONS._serialized_start=10455
-  _EXECUTIONOPTIONS._serialized_end=10945
-  _EXECUTIONOPTIONS_CODE._serialized_start=10530
-  _EXECUTIONOPTIONS_CODE._serialized_end=10945
-  _COMMAND._serialized_start=10948
-  _COMMAND._serialized_end=11610
-  _COMMAND_CODE._serialized_start=11005
-  _COMMAND_CODE._serialized_end=11610
-  _GRPCSERVER._serialized_start=11613
-  _GRPCSERVER._serialized_end=11849
-  _GRPCSERVER_CODE._serialized_start=11676
-  _GRPCSERVER_CODE._serialized_end=11849
-  _CANONICALIZEFLAGS._serialized_start=11852
-  _CANONICALIZEFLAGS._serialized_end=12005
-  _CANONICALIZEFLAGS_CODE._serialized_start=11928
-  _CANONICALIZEFLAGS_CODE._serialized_end=12005
-  _BUILDCONFIGURATION._serialized_start=12008
-  _BUILDCONFIGURATION._serialized_end=12586
-  _BUILDCONFIGURATION_CODE._serialized_start=12087
-  _BUILDCONFIGURATION_CODE._serialized_end=12586
-  _INFOCOMMAND._serialized_start=12589
-  _INFOCOMMAND._serialized_end=12822
-  _INFOCOMMAND_CODE._serialized_start=12654
-  _INFOCOMMAND_CODE._serialized_end=12822
-  _MEMORYOPTIONS._serialized_start=12825
-  _MEMORYOPTIONS._serialized_end=13071
-  _MEMORYOPTIONS_CODE._serialized_start=12894
-  _MEMORYOPTIONS_CODE._serialized_end=13071
-  _QUERY._serialized_start=13074
-  _QUERY._serialized_end=14596
-  _QUERY_CODE._serialized_start=13127
-  _QUERY_CODE._serialized_end=14596
-  _LOCALEXECUTION._serialized_start=14599
-  _LOCALEXECUTION._serialized_end=14752
-  _LOCALEXECUTION_CODE._serialized_start=14669
-  _LOCALEXECUTION_CODE._serialized_end=14752
-  _ACTIONCACHE._serialized_start=14755
-  _ACTIONCACHE._serialized_end=14893
-  _ACTIONCACHE_CODE._serialized_start=14819
-  _ACTIONCACHE_CODE._serialized_end=14893
-  _FETCHCOMMAND._serialized_start=14896
-  _FETCHCOMMAND._serialized_end=15127
-  _FETCHCOMMAND_CODE._serialized_start=14963
-  _FETCHCOMMAND_CODE._serialized_end=15127
-  _SYNCCOMMAND._serialized_start=15130
-  _SYNCCOMMAND._serialized_end=15378
-  _SYNCCOMMAND_CODE._serialized_start=15195
-  _SYNCCOMMAND_CODE._serialized_end=15378
-  _SANDBOX._serialized_start=15381
-  _SANDBOX._serialized_end=15888
-  _SANDBOX_CODE._serialized_start=15438
-  _SANDBOX_CODE._serialized_end=15888
-  _INCLUDESCANNING._serialized_start=15891
-  _INCLUDESCANNING._serialized_end=16432
-  _INCLUDESCANNING_CODE._serialized_start=16032
-  _INCLUDESCANNING_CODE._serialized_end=16432
-  _TESTCOMMAND._serialized_start=16435
-  _TESTCOMMAND._serialized_end=16623
-  _TESTCOMMAND_CODE._serialized_start=16499
-  _TESTCOMMAND_CODE._serialized_end=16623
-  _ACTIONQUERY._serialized_start=16626
-  _ACTIONQUERY._serialized_end=17304
-  _ACTIONQUERY_CODE._serialized_start=16691
-  _ACTIONQUERY_CODE._serialized_end=17304
-  _TARGETPATTERNS._serialized_start=17307
-  _TARGETPATTERNS._serialized_end=18162
-  _TARGETPATTERNS_CODE._serialized_start=17378
-  _TARGETPATTERNS_CODE._serialized_end=18162
-  _CLEANCOMMAND._serialized_start=18165
-  _CLEANCOMMAND._serialized_end=18666
-  _CLEANCOMMAND_CODE._serialized_start=18232
-  _CLEANCOMMAND_CODE._serialized_end=18666
-  _CONFIGCOMMAND._serialized_start=18669
-  _CONFIGCOMMAND._serialized_end=18846
-  _CONFIGCOMMAND_CODE._serialized_start=18737
-  _CONFIGCOMMAND_CODE._serialized_end=18846
-  _CONFIGURABLEQUERY._serialized_start=18849
-  _CONFIGURABLEQUERY._serialized_end=19420
-  _CONFIGURABLEQUERY_CODE._serialized_start=18926
-  _CONFIGURABLEQUERY_CODE._serialized_end=19420
-  _DUMPCOMMAND._serialized_start=19423
-  _DUMPCOMMAND._serialized_end=19720
-  _DUMPCOMMAND_CODE._serialized_start=19488
-  _DUMPCOMMAND_CODE._serialized_end=19720
-  _HELPCOMMAND._serialized_start=19723
-  _HELPCOMMAND._serialized_end=19885
-  _HELPCOMMAND_CODE._serialized_start=19787
-  _HELPCOMMAND_CODE._serialized_end=19885
-  _MOBILEINSTALL._serialized_start=19888
-  _MOBILEINSTALL._serialized_end=20193
-  _MOBILEINSTALL_CODE._serialized_start=19957
-  _MOBILEINSTALL_CODE._serialized_end=20193
-  _PROFILECOMMAND._serialized_start=20196
-  _PROFILECOMMAND._serialized_end=20380
-  _PROFILECOMMAND_CODE._serialized_start=20266
-  _PROFILECOMMAND_CODE._serialized_end=20380
-  _RUNCOMMAND._serialized_start=20383
-  _RUNCOMMAND._serialized_end=21093
-  _RUNCOMMAND_CODE._serialized_start=20446
-  _RUNCOMMAND_CODE._serialized_end=21093
-  _VERSIONCOMMAND._serialized_start=21096
-  _VERSIONCOMMAND._serialized_end=21234
-  _VERSIONCOMMAND_CODE._serialized_start=21166
-  _VERSIONCOMMAND_CODE._serialized_end=21234
-  _PRINTACTIONCOMMAND._serialized_start=21237
-  _PRINTACTIONCOMMAND._serialized_end=21501
-  _PRINTACTIONCOMMAND_CODE._serialized_start=21316
-  _PRINTACTIONCOMMAND_CODE._serialized_end=21501
-  _WORKSPACESTATUS._serialized_start=21504
-  _WORKSPACESTATUS._serialized_end=21832
-  _WORKSPACESTATUS_CODE._serialized_start=21577
-  _WORKSPACESTATUS_CODE._serialized_end=21832
-  _JAVACOMPILE._serialized_start=21835
-  _JAVACOMPILE._serialized_end=22111
-  _JAVACOMPILE_CODE._serialized_start=21900
-  _JAVACOMPILE_CODE._serialized_end=22111
-  _ACTIONREWINDING._serialized_start=22114
-  _ACTIONREWINDING._serialized_end=22300
-  _ACTIONREWINDING_CODE._serialized_start=22186
-  _ACTIONREWINDING_CODE._serialized_end=22300
-  _CPPCOMPILE._serialized_start=22303
-  _CPPCOMPILE._serialized_end=22828
-  _CPPCOMPILE_CODE._serialized_start=22366
-  _CPPCOMPILE_CODE._serialized_end=22828
-  _STARLARKACTION._serialized_start=22831
-  _STARLARKACTION._serialized_end=23032
-  _STARLARKACTION_CODE._serialized_start=22902
-  _STARLARKACTION_CODE._serialized_end=23032
-  _NINJAACTION._serialized_start=23035
-  _NINJAACTION._serialized_end=23219
-  _NINJAACTION_CODE._serialized_start=23099
-  _NINJAACTION_CODE._serialized_end=23219
-  _DYNAMICEXECUTION._serialized_start=23222
-  _DYNAMICEXECUTION._serialized_end=23477
-  _DYNAMICEXECUTION_CODE._serialized_start=23297
-  _DYNAMICEXECUTION_CODE._serialized_end=23477
-  _FAILACTION._serialized_start=23480
-  _FAILACTION._serialized_end=23882
-  _FAILACTION_CODE._serialized_start=23543
-  _FAILACTION_CODE._serialized_end=23882
-  _SYMLINKACTION._serialized_start=23885
-  _SYMLINKACTION._serialized_end=24192
-  _SYMLINKACTION_CODE._serialized_start=23954
-  _SYMLINKACTION_CODE._serialized_end=24192
-  _CPPLINK._serialized_start=24195
-  _CPPLINK._serialized_end=24369
-  _CPPLINK_CODE._serialized_start=24251
-  _CPPLINK_CODE._serialized_end=24369
-  _LTOACTION._serialized_start=24372
-  _LTOACTION._serialized_end=24587
-  _LTOACTION_CODE._serialized_start=24433
-  _LTOACTION_CODE._serialized_end=24587
-  _TESTACTION._serialized_start=24590
-  _TESTACTION._serialized_end=24868
-  _TESTACTION_CODE._serialized_start=24653
-  _TESTACTION_CODE._serialized_end=24868
-  _WORKER._serialized_start=24871
-  _WORKER._serialized_end=25368
-  _WORKER_CODE._serialized_start=24926
-  _WORKER_CODE._serialized_end=25368
-  _ANALYSIS._serialized_start=25371
-  _ANALYSIS._serialized_end=26153
-  _ANALYSIS_CODE._serialized_start=25430
-  _ANALYSIS_CODE._serialized_end=26153
-  _PACKAGELOADING._serialized_start=26156
-  _PACKAGELOADING._serialized_end=27364
-  _PACKAGELOADING_CODE._serialized_start=26227
-  _PACKAGELOADING_CODE._serialized_end=27364
-  _TOOLCHAIN._serialized_start=27367
-  _TOOLCHAIN._serialized_end=27707
-  _TOOLCHAIN_CODE._serialized_start=27428
-  _TOOLCHAIN_CODE._serialized_end=27707
-  _STARLARKLOADING._serialized_start=27710
-  _STARLARKLOADING._serialized_end=28108
-  _STARLARKLOADING_CODE._serialized_start=27783
-  _STARLARKLOADING_CODE._serialized_end=28108
-  _EXTERNALDEPS._serialized_start=28111
-  _EXTERNALDEPS._serialized_end=28377
-  _EXTERNALDEPS_CODE._serialized_start=28178
-  _EXTERNALDEPS_CODE._serialized_end=28377
-  _DIFFAWARENESS._serialized_start=28380
-  _DIFFAWARENESS._serialized_end=28518
-  _DIFFAWARENESS_CODE._serialized_start=28448
-  _DIFFAWARENESS_CODE._serialized_end=28518
-  _MODQUERYCOMMAND._serialized_start=28521
-  _MODQUERYCOMMAND._serialized_end=28728
-  _MODQUERYCOMMAND_CODE._serialized_start=28594
-  _MODQUERYCOMMAND_CODE._serialized_end=28728
+  _FAILUREDETAIL._serialized_end=3820
+  _INTERRUPTED._serialized_start=3823
+  _INTERRUPTED._serialized_end=4497
+  _INTERRUPTED_CODE._serialized_start=3888
+  _INTERRUPTED_CODE._serialized_end=4497
+  _SPAWN._serialized_start=4500
+  _SPAWN._serialized_end=5083
+  _SPAWN_CODE._serialized_start=4600
+  _SPAWN_CODE._serialized_end=5083
+  _EXTERNALREPOSITORY._serialized_start=5086
+  _EXTERNALREPOSITORY._serialized_end=5346
+  _EXTERNALREPOSITORY_CODE._serialized_start=5165
+  _EXTERNALREPOSITORY_CODE._serialized_end=5346
+  _BUILDPROGRESS._serialized_start=5349
+  _BUILDPROGRESS._serialized_end=6156
+  _BUILDPROGRESS_CODE._serialized_start=5418
+  _BUILDPROGRESS_CODE._serialized_end=6156
+  _REMOTEOPTIONS._serialized_start=6159
+  _REMOTEOPTIONS._serialized_end=6482
+  _REMOTEOPTIONS_CODE._serialized_start=6228
+  _REMOTEOPTIONS_CODE._serialized_end=6482
+  _CLIENTENVIRONMENT._serialized_start=6485
+  _CLIENTENVIRONMENT._serialized_end=6639
+  _CLIENTENVIRONMENT_CODE._serialized_start=6561
+  _CLIENTENVIRONMENT_CODE._serialized_end=6639
+  _CRASH._serialized_start=6642
+  _CRASH._serialized_end=6823
+  _CRASH_CODE._serialized_start=6769
+  _CRASH_CODE._serialized_end=6823
+  _THROWABLE._serialized_start=6825
+  _THROWABLE._serialized_end=6899
+  _SYMLINKFOREST._serialized_start=6902
+  _SYMLINKFOREST._serialized_end=7133
+  _SYMLINKFOREST_CODE._serialized_start=6971
+  _SYMLINKFOREST_CODE._serialized_end=7133
+  _BUILDREPORT._serialized_start=7136
+  _BUILDREPORT._serialized_end=7332
+  _BUILDREPORT_CODE._serialized_start=7201
+  _BUILDREPORT_CODE._serialized_end=7332
+  _PACKAGEOPTIONS._serialized_start=7335
+  _PACKAGEOPTIONS._serialized_end=7492
+  _PACKAGEOPTIONS_CODE._serialized_start=7405
+  _PACKAGEOPTIONS_CODE._serialized_end=7492
+  _REMOTEEXECUTION._serialized_start=7495
+  _REMOTEEXECUTION._serialized_end=8314
+  _REMOTEEXECUTION_CODE._serialized_start=7568
+  _REMOTEEXECUTION_CODE._serialized_end=8314
+  _EXECUTION._serialized_start=8317
+  _EXECUTION._serialized_end=10069
+  _EXECUTION_CODE._serialized_start=8378
+  _EXECUTION_CODE._serialized_end=10069
+  _WORKSPACES._serialized_start=10072
+  _WORKSPACES._serialized_end=10396
+  _WORKSPACES_CODE._serialized_start=10135
+  _WORKSPACES_CODE._serialized_end=10396
+  _CRASHOPTIONS._serialized_start=10398
+  _CRASHOPTIONS._serialized_end=10510
+  _CRASHOPTIONS_CODE._serialized_start=10464
+  _CRASHOPTIONS_CODE._serialized_end=10510
+  _FILESYSTEM._serialized_start=10513
+  _FILESYSTEM._serialized_end=10819
+  _FILESYSTEM_CODE._serialized_start=10576
+  _FILESYSTEM_CODE._serialized_end=10819
+  _EXECUTIONOPTIONS._serialized_start=10822
+  _EXECUTIONOPTIONS._serialized_end=11312
+  _EXECUTIONOPTIONS_CODE._serialized_start=10897
+  _EXECUTIONOPTIONS_CODE._serialized_end=11312
+  _COMMAND._serialized_start=11315
+  _COMMAND._serialized_end=11977
+  _COMMAND_CODE._serialized_start=11372
+  _COMMAND_CODE._serialized_end=11977
+  _GRPCSERVER._serialized_start=11980
+  _GRPCSERVER._serialized_end=12216
+  _GRPCSERVER_CODE._serialized_start=12043
+  _GRPCSERVER_CODE._serialized_end=12216
+  _CANONICALIZEFLAGS._serialized_start=12219
+  _CANONICALIZEFLAGS._serialized_end=12372
+  _CANONICALIZEFLAGS_CODE._serialized_start=12295
+  _CANONICALIZEFLAGS_CODE._serialized_end=12372
+  _BUILDCONFIGURATION._serialized_start=12375
+  _BUILDCONFIGURATION._serialized_end=12953
+  _BUILDCONFIGURATION_CODE._serialized_start=12454
+  _BUILDCONFIGURATION_CODE._serialized_end=12953
+  _INFOCOMMAND._serialized_start=12956
+  _INFOCOMMAND._serialized_end=13189
+  _INFOCOMMAND_CODE._serialized_start=13021
+  _INFOCOMMAND_CODE._serialized_end=13189
+  _MEMORYOPTIONS._serialized_start=13192
+  _MEMORYOPTIONS._serialized_end=13451
+  _MEMORYOPTIONS_CODE._serialized_start=13261
+  _MEMORYOPTIONS_CODE._serialized_end=13451
+  _QUERY._serialized_start=13454
+  _QUERY._serialized_end=14976
+  _QUERY_CODE._serialized_start=13507
+  _QUERY_CODE._serialized_end=14976
+  _LOCALEXECUTION._serialized_start=14979
+  _LOCALEXECUTION._serialized_end=15132
+  _LOCALEXECUTION_CODE._serialized_start=15049
+  _LOCALEXECUTION_CODE._serialized_end=15132
+  _ACTIONCACHE._serialized_start=15135
+  _ACTIONCACHE._serialized_end=15273
+  _ACTIONCACHE_CODE._serialized_start=15199
+  _ACTIONCACHE_CODE._serialized_end=15273
+  _FETCHCOMMAND._serialized_start=15276
+  _FETCHCOMMAND._serialized_end=15507
+  _FETCHCOMMAND_CODE._serialized_start=15343
+  _FETCHCOMMAND_CODE._serialized_end=15507
+  _SYNCCOMMAND._serialized_start=15510
+  _SYNCCOMMAND._serialized_end=15758
+  _SYNCCOMMAND_CODE._serialized_start=15575
+  _SYNCCOMMAND_CODE._serialized_end=15758
+  _SANDBOX._serialized_start=15761
+  _SANDBOX._serialized_end=16268
+  _SANDBOX_CODE._serialized_start=15818
+  _SANDBOX_CODE._serialized_end=16268
+  _INCLUDESCANNING._serialized_start=16271
+  _INCLUDESCANNING._serialized_end=16812
+  _INCLUDESCANNING_CODE._serialized_start=16412
+  _INCLUDESCANNING_CODE._serialized_end=16812
+  _TESTCOMMAND._serialized_start=16815
+  _TESTCOMMAND._serialized_end=17003
+  _TESTCOMMAND_CODE._serialized_start=16879
+  _TESTCOMMAND_CODE._serialized_end=17003
+  _ACTIONQUERY._serialized_start=17006
+  _ACTIONQUERY._serialized_end=17684
+  _ACTIONQUERY_CODE._serialized_start=17071
+  _ACTIONQUERY_CODE._serialized_end=17684
+  _TARGETPATTERNS._serialized_start=17687
+  _TARGETPATTERNS._serialized_end=18542
+  _TARGETPATTERNS_CODE._serialized_start=17758
+  _TARGETPATTERNS_CODE._serialized_end=18542
+  _CLEANCOMMAND._serialized_start=18545
+  _CLEANCOMMAND._serialized_end=19046
+  _CLEANCOMMAND_CODE._serialized_start=18612
+  _CLEANCOMMAND_CODE._serialized_end=19046
+  _CONFIGCOMMAND._serialized_start=19049
+  _CONFIGCOMMAND._serialized_end=19226
+  _CONFIGCOMMAND_CODE._serialized_start=19117
+  _CONFIGCOMMAND_CODE._serialized_end=19226
+  _CONFIGURABLEQUERY._serialized_start=19229
+  _CONFIGURABLEQUERY._serialized_end=19800
+  _CONFIGURABLEQUERY_CODE._serialized_start=19306
+  _CONFIGURABLEQUERY_CODE._serialized_end=19800
+  _DUMPCOMMAND._serialized_start=19803
+  _DUMPCOMMAND._serialized_end=20100
+  _DUMPCOMMAND_CODE._serialized_start=19868
+  _DUMPCOMMAND_CODE._serialized_end=20100
+  _HELPCOMMAND._serialized_start=20103
+  _HELPCOMMAND._serialized_end=20265
+  _HELPCOMMAND_CODE._serialized_start=20167
+  _HELPCOMMAND_CODE._serialized_end=20265
+  _MOBILEINSTALL._serialized_start=20268
+  _MOBILEINSTALL._serialized_end=20573
+  _MOBILEINSTALL_CODE._serialized_start=20337
+  _MOBILEINSTALL_CODE._serialized_end=20573
+  _PROFILECOMMAND._serialized_start=20576
+  _PROFILECOMMAND._serialized_end=20760
+  _PROFILECOMMAND_CODE._serialized_start=20646
+  _PROFILECOMMAND_CODE._serialized_end=20760
+  _RUNCOMMAND._serialized_start=20763
+  _RUNCOMMAND._serialized_end=21473
+  _RUNCOMMAND_CODE._serialized_start=20826
+  _RUNCOMMAND_CODE._serialized_end=21473
+  _VERSIONCOMMAND._serialized_start=21476
+  _VERSIONCOMMAND._serialized_end=21614
+  _VERSIONCOMMAND_CODE._serialized_start=21546
+  _VERSIONCOMMAND_CODE._serialized_end=21614
+  _PRINTACTIONCOMMAND._serialized_start=21617
+  _PRINTACTIONCOMMAND._serialized_end=21881
+  _PRINTACTIONCOMMAND_CODE._serialized_start=21696
+  _PRINTACTIONCOMMAND_CODE._serialized_end=21881
+  _WORKSPACESTATUS._serialized_start=21884
+  _WORKSPACESTATUS._serialized_end=22212
+  _WORKSPACESTATUS_CODE._serialized_start=21957
+  _WORKSPACESTATUS_CODE._serialized_end=22212
+  _JAVACOMPILE._serialized_start=22215
+  _JAVACOMPILE._serialized_end=22491
+  _JAVACOMPILE_CODE._serialized_start=22280
+  _JAVACOMPILE_CODE._serialized_end=22491
+  _ACTIONREWINDING._serialized_start=22494
+  _ACTIONREWINDING._serialized_end=22680
+  _ACTIONREWINDING_CODE._serialized_start=22566
+  _ACTIONREWINDING_CODE._serialized_end=22680
+  _CPPCOMPILE._serialized_start=22683
+  _CPPCOMPILE._serialized_end=23208
+  _CPPCOMPILE_CODE._serialized_start=22746
+  _CPPCOMPILE_CODE._serialized_end=23208
+  _STARLARKACTION._serialized_start=23211
+  _STARLARKACTION._serialized_end=23412
+  _STARLARKACTION_CODE._serialized_start=23282
+  _STARLARKACTION_CODE._serialized_end=23412
+  _NINJAACTION._serialized_start=23415
+  _NINJAACTION._serialized_end=23599
+  _NINJAACTION_CODE._serialized_start=23479
+  _NINJAACTION_CODE._serialized_end=23599
+  _DYNAMICEXECUTION._serialized_start=23602
+  _DYNAMICEXECUTION._serialized_end=23857
+  _DYNAMICEXECUTION_CODE._serialized_start=23677
+  _DYNAMICEXECUTION_CODE._serialized_end=23857
+  _FAILACTION._serialized_start=23860
+  _FAILACTION._serialized_end=24262
+  _FAILACTION_CODE._serialized_start=23923
+  _FAILACTION_CODE._serialized_end=24262
+  _SYMLINKACTION._serialized_start=24265
+  _SYMLINKACTION._serialized_end=24572
+  _SYMLINKACTION_CODE._serialized_start=24334
+  _SYMLINKACTION_CODE._serialized_end=24572
+  _CPPLINK._serialized_start=24575
+  _CPPLINK._serialized_end=24749
+  _CPPLINK_CODE._serialized_start=24631
+  _CPPLINK_CODE._serialized_end=24749
+  _LTOACTION._serialized_start=24752
+  _LTOACTION._serialized_end=24967
+  _LTOACTION_CODE._serialized_start=24813
+  _LTOACTION_CODE._serialized_end=24967
+  _TESTACTION._serialized_start=24970
+  _TESTACTION._serialized_end=25248
+  _TESTACTION_CODE._serialized_start=25033
+  _TESTACTION_CODE._serialized_end=25248
+  _WORKER._serialized_start=25251
+  _WORKER._serialized_end=25748
+  _WORKER_CODE._serialized_start=25306
+  _WORKER_CODE._serialized_end=25748
+  _ANALYSIS._serialized_start=25751
+  _ANALYSIS._serialized_end=26581
+  _ANALYSIS_CODE._serialized_start=25810
+  _ANALYSIS_CODE._serialized_end=26581
+  _PACKAGELOADING._serialized_start=26584
+  _PACKAGELOADING._serialized_end=27792
+  _PACKAGELOADING_CODE._serialized_start=26655
+  _PACKAGELOADING_CODE._serialized_end=27792
+  _TOOLCHAIN._serialized_start=27795
+  _TOOLCHAIN._serialized_end=28135
+  _TOOLCHAIN_CODE._serialized_start=27856
+  _TOOLCHAIN_CODE._serialized_end=28135
+  _STARLARKLOADING._serialized_start=28138
+  _STARLARKLOADING._serialized_end=28536
+  _STARLARKLOADING_CODE._serialized_start=28211
+  _STARLARKLOADING_CODE._serialized_end=28536
+  _EXTERNALDEPS._serialized_start=28539
+  _EXTERNALDEPS._serialized_end=28805
+  _EXTERNALDEPS_CODE._serialized_start=28606
+  _EXTERNALDEPS_CODE._serialized_end=28805
+  _DIFFAWARENESS._serialized_start=28808
+  _DIFFAWARENESS._serialized_end=28946
+  _DIFFAWARENESS_CODE._serialized_start=28876
+  _DIFFAWARENESS_CODE._serialized_end=28946
+  _MODQUERYCOMMAND._serialized_start=28949
+  _MODQUERYCOMMAND._serialized_end=29156
+  _MODQUERYCOMMAND_CODE._serialized_start=29022
+  _MODQUERYCOMMAND_CODE._serialized_end=29156
 # @@protoc_insertion_point(module_scope)

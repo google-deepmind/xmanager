@@ -17,10 +17,9 @@
 # pylint: skip-file
 # source: src/main/protobuf/invocation_policy.proto
 """Generated protocol buffer code."""
+from google.protobuf.internal import builder as _builder
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
-from google.protobuf import message as _message
-from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
 # @@protoc_insertion_point(imports)
 
@@ -31,57 +30,8 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n)src/main/protobuf/invocation_policy.proto\x12\x17\x62laze.invocation_policy\"N\n\x10InvocationPolicy\x12:\n\rflag_policies\x18\x01 \x03(\x0b\x32#.blaze.invocation_policy.FlagPolicy\"\xb4\x02\n\nFlagPolicy\x12\x11\n\tflag_name\x18\x01 \x01(\t\x12\x10\n\x08\x63ommands\x18\x02 \x03(\t\x12\x36\n\tset_value\x18\x03 \x01(\x0b\x32!.blaze.invocation_policy.SetValueH\x00\x12:\n\x0buse_default\x18\x04 \x01(\x0b\x32#.blaze.invocation_policy.UseDefaultH\x00\x12\x42\n\x0f\x64isallow_values\x18\x05 \x01(\x0b\x32\'.blaze.invocation_policy.DisallowValuesH\x00\x12<\n\x0c\x61llow_values\x18\x06 \x01(\x0b\x32$.blaze.invocation_policy.AllowValuesH\x00\x42\x0b\n\toperation\"\xc6\x01\n\x08SetValue\x12\x12\n\nflag_value\x18\x01 \x03(\t\x12<\n\x08\x62\x65havior\x18\x04 \x01(\x0e\x32*.blaze.invocation_policy.SetValue.Behavior\"\\\n\x08\x42\x65havior\x12\r\n\tUNDEFINED\x10\x00\x12\x13\n\x0f\x41LLOW_OVERRIDES\x10\x01\x12\n\n\x06\x41PPEND\x10\x02\x12 \n\x1c\x46INAL_VALUE_IGNORE_OVERRIDES\x10\x03J\x04\x08\x02\x10\x03J\x04\x08\x03\x10\x04\"\x0c\n\nUseDefault\"\x97\x01\n\x0e\x44isallowValues\x12\x19\n\x11\x64isallowed_values\x18\x01 \x03(\t\x12\x13\n\tnew_value\x18\x03 \x01(\tH\x00\x12:\n\x0buse_default\x18\x04 \x01(\x0b\x32#.blaze.invocation_policy.UseDefaultH\x00\x42\x13\n\x11replacement_valueJ\x04\x08\x02\x10\x03\"\x91\x01\n\x0b\x41llowValues\x12\x16\n\x0e\x61llowed_values\x18\x01 \x03(\t\x12\x13\n\tnew_value\x18\x03 \x01(\tH\x00\x12:\n\x0buse_default\x18\x04 \x01(\x0b\x32#.blaze.invocation_policy.UseDefaultH\x00\x42\x13\n\x11replacement_valueJ\x04\x08\x02\x10\x03\x42-\n+com.google.devtools.build.lib.runtime.proto')
 
-
-
-_INVOCATIONPOLICY = DESCRIPTOR.message_types_by_name['InvocationPolicy']
-_FLAGPOLICY = DESCRIPTOR.message_types_by_name['FlagPolicy']
-_SETVALUE = DESCRIPTOR.message_types_by_name['SetValue']
-_USEDEFAULT = DESCRIPTOR.message_types_by_name['UseDefault']
-_DISALLOWVALUES = DESCRIPTOR.message_types_by_name['DisallowValues']
-_ALLOWVALUES = DESCRIPTOR.message_types_by_name['AllowValues']
-_SETVALUE_BEHAVIOR = _SETVALUE.enum_types_by_name['Behavior']
-InvocationPolicy = _reflection.GeneratedProtocolMessageType('InvocationPolicy', (_message.Message,), {
-  'DESCRIPTOR' : _INVOCATIONPOLICY,
-  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
-  # @@protoc_insertion_point(class_scope:blaze.invocation_policy.InvocationPolicy)
-  })
-_sym_db.RegisterMessage(InvocationPolicy)
-
-FlagPolicy = _reflection.GeneratedProtocolMessageType('FlagPolicy', (_message.Message,), {
-  'DESCRIPTOR' : _FLAGPOLICY,
-  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
-  # @@protoc_insertion_point(class_scope:blaze.invocation_policy.FlagPolicy)
-  })
-_sym_db.RegisterMessage(FlagPolicy)
-
-SetValue = _reflection.GeneratedProtocolMessageType('SetValue', (_message.Message,), {
-  'DESCRIPTOR' : _SETVALUE,
-  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
-  # @@protoc_insertion_point(class_scope:blaze.invocation_policy.SetValue)
-  })
-_sym_db.RegisterMessage(SetValue)
-
-UseDefault = _reflection.GeneratedProtocolMessageType('UseDefault', (_message.Message,), {
-  'DESCRIPTOR' : _USEDEFAULT,
-  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
-  # @@protoc_insertion_point(class_scope:blaze.invocation_policy.UseDefault)
-  })
-_sym_db.RegisterMessage(UseDefault)
-
-DisallowValues = _reflection.GeneratedProtocolMessageType('DisallowValues', (_message.Message,), {
-  'DESCRIPTOR' : _DISALLOWVALUES,
-  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
-  # @@protoc_insertion_point(class_scope:blaze.invocation_policy.DisallowValues)
-  })
-_sym_db.RegisterMessage(DisallowValues)
-
-AllowValues = _reflection.GeneratedProtocolMessageType('AllowValues', (_message.Message,), {
-  'DESCRIPTOR' : _ALLOWVALUES,
-  '__module__' : 'src.main.protobuf.invocation_policy_pb2'
-  # @@protoc_insertion_point(class_scope:blaze.invocation_policy.AllowValues)
-  })
-_sym_db.RegisterMessage(AllowValues)
-
+_builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'src.main.protobuf.invocation_policy_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None

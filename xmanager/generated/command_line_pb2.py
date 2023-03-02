@@ -17,10 +17,9 @@
 # pylint: skip-file
 # source: src/main/protobuf/command_line.proto
 """Generated protocol buffer code."""
+from google.protobuf.internal import builder as _builder
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
-from google.protobuf import message as _message
-from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
 # @@protoc_insertion_point(imports)
 
@@ -32,48 +31,8 @@ from . import option_filters_pb2 as src_dot_main_dot_protobuf_dot_option__filter
 
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n$src/main/protobuf/command_line.proto\x12\x0c\x63ommand_line\x1a&src/main/protobuf/option_filters.proto\"]\n\x0b\x43ommandLine\x12\x1a\n\x12\x63ommand_line_label\x18\x01 \x01(\t\x12\x32\n\x08sections\x18\x02 \x03(\x0b\x32 .command_line.CommandLineSection\"\x9b\x01\n\x12\x43ommandLineSection\x12\x15\n\rsection_label\x18\x01 \x01(\t\x12-\n\nchunk_list\x18\x02 \x01(\x0b\x32\x17.command_line.ChunkListH\x00\x12/\n\x0boption_list\x18\x03 \x01(\x0b\x32\x18.command_line.OptionListH\x00\x42\x0e\n\x0csection_type\"\x1a\n\tChunkList\x12\r\n\x05\x63hunk\x18\x01 \x03(\t\"2\n\nOptionList\x12$\n\x06option\x18\x01 \x03(\x0b\x32\x14.command_line.Option\"\xac\x01\n\x06Option\x12\x15\n\rcombined_form\x18\x01 \x01(\t\x12\x13\n\x0boption_name\x18\x02 \x01(\t\x12\x14\n\x0coption_value\x18\x03 \x01(\t\x12-\n\x0b\x65\x66\x66\x65\x63t_tags\x18\x04 \x03(\x0e\x32\x18.options.OptionEffectTag\x12\x31\n\rmetadata_tags\x18\x05 \x03(\x0e\x32\x1a.options.OptionMetadataTagB-\n+com.google.devtools.build.lib.runtime.protob\x06proto3')
 
-
-
-_COMMANDLINE = DESCRIPTOR.message_types_by_name['CommandLine']
-_COMMANDLINESECTION = DESCRIPTOR.message_types_by_name['CommandLineSection']
-_CHUNKLIST = DESCRIPTOR.message_types_by_name['ChunkList']
-_OPTIONLIST = DESCRIPTOR.message_types_by_name['OptionList']
-_OPTION = DESCRIPTOR.message_types_by_name['Option']
-CommandLine = _reflection.GeneratedProtocolMessageType('CommandLine', (_message.Message,), {
-  'DESCRIPTOR' : _COMMANDLINE,
-  '__module__' : 'src.main.protobuf.command_line_pb2'
-  # @@protoc_insertion_point(class_scope:command_line.CommandLine)
-  })
-_sym_db.RegisterMessage(CommandLine)
-
-CommandLineSection = _reflection.GeneratedProtocolMessageType('CommandLineSection', (_message.Message,), {
-  'DESCRIPTOR' : _COMMANDLINESECTION,
-  '__module__' : 'src.main.protobuf.command_line_pb2'
-  # @@protoc_insertion_point(class_scope:command_line.CommandLineSection)
-  })
-_sym_db.RegisterMessage(CommandLineSection)
-
-ChunkList = _reflection.GeneratedProtocolMessageType('ChunkList', (_message.Message,), {
-  'DESCRIPTOR' : _CHUNKLIST,
-  '__module__' : 'src.main.protobuf.command_line_pb2'
-  # @@protoc_insertion_point(class_scope:command_line.ChunkList)
-  })
-_sym_db.RegisterMessage(ChunkList)
-
-OptionList = _reflection.GeneratedProtocolMessageType('OptionList', (_message.Message,), {
-  'DESCRIPTOR' : _OPTIONLIST,
-  '__module__' : 'src.main.protobuf.command_line_pb2'
-  # @@protoc_insertion_point(class_scope:command_line.OptionList)
-  })
-_sym_db.RegisterMessage(OptionList)
-
-Option = _reflection.GeneratedProtocolMessageType('Option', (_message.Message,), {
-  'DESCRIPTOR' : _OPTION,
-  '__module__' : 'src.main.protobuf.command_line_pb2'
-  # @@protoc_insertion_point(class_scope:command_line.Option)
-  })
-_sym_db.RegisterMessage(Option)
-
+_builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, globals())
+_builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'src.main.protobuf.command_line_pb2', globals())
 if _descriptor._USE_C_DESCRIPTORS == False:
 
   DESCRIPTOR._options = None
