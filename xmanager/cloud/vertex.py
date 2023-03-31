@@ -187,13 +187,11 @@ class Client:
       if job.executor.requirements.accelerator in xm.TpuType:
         service_account = None
         break
-    custom_job.run(
-        sync=False,
+    custom_job.submit(
         service_account=service_account,
         tensorboard=tensorboard,
         enable_web_access=True,
     )
-    custom_job.wait_for_resource_creation()
     print(f'Job launched at: {custom_job._dashboard_uri()}')  # pylint: disable=protected-access
     return custom_job.resource_name
 
