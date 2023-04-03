@@ -636,7 +636,6 @@ class AuxiliaryUnitJob(abc.ABC):
     self._job = job
 
   async def __call__(self, aux_unit: ExperimentUnit, **kwargs):
-
     async def launch_generator(
         job_generator: job_blocks.JobGeneratorType,
     ) -> None:
@@ -894,7 +893,15 @@ class Experiment(abc.ABC):
         pattern_matching.Case([AuxiliaryUnitJob], lambda job: job.role),
         pattern_matching.Case([Any], lambda job: role),
     )(job)
-    experiment_unit_future = self._create_experiment_unit(args, role, identity)
+
+    if self._should_reload_experiment_unit(role):
+      experiment_unit_future = self._get_experiment_unit(
+          self.experiment_id, identity, role, args
+      )
+    else:
+      experiment_unit_future = self._create_experiment_unit(
+          args, role, identity
+      )
 
     async def launch():
       experiment_unit = await experiment_unit_future
@@ -911,9 +918,46 @@ class Experiment(abc.ABC):
         raise
       return experiment_unit
 
+    async def reload():
+      experiment_unit = await experiment_unit_future
+      try:
+        await experiment_unit.add(job, args, identity=identity)
+      except Exception as update_exception:
+        logging.error(
+            'Could not reload the work unit: %s',
+            update_exception,
+        )
+        raise
+      return experiment_unit
+
     return asyncio.wrap_future(
-        self._create_task(launch()), loop=self._event_loop
+        self._create_task(
+            reload() if self._should_reload_experiment_unit(role) else launch()
+        ),
+        loop=self._event_loop,
     )
+
+  @abc.abstractmethod
+  def _get_experiment_unit(
+      self,
+      experiment_id: int,
+      identity: str,
+      role: ExperimentUnitRole,
+      args: Optional[Mapping[str, Any]] = None,
+  ) -> Awaitable[ExperimentUnit]:
+    """Returns an existing experiment unit by identity.
+
+    Args:
+      experiment_id: The ID of the experiment to get the Experiment Unit for.
+      identity: The identity of the Experiment Unit to get.
+      role: Executable unit role: whether to fetch a work unit or auxiliary
+        unit.
+      args: Keyword arguments to be passed to the job.
+
+    Returns:
+      An awaitable which fetches the work unit.
+    """
+    raise NotImplementedError
 
   @abc.abstractmethod
   def _create_experiment_unit(
@@ -966,6 +1010,19 @@ class Experiment(abc.ABC):
         creator=getpass.getuser(),
         annotations=metadata_context.ContextAnnotations(),
     )
+
+  @abc.abstractmethod
+  def _should_reload_experiment_unit(self, role: ExperimentUnitRole) -> bool:
+    """Returns True if the experiment unit should be reloaded based on its role.
+
+    Reloading an experiment depends on the context in which it is running in.
+    Primarily it entails updating, stopping, and restarting the executable
+    units very quickly without having to wait for scheduling.
+
+    Args:
+      role: Experiment unit role trying to be reloaded.
+    """
+    raise NotImplementedError
 
 
 @abc.abstractmethod

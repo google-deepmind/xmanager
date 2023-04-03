@@ -390,6 +390,36 @@ class LocalExperiment(xm.Experiment):
     """Gets work units created via self.add()."""
     raise NotImplementedError
 
+  def _get_experiment_unit(
+      self,
+      experiment_id: int,
+      identity: str,
+      role: xm.ExperimentUnitRole,
+      args: Optional[Mapping[str, Any]] = None,
+  ) -> Awaitable[xm.ExperimentUnit]:
+    """Returns an existing experiment unit by identity.
+
+    Args:
+      experiment_id: The ID of the experiment to get the Experiment Unit for.
+      identity: The identity of the Experiment Unit toget.
+      role: Executable unit role: whether to fetch a work unit or auxiliary
+        unit.
+      args: Keyword arguments to be passed to the job.
+
+    Returns:
+      An awaitable which fetches the work unit.
+    """
+    raise NotImplementedError
+
+  def _should_reload_experiment_unit(self, role: xm.ExperimentUnitRole) -> bool:
+    """Returns True if the Work Unit should be reloaded based on its role.
+
+    Args:
+      role: Executable unit role trying to be reloaded.
+    """
+    # Since reloading isn't supported locally, we always return False.
+    return False
+
 
 def create_experiment(experiment_title: str) -> xm.Experiment:
   """Create Experiment."""

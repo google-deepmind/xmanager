@@ -185,6 +185,23 @@ class MockExperiment(core.Experiment):
     """Returns metadata context for the experiment."""
     return self._context
 
+  def _should_reload_experiment_unit(
+      self, role: core.ExperimentUnitRole
+  ) -> bool:
+    return False
+
+  def _get_experiment_unit(
+      self,
+      experiment_id: int,
+      identity: str,
+      role: core.ExperimentUnitRole,
+      args: Optional[Mapping[str, Any]] = None,
+  ) -> Awaitable[core.ExperimentUnit]:
+    del identity
+    future = asyncio.Future()
+    future.set_result(self.work_units[0])
+    return future
+
 
 class MockExecutable(job_blocks.Executable):
   """A mock version of Executable with abstract methods implemented."""
