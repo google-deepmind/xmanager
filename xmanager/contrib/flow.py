@@ -1,4 +1,3 @@
-# pyformat: mode=pyink
 """XMFlow-like feature."""
 
 from __future__ import annotations
