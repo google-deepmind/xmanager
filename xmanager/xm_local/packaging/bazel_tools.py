@@ -24,7 +24,6 @@ from absl import flags
 from xmanager import xm
 from xmanager.bazel import client
 from xmanager.bazel import file_utils
-from xmanager.xm import pattern_matching
 
 from google.protobuf.internal.decoder import _DecodeVarint32
 from xmanager.generated import build_event_stream_pb2 as bes_pb2
@@ -231,37 +230,26 @@ def local_bazel_service() -> LocalBazelService:
   return LocalBazelService()
 
 
-def _collect_bazel_binary(
-    executable: xm.BazelBinary,
+def _collect_executables(
+    executable: xm.ExecutableSpec,
 ) -> List[client.BazelTarget]:
-  return [
-      client.BazelTarget(
-          label=executable.label,
-          bazel_args=executable.bazel_args,
-      ),
-  ]
-
-
-def _collect_bazel_container(
-    executable: xm.BazelContainer,
-) -> List[client.BazelTarget]:
-  return [
-      client.BazelTarget(
-          label=executable.label,
-          bazel_args=executable.bazel_args,
-      ),
-  ]
-
-
-def _return_empty_list(_: xm.ExecutableSpec) -> List[client.BazelTarget]:
-  return []
-
-
-_EXECUTABLE_COLLECTOR = pattern_matching.match(
-    _collect_bazel_binary,
-    _collect_bazel_container,
-    _return_empty_list,
-)
+  match executable:
+    case xm.BazelBinary() as bazel_binary:
+      return [
+          client.BazelTarget(
+              label=bazel_binary.label,
+              bazel_args=bazel_binary.bazel_args,
+          ),
+      ]
+    case xm.BazelContainer() as bazel_container:
+      return [
+          client.BazelTarget(
+              label=bazel_container.label,
+              bazel_args=bazel_container.bazel_args,
+          ),
+      ]
+    case _:
+      return []
 
 
 def collect_bazel_targets(
@@ -271,7 +259,7 @@ def collect_bazel_targets(
   return list(
       itertools.chain(
           *[
-              _EXECUTABLE_COLLECTOR(packageable.executable_spec)
+              _collect_executables(packageable.executable_spec)
               for packageable in packageables
           ]
       )

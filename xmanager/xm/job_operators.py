@@ -15,7 +15,7 @@
 
 import copy
 import itertools
-from typing import Any, Callable, List, Sequence, Tuple
+from typing import Callable, List, Sequence, Tuple
 
 import attr
 from xmanager.xm import job_blocks
@@ -46,25 +46,18 @@ def shallow_copy_job_type(
 def populate_job_names(job_type: job_blocks.JobTypeVar) -> None:
   """Assigns default names to the given jobs."""
 
-  def apply_to_job(prefix: Sequence[str], target: job_blocks.Job) -> None:
-    if target.name is None:
-      target.name = '_'.join(prefix) if prefix else target.executable.name
+  def matcher(prefix: Sequence[str], job_type: job_blocks.JobTypeVar) -> None:
+    match job_type:
+      case job_blocks.Job() as target:
+        if target.name is None:
+          target.name = '_'.join(prefix) if prefix else target.executable.name
+      case job_blocks.JobGroup() as target:
+        for key, job in target.jobs.items():
+          matcher([*prefix, key], job)
+      case _:
+        return
 
-  def apply_to_job_group(
-      prefix: Sequence[str], target: job_blocks.JobGroup
-  ) -> None:
-    for key, job in target.jobs.items():
-      matcher([*prefix, key], job)
-
-  def ignore_unknown(_: Sequence[str], target: Any) -> None:
-    return target
-
-  matcher = pattern_matching.match(
-      apply_to_job,
-      apply_to_job_group,
-      ignore_unknown,
-  )
-  return matcher([], job_type)
+  matcher([], job_type)
 
 
 def collect_jobs_by_filter(
@@ -73,17 +66,19 @@ def collect_jobs_by_filter(
 ) -> List[job_blocks.Job]:
   """Flattens a given job group and filters the result."""
 
-  def match_job(job: job_blocks.Job) -> List[job_blocks.Job]:
-    return [job] if predicate(job) else []
-
-  def match_job_group(job_group: job_blocks.JobGroup) -> List[job_blocks.Job]:
-    return list(
-        itertools.chain.from_iterable(
-            [job_collector(job) for job in job_group.jobs.values()]
+  def job_collector(job_type: job_blocks.JobTypeVar) -> List[job_blocks.Job]:
+    match job_type:
+      case job_blocks.Job() as job:
+        return [job] if predicate(job) else []
+      case job_blocks.JobGroup() as job_group:
+        return list(
+            itertools.chain.from_iterable(
+                [job_collector(job) for job in job_group.jobs.values()]
+            )
         )
-    )
+      case _:
+        raise TypeError(f'Unsupported job_type: {job_type!r}')
 
-  job_collector = pattern_matching.match(match_job_group, match_job)
   return job_collector(job_group)
 
 
@@ -109,28 +104,28 @@ def aggregate_constraint_cliques(
     A set of cliques.
   """
 
-  def match_job(
-      job: job_blocks.Job,
+  def matcher(
+      job_type: job_blocks.JobTypeVar,
   ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
-    return [], [job]
+    match job_type:
+      case job_blocks.Job() as job:
+        return [], [job]
+      case job_blocks.JobGroup() as job_group:
+        cliques: List[ConstraintClique] = []
+        jobs: List[job_blocks.Job] = []
+        for job in job_group.jobs.values():
+          subcliques, subjobs = matcher(job)  # pylint: disable=unpacking-non-sequence
+          cliques += subcliques
+          jobs += subjobs
+        cliques = [
+            ConstraintClique(constraint, jobs)
+            for constraint in job_group.constraints
+        ] + cliques
+        return cliques, jobs
+      case _:
+        raise TypeError(f'Unsupported job_type: {job_type!r}')
 
-  def match_job_group(
-      job_group: job_blocks.JobGroup,
-  ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
-    cliques: List[ConstraintClique] = []
-    jobs: List[job_blocks.Job] = []
-    for job in job_group.jobs.values():
-      subcliques, subjobs = matcher(job)
-      cliques += subcliques
-      jobs += subjobs
-    cliques = [
-        ConstraintClique(constraint, jobs)
-        for constraint in job_group.constraints
-    ] + cliques
-    return cliques, jobs
-
-  matcher = pattern_matching.match(match_job, match_job_group)
-  result, _ = matcher(job_group)
+  result, _ = matcher(job_group)  # pylint: disable=unpacking-non-sequence
   return result
 
 

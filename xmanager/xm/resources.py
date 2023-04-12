@@ -16,6 +16,7 @@
 Various classes defined to support resources specification for jobs.
 """
 
+import builtins
 import enum
 import functools
 import itertools
@@ -24,7 +25,6 @@ import re
 from typing import Any, Iterable, Iterator, Dict, Mapping, MutableMapping, Optional, Tuple, Union
 
 import immutabledict
-from xmanager.xm import pattern_matching as pm
 
 
 class _CaseInsensetiveResourceTypeMeta(enum.EnumMeta):
@@ -333,14 +333,14 @@ def _parse_resource_quantity(
       # TODO: Parse SI suffixes, like GiB.
       return float(value), None
 
-  def parse_topology(topology: Topology):
-    return topology.chip_count, topology
-
-  def parse_number(value: Any):
-    return float(value), None
-
   try:
-    return pm.match(parse_string, parse_topology, parse_number)(value)
+    match value:
+      case builtins.str() as str_value:
+        return parse_string(str_value)
+      case Topology() as topology:
+        return topology.chip_count, topology
+      case _:
+        return float(value), None
   except Exception as e:
     raise ValueError(
         f"Couldn't parse resource quantity for {resource_name}. "
@@ -416,11 +416,14 @@ class JobRequirements:
     for resource_name, value in itertools.chain(
         resources.items(), kw_resources.items()
     ):
-      scalar, topology = _parse_resource_quantity(resource_name, value)
-      resource = pm.match(
-          pm.Case([str], lambda r: ResourceType[r]),
-          pm.Case([ResourceType], lambda r: r),
-      )(resource_name)
+      scalar, topology = _parse_resource_quantity(resource_name, value)  # pylint: disable=unpacking-non-sequence
+      match resource_name:
+        case builtins.str() as r:
+          resource = ResourceType[r]
+        case ResourceType() as r:
+          resource = r
+        case _:
+          raise TypeError(f'Unsupported resource: {resource_name!r}')
 
       if resource in _AcceleratorType:
         if self.accelerator is not None:

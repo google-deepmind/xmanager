@@ -14,70 +14,43 @@
 """Methods for routing packageables to appropriate packagers."""
 
 import collections
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Dict, List, Sequence, Tuple
 
 from xmanager import xm
 from xmanager.bazel import client as bazel_client
-from xmanager.xm import pattern_matching
 from xmanager.xm_local import executors
 from xmanager.xm_local.packaging import bazel_tools
 from xmanager.xm_local.packaging import cloud as cloud_packaging
 from xmanager.xm_local.packaging import local as local_packaging
 
 
-def _visit_vertex_spec(
-    bazel_outputs: bazel_tools.TargetOutputs,
-    packageable: xm.Packageable,
-    _: executors.VertexSpec,
-):
-  return cloud_packaging.package_cloud_executable(
-      bazel_outputs,
-      packageable,
-      packageable.executable_spec,
-  )
-
-
-def _visit_local_spec(
-    bazel_outputs: bazel_tools.TargetOutputs,
-    packageable: xm.Packageable,
-    _: executors.LocalSpec,
-):
-  return local_packaging.package_for_local_executor(
-      bazel_outputs,
-      packageable,
-      packageable.executable_spec,
-  )
-
-
-def _visit_kubernetes_spec(
-    bazel_outputs: bazel_tools.TargetOutputs,
-    packageable: xm.Packageable,
-    _: executors.KubernetesSpec,
-):
-  return cloud_packaging.package_cloud_executable(
-      bazel_outputs,
-      packageable,
-      packageable.executable_spec,
-  )
-
-
-def _throw_on_unknown_executor(
-    bazel_outputs: bazel_tools.TargetOutputs,
-    packageable: xm.Packageable,
-    executor: Any,
-):
-  raise TypeError(
-      f'Unsupported executor specification: {executor!r}. '
-      f'Packageable: {packageable!r}'
-  )
-
-
-_PACKAGING_ROUTER = pattern_matching.match(
-    _visit_vertex_spec,
-    _visit_local_spec,
-    _visit_kubernetes_spec,
-    _throw_on_unknown_executor,
-)
+def _packaging_router(
+    built_targets: bazel_tools.TargetOutputs, packageable: xm.Packageable
+) -> xm.Executable:
+  match packageable.executor_spec:
+    case executors.VertexSpec():
+      return cloud_packaging.package_cloud_executable(
+          built_targets,
+          packageable,
+          packageable.executable_spec,
+      )
+    case executors.LocalSpec():
+      return local_packaging.package_for_local_executor(
+          built_targets,
+          packageable,
+          packageable.executable_spec,
+      )
+    case executors.KubernetesSpec():
+      return cloud_packaging.package_cloud_executable(
+          built_targets,
+          packageable,
+          packageable.executable_spec,
+      )
+    case _:
+      raise TypeError(
+          f'Unsupported executor specification: {packageable.executor_spec!r}. '
+          f'Packageable: {packageable!r}'
+      )
 
 
 def _normalize_label(label: str, kind: str) -> str:
@@ -129,6 +102,6 @@ def package(packageables: Sequence[xm.Packageable]) -> List[xm.Executable]:
         built_targets[target] = output
 
   return [
-      _PACKAGING_ROUTER(built_targets, packageable, packageable.executor_spec)
+      _packaging_router(built_targets, packageable)
       for packageable in packageables
   ]
