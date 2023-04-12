@@ -889,8 +889,10 @@ class Experiment(abc.ABC):
       An awaitable that would be fulfilled when the job is launched.
     """
     # pyformat: enable
-    if isinstance(job, AuxiliaryUnitJob):
-      role = job.role
+    role = pattern_matching.match(
+        pattern_matching.Case([AuxiliaryUnitJob], lambda job: job.role),
+        pattern_matching.Case([Any], lambda job: role),
+    )(job)
 
     if self._should_reload_experiment_unit(role):
       experiment_unit_future = self._get_experiment_unit(

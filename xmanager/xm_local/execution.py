@@ -20,7 +20,7 @@ from concurrent import futures
 import os
 import subprocess
 import threading
-from typing import Any, Callable, List, Optional, cast
+from typing import Any, Awaitable, Callable, List, Optional, cast
 
 from absl import logging
 import attr
@@ -28,6 +28,7 @@ from docker.models import containers
 from xmanager import xm
 from xmanager.docker import docker_adapter
 from xmanager.xm import job_operators
+from xmanager.xm import pattern_matching
 from xmanager.xm import utils
 from xmanager.xm_local import executables
 from xmanager.xm_local import executors
@@ -248,25 +249,17 @@ async def _launch_local_binary(
   )
 
 
-async def _local_execution_router(
-    get_full_job_name: Callable[[str], str],
-    job: xm.Job,
-    executable: xm.Executable,
-) -> LocalExecutionHandle:
-  match executable:
-    case executables.LoadedContainerImage() as container_image:
-      return await _launch_loaded_container_image(
-          get_full_job_name,
-          job,
-          container_image,
-      )
-    case executables.LocalBinary() as local_binary:
-      return await _launch_local_binary(get_full_job_name, job, local_binary)
-    case _:
-      raise TypeError(
-          f'Unsupported executable for local execution: {executable!r}'
-      )
-
+# PyType infers the return type of `async` functions without wrapping them with
+# `Awaitable`, so we are overriding the type of `_LOCAL_EXECUTION_ROUTER` to
+# make it right.
+_LocalExecutionRouter = Callable[
+    [Callable[[str], str], xm.Job, Any], Awaitable[LocalExecutionHandle]
+]
+_LOCAL_EXECUTION_ROUTER: _LocalExecutionRouter = pattern_matching.match(
+    _launch_loaded_container_image,
+    _launch_local_binary,
+    _throw_on_unknown_executable,  # pytype: disable=annotation-type-mismatch
+)
 
 # Note that currently handles are never removed from the list. We can consider
 # removing them on completion if needed.
@@ -303,7 +296,7 @@ async def launch(
       job_group, _local_job_predicate
   )
   handles: List[LocalExecutionHandle] = [
-      await _local_execution_router(get_full_job_name, job, job.executable)
+      await _LOCAL_EXECUTION_ROUTER(get_full_job_name, job, job.executable)
       for job in local_jobs
   ]
   with _local_jobs_lock:

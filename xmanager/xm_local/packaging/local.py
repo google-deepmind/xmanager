@@ -14,6 +14,7 @@
 """Packaging for local executions."""
 
 import os
+from typing import Any
 
 from xmanager import xm
 from xmanager.bazel import client as bazel_client
@@ -21,6 +22,7 @@ from xmanager.cloud import build_image
 from xmanager.cloud import docker_lib
 from xmanager.docker import docker_adapter
 from xmanager.xm import executables
+from xmanager.xm import pattern_matching
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local.packaging import bazel_tools
 
@@ -143,30 +145,32 @@ def _package_bazel_binary(
   )
 
 
+def _throw_on_unknown_executable(
+    bazel_outputs: bazel_tools.TargetOutputs,
+    packageable: xm.Packageable,  # pylint: disable=unused-argument
+    executable: Any,
+):
+  del bazel_outputs
+  raise TypeError(
+      'Unsupported executable specification '
+      f'for local packaging: {executable!r}'
+  )
+
+
+_LOCAL_PACKAGING_ROUTER = pattern_matching.match(
+    _package_bazel_binary,
+    _package_bazel_container,
+    _package_binary,
+    _package_container,
+    _package_dockerfile,
+    _package_python_container,
+    _throw_on_unknown_executable,
+)
+
+
 def package_for_local_executor(
     bazel_outputs: bazel_tools.TargetOutputs,
     packageable: xm.Packageable,
     executable_spec: xm.ExecutableSpec,
 ):
-  match executable_spec:
-    case executables.BazelBinary() as bazel_binary:
-      return _package_bazel_binary(bazel_outputs, packageable, bazel_binary)
-    case executables.BazelContainer() as bazel_container:
-      return _package_bazel_container(
-          bazel_outputs, packageable, bazel_container
-      )
-    case executables.Binary() as binary:
-      return _package_binary(bazel_outputs, packageable, binary)
-    case executables.Container() as container:
-      return _package_container(bazel_outputs, packageable, container)
-    case executables.Dockerfile() as dockerfile:
-      return _package_dockerfile(bazel_outputs, packageable, dockerfile)
-    case executables.PythonContainer() as python_container:
-      return _package_python_container(
-          bazel_outputs, packageable, python_container
-      )
-    case _:
-      raise TypeError(
-          'Unsupported executable specification '
-          f'for local packaging: {executable_spec!r}'
-      )
+  return _LOCAL_PACKAGING_ROUTER(bazel_outputs, packageable, executable_spec)
