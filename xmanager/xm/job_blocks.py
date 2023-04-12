@@ -97,19 +97,14 @@ class SequentialArgs:
 
   def _merge_from(self, args: 'SequentialArgs') -> None:
     """Merges another instance of SequentialArgs into self."""
-
-    def import_regular_item(item: SequentialArgs._RegularItem):
-      self._ingest_regular_item(item.value)
-
-    def import_keyword_item(item: SequentialArgs._KeywordItem):
-      self._ingest_keyword_item(item.name, args._kwvalues[item.name])  # pylint: disable=protected-access
-
-    matcher = pattern_matching.match(
-        import_regular_item,
-        import_keyword_item,
-    )
     for item in args._items:  # pylint: disable=protected-access
-      matcher(item)
+      match item:
+        case SequentialArgs._RegularItem() as regular_item:
+          self._ingest_regular_item(regular_item.value)
+        case SequentialArgs._KeywordItem() as keyword_item:
+          self._ingest_keyword_item(
+              keyword_item.name, args._kwvalues[keyword_item.name]  # pylint: disable=protected-access
+          )
 
   @staticmethod
   def from_collection(collection: Optional[UserArgs]) -> 'SequentialArgs':
@@ -148,24 +143,20 @@ class SequentialArgs:
     """Applies the rewrite function to all args and returns the result."""
     result = SequentialArgs()
 
-    def rewrite_regular_item(item: SequentialArgs._RegularItem):
-      new_value = item.value
-      if isinstance(new_value, str):
-        new_value = rewrite(new_value)
-      result._ingest_regular_item(new_value)  # pylint: disable=protected-access
-
-    def rewrite_keyword_item(item: SequentialArgs._KeywordItem):
-      new_value = self._kwvalues[item.name]
-      if isinstance(new_value, str):
-        new_value = rewrite(new_value)
-      result._ingest_keyword_item(item.name, new_value)  # pylint: disable=protected-access
-
-    matcher = pattern_matching.match(
-        rewrite_regular_item,
-        rewrite_keyword_item,
-    )
     for item in self._items:
-      matcher(item)
+      match item:
+        case SequentialArgs._RegularItem() as regular_item:
+          new_value = regular_item.value
+          if isinstance(new_value, str):
+            new_value = rewrite(new_value)
+          result._ingest_regular_item(new_value)  # pylint: disable=protected-access
+        case SequentialArgs._KeywordItem() as keyword_item:
+          new_value = self._kwvalues[keyword_item.name]
+          if isinstance(new_value, str):
+            new_value = rewrite(new_value)
+          result._ingest_keyword_item(keyword_item.name, new_value)  # pylint: disable=protected-access
+        case _:
+          raise TypeError(f'Unsupported item type: {item!r}')
 
     return result
 
@@ -175,11 +166,6 @@ class SequentialArgs:
       kwargs_joiner: Callable[[str, str], str] = utils.trivial_kwargs_joiner,
   ) -> List[str]:
     """Exports items as a list ready to be passed into the command line."""
-
-    def export_regular_item(
-        item: SequentialArgs._RegularItem,
-    ) -> List[Optional[str]]:
-      return [escaper(item.value)]
 
     def export_keyword_item(
         item: SequentialArgs._KeywordItem,
@@ -204,10 +190,15 @@ class SequentialArgs:
       else:
         return [kwargs_joiner(escaper(f'--{item.name}'), escaper(value))]
 
-    matcher = pattern_matching.match(
-        export_regular_item,
-        export_keyword_item,
-    )
+    def matcher(item) -> List[Optional[str]]:
+      match item:
+        case SequentialArgs._RegularItem() as regular_item:
+          return [escaper(regular_item.value)]
+        case SequentialArgs._KeywordItem() as keyword_item:
+          return export_keyword_item(keyword_item)
+        case _:
+          raise TypeError(f'Unsupported item type: {item!r}')
+
     flags = itertools.chain.from_iterable(matcher(item) for item in self._items)
     return [f for f in flags if f is not None]
 
@@ -223,20 +214,15 @@ class SequentialArgs:
     if kwargs_only:
       return self._kwvalues
 
-    def export_regular_item(
-        item: SequentialArgs._RegularItem,
-    ) -> Tuple[str, Any]:
-      return (str(item.value), True)
+    def matcher(item) -> Tuple[str, Any]:
+      match item:
+        case SequentialArgs._RegularItem() as regular_item:
+          return (str(regular_item.value), True)
+        case SequentialArgs._KeywordItem() as keyword_item:
+          return (keyword_item.name, self._kwvalues[keyword_item.name])
+        case _:
+          raise TypeError(f'Unsupported item type: {item!r}')
 
-    def export_keyword_item(
-        item: SequentialArgs._KeywordItem,
-    ) -> Tuple[str, Any]:
-      return (item.name, self._kwvalues[item.name])
-
-    matcher = pattern_matching.match(
-        export_regular_item,
-        export_keyword_item,
-    )
     return dict([matcher(item) for item in self._items])
 
   def __eq__(self, other) -> bool:

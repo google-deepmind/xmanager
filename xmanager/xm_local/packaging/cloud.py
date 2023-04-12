@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Packaging for execution on Cloud."""
-from typing import Any, Optional
+from typing import Optional
 
 from xmanager import xm
 from xmanager.bazel import client as bazel_client
@@ -20,7 +20,6 @@ from xmanager.cloud import auth
 from xmanager.cloud import build_image
 from xmanager.cloud import docker_lib
 from xmanager.docker import docker_adapter
-from xmanager.xm import pattern_matching
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import executors as local_executors
 from xmanager.xm_local.packaging import bazel_tools
@@ -28,21 +27,15 @@ from xmanager.xm_local.packaging import bazel_tools
 
 def _get_push_image_tag(executor_spec: xm.ExecutorSpec) -> Optional[str]:
   """Get the push_image_tag from executor or None."""
-
-  def _get_push_image_tag_caip(spec: local_executors.CaipSpec):
-    return spec.push_image_tag
-
-  def _get_push_image_tag_kubernetes(spec: local_executors.KubernetesSpec):
-    return spec.push_image_tag
-
-  def _throw_on_unknown_executor(executor: Any):
-    raise TypeError(f'Unsupported executor specification: {executor!r}. ')
-
-  return pattern_matching.match(
-      _get_push_image_tag_caip,
-      _get_push_image_tag_kubernetes,
-      _throw_on_unknown_executor,
-  )(executor_spec)
+  match executor_spec:
+    case local_executors.CaipSpec() as caip_spec:
+      return caip_spec.push_image_tag
+    case local_executors.KubernetesSpec() as kubernetes_spec:
+      return kubernetes_spec.push_image_tag
+    case _:
+      raise TypeError(
+          f'Unsupported executor specification: {executor_spec!r}. '
+      )
 
 
 def _package_container(
@@ -193,27 +186,38 @@ def _package_bazel_container(
   )
 
 
-def _throw_on_unknown_executable(
-    packageable: xm.Packageable, executable: xm.ExecutableSpec
-):
-  raise TypeError(
-      'Unsupported executable specification '
-      f'for Cloud packaging: {executable!r}'
-  )
-
-
-_CLOUD_PACKAGING_ROUTER = pattern_matching.match(
-    _package_container,
-    _package_dockerfile,
-    _package_python_container,
-    _package_bazel_container,
-    _throw_on_unknown_executable,
-)
-
-
 def package_cloud_executable(
     bazel_outputs: bazel_tools.TargetOutputs,
     packageable: xm.Packageable,
     executable_spec: xm.ExecutableSpec,
 ) -> xm.Executable:
-  return _CLOUD_PACKAGING_ROUTER(bazel_outputs, packageable, executable_spec)
+  match executable_spec:
+    case xm.Container() as container:
+      return _package_container(
+          bazel_outputs,
+          packageable,
+          container,
+      )
+    case xm.Dockerfile() as dockerfile:
+      return _package_dockerfile(
+          bazel_outputs,
+          packageable,
+          dockerfile,
+      )
+    case xm.PythonContainer() as python_container:
+      return _package_python_container(
+          bazel_outputs,
+          packageable,
+          python_container,
+      )
+    case xm.BazelContainer() as bazel_container:
+      return _package_bazel_container(
+          bazel_outputs,
+          packageable,
+          bazel_container,
+      )
+    case _:
+      raise TypeError(
+          'Unsupported executable specification '
+          f'for Cloud packaging: {executable_spec!r}'
+      )

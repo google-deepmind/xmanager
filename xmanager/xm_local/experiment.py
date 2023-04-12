@@ -27,7 +27,6 @@ from xmanager.cloud import vertex
 from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
 from xmanager.xm import job_operators
-from xmanager.xm import pattern_matching
 from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
 from xmanager.xm_local import status as local_status
@@ -35,24 +34,14 @@ from xmanager.xm_local.packaging import router as packaging_router
 from xmanager.xm_local.storage import database
 
 
-def _throw_on_unknown_executor(job: xm.Job, executor: Any):
-  raise TypeError(f'Unsupported executor: {executor!r}. Job: {job!r}')
-
-
-_EXECUTOR_VALIDATOR = pattern_matching.match(
-    pattern_matching.Case([xm.Job, local_executors.Local], lambda *_: None),
-    pattern_matching.Case([xm.Job, local_executors.Vertex], lambda *_: None),
-    pattern_matching.Case(
-        [xm.Job, local_executors.Kubernetes], lambda *_: None
-    ),
-    _throw_on_unknown_executor,
-)
-
-
 def _validate_job_group(job_group: xm.JobGroup) -> None:
   all_jobs = job_operators.flatten_jobs(job_group)
   for job in all_jobs:
-    _EXECUTOR_VALIDATOR(job, job.executor)
+    match job.executor:
+      case local_executors.Local() | local_executors.Vertex() | local_executors.Kubernetes():
+        pass
+      case _:
+        raise TypeError(f'Unsupported executor: {job.executor!r}. Job: {job!r}')
 
 
 @attr.s(auto_attribs=True)
@@ -159,19 +148,13 @@ class LocalExperimentUnit(xm.ExperimentUnit):
     del mark_as_completed  # Not implemented in xm_local.
     del message  # Not implemented in xm_local.
 
-    def stop_vertex_handle(vertex_handle: vertex.VertexHandle) -> None:
-      vertex_handle.stop()
-
-    def throw_on_unknown_handle(handle: Any) -> None:
-      raise TypeError(f'Unsupported handle: {handle!r}')
-
-    handle_stopper = pattern_matching.match(
-        stop_vertex_handle,
-        throw_on_unknown_handle,
-    )
     handles = self._non_local_execution_handles + self._local_execution_handles
     for handle in handles:
-      handle_stopper(handle)
+      match handle:
+        case vertex.VertexHandle() as vertex_handle:
+          vertex_handle.stop()
+        case _:
+          raise TypeError(f'Unsupported handle: {handle!r}')
 
   def get_status(self) -> local_status.LocalWorkUnitStatus:
     """Gets the current status of the work unit."""
@@ -204,30 +187,21 @@ class LocalWorkUnit(LocalExperimentUnit):
       self, handles: Sequence[local_execution.ExecutionHandle]
   ) -> None:
     """Saves jobs present in the handlers."""
-
-    def save_vertex_handle(vertex_handle: vertex.VertexHandle) -> None:
-      database.database().insert_vertex_job(
-          self.experiment_id, self.work_unit_id, vertex_handle.job_name
-      )
-
-    def save_k8s_handle(k8s_handle: kubernetes.KubernetesHandle) -> None:
-      for job in k8s_handle.jobs:
-        namespace = job.metadata.namespace or 'default'
-        name = job.metadata.name
-        database.database().insert_kubernetes_job(
-            self.experiment_id, self.work_unit_id, namespace, name
-        )
-
-    def throw_on_unknown_handle(handle: Any) -> None:
-      raise TypeError(f'Unsupported handle: {handle!r}')
-
-    handle_saver = pattern_matching.match(
-        save_vertex_handle,
-        save_k8s_handle,
-        throw_on_unknown_handle,
-    )
     for handle in handles:
-      handle_saver(handle)
+      match handle:
+        case vertex.VertexHandle() as vertex_handle:
+          database.database().insert_vertex_job(
+              self.experiment_id, self.work_unit_id, vertex_handle.job_name
+          )
+        case kubernetes.KubernetesHandle() as k8s_handle:
+          for job in k8s_handle.jobs:
+            namespace = job.metadata.namespace or 'default'
+            name = job.metadata.name
+            database.database().insert_kubernetes_job(
+                self.experiment_id, self.work_unit_id, namespace, name
+            )
+        case _:
+          raise TypeError(f'Unsupported handle: {handle!r}')
 
   async def _launch_job_group(
       self,
@@ -354,7 +328,13 @@ class LocalExperiment(xm.Experiment):
       future.set_result(auxiliary_unit)
       return future
 
-    return pattern_matching.match(create_work_unit, create_auxiliary_unit)(role)
+    match role:
+      case xm.WorkUnitRole() as role:
+        return create_work_unit(role)
+      case xm.AuxiliaryUnitRole() as role:
+        return create_auxiliary_unit(role)
+      case _:
+        raise TypeError(f'Unsupported role: {role!r}')
 
   def _wait_for_local_jobs(self, is_exit_abrupt: bool):
     if self._experiment_units:
