@@ -707,7 +707,7 @@ class Experiment(abc.ABC):
     self._current_experiment_token = _current_experiment.set(self)
     self._event_loop = asyncio.new_event_loop()
     asyncio.get_child_watcher().attach_loop(self._event_loop)
-    self._event_loop_thread = threading.Thread(
+    self._event_loop_thread = self._thread_factory()(
         target=self._event_loop.run_forever, daemon=True
     )
     self._event_loop_thread.start()
@@ -722,6 +722,16 @@ class Experiment(abc.ABC):
     ).result()
 
     return self
+
+  def _thread_factory(self) -> type[threading.Thread]:
+    """Gets the type of Thread to use for asynchronous operations.
+
+    Defaults to `threading.Thread`.
+
+    Returns:
+      The type to use for constructing a Thread.
+    """
+    return threading.Thread
 
   def _wait_for_tasks(self):
     """Waits for pending tasks to complete, raising the first error."""
