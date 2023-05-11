@@ -32,7 +32,6 @@ from xmanager.xm import core
 from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
 from xmanager.xm import metadata_context
-from xmanager.xm import pattern_matching as pm
 
 
 class MockContextAnnotations(metadata_context.ContextAnnotations):
@@ -150,16 +149,12 @@ class MockExperiment(core.Experiment):
         args,
         role,
     )
-    pm.match(
-        pm.Case(
-            [core.WorkUnitRole],
-            lambda _: self._work_units.append(experiment_unit),
-        ),
-        pm.Case(
-            [core.AuxiliaryUnitRole],
-            lambda _: self._auxiliary_units.append(experiment_unit),
-        ),
-    )(role)
+    if isinstance(role, core.WorkUnitRole):
+      self._work_units.append(experiment_unit)
+    elif isinstance(role, core.AuxiliaryUnitRole):
+      self._auxiliary_units.append(experiment_unit)
+    else:
+      raise TypeError(f'Unsupported role: {role!r}')
 
     future.set_result(experiment_unit)
     return future

@@ -19,28 +19,23 @@ from typing import Callable, List, Sequence, Tuple
 
 import attr
 from xmanager.xm import job_blocks
-from xmanager.xm import pattern_matching
 
 
 def shallow_copy_job_type(
     job_type: job_blocks.JobTypeVar,
 ) -> job_blocks.JobTypeVar:
   """Creates a shallow copy of the job structure."""
+  if job_blocks.is_job_generator(job_type):
+    return job_type
 
-  def apply_to_job_group(job_group: job_blocks.JobGroup) -> job_blocks.JobGroup:
-    job_group = copy.copy(job_group)
-    job_group.jobs = {key: matcher(job) for key, job in job_group.jobs.items()}
-    return job_group
+  if isinstance(job_type, job_blocks.JobGroup):
+    job_type = copy.copy(job_type)
+    job_type.jobs = {
+        key: shallow_copy_job_type(job) for key, job in job_type.jobs.items()
+    }
+    return job_type
 
-  matcher = pattern_matching.match(
-      pattern_matching.Case([job_blocks.Job], copy.copy),
-      apply_to_job_group,
-      pattern_matching.Case(
-          [job_blocks.JobGeneratorType], lambda generator: generator
-      ),
-      pattern_matching.Case([job_blocks.JobConfig], copy.copy),
-  )
-  return matcher(job_type)
+  return copy.copy(job_type)
 
 
 def populate_job_names(job_type: job_blocks.JobTypeVar) -> None:

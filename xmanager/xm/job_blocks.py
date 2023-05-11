@@ -20,7 +20,6 @@ import re
 from typing import Any, Awaitable, Callable, Dict, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union
 
 import attr
-from xmanager.xm import pattern_matching
 from xmanager.xm import utils
 
 UserArgs = Union[Mapping, Sequence, 'SequentialArgs']
@@ -113,30 +112,21 @@ class SequentialArgs:
     if collection is None:
       return result
 
-    def check_for_string(args: str) -> None:
+    if isinstance(collection, str):
       raise ValueError(
-          f'Tried to construct xm.SequentialArgs from a string: {args!r}. '
-          f'Wrap it in a list: [{args!r}] to make it a single argument.'
+          f'Tried to construct xm.SequentialArgs from string: {collection!r}. '
+          f'Wrap it in a list: [{collection!r}] to make it a single argument.'
       )
-
-    def import_sequential_args(args: SequentialArgs) -> None:
-      result._merge_from(args)  # pylint: disable=protected-access
-
-    def import_mapping(collection: Mapping[Any, Any]) -> None:
+    elif isinstance(collection, SequentialArgs):
+      result._merge_from(collection)  # pylint: disable=protected-access
+    elif isinstance(collection, Mapping):
       for key, value in collection.items():
         result._ingest_keyword_item(str(key), value)  # pylint: disable=protected-access
-
-    def import_sequence(collection: Sequence[Any]) -> None:
+    elif isinstance(collection, Sequence):
       for value in collection:
         result._ingest_regular_item(value)  # pylint: disable=protected-access
-
-    matcher = pattern_matching.match(
-        check_for_string,
-        import_sequential_args,
-        import_mapping,
-        import_sequence,
-    )
-    matcher(collection)
+    else:
+      raise TypeError(f'Unsupported collection type: {collection!r}')
     return result
 
   def rewrite_args(self, rewrite: Callable[[str], str]) -> 'SequentialArgs':
@@ -458,6 +448,10 @@ class JobConfig(abc.ABC):
 JobTypeVar = TypeVar('JobTypeVar', Job, JobGroup, JobGeneratorType, JobConfig)
 
 
+def is_job_generator(job: JobType) -> bool:
+  return isinstance(job, Callable)
+
+
 def get_args_for_all_jobs(job: JobType, args: Dict[str, Any]) -> Dict[str, Any]:
   """Gets args to apply on all jobs inside a JobGroup.
 
@@ -470,10 +464,12 @@ def get_args_for_all_jobs(job: JobType, args: Dict[str, Any]) -> Dict[str, Any]:
   Returns:
     args that can be added with work_unit.add()
   """
-  if not isinstance(job, JobGroup):
-    return {'args': dict(args)}
-  all_args = {}
-  for job_name, job_type in job.jobs.items():
-    job_type_args = get_args_for_all_jobs(job_type, args)
-    all_args[job_name] = job_type_args
-  return all_args
+  match job:
+    case JobGroup() as job_group:
+      all_args = {}
+      for job_name, job_type in job_group.jobs.items():
+        job_type_args = get_args_for_all_jobs(job_type, args)
+        all_args[job_name] = job_type_args
+      return all_args
+    case _:
+      return {'args': dict(args)}

@@ -41,7 +41,6 @@ from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
 from xmanager.xm import job_operators
 from xmanager.xm import metadata_context
-from xmanager.xm import pattern_matching
 
 # ContextVars holding the current experiment (when within an Experiment context)
 # and current experiment unit (when inside a JobGenerator).
@@ -65,39 +64,27 @@ def _check_if_unsupported_args_are_present(
     )
 
 
-def _apply_args_to_job(job: job_blocks.Job, args: Mapping[str, Any]) -> None:
-  """Overrides job properties."""
-  _check_if_unsupported_args_are_present(args, ('args', 'env_vars'), 'xm.Job')
+def _apply_args(job_type: job_blocks.JobType, args: Mapping[str, Any]) -> None:
+  match job_type:
+    case job_blocks.Job() as job:
+      _check_if_unsupported_args_are_present(
+          args, ('args', 'env_vars'), 'xm.Job'
+      )
 
-  if 'args' in args:
-    job.args = job_blocks.merge_args(job.args, args['args'])
-  if 'env_vars' in args:
-    job.env_vars = job.env_vars.copy()
-    job.env_vars.update(args['env_vars'])
-
-
-def _apply_args_to_job_group(
-    job_group: job_blocks.JobGroup, args: Mapping[str, Any]
-) -> None:
-  """Recursively overrides job group properties."""
-  if args:
-    _check_if_unsupported_args_are_present(
-        args, job_group.jobs.keys(), 'xm.JobGroup'
-    )
-    for key, job in job_group.jobs.items():
-      _apply_args(job, args.get(key, {}))
-
-
-_apply_args = pattern_matching.match(
-    _apply_args_to_job,
-    _apply_args_to_job_group,
-    pattern_matching.Case(
-        [job_blocks.JobGeneratorType, Any], lambda other, args: None
-    ),
-    pattern_matching.Case(
-        [job_blocks.JobConfig, Any], lambda other, args: None
-    ),
-)
+      if 'args' in args:
+        job.args = job_blocks.merge_args(job.args, args['args'])
+      if 'env_vars' in args:
+        job.env_vars = job.env_vars.copy()
+        job.env_vars.update(args['env_vars'])
+    case job_blocks.JobGroup() as job_group:
+      if args:
+        _check_if_unsupported_args_are_present(
+            args, job_group.jobs.keys(), 'xm.JobGroup'
+        )
+        for key, job in job_group.jobs.items():
+          _apply_args(job, args.get(key, {}))
+    case _:
+      pass
 
 
 class ExperimentUnitStatus(abc.ABC):
@@ -206,28 +193,23 @@ def _work_unit_arguments(
     # don't alter them if a value is given.
     return args
 
-  def deduce_args_for_job(job: job_blocks.Job) -> Dict[str, Any]:
-    args = {
-        'args': job.args.to_dict(kwargs_only=True),
-        'env_vars': job.env_vars,
-    }
-    return {key: value for key, value in args.items() if value}
-
-  def deduce_args_for_job_group(group: job_blocks.JobGroup) -> Dict[str, Any]:
-    args = {}
-    for job_name, job in group.jobs.items():
-      job_args = deduce_args(job)
-      if job_args:
-        args[job_name] = job_args
-    return args
-
-  deduce_args = pattern_matching.match(
-      deduce_args_for_job,
-      deduce_args_for_job_group,
-      pattern_matching.Case(
-          [job_blocks.JobGeneratorType], lambda generator: {}
-      ),
-  )
+  def deduce_args(job_type: job_blocks.JobType) -> Dict[str, Any]:
+    match job_type:
+      case job_blocks.Job() as job:
+        args = {
+            'args': job.args.to_dict(kwargs_only=True),
+            'env_vars': job.env_vars,
+        }
+        return {key: value for key, value in args.items() if value}
+      case job_blocks.JobGroup() as job_group:
+        args = {}
+        for job_name, job in job_group.jobs.items():
+          job_args = deduce_args(job)
+          if job_args:
+            args[job_name] = job_args
+        return args
+      case _:
+        return {}
 
   return deduce_args(job)
 
@@ -401,12 +383,19 @@ class ExperimentUnit(abc.ABC):
       _current_experiment_unit.set(self)
       return self._launch_job_config(job_config, args or {}, identity)
 
-    job_awaitable = pattern_matching.match(
-        launch_job,
-        launch_job_group,
-        launch_job_generator,
-        launch_job_config,
-    )(job)
+    job_awaitable: Awaitable[Any]
+    match job:
+      case job_blocks.Job() as job:
+        job_awaitable = launch_job(job)
+      case job_blocks.JobGroup() as job_group:
+        job_awaitable = launch_job_group(job_group)
+      case job_generator if job_blocks.is_job_generator(job):
+        job_awaitable = launch_job_generator(job_generator)
+      case job_blocks.JobConfig() as job_config:
+        job_awaitable = launch_job_config(job_config)
+      case _:
+        raise TypeError(f'Unsupported job type: {job!r}')
+
     launch_task = self._create_task(job_awaitable)
     self._launch_tasks.append(launch_task)
     return asyncio.wrap_future(launch_task)
@@ -636,17 +625,14 @@ class AuxiliaryUnitJob(abc.ABC):
     self._job = job
 
   async def __call__(self, aux_unit: ExperimentUnit, **kwargs):
-    async def launch_generator(
-        job_generator: job_blocks.JobGeneratorType,
-    ) -> None:
-      coroutine = job_generator(aux_unit, **kwargs)
-      assert coroutine is not None
-      await coroutine
+    if not job_blocks.is_job_generator(self._job):
+      aux_unit.add(self._job, args=kwargs)
+      return
 
-    async def launch_job(job: Any) -> None:
-      aux_unit.add(job, args=kwargs)
-
-    await pattern_matching.async_match(launch_generator, launch_job)(self._job)
+    job_generator = self._job
+    coroutine = job_generator(aux_unit, **kwargs)
+    assert coroutine is not None
+    await coroutine
 
 
 class Experiment(abc.ABC):

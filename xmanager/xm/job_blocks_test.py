@@ -92,7 +92,7 @@ class JobBlocksTest(unittest.TestCase):
     with self.assertRaisesRegex(
         ValueError,
         (
-            "Tried to construct xm.SequentialArgs from a string: '--foo'. "
+            "Tried to construct xm.SequentialArgs from string: '--foo'. "
             "Wrap it in a list: \\['--foo'\\] to make it a single argument."
         ),
     ):

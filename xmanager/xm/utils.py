@@ -28,7 +28,6 @@ from typing import Any, Callable, TypeVar
 
 from absl import flags
 import attr
-from xmanager.xm import pattern_matching
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string(
@@ -60,11 +59,14 @@ class ShellSafeArg(SpecialArg):
     )
 
 
-ARG_ESCAPER = pattern_matching.match(
-    pattern_matching.Case([ShellSafeArg], lambda v: v.arg),
-    pattern_matching.Case([enum.Enum], lambda v: shlex.quote(str(v.name))),
-    pattern_matching.Case([Any], lambda v: shlex.quote(str(v))),
-)
+def ARG_ESCAPER(value: Any) -> str:  # pylint: disable=invalid-name
+  match value:
+    case ShellSafeArg():
+      return value.arg
+    case enum.Enum():
+      return shlex.quote(str(value.name))
+    case _:
+      return shlex.quote(str(value))
 
 
 def trivial_kwargs_joiner(key: str, value: str) -> str:
