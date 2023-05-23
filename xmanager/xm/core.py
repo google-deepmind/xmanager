@@ -677,7 +677,7 @@ class Experiment(abc.ABC):
     """Returns a unique ID assigned to the experiment."""
     raise NotImplementedError
 
-  def __enter__(self):
+  def __enter__(self) -> 'Experiment':
     is_coro_context = False
     try:
       asyncio.get_running_loop()
