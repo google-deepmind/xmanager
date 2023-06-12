@@ -286,6 +286,7 @@ class ExperimentUnit(abc.ABC):
       create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
       args: Optional[Mapping[str, Any]],
       role: ExperimentUnitRole,
+      identity: str = '',
   ) -> None:
     """Initializes an `ExperimentUnit` instance.
 
@@ -295,11 +296,13 @@ class ExperimentUnit(abc.ABC):
       args: Arguments to this experiment unit. Most commonly used to represent
         the hyperparameter sweep trial corresponding to a work unit.
       role: The role of this unit in the experiment structure.
+      identity: The unique (user defined) identifier for this work unit.
     """
     self.experiment = experiment
     self._create_task = create_task
     self._args = args
     self._role = role
+    self._identity = identity
 
     self._launch_tasks: List[futures.Future[Any]] = []
 
@@ -307,6 +310,11 @@ class ExperimentUnit(abc.ABC):
   def experiment_id(self) -> int:
     """Returns a unique ID assigned to the experiment."""
     return self.experiment.experiment_id
+
+  @property
+  def identity(self) -> str:
+    """Returns the unique identity (user assigned) for the experiment unit."""
+    return self._identity
 
   def add(
       self,
