@@ -926,7 +926,7 @@ class Experiment(abc.ABC):
         await experiment_unit.add(job, args, identity=identity)
       except Exception as update_exception:
         logging.error(
-            'Could not reload the work unit: %s',
+            'Could not reload the experiment unit: %s',
             update_exception,
         )
         raise
