@@ -92,10 +92,10 @@ def package(packageables: Sequence[xm.Packageable]) -> List[xm.Executable]:
       args_to_targets[target.bazel_args].append(target)
     for args, targets in args_to_targets.items():
       outputs = bazel_service.build_targets(
-          labels=[
+          labels=tuple(
               _normalize_label(target.label, label_to_kind[target.label])
               for target in targets
-          ],
+          ),
           bazel_args=args,
       )
       for target, output in zip(targets, outputs):
