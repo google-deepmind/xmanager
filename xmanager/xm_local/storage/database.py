@@ -242,9 +242,10 @@ class Database:
   def maybe_migrate_database_version(self):
     """Enforces the latest version of the database to be used."""
     db_version = self.database_version()
-    legacy_sqlite_db = self.engine.dialect.has_table(
-        self.engine, 'VersionHistory'
-    )
+    with self.engine.connect() as connection:
+      legacy_sqlite_db = self.engine.dialect.has_table(
+          connection, 'VersionHistory'
+      )
 
     need_to_update = (
         db_version != self.latest_version_available() and db_version
