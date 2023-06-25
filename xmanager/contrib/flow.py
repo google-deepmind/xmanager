@@ -20,10 +20,14 @@ _Controller = Callable[[_Fn], _AsyncFn]
 controller = parameter_controller.controller
 
 
+class _UnlaunchedJobError(Exception):
+  pass
+
+
 class _UnlaunchedJob:
 
   async def wait_until_complete(self):
-    raise xm.ExperimentUnitError
+    raise _UnlaunchedJobError
 
 
 def executable_graph(
@@ -94,7 +98,7 @@ def executable_graph(
       try:
         log(f'`{job_name}` is running, waiting to finish')
         await op.wait_until_complete()  # Wait for the job to complete
-      except xm.ExperimentUnitError:
+      except (xm.ExperimentUnitError, _UnlaunchedJobError):
         log(f'`{job_name}` has failed.')
         if terminate_on_failure:
           raise
