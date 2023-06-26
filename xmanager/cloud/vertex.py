@@ -341,7 +341,7 @@ class VertexHandle(local_execution.ExecutionHandle):
 
   def get_status(self) -> local_status.LocalWorkUnitStatus:
     state = get_default_client().get_state(self.job_name)
-    status = _STATE_TO_STATUS[state]
+    status = _STATE_TO_STATUS[int(state)]
     return local_status.LocalWorkUnitStatus(status=status)
 
 

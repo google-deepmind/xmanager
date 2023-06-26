@@ -210,6 +210,10 @@ class BinaryHandle(LocalExecutionHandle):
 
   async def monitor(self) -> None:
     if self.stream_output:
+      if not self.process.stdout:
+        raise ValueError(
+            'No stdout available from process. Cannot stream output.'
+        )
       while True:
         line = await self.process.stdout.readline()
         if not line:
