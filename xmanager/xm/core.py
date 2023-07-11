@@ -65,6 +65,7 @@ def _check_if_unsupported_args_are_present(
 
 
 def _apply_args(job_type: job_blocks.JobType, args: Mapping[str, Any]) -> None:
+  # pytype: disable=attribute-error
   match job_type:
     case job_blocks.Job() as job:
       _check_if_unsupported_args_are_present(
@@ -85,6 +86,7 @@ def _apply_args(job_type: job_blocks.JobType, args: Mapping[str, Any]) -> None:
           _apply_args(job, args.get(key, {}))
     case _:
       pass
+  # pytype: enable=attribute-error
 
 
 class ExperimentUnitStatus(abc.ABC):
@@ -194,6 +196,7 @@ def _work_unit_arguments(
     return args
 
   def deduce_args(job_type: job_blocks.JobType) -> Dict[str, Any]:
+    # pytype: disable=attribute-error
     match job_type:
       case job_blocks.Job() as job:
         args = {
@@ -210,6 +213,7 @@ def _work_unit_arguments(
         return args
       case _:
         return {}
+    # pytype: enable=attribute-error
 
   return deduce_args(job)
 

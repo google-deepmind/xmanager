@@ -99,10 +99,10 @@ class SequentialArgs:
     for item in args._items:  # pylint: disable=protected-access
       match item:
         case SequentialArgs._RegularItem() as regular_item:
-          self._ingest_regular_item(regular_item.value)
+          self._ingest_regular_item(regular_item.value)  # pytype: disable=attribute-error
         case SequentialArgs._KeywordItem() as keyword_item:
           self._ingest_keyword_item(
-              keyword_item.name, args._kwvalues[keyword_item.name]  # pylint: disable=protected-access
+              keyword_item.name, args._kwvalues[keyword_item.name]  # pylint: disable=protected-access  # pytype: disable=attribute-error
           )
 
   @staticmethod
@@ -134,6 +134,7 @@ class SequentialArgs:
     result = SequentialArgs()
 
     for item in self._items:
+      # pytype: disable=attribute-error
       match item:
         case SequentialArgs._RegularItem() as regular_item:
           new_value = regular_item.value
@@ -147,6 +148,7 @@ class SequentialArgs:
           result._ingest_keyword_item(keyword_item.name, new_value)  # pylint: disable=protected-access
         case _:
           raise TypeError(f'Unsupported item type: {item!r}')
+      # pytype: enable=attribute-error
 
     return result
 
@@ -467,7 +469,7 @@ def get_args_for_all_jobs(job: JobType, args: Dict[str, Any]) -> Dict[str, Any]:
   match job:
     case JobGroup() as job_group:
       all_args = {}
-      for job_name, job_type in job_group.jobs.items():
+      for job_name, job_type in job_group.jobs.items():  # pytype: disable=attribute-error
         job_type_args = get_args_for_all_jobs(job_type, args)
         all_args[job_name] = job_type_args
       return all_args

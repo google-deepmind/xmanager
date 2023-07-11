@@ -44,10 +44,10 @@ def populate_job_names(job_type: job_blocks.JobTypeVar) -> None:
   def matcher(prefix: Sequence[str], job_type: job_blocks.JobTypeVar) -> None:
     match job_type:
       case job_blocks.Job() as target:
-        if target.name is None:
+        if target.name is None:  # pytype: disable=attribute-error
           target.name = '_'.join(prefix) if prefix else target.executable.name
       case job_blocks.JobGroup() as target:
-        for key, job in target.jobs.items():
+        for key, job in target.jobs.items():  # pytype: disable=attribute-error
           matcher([*prefix, key], job)
       case _:
         return
@@ -64,7 +64,7 @@ def collect_jobs_by_filter(
   def job_collector(job_type: job_blocks.JobTypeVar) -> List[job_blocks.Job]:
     match job_type:
       case job_blocks.Job() as job:
-        return [job] if predicate(job) else []
+        return [job] if predicate(job) else []  # pytype: disable=bad-return-type
       case job_blocks.JobGroup() as job_group:
         return list(
             itertools.chain.from_iterable(
@@ -104,7 +104,7 @@ def aggregate_constraint_cliques(
   ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
     match job_type:
       case job_blocks.Job() as job:
-        return [], [job]
+        return [], [job]  # pytype: disable=bad-return-type
       case job_blocks.JobGroup() as job_group:
         cliques: List[ConstraintClique] = []
         jobs: List[job_blocks.Job] = []
