@@ -120,7 +120,9 @@ class MockExperiment(core.Experiment):
 
   constraints: List[job_blocks.JobType]
 
-  _async_packager = async_packager.AsyncPackager(lambda _: [])
+  _async_packager = async_packager.AsyncPackager(
+      lambda packageables: [MockExecutable()] * len(packageables)
+  )
 
   def __init__(self) -> None:
     super().__init__()
