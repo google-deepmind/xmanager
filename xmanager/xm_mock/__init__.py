@@ -87,8 +87,9 @@ class MockExperimentUnit(core.WorkUnit):
       launched_jobs_args: List[Optional[Mapping[str, Any]]],
       args: Optional[Mapping[str, Any]],
       role: core.ExperimentUnitRole,
+      identity: str = '',
   ) -> None:
-    super().__init__(experiment, create_task, args, role)
+    super().__init__(experiment, create_task, args, role, identity)
     self._launched_jobs = launched_jobs
     self._launched_jobs_args = launched_jobs_args
     self._work_unit_id = work_unit_id_predictor.reserve_id()
@@ -140,7 +141,6 @@ class MockExperiment(core.Experiment):
       identity: str = '',
   ) -> Awaitable[MockExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
-    del identity  # Unused.
     future = asyncio.Future(loop=self._event_loop)
     experiment_unit = MockExperimentUnit(
         self,
@@ -150,6 +150,7 @@ class MockExperiment(core.Experiment):
         self.launched_jobs_args,
         args,
         role,
+        identity,
     )
     if isinstance(role, core.WorkUnitRole):
       self._work_units.append(experiment_unit)
