@@ -22,7 +22,7 @@ import functools
 import itertools
 import operator
 import re
-from typing import Any, Iterable, Iterator, Dict, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, Tuple, Union, cast
 
 import immutabledict
 
@@ -339,7 +339,8 @@ def _parse_resource_quantity(
     match value:
       case builtins.str() as str_value:
         return parse_string(str_value)
-      case Topology() as topology:
+      case Topology():
+        topology = cast(Topology, value)  # needed to work around a pytype bug
         return topology.chip_count, topology
       case _:
         return float(value), None
@@ -422,8 +423,8 @@ class JobRequirements:
       match resource_name:
         case builtins.str() as r:
           resource = ResourceType[r]
-        case ResourceType() as r:
-          resource = r
+        case ResourceType():
+          resource = resource_name
         case _:
           raise TypeError(f'Unsupported resource: {resource_name!r}')
 
