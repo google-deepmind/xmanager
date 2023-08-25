@@ -16,10 +16,6 @@ _AsyncFn = Callable[[], xm.JobGeneratorType]
 _Controller = Callable[[_Fn], _AsyncFn]
 
 
-# Alias for convenience.
-controller = parameter_controller.controller
-
-
 class _UnlaunchedJobError(Exception):
   pass
 
@@ -28,6 +24,10 @@ class _UnlaunchedJob:
 
   async def wait_until_complete(self):
     raise _UnlaunchedJobError
+
+
+class StopControllerError(Exception):
+  pass
 
 
 def executable_graph(
@@ -98,10 +98,10 @@ def executable_graph(
       try:
         log(f'`{job_name}` is running, waiting to finish')
         await op.wait_until_complete()  # Wait for the job to complete
-      except (xm.ExperimentUnitError, _UnlaunchedJobError):
+      except (xm.ExperimentUnitError, _UnlaunchedJobError) as e:
         log(f'`{job_name}` has failed.')
         if terminate_on_failure:
-          raise
+          raise StopControllerError() from e
         return False
       else:
         log(f'`{job_name}` has finished successfully.')
@@ -125,7 +125,12 @@ def executable_graph(
       jobs_launched[job_name].set_result(op)
       log(f'`{job_name}` complete.')
 
-    await asyncio.gather(*(launch_single_job(job_name) for job_name in jobs))
+    try:
+      await asyncio.gather(*(launch_single_job(job_name) for job_name in jobs))
+    except StopControllerError as e:
+      log(str(e))
+      # This is expected, so exit normally.
+      return
 
   return run_graphs()  # pylint: disable=no-value-for-parameter
 
