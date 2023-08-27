@@ -12,7 +12,7 @@ from xmanager.contrib import parameter_controller
 
 _Fn = Callable[[xm.Experiment], None]
 _AsyncFn = Callable[[], xm.JobGeneratorType]
-# A `flow.controller()` (alias of `parameter_controller.controller()`)
+# The type of `parameter_controller.controller()`
 _Controller = Callable[[_Fn], _AsyncFn]
 
 
@@ -36,7 +36,7 @@ def executable_graph(
     jobs_deps: dict[str, Sequence[str]],
     # Have to redefine external symbol to allow both
     # `flow.controller` and `flow.executable_graph(controller=)`
-    controller: Optional[_Controller] = None,  # pylint: disable=redefined-outer-name
+    controller: Optional[_Controller] = None,
     terminate_on_failure: bool = True,
 ) -> xm.JobGeneratorType:
   """Returns an executable which run the pipeline.
