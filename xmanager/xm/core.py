@@ -353,6 +353,13 @@ class ExperimentUnit(abc.ABC):
       An awaitable that would be fulfilled when the job is launched.
     """
     # pyformat: enable
+
+    # Prioritize the identity given directly to the work unit at work unit
+    # creation time, as opposed to the identity passed when adding jobs to it as
+    # this is more consistent between job generator work units and regular work
+    # units.
+    identity = self.identity or identity
+
     job = job_operators.shallow_copy_job_type(job)
     if args is not None:
       _apply_args(job, args)
