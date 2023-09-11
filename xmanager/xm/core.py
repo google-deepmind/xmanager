@@ -166,6 +166,10 @@ class NotFoundError(KeyError):
   """Experiment/Work Unit/etc. has not been found."""
 
 
+class ReloadError(ExperimentUnitError):
+  """Raised when an XReload reload check fails during the reload step."""
+
+
 def _work_unit_arguments(
     job: job_blocks.JobType,
     args: Optional[Mapping[str, Any]],

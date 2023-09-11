@@ -30,6 +30,7 @@ from xmanager.xm.core import ExperimentUnitStatus
 from xmanager.xm.core import Importance
 from xmanager.xm.core import LaunchedJob
 from xmanager.xm.core import NotFoundError
+from xmanager.xm.core import ReloadError
 from xmanager.xm.core import WorkUnit
 from xmanager.xm.core import WorkUnitCompletedAwaitable
 from xmanager.xm.core import WorkUnitRole
