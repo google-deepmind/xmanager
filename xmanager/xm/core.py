@@ -24,6 +24,7 @@ from xmanager import xm_foo
 
 import abc
 import asyncio
+import collections
 from concurrent import futures
 import contextvars
 import enum
@@ -32,7 +33,7 @@ import inspect
 import queue
 import threading
 import traceback
-from typing import Any, Awaitable, Callable, Collection, Coroutine, Dict, Generator, List, Mapping, Optional, Sequence, overload
+from typing import Any, Awaitable, Callable, Collection, Coroutine, Counter, Dict, Generator, List, Mapping, Optional, Sequence, Type, overload
 
 from absl import logging
 import attr
@@ -694,6 +695,8 @@ class Experiment(abc.ABC):
   # ContextVars token when entering the context.
   _current_experiment_token: contextvars.Token
   _current_async_experiment_token: contextvars.Token
+  # Counts how many of each role were added to the experiment.
+  _added_roles: Counter[Type[ExperimentUnitRole]] = collections.Counter()
 
   @property
   def experiment_id(self) -> int:
@@ -763,6 +766,7 @@ class Experiment(abc.ABC):
     self._wait_for_tasks()
     self._event_loop.call_soon_threadsafe(self._event_loop.stop)
     self._event_loop_thread.join()
+    self._validate_added_roles()
 
   async def __aenter__(self):
     self._current_async_experiment_token = _current_experiment.set(self)
@@ -780,6 +784,19 @@ class Experiment(abc.ABC):
   async def __aexit__(self, exc_type, exc_value, traceback):  # pylint:disable=redefined-outer-name
     _current_experiment.reset(self._current_async_experiment_token)
     await self._await_for_tasks()
+    self._validate_added_roles()
+
+  def _validate_added_roles(self):
+    """Validates the roles added to this experiment.
+
+    By default, logs a warning if no work units were added, which is usually
+    unintentional.
+    """
+    if not self._added_roles[WorkUnitRole]:
+      logging.warning(
+          'No work units were added to this experiment, which is usually not'
+          ' intended.'
+      )
 
   @classmethod
   def package(
@@ -910,6 +927,7 @@ class Experiment(abc.ABC):
     # pyformat: enable
     if isinstance(job, AuxiliaryUnitJob):
       role = job.role
+    self._added_roles[type(role)] += 1
 
     if self._should_reload_experiment_unit(role):
       experiment_unit_future = self._get_experiment_unit(
