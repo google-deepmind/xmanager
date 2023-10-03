@@ -214,6 +214,9 @@ class Client:
   def wait_for_build(self, build_id: str, kaniko_image: str) -> str:
     """Waits for build to finish and return the image URI of the result."""
     backoff = 30  # seconds
+    if self.cloudbuild_api is None:
+      print('Cloud Build API not initialized.')
+      raise RuntimeError('Build FAILED.')
     while True:
       time.sleep(backoff)
       result = (
