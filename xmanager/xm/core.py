@@ -942,12 +942,20 @@ class Experiment(abc.ABC):
       experiment_unit = await experiment_unit_future
       try:
         await experiment_unit.add(job, args, identity=identity)
-      except Exception:
+      except Exception as experiment_exception:
+        logging.error(
+            'Stopping experiment unit (identity %r) after it failed with: %s',
+            identity,
+            experiment_exception,
+        )
         try:
-          experiment_unit.stop(
-              mark_as_failed=True,
-              message=f'Work unit creation failed. {traceback.format_exc()}',
-          )
+          if isinstance(job, AuxiliaryUnitJob):
+            experiment_unit.stop()
+          else:
+            experiment_unit.stop(
+                mark_as_failed=True,
+                message=f'Work unit creation failed. {traceback.format_exc()}',
+            )
         except Exception as stop_exception:  # pylint: disable=broad-except
           logging.error("Couldn't stop experiment unit: %s", stop_exception)
         raise
