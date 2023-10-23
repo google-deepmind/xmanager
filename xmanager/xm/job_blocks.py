@@ -54,7 +54,7 @@ class SequentialArgs:
     xm.merge_args({'foo': 'bar'}, ['--'], {'n': 16}) -> --foo=bar -- --n=16
 
   SequentialArgs provides a convenient merging semantics: if a value is given
-  for an existing keyword argument, it will be overriden rather than appended,
+  for an existing keyword argument, it will be overridden rather than appended,
   which allows to specify default values and override them later:
 
     xm.merge_args({'foo': '1', 'bar': '42'}, {'foo': '2'}) -> --foo=2 --bar=42
@@ -77,7 +77,7 @@ class SequentialArgs:
     name: str
 
   def __init__(self) -> None:
-    """Constucts an empty SequentialArgs.
+    """Constructs an empty SequentialArgs.
 
     Prefer using xm.merge_args to construct SequentialArgs objects.
     """
@@ -146,6 +146,32 @@ class SequentialArgs:
           if isinstance(new_value, str):
             new_value = rewrite(new_value)
           result._ingest_keyword_item(keyword_item.name, new_value)  # pylint: disable=protected-access
+        case _:
+          raise TypeError(f'Unsupported item type: {item!r}')
+      # pytype: enable=attribute-error
+
+    return result
+
+  def remove_args(self, removed_args: str) -> 'SequentialArgs':
+    """Removes the args from the SequentialArgs and returns the result."""
+    result = SequentialArgs()
+
+    for item in self._items:
+      # pytype: disable=attribute-error
+      match item:
+        case SequentialArgs._RegularItem() as regular_item:
+          if (
+              isinstance(regular_item.value, str)
+              and regular_item.value == removed_args
+          ):
+            continue
+          result._ingest_regular_item(regular_item.value)  # pylint: disable=protected-access
+        case SequentialArgs._KeywordItem() as keyword_item:
+          if keyword_item.name == removed_args:  # pylint: disable=protected-access
+            continue
+          result._ingest_keyword_item(  # pylint: disable=protected-access
+              keyword_item.name, self._kwvalues[keyword_item.name]  # pylint: disable=protected-access
+          )
         case _:
           raise TypeError(f'Unsupported item type: {item!r}')
       # pytype: enable=attribute-error
@@ -340,7 +366,7 @@ class Constraint(abc.ABC):
 
 # Job generators are async functions returning None.
 # Pylint doesn't distinguish async and sync contexts so Optional[Awaitable] has
-# to be used to accomodate both cases.
+# to be used to accommodate both cases.
 JobGeneratorType = Callable[..., Optional[Awaitable]]
 JobType = Union['Job', 'JobGroup', JobGeneratorType, 'JobConfig']
 

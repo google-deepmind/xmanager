@@ -88,6 +88,20 @@ class JobBlocksTest(unittest.TestCase):
 
     self.assertEqual(args.to_list(str), ['--pass_me=None'])
 
+  def test_remove_args(self):
+    args = job_blocks.merge_args(
+        {'fiddle': {'batch_size': 32}},
+        [1],
+        {
+            'a': 'z',
+            'b': 'y',
+        },
+    )
+
+    args = args.remove_args('fiddle')
+
+    self.assertEqual(args.to_list(str), ['1', '--a=z', '--b=y'])
+
   def test_sequential_args_from_string(self):
     with self.assertRaisesRegex(
         ValueError,
