@@ -253,7 +253,7 @@ class SequentialArgs:
     return f"[{', '.join(self.to_list(repr))}]"
 
 
-def merge_args(*operands: Union[SequentialArgs, UserArgs]) -> SequentialArgs:
+def merge_args(*operands: UserArgs) -> SequentialArgs:
   """Merges several arguments collections into one left-to-right."""
   result = SequentialArgs()
   for operand in operands:
