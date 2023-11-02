@@ -670,10 +670,10 @@ class Experiment(abc.ABC):
 
   XManager API provides multiple implementations of the Experiment class which
   use different backends to start jobs. Types of supported Executables may vary
-  between these implementations. Usually experiments woulbe be created by though
+  between these implementations. Usually experiments woulbe be created through
   xm_<foo>.create_experiment() functions.
 
-  While experiment metadata and statuses can accessed and altered directly,
+  While experiment metadata and statuses can be accessed and altered directly,
   adding work or auxiliary units requires entering experiment context:
 
     with xm_foo.create_experiment(...) as experiment:
