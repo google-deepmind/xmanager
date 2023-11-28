@@ -79,10 +79,24 @@ def collect_jobs_by_filter(
 
 @attr.s(auto_attribs=True)
 class ConstraintClique:
-  """A constraint with the list of jobs it applies to."""
+  """A constraint with the job group it applies to.
+
+  Attributes:
+    constraint: The constraint that describes the requirements for where a job
+      group can run.
+    jobs: A list of direct jobs and all jobs in child JobGroups that the
+      constraint applies to.
+    group_name: The JobGroup name that the constraint applies to.
+    size: The number of direct jobs and JobGroups that the constraint applies
+      to.
+    parent_group_name: The parent JobGroup name of the constraint.
+  """
 
   constraint: job_blocks.Constraint
   jobs: List[job_blocks.Job]
+  group_name: str | None = None
+  size: int | None = None
+  parent_group_name: str | None = None
 
 
 def aggregate_constraint_cliques(
@@ -98,9 +112,19 @@ def aggregate_constraint_cliques(
   Returns:
     A set of cliques.
   """
+  group_id = 0
+
+  def construct_group_name(job_group: job_blocks.JobGroup) -> str:
+    nonlocal group_id
+    group_name = (
+        '_'.join([name for name in job_group.jobs.keys()]) + '_' + str(group_id)
+    )
+    group_id += 1
+    return group_name
 
   def matcher(
       job_type: job_blocks.JobTypeVar,
+      parent_group_name: str | None,
   ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
     match job_type:
       case job_blocks.Job() as job:
@@ -108,19 +132,27 @@ def aggregate_constraint_cliques(
       case job_blocks.JobGroup() as job_group:
         cliques: List[ConstraintClique] = []
         jobs: List[job_blocks.Job] = []
+        group_name = construct_group_name(job_group)
+        size = len(job_group.jobs)
         for job in job_group.jobs.values():
-          subcliques, subjobs = matcher(job)  # pylint: disable=unpacking-non-sequence
+          subcliques, subjobs = matcher(job, group_name)  # pylint: disable=unpacking-non-sequence
           cliques += subcliques
           jobs += subjobs
         cliques = [
-            ConstraintClique(constraint, jobs)
+            ConstraintClique(
+                constraint=constraint,
+                jobs=jobs,
+                group_name=group_name,
+                size=size,
+                parent_group_name=parent_group_name,
+            )
             for constraint in job_group.constraints
         ] + cliques
         return cliques, jobs
       case _:
         raise TypeError(f'Unsupported job_type: {job_type!r}')
 
-  result, _ = matcher(job_group)  # pylint: disable=unpacking-non-sequence
+  result, _ = matcher(job_group, None)  # pylint: disable=unpacking-non-sequence
   return result
 
 

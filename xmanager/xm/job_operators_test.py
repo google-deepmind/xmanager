@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import unittest
-
 from xmanager import xm_mock
 from xmanager.xm import job_blocks
 from xmanager.xm import job_operators
@@ -80,14 +79,23 @@ class JobOperatorsTest(unittest.TestCase):
             job_operators.ConstraintClique(
                 constraint=constraint_a,
                 jobs=[outer_1, inner_1, inner_2],
+                group_name='outer_1_outer_2_0',
+                size=2,
+                parent_group_name=None,
             ),
             job_operators.ConstraintClique(
                 constraint=constraint_b,
                 jobs=[inner_1, inner_2],
+                group_name='inner_1_inner_2_1',
+                size=2,
+                parent_group_name='outer_1_outer_2_0',
             ),
             job_operators.ConstraintClique(
                 constraint=constraint_c,
                 jobs=[inner_1, inner_2],
+                group_name='inner_1_inner_2_1',
+                size=2,
+                parent_group_name='outer_1_outer_2_0',
             ),
         ],
     )
