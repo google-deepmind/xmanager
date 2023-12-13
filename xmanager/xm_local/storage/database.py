@@ -15,11 +15,11 @@
 import abc
 import functools
 import os
-from typing import Dict, List, Optional, Type, TypeVar, Any
+from typing import Any, Dict, List, Optional, Type, TypeVar
+
 from absl import flags
 import alembic
 from alembic.config import Config
-
 import attr
 import sqlalchemy
 from xmanager import xm
@@ -203,7 +203,11 @@ class Database:
     # TODO: Remove this line after using sqlalchemy>=1.14.
     self.engine.dialect.description_encoding = None
     storage_dir = os.path.dirname(__file__)
-    self.alembic_cfg = Config(os.path.join(storage_dir, 'alembic.ini'))
+
+    alembic_ini_path = os.path.join(storage_dir, 'alembic.ini')
+
+    self.alembic_cfg = Config(alembic_ini_path)
+
     self.alembic_cfg.set_main_option('sqlalchemy.url', str(self.engine.url))
     self.alembic_cfg.set_main_option(
         'script_location', os.path.join(storage_dir, 'alembic')
