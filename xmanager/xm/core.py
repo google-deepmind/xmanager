@@ -37,6 +37,7 @@ from typing import Any, Awaitable, Callable, Collection, Coroutine, Counter, Dic
 
 from absl import logging
 import attr
+from typing_extensions import Self
 from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
@@ -424,7 +425,7 @@ class ExperimentUnit(abc.ABC):
     self._launch_tasks.append(launch_task)
     return asyncio.wrap_future(launch_task)
 
-  async def _wait_until_complete_impl(self) -> 'ExperimentUnit':
+  async def _wait_until_complete_impl(self) -> Self:
     try:
       for task in self._launch_tasks:
         await asyncio.wrap_future(task)
@@ -703,7 +704,7 @@ class Experiment(abc.ABC):
     """Returns a unique ID assigned to the experiment."""
     raise NotImplementedError
 
-  def __enter__(self) -> 'Experiment':
+  def __enter__(self) -> Self:
     is_coro_context = False
     try:
       asyncio.get_running_loop()
@@ -768,7 +769,7 @@ class Experiment(abc.ABC):
     self._event_loop_thread.join()
     self._validate_added_roles()
 
-  async def __aenter__(self):
+  async def __aenter__(self) -> Self:
     self._current_async_experiment_token = _current_experiment.set(self)
     self._event_loop = asyncio.get_event_loop()
     self._running_tasks = queue.Queue()
