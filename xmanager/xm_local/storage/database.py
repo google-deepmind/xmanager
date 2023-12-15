@@ -15,6 +15,7 @@
 import abc
 import functools
 import os
+import tempfile
 from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from absl import flags
@@ -209,9 +210,10 @@ class Database:
     self.alembic_cfg = Config(alembic_ini_path)
 
     self.alembic_cfg.set_main_option('sqlalchemy.url', str(self.engine.url))
-    self.alembic_cfg.set_main_option(
-        'script_location', os.path.join(storage_dir, 'alembic')
-    )
+
+    alembic_script_path = os.path.join(storage_dir, 'alembic')
+
+    self.alembic_cfg.set_main_option('script_location', alembic_script_path)
 
     self.maybe_migrate_database_version()
 
