@@ -193,8 +193,8 @@ GpuType = _enum_subset(
 )
 
 
-_AcceleratorType = _enum_subset(
-    '_AcceleratorType',
+AcceleratorType = _enum_subset(
+    'AcceleratorType',
     [
         ResourceType.LOCAL_GPU,
         *list(TpuType),
@@ -428,7 +428,7 @@ class JobRequirements:
         case _:
           raise TypeError(f'Unsupported resource: {resource_name!r}')
 
-      if resource in _AcceleratorType:
+      if resource in AcceleratorType:
         if self.accelerator is not None:
           raise ValueError('Accelerator already set.')
         self.accelerator = resource

@@ -66,6 +66,7 @@ from xmanager.xm.packagables import binary
 from xmanager.xm.packagables import container
 from xmanager.xm.packagables import dockerfile_container
 from xmanager.xm.packagables import python_container
+from xmanager.xm.resources import AcceleratorType
 from xmanager.xm.resources import GpuType
 from xmanager.xm.resources import InvalidTpuTopologyError
 from xmanager.xm.resources import JobRequirements
