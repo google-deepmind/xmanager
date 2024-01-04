@@ -559,9 +559,9 @@ class WorkUnitCompletedAwaitable(Coroutine):
         wid = event.work_unit.work_unit_id
         try:
           await event
-          print(f'Wor unit {wid} completed successfully.')
+          print(f'Work unit {wid} completed successfully.')
         except xm.ExperimentUnitError as e:
-          print(f'Wor unit {wid} failed: {e}.')
+          print(f'Work unit {wid} failed: {e}.')
   """
 
   def __init__(
