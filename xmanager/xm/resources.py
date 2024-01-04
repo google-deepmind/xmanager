@@ -27,8 +27,8 @@ from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, Optio
 import immutabledict
 
 
-class _CaseInsensetiveResourceTypeMeta(enum.EnumMeta):
-  """Metaclass which allows case-insensetive enum lookup.
+class _CaseInsensitiveResourceTypeMeta(enum.EnumMeta):
+  """Metaclass which allows case-insensitive enum lookup.
 
   Enum keys are upper case, but we allow other cases for the input. For
   example existing flags and JobRequirements use lower case for resource names.
@@ -41,7 +41,7 @@ class _CaseInsensetiveResourceTypeMeta(enum.EnumMeta):
       raise KeyError(f'Unknown {cls.__name__} {resource_name!r}')  # pylint: disable=raise-missing-from
 
 
-class ResourceType(enum.Enum, metaclass=_CaseInsensetiveResourceTypeMeta):
+class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
   """Type of a countable resource (e.g., CPU, memory, accelerators etc).
 
   We use a schema in which every particular accelerator has its own type. This
@@ -78,8 +78,8 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensetiveResourceTypeMeta):
     return self._name_
 
 
-class _CaseInsensetiveServiceTierMeta(enum.EnumMeta):
-  """Metaclass which allows case-insensetive enum lookup.
+class _CaseInsensitiveServiceTierMeta(enum.EnumMeta):
+  """Metaclass which allows case-insensitive enum lookup.
 
   Enum keys are upper case, but we allow other cases for the input. For
   example existing flags and JobRequirements use lower case for resource names.
@@ -92,8 +92,8 @@ class _CaseInsensetiveServiceTierMeta(enum.EnumMeta):
       raise KeyError(f'Unknown {cls.__name__} {resource_name!r}')  # pylint: disable=raise-missing-from
 
 
-class ServiceTier(enum.Enum, metaclass=_CaseInsensetiveServiceTierMeta):
-  """The job availability guarantees which underlying platfrom should provide.
+class ServiceTier(enum.Enum, metaclass=_CaseInsensitiveServiceTierMeta):
+  """The job availability guarantees which underlying platform should provide.
 
   Most cloud platforms offer a selection of availability/price tradeoff options.
   Usually there are at least "Take my money, this workload is important" and
