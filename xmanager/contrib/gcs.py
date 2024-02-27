@@ -26,7 +26,16 @@ import getpass
 import os
 
 from absl import app
-from xmanager import xm_flags
+from absl import flags
+
+_GCS_PATH = flags.DEFINE_string(
+    'xm_gcs_path',
+    None,
+    (
+        'A GCS directory within a bucket to store output '
+        '(in gs://bucket/directory format).'
+    ),
+)
 
 _GS_PREFIX = 'gs://'
 _GCS_PREFIX = '/gcs/'
@@ -55,17 +64,17 @@ def get_gcs_path_or_fail(project_name: str) -> str:
     If the --xm_gcs_path flag is empty, or contains invalid value, raise an
     error. Otherwise, returns a flag value.
   """
-  if not xm_flags.GCS_PATH.value:
+  if not _GCS_PATH.value:
     raise app.UsageError(
         '--xm_gcs_path is missing. Suggestion: '
         + f'--xm_gcs_path={suggestion(project_name)}'
     )
-  elif not is_gcs_path(xm_flags.GCS_PATH.value):
+  elif not is_gcs_path(_GCS_PATH.value):
     raise app.UsageError(
         '--xm_gcs_path not in gs://bucket/directory or /gcs/path format. '
         + f'Suggestion: --xm_gcs_path={suggestion(project_name)}'
     )
-  return str(xm_flags.GCS_PATH.value)
+  return str(_GCS_PATH.value)
 
 
 def is_gs_path(path: str) -> bool:
