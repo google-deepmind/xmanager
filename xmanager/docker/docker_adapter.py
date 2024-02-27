@@ -17,13 +17,19 @@ import functools
 import subprocess
 from typing import Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
+from absl import flags
 from absl import logging
 import docker
 from docker import errors
 from docker import types
 from docker.models import containers
 from docker.utils import utils
-from xmanager import xm_flags
+
+_USE_SUBPROCESS = flags.DEFINE_bool(
+    'xm_subprocess_docker_impl',
+    False,
+    'Launch docker using `subprocess` command.',
+)
 
 Ports = Dict[Union[int, str], Union[None, int, Tuple[str, int], List[int]]]
 
@@ -90,7 +96,7 @@ class DockerAdapter(object):
       interactive: bool = False,
   ) -> Optional[containers.Container]:
     """Runs a given container image."""
-    if xm_flags.SUBPROCESS_DOCKER.value or interactive:
+    if _USE_SUBPROCESS.value or interactive:
       return self.run_container_subprocess(
           image_id,
           args,
