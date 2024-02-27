@@ -15,15 +15,25 @@
 
 import functools
 import os
-from typing import Any, Dict, Iterable
+from typing import Any, Iterable, Dict
 
 from absl import flags
 from google import auth
 from googleapiclient import discovery
 from googleapiclient import errors
-from xmanager import xm_flags
 
 _DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
+
+_GCP_SERVICE_ACCOUNT_NAME = flags.DEFINE_string(
+    'xm_gcp_service_account_name',
+    'xmanager',
+    (
+        'Specifies the user-managed service account name to be used by XManager'
+        'Note that user-managed service accounts have the following format: '
+        '`{service-account-name}@{project-id}.iam.gserviceaccount.com`, so only'
+        'the part before @ is required'
+    ),
+)
 
 
 def get_project_name() -> str:
@@ -85,7 +95,7 @@ def get_service_account() -> str:
     HttpError: if the response was not a 2xx or 403.
   """
 
-  service_account_name = xm_flags.GCP_SERVICE_ACCOUNT_NAME.value
+  service_account_name = _GCP_SERVICE_ACCOUNT_NAME.value
   service_account = (
       f'{service_account_name}@{get_project_name()}.iam.gserviceaccount.com'
   )

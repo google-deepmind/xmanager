@@ -20,13 +20,41 @@ import time
 from typing import Any, Dict, Optional
 import warnings
 
+from absl import flags
 from docker.utils import utils as docker_utils
 from google.cloud import storage
 from googleapiclient import discovery
 import termcolor
-from xmanager import xm_flags
+
 from xmanager.cloud import auth
 
+_CLOUD_BUILD_TIMEOUT_SECONDS = flags.DEFINE_integer(
+    'xm_cloud_build_timeout_seconds',
+    1200,
+    (
+        'The amount of time that builds should be allowed to run, '
+        'to second granularity.'
+    ),
+)
+_USE_CLOUD_BUILD_CACHE = flags.DEFINE_boolean(
+    'xm_use_cloud_build_cache',
+    False,
+    (  # pylint:disable=g-line-too-long
+        'Use Cloud Build cache to speed up the Docker build. '
+        'An image with the same name tagged as :latest should exist.'
+        'More details at'
+        ' https://cloud.google.com/cloud-build/docs/speeding-up-builds#using_a_cached_docker_image'
+    ),
+)
+
+_USE_KANIKO = flags.DEFINE_boolean(
+    'xm_use_kaniko',
+    False,
+    'Use kaniko backend for Cloud Build and enable caching.',
+)
+_KANIKO_CACHE_TTL = flags.DEFINE_string(
+    'xm_kaniko_cache_ttl', '336h', 'Cache ttl to use for kaniko builds.'
+)
 
 _CLOUD_SDK_CREDENTIALS_WARNING = """\
 Your application has authenticated using end user credentials from Google \
@@ -76,16 +104,16 @@ class Client:
     self.bucket = bucket or auth.get_bucket()
     self.credentials = credentials or auth.get_creds()
     if cloud_build_timeout_seconds is None:
-      cloud_build_timeout_seconds = xm_flags.CLOUD_BUILD_TIMEOUT_SECONDS.value
+      cloud_build_timeout_seconds = _CLOUD_BUILD_TIMEOUT_SECONDS.value
     self.cloud_build_timeout_seconds = cloud_build_timeout_seconds
     if use_cloud_build_cache is None:
-      use_cloud_build_cache = xm_flags.USE_CLOUD_BUILD_CACHE.value
+      use_cloud_build_cache = _USE_CLOUD_BUILD_CACHE.value
     self.use_cloud_build_cache = use_cloud_build_cache
     if use_kaniko is None:
-      use_kaniko = xm_flags.USE_KANIKO.value
+      use_kaniko = _USE_KANIKO.value
     self.use_kaniko = use_kaniko
     if kaniko_cache_ttl is None:
-      kaniko_cache_ttl = xm_flags.KANIKO_CACHE_TTL.value
+      kaniko_cache_ttl = _KANIKO_CACHE_TTL.value
     self.kaniko_cache_ttl = kaniko_cache_ttl
     self.cloudbuild_api = None  # discovery CloudBuild v1 client
 

@@ -17,16 +17,26 @@ import asyncio
 import functools
 from typing import Callable, Dict, List, Optional, Sequence
 
+from absl import flags
 import attr
 from kubernetes import client as k8s_client
 from kubernetes import config as k8s_config
 from xmanager import xm
-from xmanager import xm_flags
 from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
 from xmanager.xm_local import status as local_status
+
+
+_K8S_SERVICE_ACCOUNT_NAME = flags.DEFINE_string(
+    'xm_k8s_service_account_name',
+    'default',
+    (
+        'Specifies the Kubernetes Service Account name to be used by XManager'
+        ' inthe pod specifications.'
+    ),
+)
 
 
 @functools.lru_cache()
@@ -117,7 +127,7 @@ class Client:
                   annotations=annotations_from_executor(executor),
               ),
               spec=k8s_client.V1PodSpec(
-                  service_account=xm_flags.K8S_SERVICE_ACCOUNT_NAME.value,
+                  service_account=_K8S_SERVICE_ACCOUNT_NAME.value,
                   hostname=job_name,
                   subdomain=service,
                   restart_policy='Never',

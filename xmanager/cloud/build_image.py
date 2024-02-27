@@ -18,15 +18,48 @@ import shutil
 import tempfile
 from typing import Dict, List, Optional
 
+from absl import flags
 from docker.utils import utils as docker_utils
+
 from xmanager import xm
-from xmanager import xm_flags
 from xmanager.cloud import auth
 from xmanager.cloud import cloud_build
 from xmanager.cloud import docker_lib
 from xmanager.docker import docker_adapter
 from xmanager.xm import utils
 
+_BUILD_IMAGE_LOCALLY = flags.DEFINE_boolean(
+    'xm_build_image_locally',
+    True,
+    (
+        'Use local Docker to build images instead of remote Google Cloud Build.'
+        ' This is usually a lot faster but requires docker to be installed.'
+    ),
+)
+_USE_DOCKER_COMMAND = flags.DEFINE_boolean(
+    'xm_use_docker_command',
+    True,
+    (
+        'Call "docker build" in a subprocess rather than using Python docker '
+        'client library when building the docker image locally. This provies a '
+        'much nicer output for interactive use.'
+    ),
+)
+_SHOW_DOCKER_COMMAND_PROGRESS = flags.DEFINE_boolean(
+    'xm_show_docker_command_progress',
+    False,
+    'Show container output during the "docker build".',
+)
+_WRAP_LATE_BINDINGS = flags.DEFINE_boolean(
+    'xm_wrap_late_bindings',
+    False,
+    (
+        'Feature flag to wrap and unwrap late bindings for network addresses. '
+        'ONLY works with PythonContainer with default instructions or simple '
+        'instructions that do not modify the file directory. '
+        'REQUIRES ./entrypoint.sh to be the ENTRYPOINT.'
+    ),
+)
 
 # TODO: Find a master image than is compatible with every
 # combination (TF, Torch, JAX) X (CPU, GPU, TPU).
@@ -93,7 +126,7 @@ def build(
   python_path = py_executable.path
 
   with tempfile.TemporaryDirectory() as wrapped_directory:
-    if xm_flags.WRAP_LATE_BINDINGS.value:
+    if _WRAP_LATE_BINDINGS.value:
       _wrap_late_bindings(wrapped_directory, python_path, dockerfile)
       python_path = wrapped_directory
       dockerfile = os.path.join(python_path, 'Dockerfile')
@@ -134,15 +167,15 @@ def build_by_dockerfile(
     The name of the built image.
   """
   print('Building Docker image, please wait...')
-  if xm_flags.BUILD_IMAGE_LOCALLY.value:
+  if _BUILD_IMAGE_LOCALLY.value:
     if docker_lib.is_docker_installed():
       # TODO: Improve out-of-disk space handling.
       return docker_lib.build_docker_image(
           image_name,
           path,
           dockerfile,
-          use_docker_command=xm_flags.USE_DOCKER_COMMAND.value,
-          show_docker_command_progress=xm_flags.SHOW_DOCKER_COMMAND_PROGRESS.value,
+          use_docker_command=_USE_DOCKER_COMMAND.value,
+          show_docker_command_progress=_SHOW_DOCKER_COMMAND_PROGRESS.value,
       )
     print('Falling back to CloudBuild. See INFO log for details.')
 
