@@ -14,3 +14,91 @@
 """XManager Flags."""
 
 from absl import flags
+
+# --------------------- cloud ---------------------
+
+BUILD_IMAGE_LOCALLY = flags.DEFINE_boolean(
+    'xm_build_image_locally',
+    True,
+    (
+        'Use local Docker to build images instead of remote Google Cloud Build.'
+        ' This is usually a lot faster but requires docker to be installed.'
+    ),
+)
+
+USE_DOCKER_COMMAND = flags.DEFINE_boolean(
+    'xm_use_docker_command',
+    True,
+    (
+        'Call "docker build" in a subprocess rather than using Python docker '
+        'client library when building the docker image locally. This provies a '
+        'much nicer output for interactive use.'
+    ),
+)
+
+SHOW_DOCKER_COMMAND_PROGRESS = flags.DEFINE_boolean(
+    'xm_show_docker_command_progress',
+    False,
+    'Show container output during the "docker build".',
+)
+
+WRAP_LATE_BINDINGS = flags.DEFINE_boolean(
+    'xm_wrap_late_bindings',
+    False,
+    (
+        'Feature flag to wrap and unwrap late bindings for network addresses. '
+        'ONLY works with PythonContainer with default instructions or simple '
+        'instructions that do not modify the file directory. '
+        'REQUIRES ./entrypoint.sh to be the ENTRYPOINT.'
+    ),
+)
+
+CLOUD_BUILD_TIMEOUT_SECONDS = flags.DEFINE_integer(
+    'xm_cloud_build_timeout_seconds',
+    1200,
+    (
+        'The amount of time that builds should be allowed to run, '
+        'to second granularity.'
+    ),
+)
+
+USE_CLOUD_BUILD_CACHE = flags.DEFINE_boolean(
+    'xm_use_cloud_build_cache',
+    False,
+    (  # pylint:disable=g-line-too-long
+        'Use Cloud Build cache to speed up the Docker build. '
+        'An image with the same name tagged as :latest should exist.'
+        'More details at'
+        ' https://cloud.google.com/cloud-build/docs/speeding-up-builds#using_a_cached_docker_image'
+    ),
+)
+
+USE_KANIKO = flags.DEFINE_boolean(
+    'xm_use_kaniko',
+    False,
+    'Use kaniko backend for Cloud Build and enable caching.',
+)
+
+KANIKO_CACHE_TTL = flags.DEFINE_string(
+    'xm_kaniko_cache_ttl', '336h', 'Cache ttl to use for kaniko builds.'
+)
+
+GCP_SERVICE_ACCOUNT_NAME = flags.DEFINE_string(
+    'xm_gcp_service_account_name',
+    'xmanager',
+    (
+        'Specifies the user-managed service account name to be used by XManager'
+        'Note that user-managed service accounts have the following format: '
+        '`{service-account-name}@{project-id}.iam.gserviceaccount.com`, so only'
+        'the part before @ is required'
+    ),
+)
+
+K8S_SERVICE_ACCOUNT_NAME = flags.DEFINE_string(
+    'xm_k8s_service_account_name',
+    'default',
+    (
+        'Specifies the Kubernetes Service Account name to be used by XManager'
+        ' inthe pod specifications.'
+    ),
+)
