@@ -13,6 +13,7 @@
 # limitations under the License.
 """XManager Flags."""
 
+import enum
 from absl import flags
 
 # --------------------- cloud ---------------------
@@ -142,4 +143,34 @@ UPGRADE_DB = flags.DEFINE_boolean(
 
 BAZEL_COMMAND = flags.DEFINE_string(
     'xm_bazel_command', 'bazel', 'A command that runs Bazel.'
+)
+
+# -------------------- contrib --------------------
+
+GCS_PATH = flags.DEFINE_string(
+    'xm_gcs_path',
+    None,
+    (
+        'A GCS directory within a bucket to store output '
+        '(in gs://bucket/directory format).'
+    ),
+)
+
+
+class XMLaunchMode(enum.Enum):
+  """Specifies an executor to run an experiment."""
+
+  VERTEX = 'vertex'
+  LOCAL = 'local'
+  INTERACTIVE = 'interactive'
+
+
+XM_LAUNCH_MODE = flags.DEFINE_enum_class(
+    'xm_launch_mode',
+    XMLaunchMode.VERTEX,
+    XMLaunchMode,
+    'How to launch the experiment. Supports local and interactive execution, '
+    + 'launch on '
+    +
+    'Vertex.',
 )
