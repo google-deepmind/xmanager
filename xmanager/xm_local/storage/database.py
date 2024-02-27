@@ -18,53 +18,18 @@ import os
 import tempfile
 from typing import Any, Dict, List, Optional, Type, TypeVar
 
-from absl import flags
 import alembic
 from alembic.config import Config
 import attr
 import sqlalchemy
 from xmanager import xm
+from xmanager import xm_flags
 from xmanager.generated import data_pb2
 import yaml
 
 from google.protobuf import text_format
 
 from google.cloud.sql.connector import Connector, IPTypes
-
-_DB_YAML_CONFIG_PATH = flags.DEFINE_string(
-    'xm_db_yaml_config_path',
-    None,
-    """
-    Path of YAML config file containing DB connection details.
-
-    A valid config file contains two main entries:
-      `sql_connector`: must be one of [`sqlite`, `generic`, `cloudsql`]
-
-      `sql_connection_settings`: contains details about the connection URL.
-        These match the interface of `SqlConnectionSettings` and their
-        combination must form a valid `sqlalchemy` connection URL. Possible
-        fields are:
-          - backend, e.g. 'mysql', 'postgresql'
-          - db_name
-          - driver, e.g. 'pymysql', 'pg8000'
-          - username
-          - password
-          - host (instance connection name when using CloudSql)
-          - port
-    """,
-)
-
-_UPGRADE_DB = flags.DEFINE_boolean(
-    'xm_upgrade_db',
-    False,
-    """
-    Specifies if XManager should update the database to the latest version.
-    It's recommended to take a back-up of the database before updating, since
-    migrations can fail/have errors. This is especially true
-    for non-transactional DDLs, where partial migrations can occur on
-    failure, leaving the database in a not well-defined state.
-    """,
-)
 
 
 @attr.s(auto_attribs=True)
@@ -256,7 +221,7 @@ class Database:
     need_to_update = (
         db_version != self.latest_version_available() and db_version
     ) or legacy_sqlite_db
-    if need_to_update and not _UPGRADE_DB.value:
+    if need_to_update and not xm_flags.UPGRADE_DB.value:
       raise RuntimeError(
           f'Database is not up to date: current={self.database_version()}, '
           f'latest={self.latest_version_available()}. Take a backup of the '
@@ -404,9 +369,9 @@ def _validate_db_config(config: Dict[str, Any]) -> None:
 @functools.lru_cache()
 def _db_config() -> Dict[str, Any]:
   """Parses and validates YAML DB config file to a dict."""
-  if _DB_YAML_CONFIG_PATH.value is not None:
+  if xm_flags.DB_YAML_CONFIG_PATH.value is not None:
     db_config_file = xm.utils.resolve_path_relative_to_launcher(
-        _DB_YAML_CONFIG_PATH.value
+        xm_flags.DB_YAML_CONFIG_PATH.value
     )
     with open(db_config_file, 'r') as f:
       config = yaml.safe_load(f)
