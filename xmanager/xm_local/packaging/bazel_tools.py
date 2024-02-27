@@ -20,13 +20,17 @@ import re
 import subprocess
 from typing import Dict, List, Optional, Sequence, Tuple
 
+from absl import flags
 from xmanager import xm
-from xmanager import xm_flags
 from xmanager.bazel import client
 from xmanager.bazel import file_utils
 
 from google.protobuf.internal.decoder import _DecodeVarint32
 from xmanager.generated import build_event_stream_pb2 as bes_pb2
+
+_BAZEL_COMMAND = flags.DEFINE_string(
+    'xm_bazel_command', 'bazel', 'A command that runs Bazel.'
+)
 
 
 def _get_important_outputs(
@@ -99,7 +103,7 @@ def _root_absolute_path() -> str:
   return (
       os.getenv('BUILD_WORKSPACE_DIRECTORY')
       or subprocess.run(
-          [xm_flags.BAZEL_COMMAND.value, 'info', 'workspace'],
+          [_BAZEL_COMMAND.value, 'info', 'workspace'],
           check=True,
           stdout=subprocess.PIPE,
           stderr=subprocess.PIPE,
@@ -126,7 +130,7 @@ def _build_multiple_targets(
   with file_utils.TemporaryFilePath() as bep_path:
     subprocess.run(
         [
-            xm_flags.BAZEL_COMMAND.value,
+            _BAZEL_COMMAND.value,
             'build',
             f'--build_event_binary_file={bep_path}',
             # Forces a GC at the end of the build and publishes value to BEP.
@@ -200,7 +204,7 @@ class LocalBazelService(client.BazelService):
     # https://docs.bazel.build/versions/main/query.html#output-label_kind.
     stdout = subprocess.run(
         [
-            xm_flags.BAZEL_COMMAND.value,
+            _BAZEL_COMMAND.value,
             'query',
             f"'{' union '.join(labels)}'",
             '--output',
