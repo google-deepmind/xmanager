@@ -145,6 +145,14 @@ BAZEL_COMMAND = flags.DEFINE_string(
     'xm_bazel_command', 'bazel', 'A command that runs Bazel.'
 )
 
+# -------------------- docker ---------------------
+
+SUBPROCESS_DOCKER = flags.DEFINE_bool(
+    'xm_subprocess_docker_impl',
+    False,
+    'Launch docker using `subprocess` command.',
+)
+
 # -------------------- contrib --------------------
 
 GCS_PATH = flags.DEFINE_string(
