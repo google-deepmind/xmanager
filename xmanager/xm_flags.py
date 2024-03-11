@@ -14,3 +14,44 @@
 """XManager Flags."""
 
 from absl import flags
+
+# -------------------- xm_local --------------------
+
+DB_YAML_CONFIG_PATH = flags.DEFINE_string(
+    'xm_db_yaml_config_path',
+    None,
+    """
+    Path of YAML config file containing DB connection details.
+
+    A valid config file contains two main entries:
+      `sql_connector`: must be one of [`sqlite`, `generic`, `cloudsql`]
+
+      `sql_connection_settings`: contains details about the connection URL.
+        These match the interface of `SqlConnectionSettings` and their
+        combination must form a valid `sqlalchemy` connection URL. Possible
+        fields are:
+          - backend, e.g. 'mysql', 'postgresql'
+          - db_name
+          - driver, e.g. 'pymysql', 'pg8000'
+          - username
+          - password
+          - host (instance connection name when using CloudSql)
+          - port
+    """,
+)
+
+UPGRADE_DB = flags.DEFINE_boolean(
+    'xm_upgrade_db',
+    False,
+    """
+    Specifies if XManager should update the database to the latest version.
+    It's recommended to take a back-up of the database before updating, since
+    migrations can fail/have errors. This is especially true
+    for non-transactional DDLs, where partial migrations can occur on
+    failure, leaving the database in a not well-defined state.
+    """,
+)
+
+BAZEL_COMMAND = flags.DEFINE_string(
+    'xm_bazel_command', 'bazel', 'A command that runs Bazel.',
+)
