@@ -47,40 +47,20 @@ else:
 executor = executor_fn(**kwargs)
 """
 
-import enum
 from typing import Callable, List, Optional, Union
 
-from absl import flags
 from xmanager import xm
+from xmanager import xm_flags
 from xmanager import xm_local
 
 
-class XMLaunchMode(enum.Enum):
-  """Specifies an executor to run an experiment."""
-
-  VERTEX = 'vertex'
-  LOCAL = 'local'
-  INTERACTIVE = 'interactive'
-
-
-_XM_LAUNCH_MODE = flags.DEFINE_enum_class(
-    'xm_launch_mode',
-    XMLaunchMode.VERTEX,
-    XMLaunchMode,
-    'How to launch the experiment. Supports local and interactive execution, '
-    + 'launch on '
-    +
-    'Vertex.',
-)
-
-
-def launch_mode() -> XMLaunchMode:
-  return _XM_LAUNCH_MODE.value
+def launch_mode() -> xm_flags.XMLaunchMode:
+  return xm_flags.XM_LAUNCH_MODE.value
 
 
 def create_experiment(
     experiment_title: Optional[str] = None,
-    mode: Optional[XMLaunchMode] = None,
+    mode: Optional[xm_flags.XMLaunchMode] = None,
 ) -> xm.Experiment:
   """Creates an experiment depending on the launch mode.
 
@@ -99,9 +79,9 @@ def create_experiment(
     mode = launch_mode()
 
   if mode in (
-      XMLaunchMode.LOCAL,
-      XMLaunchMode.INTERACTIVE,
-      XMLaunchMode.VERTEX,
+      xm_flags.XMLaunchMode.LOCAL,
+      xm_flags.XMLaunchMode.INTERACTIVE,
+      xm_flags.XMLaunchMode.VERTEX,
   ):
     # TODO: add import here?
     return xm_local.create_experiment(experiment_title)
@@ -128,7 +108,7 @@ def _local_executor(interactive: bool) -> Callable[..., xm.Executor]:
 
 
 def get_executor(
-    mode: Optional[XMLaunchMode] = None,
+    mode: Optional[xm_flags.XMLaunchMode] = None,
 ) -> Callable[..., xm.Executor]:
   """Select an `xm.Executor` specialization depending on the launch mode.
 
@@ -145,8 +125,11 @@ def get_executor(
   if mode is None:
     mode = launch_mode()
 
-  if mode == XMLaunchMode.VERTEX:
+  if mode == xm_flags.XMLaunchMode.VERTEX:
     return xm_local.Caip
-  if mode == XMLaunchMode.LOCAL or mode == XMLaunchMode.INTERACTIVE:
-    return _local_executor(mode == XMLaunchMode.INTERACTIVE)
+  if (
+      mode == xm_flags.XMLaunchMode.LOCAL
+      or mode == xm_flags.XMLaunchMode.INTERACTIVE
+  ):
+    return _local_executor(mode == xm_flags.XMLaunchMode.INTERACTIVE)
   raise ValueError(f'Unknown launch mode: {mode}')
