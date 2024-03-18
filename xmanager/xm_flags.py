@@ -14,6 +14,11 @@
 """XManager Flags."""
 
 import enum
+import getpass
+import os
+import sys
+from typing import Any
+
 from absl import flags
 
 # --------------------- cloud ---------------------
