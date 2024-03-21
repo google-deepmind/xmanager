@@ -14,27 +14,28 @@
 """Test for custom lazy loader definition for xmanager sub-package __init__.py files."""
 
 import unittest
-from xmanager import module_lazy_loader
+from xmanager.module_lazy_loader import module_lazy_loader
 
 
-class ModuleLazyLoaderTest(unittest.TestCase):
+class LazyLoaderModuleAttrsTest(unittest.TestCase):
   test_lazy_loader = module_lazy_loader.XManagerLazyLoader(
       __name__,
       apis=[
           module_lazy_loader.XManagerAPI(
-              module="xmanager.module_lazy_loader",
+              module="xmanager.module_lazy_loader.module_lazy_loader",
               symbol="XManagerAPI",
               alias="boo",
           ),
           module_lazy_loader.XManagerAPI(
-              module="xmanager.module_lazy_loader",
+              module="xmanager.module_lazy_loader.module_lazy_loader",
               symbol="XManagerAPI",
           ),
           module_lazy_loader.XManagerAPI(
-              module="xmanager.module_lazy_loader", alias="baz"
+              module="xmanager.module_lazy_loader.module_lazy_loader",
+              alias="baz",
           ),
           module_lazy_loader.XManagerAPI(
-              module="xmanager.module_lazy_loader",
+              module="xmanager.module_lazy_loader.module_lazy_loader",
           ),
       ],
   )

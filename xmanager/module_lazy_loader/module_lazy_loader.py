@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Custom lazy loader definition for xmanager sub-package __init__.py files."""
+
 import dataclasses
 import importlib
+import sys
 import types
 from typing import Any, Callable, Optional, Sequence
 
@@ -50,6 +52,7 @@ class XManagerLazyLoader:
     self.apis = apis
     self._loaded_attrs = {}
     self._name_to_api: dict[str, XManagerAPI] = {}
+
     for api in self.apis:
       if api.alias:
         name = api.alias
@@ -72,18 +75,35 @@ class XManagerLazyLoader:
   ) -> Callable[[str], types.ModuleType | Any | None]:
     """Returns __getattr__ for the xmanager sub-package __init__.py file."""
 
+    def _import_module_with_reloaded_parent(
+        module_name: str, e: ModuleNotFoundError
+    ):
+      # reload module's parent as a last resort (likely in the case that a
+      # module was imported outside adhoc import context but later
+      # used within it). Assuming the parent package has a lazy-loaded
+      # / empty __init__.py file, this should be quick.
+      parent = e.name.rsplit(".", 1)[0]
+      parent_module = importlib.import_module(parent)
+      importlib.reload(parent_module)
+      return importlib.import_module(module_name)
+
+    def _import_module(module_name: str):
+      try:
+        return importlib.import_module(module_name)
+      except ModuleNotFoundError as e:
+        return _import_module_with_reloaded_parent(e)
+
     def _module_getattr(name: str) -> types.ModuleType | Any | None:
       if name in self._loaded_attrs:
         return self._loaded_attrs[name]
       if name in self._name_to_api:
         api = self._name_to_api[name]
+        module = _import_module(api.module)
         if api.symbol:
-          module = importlib.import_module(api.module)
           attr = getattr(module, api.symbol)
           self._loaded_attrs[name] = attr
           return attr
         else:
-          module = importlib.import_module(api.module)
           self._loaded_attrs[name] = module
           return module
       raise AttributeError(
