@@ -75,9 +75,7 @@ class XManagerLazyLoader:
   ) -> Callable[[str], types.ModuleType | Any | None]:
     """Returns __getattr__ for the xmanager sub-package __init__.py file."""
 
-    def _import_module_with_reloaded_parent(
-        module_name: str, e: ModuleNotFoundError
-    ):
+    def _import_module_with_reloaded_parent(module_name: str, e: ImportError):
       # reload module's parent as a last resort (likely in the case that a
       # module was imported outside adhoc import context but later
       # used within it). Assuming the parent package has a lazy-loaded
@@ -90,7 +88,7 @@ class XManagerLazyLoader:
     def _import_module(module_name: str):
       try:
         return importlib.import_module(module_name)
-      except ModuleNotFoundError as e:
+      except ImportError as e:
         return _import_module_with_reloaded_parent(e)
 
     def _module_getattr(name: str) -> types.ModuleType | Any | None:
