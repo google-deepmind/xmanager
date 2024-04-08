@@ -157,8 +157,10 @@ class JobRequirementsTest(parameterized.TestCase):
     requirements = resources.JobRequirements(replicas=2)
     self.assertEqual(requirements.replicas, 2)
 
-    with self.assertRaises(ValueError):
-      resources.JobRequirements(replicas=2, tpu_v3='4x4')
+    requirements = resources.JobRequirements(replicas=2, tpu_v3='4x4')
+    self.assertEqual(requirements.replicas, 2)
+    self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
+    self.assertEqual(requirements.topology.name, '4x4')
 
     resources.JobRequirements(replicas=2, v100='4x2')
     resources.JobRequirements(v100='4x2')

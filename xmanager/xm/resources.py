@@ -456,7 +456,6 @@ class JobRequirements:
       replicas = self.topology.dimensions[1]
 
     self.replicas = replicas or 1
-    self._validate_replicas()
 
   @property
   def service_tier(self):
@@ -465,13 +464,6 @@ class JobRequirements:
   @service_tier.setter
   def service_tier(self, new_service_tier):
     self._service_tier = new_service_tier
-
-  def _validate_replicas(self) -> None:
-    """Raises ValueError if replication is not supported."""
-    if self.replicas > 1 and self.accelerator in TpuType:
-      raise ValueError(
-          f'Replicated jobs are not supported for {self.accelerator}.'
-      )
 
   def __repr__(self) -> str:
     """Returns string representation of the requirements."""
