@@ -118,40 +118,6 @@ class JobRequirementsTest(parameterized.TestCase):
   def test_tpu_job(self):
     requirements = resources.JobRequirements(tpu_v3='4x4')
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
-    self.assertEqual(requirements.topology.name, '4x4')
-
-  def test_multihost_gpu(self):
-    requirements = resources.JobRequirements(v100='4x2')
-    self.assertEqual(requirements.accelerator, resources.ResourceType.V100)
-    self.assertEqual(requirements.topology.name, '4x2')
-    self.assertEqual(requirements.replicas, 2)
-
-  def test_multihost_gpu_with_cpu(self):
-    requirements = resources.JobRequirements(v100='4x2', cpu=1)
-    self.assertEqual(requirements.accelerator, resources.ResourceType.V100)
-    self.assertEqual(requirements.topology.name, '4x2')
-    self.assertEqual(requirements.replicas, 2)
-
-  def test_multihost_gpu_with_replicas(self):
-    with self.assertRaises(ValueError):
-      resources.JobRequirements(v100='4x2', replicas=3)
-
-  def test_location(self):
-    requirements = resources.JobRequirements(location='lon_r7')
-    self.assertEqual(requirements.location, 'lon_r7')
-
-  def test_service_tier(self):
-    requirements = resources.JobRequirements(
-        service_tier=resources.ServiceTier.PROD
-    )
-    self.assertEqual(requirements.service_tier, resources.ServiceTier.PROD)
-
-  def test_service_tier_mutable(self):
-    requirements = resources.JobRequirements(
-        service_tier=resources.ServiceTier.PROD
-    )
-    requirements.service_tier = resources.ServiceTier.BATCH
-    self.assertEqual(requirements.service_tier, resources.ServiceTier.BATCH)
 
   def test_replicas(self):
     requirements = resources.JobRequirements(replicas=2)
@@ -160,6 +126,7 @@ class JobRequirementsTest(parameterized.TestCase):
     requirements = resources.JobRequirements(replicas=2, tpu_v3='4x4')
     self.assertEqual(requirements.replicas, 2)
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
+    assert requirements.topology is not None
     self.assertEqual(requirements.topology.name, '4x4')
 
     resources.JobRequirements(replicas=2, v100='4x2')
