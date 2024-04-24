@@ -629,7 +629,7 @@ class AuxiliaryUnitJob(abc.ABC):
   """A job bundled with an AuxiliaryUnitRole.
 
   This class allows libraries to define self-contained objects which would
-  result in AUX units once added to the expetiment.
+  result in AUX units once added to the experiment.
   Note that this class conforms to xm.JobGenerator interface.
   """
 
