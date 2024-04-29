@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Sequence
+from collections.abc import Awaitable, Sequence
 from typing import Callable, Optional
 
 from absl import logging
 from xmanager import xm
 from xmanager.contrib import parameter_controller
 
-_Fn = Callable[[xm.Experiment], None]
+_Fn = Callable[[xm.Experiment], Awaitable[None]]
 _AsyncFn = Callable[[], xm.JobGeneratorType]
 # The type of `parameter_controller.controller()`
 _Controller = Callable[[_Fn], _AsyncFn]

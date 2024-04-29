@@ -58,7 +58,9 @@ class MultiWorkerMirroredStrategyBuilder:
         f'`{type(self.worker_executor)}`'
     )
 
-  def gen_job_group(self) -> Callable[[xm.WorkUnit], Awaitable[None]]:
+  def gen_job_group(
+      self,
+  ) -> Callable[[xm.WorkUnit], Awaitable[Awaitable[None]]]:
     """Create a generator that can be be used with experiment.add(generator)."""
 
     async def _gen_job_group(
@@ -140,7 +142,9 @@ class ParameterServerStrategyBuilder:
         f'`{type(self.worker_executor)}`'
     )
 
-  def gen_job_group(self) -> Callable[[xm.WorkUnit], Awaitable[None]]:
+  def gen_job_group(
+      self,
+  ) -> Callable[[xm.WorkUnit], Awaitable[Awaitable[None]]]:
     """Create a generator that can be be used with experiment.add(generator)."""
 
     async def _gen_job_group(

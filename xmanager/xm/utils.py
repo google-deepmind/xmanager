@@ -24,7 +24,7 @@ import functools
 import os
 import shlex
 import sys
-from typing import Any, Callable, TypeVar
+from typing import Any, Awaitable, Callable, TypeVar
 
 from absl import flags
 import attr
@@ -74,7 +74,9 @@ def trivial_kwargs_joiner(key: str, value: str) -> str:
   return f'{key}={value}'
 
 
-def run_in_asyncio_loop(f: Callable[..., ReturnT]) -> Callable[..., ReturnT]:
+def run_in_asyncio_loop(
+    f: Callable[..., Awaitable[ReturnT]],
+) -> Callable[..., ReturnT]:
   """A decorator that turns an async function to a synchronous one.
 
   Python asynchronous APIs can't be used directly from synchronous functions.
