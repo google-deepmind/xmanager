@@ -24,6 +24,7 @@ from typing import Any, Callable, List, Optional, cast
 
 from absl import logging
 import attr
+import docker
 from docker.models import containers
 from xmanager import xm
 from xmanager.docker import docker_adapter
@@ -87,14 +88,16 @@ class ContainerHandle(LocalExecutionHandle):
     if self.model is None:
       return
 
-    response = await asyncio.wrap_future(
-        self.futures_executor.submit(self.model.wait)
-    )
-    status_code = response['StatusCode']
-    if status_code != 0:
-      raise RuntimeError(
-          f'Container {self.model!r} returned non-zero status: {status_code}'
-      )
+    def _wait() -> None:
+      try:
+        self.model.wait()
+      except docker.errors.NotFound:
+        logging.info(
+            'Container %s not found (it may have already been removed).',
+            self.model.name,
+        )
+
+    await asyncio.wrap_future(self.futures_executor.submit(_wait))
 
   def get_status(self) -> status.LocalWorkUnitStatus:
     raise NotImplementedError
@@ -111,8 +114,14 @@ class ContainerHandle(LocalExecutionHandle):
       return
 
     def _stream_chunks() -> None:
-      for chunk in self.model.logs(stream=True, follow=True):
-        _print_chunk(self.name, chunk.decode(_DEFAULT_ENCODING))
+      try:
+        for chunk in self.model.logs(stream=True, follow=True):
+          _print_chunk(self.name, chunk.decode(_DEFAULT_ENCODING))
+      except docker.errors.NotFound:
+        logging.info(
+            'Container %s not found (it may have already been removed).',
+            self.model.name,
+        )
 
     if self.stream_output:
       await asyncio.wrap_future(self.futures_executor.submit(_stream_chunks))
