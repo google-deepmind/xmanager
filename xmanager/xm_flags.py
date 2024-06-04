@@ -188,3 +188,15 @@ XM_LAUNCH_MODE = flags.DEFINE_enum_class(
     +
     'Vertex.',
 )
+
+XM_ADDITIONAL_BUILD_FLAGS = flags.DEFINE_string(
+    'xm_additional_build_flags',
+    None,
+    (
+        'String with space-separated build flags, to be appended for all build '
+        'target resources.'
+    ),
+    # TODO: Remove when releases have caught up
+    allow_override=True,
+    allow_hide_cpp=True,
+)

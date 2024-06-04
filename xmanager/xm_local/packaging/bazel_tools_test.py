@@ -12,8 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import sys
 import unittest
 
+from absl import flags
+from absl.testing import flagsaver
 from xmanager.xm_local.packaging import bazel_tools
 
 
@@ -72,6 +75,30 @@ class BazelToolsTest(unittest.TestCase):
     with self.assertRaisesRegex(ValueError, '`:all` is not a valid target'):
       bazel_tools._lex_label('//project/directory:all')
 
+  @flagsaver.flagsaver(xm_additional_build_flags='--flag2=val2 --flag3=val3')
+  def test_apply_additional_bazel_args(self):
+    original_args = ['--flag']
+    self.assertCountEqual(
+        bazel_tools._apply_additional_bazel_args(original_args),
+        original_args + ['--flag2=val2', '--flag3=val3'],
+    )
+
+  @flagsaver.flagsaver(xm_additional_build_flags=' --flag2=val2  --flag3=val3 ')
+  def test_apply_additional_bazel_args_removes_whitespace(self):
+    original_args = ['--flag']
+    self.assertCountEqual(
+        bazel_tools._apply_additional_bazel_args(original_args),
+        original_args + ['--flag2=val2', '--flag3=val3'],
+    )
+
+  @flagsaver.flagsaver(xm_additional_build_flags='')
+  def test_apply_additional_bazel_args_ignores_empty_string(self):
+    original_args = ['--flag']
+    self.assertCountEqual(
+        bazel_tools._apply_additional_bazel_args(original_args), original_args
+    )
+
 
 if __name__ == '__main__':
+  flags.FLAGS(sys.argv)
   unittest.main()
