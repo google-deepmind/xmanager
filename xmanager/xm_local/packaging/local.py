@@ -109,7 +109,7 @@ def _package_bazel_container(
   paths = bazel_outputs[
       bazel_client.BazelTarget(
           label=container.label,
-          bazel_args=container.bazel_args,
+          bazel_args=bazel_tools.apply_default_bazel_args(container.bazel_args),
       )
   ]
   assert len(paths) == 1
@@ -131,7 +131,7 @@ def _package_bazel_binary(
   paths = bazel_outputs[
       bazel_client.BazelTarget(
           label=binary.label,
-          bazel_args=binary.bazel_args,
+          bazel_args=bazel_tools.apply_default_bazel_args(binary.bazel_args),
       )
   ]
   assert len(paths) == 1

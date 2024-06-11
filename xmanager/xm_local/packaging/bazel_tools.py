@@ -226,14 +226,9 @@ def local_bazel_service() -> LocalBazelService:
   return LocalBazelService()
 
 
-def _apply_additional_bazel_args(args: list[str]) -> tuple[str, ...]:
+def apply_default_bazel_args(args: list[str]) -> tuple[str, ...]:
   """Returns bazel flags to be used with additional args applied."""
-  additional_flags_str = xm_flags.XM_ADDITIONAL_BUILD_FLAGS.value or ''
-  additional_flags = []
-  for flag in additional_flags_str.split(' '):
-    if flag := flag.strip():
-      additional_flags.append(flag)
-  return (*args, *additional_flags)
+  return args
 
 
 def _collect_executables(
@@ -244,16 +239,14 @@ def _collect_executables(
       return [
           client.BazelTarget(
               label=bazel_binary.label,
-              bazel_args=_apply_additional_bazel_args(bazel_binary.bazel_args),
+              bazel_args=apply_default_bazel_args(bazel_binary.bazel_args),
           ),
       ]
     case xm.BazelContainer() as bazel_container:
       return [
           client.BazelTarget(
               label=bazel_container.label,
-              bazel_args=_apply_additional_bazel_args(
-                  bazel_container.bazel_args
-              ),
+              bazel_args=apply_default_bazel_args(bazel_container.bazel_args),
           ),
       ]
     case _:
