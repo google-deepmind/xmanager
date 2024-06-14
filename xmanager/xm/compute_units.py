@@ -16,11 +16,12 @@
 # pylint: disable=invalid-name
 vCPU = 1.0  # Virtual CPU
 
-KiB = 2**10  # kibibyte
-MiB = 2**20  # mibibyte
-GiB = 2**30  # gibibyte
-TiB = 2**40  # tebibyte
-PiB = 2**50  # pebibyte
+# TODO: Explicit types are to work around a type inference issue.
+KiB: int = 2**10  # kibibyte
+MiB: int = 2**20  # mibibyte
+GiB: int = 2**30  # gibibyte
+TiB: int = 2**40  # tebibyte
+PiB: int = 2**50  # pebibyte
 
 KB = 10**3  # kilobyte
 MB = 10**6  # megabyte
