@@ -172,6 +172,10 @@ class ReloadError(ExperimentUnitError):
   """Raised when an XReload reload check fails during the reload step."""
 
 
+class DebugInterrupt(BaseException):  # pylint: disable=g-bad-exception-name
+  """Raised when a debug interrupt is requested."""
+
+
 def _work_unit_arguments(
     job: job_blocks.JobType,
     args: Optional[Mapping[str, Any]],
@@ -960,6 +964,11 @@ class Experiment(abc.ABC):
         except Exception as stop_exception:  # pylint: disable=broad-except
           logging.error("Couldn't stop experiment unit: %s", stop_exception)
         raise
+      except DebugInterrupt:
+        try:
+          experiment_unit.stop(message='Launch interrupted by debug mode.')
+        except Exception as stop_exception:  # pylint: disable=broad-except
+          logging.error("Couldn't stop experiment unit: %s", stop_exception)
       return experiment_unit
 
     async def reload():

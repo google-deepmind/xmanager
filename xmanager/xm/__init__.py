@@ -20,6 +20,7 @@ from xmanager.xm import job_operators
 from xmanager.xm.compute_units import *
 from xmanager.xm.core import AuxiliaryUnitJob
 from xmanager.xm.core import AuxiliaryUnitRole
+from xmanager.xm.core import DebugInterrupt
 from xmanager.xm.core import Experiment
 from xmanager.xm.core import ExperimentUnit
 from xmanager.xm.core import ExperimentUnitError
