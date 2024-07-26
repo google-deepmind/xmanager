@@ -13,125 +13,31 @@
 # limitations under the License.
 """Methods for executing job groups using the local backend."""
 
-import abc
 import asyncio
 import atexit
-from concurrent import futures
 import os
 import subprocess
 import threading
-from typing import Any, Callable, List, Optional, cast
+from typing import Callable, List, cast
 
 from absl import logging
-import attr
-import docker
-from docker.models import containers
 from xmanager import xm
 from xmanager.docker import docker_adapter
 from xmanager.xm import job_operators
 from xmanager.xm import utils
 from xmanager.xm_local import executables
 from xmanager.xm_local import executors
-from xmanager.xm_local import status
+from xmanager.xm_local import handles
+from xmanager.xm_local import registry
 
-_DEFAULT_ENCODING = 'utf-8'
 _BRIDGE_NETWORK_NAME = 'xmanager'
-
-
-def _print_chunk(name: str, line: str) -> None:
-  print('[{}] {}'.format(name, line.strip()))
-
-
-class ExecutionHandle(abc.ABC):
-  """An interface for operating on executions."""
-
-  @abc.abstractmethod
-  async def wait(self) -> None:
-    raise NotImplementedError
-
-  @abc.abstractmethod
-  def get_status(self) -> status.LocalWorkUnitStatus:
-    """Aggregates the statuses of all jobs in the work unit into one status."""
-    raise NotImplementedError
-
-
-class LocalExecutionHandle(ExecutionHandle, abc.ABC):
-  """An interface for operating on local executions."""
-
-  @abc.abstractmethod
-  async def monitor(self) -> None:
-    raise NotImplementedError
-
-  @abc.abstractmethod
-  def terminate(self) -> None:
-    raise NotImplementedError
-
-
-async def _throw_on_unknown_executable(
-    get_full_job_name: Callable[[str], str],
-    job: xm.Job,
-    executable: Any,
-) -> LocalExecutionHandle:
-  raise TypeError(f'Unsupported executable for local execution: {executable!r}')
-
-
-@attr.s(auto_attribs=True)
-class ContainerHandle(LocalExecutionHandle):
-  """A handle for referring to the launched container."""
-
-  name: str
-  model: Optional[containers.Container]
-  stream_output: bool
-  futures_executor: futures.Executor = attr.Factory(futures.ThreadPoolExecutor)
-
-  async def wait(self) -> None:
-    if self.model is None:
-      return
-
-    def _wait() -> None:
-      try:
-        self.model.wait()
-      except docker.errors.NotFound:
-        logging.info(
-            'Container %s not found (it may have already been removed).',
-            self.model.name,
-        )
-
-    await asyncio.wrap_future(self.futures_executor.submit(_wait))
-
-  def get_status(self) -> status.LocalWorkUnitStatus:
-    raise NotImplementedError
-
-  def terminate(self) -> None:
-    if self.model is None:
-      return
-
-    self.model.stop()
-    self.futures_executor.shutdown(wait=True)
-
-  async def monitor(self) -> None:
-    if self.model is None:
-      return
-
-    def _stream_chunks() -> None:
-      try:
-        for chunk in self.model.logs(stream=True, follow=True):
-          _print_chunk(self.name, chunk.decode(_DEFAULT_ENCODING))
-      except docker.errors.NotFound:
-        logging.info(
-            'Container %s not found (it may have already been removed).',
-            self.model.name,
-        )
-
-    if self.stream_output:
-      await asyncio.wrap_future(self.futures_executor.submit(_stream_chunks))
 
 
 async def _launch_loaded_container_image(
     get_full_job_name: Callable[[str], str],
     job: xm.Job,
     executable: executables.LoadedContainerImage,
-) -> LocalExecutionHandle:
+) -> handles.LocalExecutionHandle:
   """Launches a preloaded image as a detached container."""
   if not isinstance(job.executor, executors.Local):
     raise TypeError(f'Expected {job!r} to have the Local executor')
@@ -189,52 +95,18 @@ async def _launch_loaded_container_image(
       gpu_count=gpu_count,
       interactive=options.interactive,
   )
-  return ContainerHandle(
+  return handles.ContainerHandle(
       name=job.name,
       model=container,
       stream_output=executor.experimental_stream_output,
   )
 
 
-@attr.s(auto_attribs=True)
-class BinaryHandle(LocalExecutionHandle):
-  """A handle referring to the launched binary."""
-
-  name: str
-  process: asyncio.subprocess.Process  # pytype: disable=module-attr
-  stream_output: bool
-
-  async def wait(self) -> None:
-    return_code = await self.process.wait()
-    if return_code != 0:
-      raise RuntimeError(
-          f'Process {self.process!r} returned non-zero code: {return_code}'
-      )
-
-  def get_status(self) -> status.LocalWorkUnitStatus:
-    raise NotImplementedError
-
-  def terminate(self) -> None:
-    self.process.terminate()
-
-  async def monitor(self) -> None:
-    if self.stream_output:
-      if not self.process.stdout:
-        raise ValueError(
-            'No stdout available from process. Cannot stream output.'
-        )
-      while True:
-        line = await self.process.stdout.readline()
-        if not line:
-          break
-        _print_chunk(self.name, line.decode(_DEFAULT_ENCODING))
-
-
 async def _launch_local_binary(
     get_full_job_name: Callable[[str], str],
     job: xm.Job,
     executable: executables.LocalBinary,
-) -> LocalExecutionHandle:
+) -> handles.LocalExecutionHandle:
   """Launches a local binary as a detached process."""
   del get_full_job_name  # Unused.
   if not isinstance(job.executor, executors.Local):
@@ -255,7 +127,7 @@ async def _launch_local_binary(
       else None,
       limit=1024 * 128,  # 128 KiB
   )
-  return BinaryHandle(
+  return handles.BinaryHandle(
       name=job.name,
       process=process,
       stream_output=job.executor.experimental_stream_output,
@@ -266,7 +138,7 @@ async def _local_execution_router(
     get_full_job_name: Callable[[str], str],
     job: xm.Job,
     executable: xm.Executable,
-) -> LocalExecutionHandle:
+) -> handles.LocalExecutionHandle:
   match executable:
     case executables.LoadedContainerImage() as container_image:
       return await _launch_loaded_container_image(
@@ -284,7 +156,7 @@ async def _local_execution_router(
 
 # Note that currently handles are never removed from the list. We can consider
 # removing them on completion if needed.
-_local_jobs: List[LocalExecutionHandle] = []
+_local_jobs: List[handles.LocalExecutionHandle] = []
 _local_jobs_lock = threading.Lock()
 
 
@@ -310,16 +182,26 @@ def _local_job_predicate(job: xm.Job) -> bool:
 
 async def launch(
     get_full_job_name: Callable[[str], str], job_group: xm.JobGroup
-) -> List[LocalExecutionHandle]:
+) -> list[handles.LocalExecutionHandle]:
   """Launches jobs with `xm_local.Local` executor."""
   # Must act on all jobs with `Local` executor.
   local_jobs = job_operators.collect_jobs_by_filter(
       job_group, _local_job_predicate
   )
-  handles: List[LocalExecutionHandle] = [
+  execution_handles: List[handles.LocalExecutionHandle] = [
       await _local_execution_router(get_full_job_name, job, job.executable)
       for job in local_jobs
   ]
   with _local_jobs_lock:
-    _local_jobs.extend(handles)
-  return handles
+    _local_jobs.extend(execution_handles)
+  return execution_handles
+
+
+def register():
+  """Registers local execution logic."""
+  registry.register(
+      executors.Local,
+      launch=lambda local_experiment_unit, job_group: launch(
+          local_experiment_unit.get_full_job_name, job_group
+      ),
+  )

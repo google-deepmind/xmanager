@@ -19,7 +19,7 @@ import asyncio
 import logging
 import math
 import os
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, Optional, Sequence, Tuple
 
 import attr
 from google.cloud import aiplatform
@@ -28,9 +28,11 @@ from xmanager import xm
 from xmanager.cloud import auth
 from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
-from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
+from xmanager.xm_local import handles
+from xmanager.xm_local import registry
 from xmanager.xm_local import status as local_status
+from xmanager.xm_local.storage import database
 
 _DEFAULT_LOCATION = 'us-central1'
 # The only machines available on AI Platform are N1 machines and A2 machines.
@@ -328,7 +330,7 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
 
 
 @attr.s(auto_attribs=True)
-class VertexHandle(local_execution.ExecutionHandle):
+class VertexHandle(handles.ExecutionHandle):
   """A handle for referring to the launched container."""
 
   job_name: str
@@ -344,11 +346,16 @@ class VertexHandle(local_execution.ExecutionHandle):
     status = _STATE_TO_STATUS[int(state)]
     return local_status.LocalWorkUnitStatus(status=status)
 
+  def save_to_storage(self, experiment_id: int, work_unit_id: int) -> None:
+    database.database().insert_vertex_job(
+        experiment_id, work_unit_id, self.job_name
+    )
+
 
 # Must act on all jobs with `local_executors.Vertex` executor.
 def launch(
     experiment_title: str, work_unit_name: str, job_group: xm.JobGroup
-) -> List[VertexHandle]:
+) -> list[VertexHandle]:
   """Launch Vertex jobs in the job_group and return a handler."""
   jobs = xm.job_operators.collect_jobs_by_filter(
       job_group, _vertex_job_predicate
@@ -387,4 +394,23 @@ def cpu_ram_to_machine_type(cpu: Optional[int], ram: Optional[int]) -> str:
     return optimal_machine_type
   raise ValueError(
       '(cpu={}, ram={}) does not fit in any valid machine type'.format(cpu, ram)
+  )
+
+
+async def _async_launch(
+    local_experiment_unit: Any, job_group: xm.JobGroup
+) -> list[VertexHandle]:
+  return launch(
+      local_experiment_unit._experiment_title,  # pylint: disable=protected-access
+      local_experiment_unit.experiment_unit_name,
+      job_group,
+  )
+
+
+def register():
+  """Registers Vertex execution logic."""
+  registry.register(
+      local_executors.Vertex,
+      launch=_async_launch,
+      create_handle=lambda *args, data: VertexHandle(data.caip.resource_name),
   )

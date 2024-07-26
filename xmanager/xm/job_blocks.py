@@ -324,6 +324,21 @@ class Executor(abc.ABC):
   def Spec(cls) -> ExecutorSpec:  # pylint: disable=invalid-name
     raise NotImplementedError
 
+  @classmethod
+  async def launch(
+      cls, local_experiment_unit: Any, job_group: 'JobGroup'
+  ) -> Sequence[Any]:
+    """Launches a job group on the executor platform.
+
+    Args:
+      local_experiment_unit: The experiment unit to launch.
+      job_group: The job group to launch.
+
+    Returns:
+      Execution handles for jobs in the group.
+    """
+    raise NotImplementedError
+
 
 def _validate_env_vars(
     self: Any, attribute: Any, env_vars: Dict[str, str]

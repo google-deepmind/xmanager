@@ -13,11 +13,17 @@
 # limitations under the License.
 """Local backend executors."""
 
-from typing import Dict, Optional
+import importlib
+import logging
+from typing import Any, Dict, Optional, Sequence
 
 import attr
+from typing_extensions import override
 from xmanager import xm
 from xmanager.docker import docker_adapter
+from xmanager.xm_local import handles
+from xmanager.xm_local import registry
+
 
 GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER = 'GOOGLE_KUBERNETES_ENGINE'
 
@@ -70,6 +76,19 @@ class Local(xm.Executor):
 
   Spec = LocalSpec  # pylint: disable=invalid-name
 
+  def __attrs_post_init__(self):
+    local_execution = importlib.import_module('xmanager.xm_local.execution')
+    local_execution.register()
+
+  @override
+  @classmethod
+  async def launch(
+      cls, local_experiment_unit: Any, job_group: xm.JobGroup
+  ) -> Sequence[handles.ExecutionHandle]:
+    return await registry.get_launch_method(cls)(
+        local_experiment_unit, job_group
+    )
+
 
 @attr.s(auto_attribs=True)
 class TpuCapability:
@@ -110,6 +129,19 @@ class Vertex(xm.Executor):
 
   Spec = VertexSpec  # pylint: disable=invalid-name
 
+  def __attrs_post_init__(self):
+    vertex_execution = importlib.import_module('xmanager.cloud.vertex')
+    vertex_execution.register()
+
+  @override
+  @classmethod
+  async def launch(
+      cls, local_experiment_unit: Any, job_group: xm.JobGroup
+  ) -> Sequence[handles.ExecutionHandle]:
+    return await registry.get_launch_method(cls)(
+        local_experiment_unit, job_group
+    )
+
 
 # Declaring variable aliases for legacy compatability.
 # New code should not use these aliases.
@@ -132,6 +164,19 @@ class Kubernetes(xm.Executor):
 
   requirements: xm.JobRequirements = attr.Factory(xm.JobRequirements)
   cloud_provider: str = GOOGLE_KUBERNETES_ENGINE_CLOUD_PROVIDER
-  tpu_capability: Optional[TpuCapability] = None
+  tpu_capability: TpuCapability | None = None
 
   Spec = KubernetesSpec  # pylint: disable=invalid-name
+
+  def __attrs_post_init__(self):
+    k8s_execution = importlib.import_module('xmanager.cloud.kubernetes')
+    k8s_execution.register()
+
+  @override
+  @classmethod
+  async def launch(
+      cls, local_experiment_unit: Any, job_group: xm.JobGroup
+  ) -> Sequence[handles.ExecutionHandle]:
+    return await registry.get_launch_method(cls)(
+        local_experiment_unit, job_group
+    )

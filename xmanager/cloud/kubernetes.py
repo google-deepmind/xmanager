@@ -15,7 +15,7 @@
 
 import asyncio
 import functools
-from typing import Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence
 
 import attr
 from kubernetes import client as k8s_client
@@ -24,9 +24,11 @@ from xmanager import xm
 from xmanager import xm_flags
 from xmanager.xm import utils
 from xmanager.xm_local import executables as local_executables
-from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
+from xmanager.xm_local import handles
+from xmanager.xm_local import registry
 from xmanager.xm_local import status as local_status
+from xmanager.xm_local.storage import database
 
 
 @functools.lru_cache()
@@ -165,7 +167,7 @@ class Client:
 
 
 @attr.s(auto_attribs=True)
-class KubernetesHandle(local_execution.ExecutionHandle):
+class KubernetesHandle(handles.ExecutionHandle):
   """A handle for referring to the launched container."""
 
   jobs: List[k8s_client.V1Job]
@@ -175,6 +177,14 @@ class KubernetesHandle(local_execution.ExecutionHandle):
 
   def get_status(self) -> local_status.LocalWorkUnitStatus:
     raise NotImplementedError
+
+  def save_to_storage(self, experiment_id: int, work_unit_id: int) -> None:
+    for job in self.jobs:
+      namespace = job.metadata.namespace or 'default'
+      name = job.metadata.name
+      database.database().insert_kubernetes_job(
+          experiment_id, work_unit_id, namespace, name
+      )
 
 
 # Must act on all jobs with `local_executors.Kubernetes` executor.
@@ -252,3 +262,29 @@ def node_selector_from_executor(
           )
       }
   return {}
+
+
+async def _async_launch(
+    local_experiment_unit: Any, job_group: xm.JobGroup
+) -> list[KubernetesHandle]:
+  return launch(local_experiment_unit.get_full_job_name, job_group)
+
+
+def _create_handle(*args, data, kubernetes_jobs) -> KubernetesHandle:
+  del args  # unused
+  data = k8s_client.V1Job(
+      metadata=k8s_client.V1ObjectMeta(
+          namespace=data.kubernetes.namespace, name=data.kubernetes.job_name
+      )
+  )
+  kubernetes_jobs.append(data)
+  return KubernetesHandle(jobs=kubernetes_jobs)
+
+
+def register():
+  """Registers Kubernetes execution logic."""
+  registry.register(
+      local_executors.Kubernetes,
+      launch=_async_launch,
+      create_handle=_create_handle,
+  )

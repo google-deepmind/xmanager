@@ -14,21 +14,21 @@
 """Implementation of the local scheduler experiment."""
 
 import asyncio
+import collections
 from concurrent import futures
 import time
-from typing import Any, Awaitable, Callable, List, Mapping, Optional, Sequence
+from typing import Any, Awaitable, Callable, List, Mapping, Optional, Sequence, Type
 
 from absl import logging
 import attr
-from kubernetes import client as k8s_client
 from xmanager import xm
-from xmanager.cloud import kubernetes
 from xmanager.cloud import vertex
 from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
 from xmanager.xm import job_operators
-from xmanager.xm_local import execution as local_execution
 from xmanager.xm_local import executors as local_executors
+from xmanager.xm_local import handles as execution_handles
+from xmanager.xm_local import registry
 from xmanager.xm_local import status as local_status
 from xmanager.xm_local.packaging import router as packaging_router
 from xmanager.xm_local.storage import database
@@ -37,18 +37,21 @@ from xmanager.xm_local.storage import database
 def _validate_job_group(job_group: xm.JobGroup) -> None:
   all_jobs = job_operators.flatten_jobs(job_group)
   for job in all_jobs:
-    match job.executor:
-      case local_executors.Local() | local_executors.Vertex() | local_executors.Kubernetes():
-        pass
-      case _:
-        raise TypeError(f'Unsupported executor: {job.executor!r}. Job: {job!r}')
+    if not registry.is_registered(type(job.executor)):
+      raise TypeError(f'Unsupported executor: {job.executor!r}. Job: {job!r}')
 
 
 @attr.s(auto_attribs=True)
 class _LaunchResult:
-  vertex_handles: List[vertex.VertexHandle]
-  k8s_handles: List[kubernetes.KubernetesHandle]
-  local_handles: List[local_execution.LocalExecutionHandle]
+  handles: collections.defaultdict[Type[xm.Executor], list[Any]]
+
+  def get_local_handles(self) -> list[execution_handles.LocalExecutionHandle]:
+    return self.handles.get(local_executors.Local, [])
+
+  def get_non_local_handles(self) -> list[execution_handles.ExecutionHandle]:
+    return self.handles.get(local_executors.Vertex, []) + self.handles.get(
+        local_executors.Kubernetes, []
+    )
 
 
 class LocalExperimentUnit(xm.ExperimentUnit):
@@ -65,11 +68,11 @@ class LocalExperimentUnit(xm.ExperimentUnit):
     super().__init__(experiment, create_task, args, role)
     self._experiment_title = experiment_title
     self._local_execution_handles: List[
-        local_execution.LocalExecutionHandle
+        execution_handles.LocalExecutionHandle
     ] = []
-    self._non_local_execution_handles: List[local_execution.ExecutionHandle] = (
-        []
-    )
+    self._non_local_execution_handles: List[
+        execution_handles.ExecutionHandle
+    ] = []
 
   async def _submit_jobs_for_execution(
       self, job_group: xm.JobGroup
@@ -77,28 +80,27 @@ class LocalExperimentUnit(xm.ExperimentUnit):
     # We are delegating the traversal of the job group to modules.
     # That improves modularity, but sacrifices the ability to make
     # cross-executor decisions.
-    vertex_handles = vertex.launch(
-        self._experiment_title, self.experiment_unit_name, job_group
-    )
-    k8s_handles = kubernetes.launch(self.get_full_job_name, job_group)
-    local_handles = await local_execution.launch(
-        self.get_full_job_name, job_group
-    )
-    return _LaunchResult(
-        vertex_handles=vertex_handles,
-        k8s_handles=k8s_handles,
-        local_handles=local_handles,
-    )
+    executor_types = set()
+    for job in job_operators.flatten_jobs(job_group):
+      executor_types.add(type(job.executor))
+
+    handles = collections.defaultdict(list)
+    for executor_type in executor_types:
+      handles[executor_type] = await executor_type.launch(
+          local_experiment_unit=self, job_group=job_group
+      )
+
+    return _LaunchResult(handles)
 
   def _ingest_execution_handles(self, launch_result: _LaunchResult) -> None:
     self._non_local_execution_handles.extend(
-        launch_result.vertex_handles + launch_result.k8s_handles
+        launch_result.get_non_local_handles()
     )
-    self._local_execution_handles.extend(launch_result.local_handles)
+    self._local_execution_handles.extend(launch_result.get_local_handles())
 
   def _monitor_local_jobs(
       self,
-      local_execution_handles: Sequence[local_execution.LocalExecutionHandle],
+      local_execution_handles: Sequence[execution_handles.LocalExecutionHandle],
   ) -> None:
     for handle in local_execution_handles:
       self._create_task(handle.monitor())
@@ -184,24 +186,11 @@ class LocalWorkUnit(LocalExperimentUnit):
     self._work_unit_id = self._work_unit_id_predictor.reserve_id()
 
   def _save_handles_to_storage(
-      self, handles: Sequence[local_execution.ExecutionHandle]
+      self, handles: Sequence[execution_handles.ExecutionHandle]
   ) -> None:
     """Saves jobs present in the handlers."""
     for handle in handles:
-      match handle:
-        case vertex.VertexHandle() as vertex_handle:
-          database.database().insert_vertex_job(
-              self.experiment_id, self.work_unit_id, vertex_handle.job_name
-          )
-        case kubernetes.KubernetesHandle() as k8s_handle:
-          for job in k8s_handle.jobs:
-            namespace = job.metadata.namespace or 'default'
-            name = job.metadata.name
-            database.database().insert_kubernetes_job(
-                self.experiment_id, self.work_unit_id, namespace, name
-            )
-        case _:
-          raise TypeError(f'Unsupported handle: {handle!r}')
+      handle.save_to_storage(self.experiment_id, self.work_unit_id)
 
   async def _launch_job_group(
       self,
@@ -222,10 +211,8 @@ class LocalWorkUnit(LocalExperimentUnit):
       launch_result = await self._submit_jobs_for_execution(job_group)
       self._ingest_execution_handles(launch_result)
       # TODO: Save the local jobs to the database as well.
-      self._save_handles_to_storage(
-          launch_result.vertex_handles + launch_result.k8s_handles
-      )
-      self._monitor_local_jobs(launch_result.local_handles)
+      self._save_handles_to_storage(launch_result.get_non_local_handles())
+      self._monitor_local_jobs(launch_result.get_local_handles())
 
   @property
   def experiment_unit_name(self) -> str:
@@ -256,7 +243,7 @@ class LocalAuxiliaryUnit(LocalExperimentUnit):
 
     launch_result = await self._submit_jobs_for_execution(job_group)
     self._ingest_execution_handles(launch_result)
-    self._monitor_local_jobs(launch_result.local_handles)
+    self._monitor_local_jobs(launch_result.get_local_handles())
 
   @property
   def experiment_unit_name(self) -> str:
@@ -441,14 +428,18 @@ def get_experiment(experiment_id: int) -> xm.Experiment:
         )
       # "caip" is the legacy field name of vertex inside the proto.
       elif data.HasField('caip'):
-        non_local_handles = [vertex.VertexHandle(data.caip.resource_name)]
-      elif data.HasField('kubernetes'):
-        job = k8s_client.V1Job()
-        job.metadata = k8s_client.V1ObjectMeta(
-            namespace=data.kubernetes.namespace, name=data.kubernetes.job_name
+        handle = registry.get_create_handle_method(local_executors.Vertex)(
+            data=data
         )
-        kubernetes_jobs.append(job)
-        non_local_handles = [kubernetes.KubernetesHandle(kubernetes_jobs)]
+        assert handle
+        non_local_handles = [handle]
+      elif data.HasField('kubernetes'):
+        handle = registry.get_create_handle_method(local_executors.Kubernetes)(
+            data=data, kubernetes_jobs=kubernetes_jobs
+        )
+        assert handle
+        kubernetes_jobs = handle.kubernetes_jobs
+        non_local_handles = [handle]
     work_unit._non_local_execution_handles = non_local_handles
     experiment._experiment_units.append(work_unit)
     experiment._work_unit_count += 1
