@@ -86,9 +86,7 @@ USE_KANIKO = flags.DEFINE_boolean(
 )
 
 KANIKO_CACHE_TTL = flags.DEFINE_string(
-    'xm_kaniko_cache_ttl',
-    '336h',
-    'Cache ttl to use for kaniko builds.',
+    'xm_kaniko_cache_ttl', '336h', 'Cache ttl to use for kaniko builds.',
 )
 
 GCP_SERVICE_ACCOUNT_NAME = flags.DEFINE_string(
@@ -150,9 +148,7 @@ UPGRADE_DB = flags.DEFINE_boolean(
 )
 
 BAZEL_COMMAND = flags.DEFINE_string(
-    'xm_bazel_command',
-    'bazel',
-    'A command that runs Bazel.',
+    'xm_bazel_command', 'bazel', 'A command that runs Bazel.',
 )
 
 # -------------------- docker ---------------------
