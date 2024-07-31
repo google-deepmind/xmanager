@@ -341,7 +341,7 @@ class Executor(abc.ABC):
 
 
 def _validate_env_vars(
-    self: Any, attribute: Any, env_vars: Dict[str, str]
+    self: Any, attribute: Any, env_vars: Dict[str, Any]
 ) -> None:
   del self  # Unused.
   del attribute  # Unused.
@@ -362,7 +362,7 @@ class Packageable:
   args: SequentialArgs = attr.ib(
       factory=list, converter=SequentialArgs.from_collection
   )  # pytype: disable=annotation-type-mismatch
-  env_vars: Dict[str, str] = attr.ib(
+  env_vars: Dict[str, Any] = attr.ib(
       converter=dict, default=attr.Factory(dict), validator=_validate_env_vars
   )
 
@@ -409,7 +409,7 @@ class Job:
   args: SequentialArgs = attr.ib(
       factory=list, converter=SequentialArgs.from_collection
   )  # pytype: disable=annotation-type-mismatch
-  env_vars: Dict[str, str] = attr.ib(
+  env_vars: Dict[str, Any] = attr.ib(
       converter=dict, default=attr.Factory(dict), validator=_validate_env_vars
   )
 

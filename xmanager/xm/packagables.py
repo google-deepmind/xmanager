@@ -13,7 +13,7 @@
 # limitations under the License.
 """Convenience methods for constructing core objects."""
 
-from typing import Collection, List, Mapping, Optional, Union
+from typing import Any, Collection, List, Mapping, Optional, Union
 
 import immutabledict
 from xmanager.xm import executables
@@ -30,7 +30,7 @@ def binary(
     dependencies: Collection[executables.BinaryDependency] = (),
     *,
     args: Optional[job_blocks.UserArgs] = None,
-    env_vars: Mapping[str, str] = immutabledict.immutabledict(),
+    env_vars: Mapping[str, Any] = immutabledict.immutabledict(),
 ) -> job_blocks.Packageable:
   # pyformat: disable
   """A prebuilt executable program.
@@ -70,7 +70,7 @@ def bazel_binary(
     bazel_args: Collection[str] = (),
     *,
     args: Optional[job_blocks.UserArgs] = None,
-    env_vars: Mapping[str, str] = immutabledict.immutabledict(),
+    env_vars: Mapping[str, Any] = immutabledict.immutabledict(),
 ) -> job_blocks.Packageable:
   # pyformat: disable
   """A Bazel target that produces a self-contained binary.
@@ -113,7 +113,7 @@ def container(
     image_path: str,
     *,
     args: Optional[job_blocks.UserArgs] = None,
-    env_vars: Mapping[str, str] = immutabledict.immutabledict(),
+    env_vars: Mapping[str, Any] = immutabledict.immutabledict(),
 ) -> job_blocks.Packageable:
   # pyformat: disable
   """A prebuilt Docker image.
@@ -151,7 +151,7 @@ def bazel_container(
     bazel_args: Collection[str] = (),
     *,
     args: Optional[job_blocks.UserArgs] = None,
-    env_vars: Mapping[str, str] = immutabledict.immutabledict(),
+    env_vars: Mapping[str, Any] = immutabledict.immutabledict(),
 ) -> job_blocks.Packageable:
   # pyformat: disable
   """A Bazel target that produces a .tar image.
@@ -195,7 +195,7 @@ def python_container(
     use_deep_module: bool = False,
     *,
     args: Optional[job_blocks.UserArgs] = None,
-    env_vars: Mapping[str, str] = immutabledict.immutabledict(),
+    env_vars: Mapping[str, Any] = immutabledict.immutabledict(),
 ) -> job_blocks.Packageable:
   # pyformat: disable
   """PythonContainer describes a directory containing Python code.
@@ -271,7 +271,7 @@ def dockerfile_container(
     dockerfile: Optional[str] = None,
     *,
     args: Optional[job_blocks.UserArgs] = None,
-    env_vars: Mapping[str, str] = immutabledict.immutabledict(),
+    env_vars: Mapping[str, Any] = immutabledict.immutabledict(),
 ) -> job_blocks.Packageable:
   # pyformat: disable
   """Dockerfile describes a Dockerfile for generating a docker image.
