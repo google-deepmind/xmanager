@@ -34,6 +34,10 @@ class ExecutionHandle(abc.ABC):
     """Saves the handle to the local database."""
     raise NotImplementedError
 
+  def stop(self) -> None:
+    """Stops execution."""
+    raise NotImplementedError
+
 
 class LocalExecutionHandle(ExecutionHandle, abc.ABC):
   """An interface for operating on local executions."""

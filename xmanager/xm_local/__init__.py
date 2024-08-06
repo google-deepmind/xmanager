@@ -29,10 +29,6 @@ _apis = [
         alias="auth",
     ),
     _module_lazy_loader.XManagerAPI(
-        module="xmanager.cloud.vertex",
-        alias="vertex",
-    ),
-    _module_lazy_loader.XManagerAPI(
         module="xmanager.xm_local.executors",
         symbol="Caip",
     ),
@@ -120,7 +116,6 @@ __getattr__ = _lazy_loader.get_module_getattr()
 if typing.TYPE_CHECKING:
   # pylint: disable=g-bad-import-order
   from xmanager.cloud import auth
-  from xmanager.cloud import vertex
   from xmanager.xm_local import experiment as _experiment
   from xmanager.xm_local import executors as _executors
 

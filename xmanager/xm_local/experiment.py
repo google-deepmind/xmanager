@@ -22,7 +22,6 @@ from typing import Any, Awaitable, Callable, List, Mapping, Optional, Sequence, 
 from absl import logging
 import attr
 from xmanager import xm
-from xmanager.cloud import vertex
 from xmanager.xm import async_packager
 from xmanager.xm import id_predictor
 from xmanager.xm import job_operators
@@ -152,11 +151,7 @@ class LocalExperimentUnit(xm.ExperimentUnit):
 
     handles = self._non_local_execution_handles + self._local_execution_handles
     for handle in handles:
-      match handle:
-        case vertex.VertexHandle() as vertex_handle:
-          vertex_handle.stop()
-        case _:
-          raise TypeError(f'Unsupported handle: {handle!r}')
+      handle.stop()
 
   def get_status(self) -> local_status.LocalWorkUnitStatus:
     """Gets the current status of the work unit."""
