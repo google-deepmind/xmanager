@@ -17,6 +17,7 @@ from unittest import mock
 
 from absl.testing import absltest
 from xmanager.xm import job_blocks
+from xmanager.xm import utils
 
 
 class JobBlocksTest(unittest.TestCase):
@@ -75,6 +76,13 @@ class JobBlocksTest(unittest.TestCase):
     args = job_blocks.merge_args(['--knob'], {1: False})
 
     self.assertEqual(args.to_dict(), {'--knob': True, '1': False})
+
+  def test_to_dict_shellsafe_arg(self):
+    args = job_blocks.SequentialArgs.from_collection(
+        [utils.ShellSafeArg('jax_platforms=cpu')]
+    )
+
+    self.assertEqual(args.to_dict(), {'jax_platforms=cpu': True})
 
   def test_to_list_bool(self):
     args = job_blocks.SequentialArgs.from_collection({'yes': True, 'no': False})

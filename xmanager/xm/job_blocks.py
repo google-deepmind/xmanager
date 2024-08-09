@@ -235,7 +235,11 @@ class SequentialArgs:
     def matcher(item) -> Tuple[str, Any]:
       match item:
         case SequentialArgs._RegularItem() as regular_item:
-          return (str(regular_item.value), True)
+          match regular_item.value:
+            case utils.ShellSafeArg():
+              return (regular_item.value.arg, True)
+            case _:
+              return (str(regular_item.value), True)
         case SequentialArgs._KeywordItem() as keyword_item:
           return (keyword_item.name, self._kwvalues[keyword_item.name])
         case _:
