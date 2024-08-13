@@ -15,7 +15,7 @@
 
 import copy
 import itertools
-from typing import Callable, List, Sequence, Tuple
+from typing import Any, Callable, List, Sequence, Tuple
 
 import attr
 from xmanager.xm import job_blocks
@@ -158,3 +158,36 @@ def aggregate_constraint_cliques(
 
 def flatten_jobs(job_group: job_blocks.JobGroup) -> List[job_blocks.Job]:
   return collect_jobs_by_filter(job_group, lambda _: True)
+
+
+def _check_job_exists(job_name: str, jobs: dict[str, Any]):
+  """Raises a `ValueError` if the job exists in the jobs Dict."""
+  if job_name in jobs:
+    raise ValueError(f'{job_name} is duplicated in the experiment.')
+
+
+def get_jobs(job_group: job_blocks.JobGroup) -> dict[str, job_blocks.JobType]:
+  """Maps the jobs to their job name.
+
+  Args:
+    job_group: The jobs process.
+
+  Returns:
+    A map where the key is the job name and value is the job itself.
+  """
+  jobs = {}
+  for key, value in job_group.jobs.items():
+    match value:
+      case job_blocks.Job():
+        _check_job_exists(value.name, jobs)
+        jobs[str(value.name)] = value
+      case job_blocks.JobGroup():
+        jobs.update(get_jobs(value))
+      case _:
+        # We treat JobGroups as a special case since we want to process the jobs
+        # within them. Jobs *may* have a diffrerent name than key. All other
+        # JobTypes are too generic to handle so we assume that the key is
+        # representative.
+        _check_job_exists(key, jobs)
+        jobs[key] = value
+  return jobs
