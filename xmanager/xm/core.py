@@ -91,6 +91,17 @@ def _apply_args(job_type: job_blocks.JobType, args: Mapping[str, Any]) -> None:
   # pytype: enable=attribute-error
 
 
+def _is_coro_context() -> bool:
+  """Returns whether we are currently running in a coroutine context."""
+  is_coro_context = False
+  try:
+    asyncio.get_running_loop()
+    is_coro_context = True
+  except RuntimeError:
+    pass
+  return is_coro_context
+
+
 class ExperimentUnitStatus(abc.ABC):
   """The status of an experiment unit."""
 
@@ -709,13 +720,7 @@ class Experiment(abc.ABC):
     raise NotImplementedError
 
   def __enter__(self) -> Self:
-    is_coro_context = False
-    try:
-      asyncio.get_running_loop()
-      is_coro_context = True
-    except RuntimeError:
-      pass
-    if is_coro_context:
+    if _is_coro_context():
       raise RuntimeError(
           'When using Experiment from a coroutine please use '
           '`async with` syntax'
