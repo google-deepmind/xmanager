@@ -135,7 +135,9 @@ def aggregate_constraint_cliques(
         group_name = construct_group_name(job_group)
         size = len(job_group.jobs)
         for job in job_group.jobs.values():
-          subcliques, subjobs = matcher(job, group_name)  # pylint: disable=unpacking-non-sequence
+          subcliques, subjobs = matcher(
+              job, group_name if job_group.constraints else None
+          )
           cliques += subcliques
           jobs += subjobs
         cliques = [
