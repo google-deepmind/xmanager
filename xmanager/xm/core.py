@@ -31,6 +31,7 @@ import enum
 import getpass
 import inspect
 import queue
+import sys
 import threading
 import traceback
 from typing import Any, Awaitable, Callable, Collection, Coroutine, Counter, Dict, Generator, List, Mapping, Optional, Sequence, Type, overload
