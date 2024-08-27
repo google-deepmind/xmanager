@@ -61,7 +61,7 @@ def _package_binary(
     raise ValueError(f'{binary.path} does not exist on this machine')
   return local_executables.LocalBinary(
       name=packageable.executable_spec.name,
-      path=binary.path,
+      command=binary.path,
       args=packageable.args,
       env_vars=packageable.env_vars,
   )
@@ -137,7 +137,7 @@ def _package_bazel_binary(
   assert len(paths) == 1
   return local_executables.LocalBinary(
       name=packageable.executable_spec.name,
-      path=paths[0],
+      command=paths[0],
       args=packageable.args,
       env_vars=packageable.env_vars,
   )

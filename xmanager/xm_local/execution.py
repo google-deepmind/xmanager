@@ -16,6 +16,7 @@
 import asyncio
 import atexit
 import os
+import shlex
 import subprocess
 import threading
 from typing import Callable, List, cast
@@ -114,9 +115,14 @@ async def _launch_local_binary(
 
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
   env_vars = {**executable.env_vars, **job.env_vars}
-  process = await asyncio.create_subprocess_exec(
-      executable.path,
+
+  command = shlex.join([
+      executable.command,
       *args,
+  ])
+
+  process = await asyncio.create_subprocess_shell(
+      cmd=command,
       env=env_vars,
       start_new_session=True,
       stdout=asyncio.subprocess.PIPE

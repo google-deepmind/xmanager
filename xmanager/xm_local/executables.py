@@ -32,7 +32,7 @@ class LoadedContainerImage(xm.Executable):
 class LocalBinary(xm.Executable):
   """A locally located binary."""
 
-  path: str
+  command: str
   args: xm.SequentialArgs = attr.Factory(xm.SequentialArgs)
   env_vars: Dict[str, str] = attr.Factory(dict)
 
