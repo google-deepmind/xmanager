@@ -80,10 +80,13 @@ class XManagerLazyLoader:
       # module was imported outside adhoc import context but later
       # used within it). Assuming the parent package has a lazy-loaded
       # / empty __init__.py file, this should be quick.
-      parent = e.name.rsplit(".", 1)[0]
-      parent_module = importlib.import_module(parent)
-      importlib.reload(parent_module)
-      return importlib.import_module(module_name)
+      if e.name:
+        parent = e.name.rsplit(".", 1)[0]
+        parent_module = importlib.import_module(parent)
+        importlib.reload(parent_module)
+        return importlib.import_module(module_name)
+      else:
+        raise e
 
     def _import_module(module_name: str):
       try:
