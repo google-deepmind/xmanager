@@ -151,6 +151,12 @@ BAZEL_COMMAND = flags.DEFINE_string(
     'xm_bazel_command', 'bazel', 'A command that runs Bazel.',
 )
 
+MULTIPLEX_LOCAL_JOBS = flags.DEFINE_boolean(
+    'xm_multiplex_local_jobs',
+    False,
+    'Run local jobs in a terminal multiplexer (tmux).',
+)
+
 # -------------------- docker ---------------------
 
 SUBPROCESS_DOCKER = flags.DEFINE_bool(

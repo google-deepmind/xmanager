@@ -23,12 +23,14 @@ from typing import Callable, List, cast
 
 from absl import logging
 from xmanager import xm
+from xmanager import xm_flags
 from xmanager.docker import docker_adapter
 from xmanager.xm import job_operators
 from xmanager.xm import utils
 from xmanager.xm_local import executables
 from xmanager.xm_local import executors
 from xmanager.xm_local import handles
+from xmanager.xm_local import multiplexer as multiplexer_lib
 from xmanager.xm_local import registry
 
 _BRIDGE_NETWORK_NAME = 'xmanager'
@@ -116,23 +118,27 @@ async def _launch_local_binary(
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
   env_vars = {**executable.env_vars, **job.env_vars}
 
-  command = shlex.join([
-      executable.command,
-      *args,
-  ])
+  if xm_flags.MULTIPLEX_LOCAL_JOBS.value:
+    multiplexer = multiplexer_lib.instance()
+    process = await multiplexer.add(executable.command, args, env_vars)
+  else:
+    command = shlex.join([
+        executable.command,
+        *args,
+    ])
 
-  process = await asyncio.create_subprocess_shell(
-      cmd=command,
-      env=env_vars,
-      start_new_session=True,
-      stdout=asyncio.subprocess.PIPE
-      if job.executor.experimental_stream_output
-      else None,
-      stderr=asyncio.subprocess.STDOUT
-      if job.executor.experimental_stream_output
-      else None,
-      limit=1024 * 128,  # 128 KiB
-  )
+    process = await asyncio.create_subprocess_shell(
+        cmd=command,
+        env=env_vars,
+        start_new_session=True,
+        stdout=asyncio.subprocess.PIPE
+        if job.executor.experimental_stream_output
+        else None,
+        stderr=asyncio.subprocess.STDOUT
+        if job.executor.experimental_stream_output
+        else None,
+        limit=1024 * 128,  # 128 KiB
+    )
   return handles.BinaryHandle(
       name=job.name,
       process=process,
