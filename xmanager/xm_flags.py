@@ -151,8 +151,8 @@ BAZEL_COMMAND = flags.DEFINE_string(
     'xm_bazel_command', 'bazel', 'A command that runs Bazel.',
 )
 
-MULTIPLEX_LOCAL_JOBS = flags.DEFINE_boolean(
-    'xm_multiplex_local_jobs',
+USE_MULTIPLEXER = flags.DEFINE_boolean(
+    'xm_use_multiplexer',
     False,
     'Run local jobs in a terminal multiplexer (tmux).',
 )

@@ -111,16 +111,17 @@ async def _launch_local_binary(
     executable: executables.LocalBinary,
 ) -> handles.LocalExecutionHandle:
   """Launches a local binary as a detached process."""
-  del get_full_job_name  # Unused.
   if not isinstance(job.executor, executors.Local):
     raise TypeError(f'Expected {job!r} to have the Local executor')
 
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
   env_vars = {**executable.env_vars, **job.env_vars}
 
-  if xm_flags.MULTIPLEX_LOCAL_JOBS.value:
+  if xm_flags.USE_MULTIPLEXER.value:
     multiplexer = multiplexer_lib.instance()
-    process = await multiplexer.add(executable.command, args, env_vars)
+    process = await multiplexer.add(
+        executable.command, args, env_vars, get_full_job_name(job.name)
+    )
   else:
     command = shlex.join([
         executable.command,

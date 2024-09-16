@@ -1,10 +1,8 @@
 """Methods for running processes in a terminal multiplexer."""
 
 import asyncio
-import collections
 import functools
 import logging
-import os
 import shutil
 import subprocess
 
@@ -24,7 +22,10 @@ def _get_executable_command(
   )
   # When the command is done, echo the command so it can be copy-pasted, and
   # then drop into a shell.
-  command = f'{launch_command}; echo {launch_command}; exec $SHELL'
+  command = (
+      f'{launch_command}; '
+      f'echo; echo Job completed.; echo {launch_command}; exec $SHELL'
+  )
   return command
 
 
@@ -35,26 +36,19 @@ class Multiplexer:
     if not _has_tmux():
       raise ValueError('tmux must be installed')
     self._session_name = None
-    self._window_names = collections.Counter()
-
-  def _get_window_name(self, executable_path: str) -> str:
-    """Gets a unique window name for the given executable."""
-    window_name = os.path.basename(executable_path)
-    self._window_names[window_name] += 1
-    if self._window_names[window_name] > 1:
-      count = self._window_names[window_name]
-      window_name += f'_{count}'
-    return window_name
 
   async def _new_session(
-      self, executable_path: str, args: list[str], env_vars: dict[str, str]
+      self,
+      executable_path: str,
+      args: list[str],
+      env_vars: dict[str, str],
+      full_job_name: str,
   ) -> asyncio.subprocess.Process:
     """Starts a new tmux session with the specified executable."""
     session_name_prefix = 'xm'
     session_name_suffix = 0
     self._session_name = f'{session_name_prefix}_{session_name_suffix}'
     inner_command = _get_executable_command(executable_path, args, env_vars)
-    window_name = self._get_window_name(executable_path)
 
     while True:
       process = await asyncio.create_subprocess_shell(
@@ -65,7 +59,7 @@ class Multiplexer:
               '-s',
               self._session_name,
               '-n',
-              window_name,
+              full_job_name,
               inner_command,
           ]),
           stdout=subprocess.PIPE,
@@ -98,27 +92,31 @@ class Multiplexer:
     return process
 
   async def add(
-      self, executable_path: str, args: list[str], env_vars: dict[str, str]
+      self,
+      executable_path: str,
+      args: list[str],
+      env_vars: dict[str, str],
+      full_job_name: str,
   ) -> asyncio.subprocess.Process:
     """Runs the given command in a new window."""
     # New session automatically creates a window, so we delay creating the
     # session until the first process is added.
     if not self._session_name:
-      return await self._new_session(executable_path, args, env_vars)
+      return await self._new_session(
+          executable_path, args, env_vars, full_job_name
+      )
 
-    window_name = self._get_window_name(executable_path)
     inner_command = _get_executable_command(executable_path, args, env_vars)
-    command_list = [
-        'tmux',
-        'new-window',
-        '-t',
-        self._session_name,
-        '-n',
-        window_name,
-        inner_command,
-    ]
     return await asyncio.create_subprocess_shell(
-        subprocess.list2cmdline(command_list),
+        subprocess.list2cmdline([
+            'tmux',
+            'new-window',
+            '-t',
+            self._session_name,
+            '-n',
+            full_job_name,
+            inner_command,
+        ]),
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
