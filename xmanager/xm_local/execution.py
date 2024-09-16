@@ -115,7 +115,7 @@ async def _launch_local_binary(
     raise TypeError(f'Expected {job!r} to have the Local executor')
 
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
-  env_vars = {**executable.env_vars, **job.env_vars}
+  env_vars = {**os.environ, **executable.env_vars, **job.env_vars}
 
   if xm_flags.USE_MULTIPLEXER.value:
     multiplexer = multiplexer_lib.instance()
