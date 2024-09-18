@@ -153,9 +153,24 @@ BAZEL_COMMAND = flags.DEFINE_string(
 
 USE_MULTIPLEXER = flags.DEFINE_boolean(
     'xm_use_multiplexer',
-    False,
+    None,
     'Run local jobs in a terminal multiplexer (tmux).',
 )
+
+OPEN_MULTIPLEXER_WINDOW = flags.DEFINE_integer(
+    'xm_open_multiplexer_window',
+    None,
+    'Window in new tmux session to switch to. Should be an index starting'
+    ' from 1.',
+)
+
+
+def should_use_multiplexer() -> bool:
+  if USE_MULTIPLEXER.value is not None:
+    return USE_MULTIPLEXER.value
+  # --xm_open_multiplexer_window also signals intent to use the multiplexer.
+  return OPEN_MULTIPLEXER_WINDOW.value is not None
+
 
 # -------------------- docker ---------------------
 

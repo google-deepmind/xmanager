@@ -117,7 +117,7 @@ async def _launch_local_binary(
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
   env_vars = {**os.environ, **executable.env_vars, **job.env_vars}
 
-  if xm_flags.USE_MULTIPLEXER.value:
+  if xm_flags.should_use_multiplexer():
     multiplexer = multiplexer_lib.instance()
     process = await multiplexer.add(
         executable.command, args, env_vars, get_full_job_name(job.name)
