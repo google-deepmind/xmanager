@@ -197,7 +197,7 @@ class LocalWorkUnit(LocalExperimentUnit):
     _validate_job_group(job_group)
 
     if identity:
-      raise ValueError(
+      logging.warning(
           'LocalExperiment does not support idempotent experiment '
           'unit creation.'
       )
@@ -270,7 +270,7 @@ class LocalExperiment(xm.Experiment):
   ) -> Awaitable[xm.ExperimentUnit]:
     """Creates a new WorkUnit instance for the experiment."""
     if identity:
-      raise ValueError(
+      logging.warning(
           'LocalExperiment does not support idempotent experiment '
           'unit creation.'
       )
