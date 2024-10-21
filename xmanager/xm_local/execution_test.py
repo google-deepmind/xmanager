@@ -13,9 +13,11 @@
 # limitations under the License.
 """Tests for xmanager.xm_local.executors."""
 
+import asyncio
 import os
 import subprocess
 import sys
+from typing import cast
 import unittest
 from unittest import mock
 
@@ -27,6 +29,7 @@ from xmanager.docker import docker_adapter
 from xmanager.xm_local import executables as local_executables
 from xmanager.xm_local import execution
 from xmanager.xm_local import executors as local_executors
+from xmanager.xm_local import handles as local_handles
 
 
 def create_test_job(
@@ -286,6 +289,28 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
           gpu_count=gpu_count,
           interactive=interactive,
       )
+
+  async def test_launch_local_binary(self):
+    job = xm.Job(
+        name='test-job',
+        executable=local_executables.LocalBinary(
+            name='test_echo',
+            command='echo',
+            args=xm.SequentialArgs.from_collection({'arg': 'with space'}),
+        ),
+        executor=local_executors.Local(experimental_stream_output=True),
+    )
+    handles = await execution.launch(
+        lambda x: x, job_group=xm.JobGroup(test_job=job)
+    )
+    self.assertLen(handles, 1)
+    handle = cast(local_handles.BinaryHandle, handles[0])
+    self.assertIsInstance(handle, local_handles.BinaryHandle)
+    await handle.wait()
+    self.assertEqual(handle.name, 'test-job')
+    self.assertEqual(handle.process.returncode, 0)
+    stdout_reader = cast(asyncio.StreamReader, handle.process.stdout)
+    self.assertEqual(await stdout_reader.read(), b'--arg=with space\n')
 
 
 if __name__ == '__main__':
