@@ -59,7 +59,7 @@ class FrameworkDefaultsTest(parameterized.TestCase):
     base_image = framework_defaults.base_image(MLFramework.JAX, accelerator)
     self.assertStartsWith(base_image, 'gcr.io/deeplearning-platform-release/')
     # Jax uses CUDA images.
-    self.assertContainsSubsequence(base_image, 'cu')
+    self.assertIn('cu', base_image)
 
   @parameterized.named_parameters(
       ('cpu', None),
@@ -69,7 +69,7 @@ class FrameworkDefaultsTest(parameterized.TestCase):
   def test_tf2_base_image(self, accelerator):
     base_image = framework_defaults.base_image(MLFramework.TF2, accelerator)
     self.assertStartsWith(base_image, 'gcr.io/deeplearning-platform-release/')
-    self.assertContainsSubsequence(base_image, 'tf2-')
+    self.assertIn('tf2-', base_image)
 
   @parameterized.named_parameters(
       ('cpu', None),
@@ -79,9 +79,9 @@ class FrameworkDefaultsTest(parameterized.TestCase):
   def test_torch_base_image(self, accelerator):
     base_image = framework_defaults.base_image(MLFramework.PYTORCH, accelerator)
     self.assertStartsWith(base_image, 'gcr.io/')
-    self.assertContainsSubsequence(base_image, 'pytorch')
+    self.assertIn('pytorch', base_image)
     if accelerator in xm.TpuType:
-      self.assertContainsSubsequence(base_image, 'tpu')
+      self.assertIn('tpu', base_image)
 
   @parameterized.named_parameters(
       ('cpu', None),
@@ -91,7 +91,7 @@ class FrameworkDefaultsTest(parameterized.TestCase):
   def test_unsupported_tf1_base_image(self, accelerator):
     base_image = framework_defaults.base_image(MLFramework.TF1, accelerator)
     self.assertStartsWith(base_image, 'gcr.io/deeplearning-platform-release/')
-    self.assertContainsSubsequence(base_image, 'tf')
+    self.assertIn('tf', base_image)
 
   @parameterized.named_parameters(
       ('cpu', None),
@@ -101,7 +101,7 @@ class FrameworkDefaultsTest(parameterized.TestCase):
   def test_unknown_base_image(self, accelerator):
     base_image = framework_defaults.base_image(MLFramework.UNKNOWN, accelerator)
     self.assertStartsWith(base_image, 'gcr.io/deeplearning-platform-release/')
-    self.assertContainsSubsequence(base_image, 'base')
+    self.assertIn('base', base_image)
 
 
 if __name__ == '__main__':
