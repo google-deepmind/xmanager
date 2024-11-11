@@ -133,7 +133,7 @@ async def _launch_local_binary(
         stderr=asyncio.subprocess.STDOUT
         if job.executor.experimental_stream_output
         else None,
-        limit=1024 * 512,  # 512 KiB
+        limit=1024 * 1024,  # 1 MB
     )
   return handles.BinaryHandle(
       name=job.name,
