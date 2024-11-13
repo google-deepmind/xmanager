@@ -313,6 +313,8 @@ class Topology:
     return f'xm.Topology({self.name!r})'
 
   def __eq__(self, other: 'Topology') -> bool:
+    if not isinstance(other, Topology):
+      return False
     return self.name == other.name
 
   def __hash__(self) -> int:
