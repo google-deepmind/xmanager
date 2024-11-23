@@ -102,7 +102,7 @@ class JobRequirementsTest(parameterized.TestCase):
     self.assertIsNone(requirements.topology)
     self.assertEqual(requirements.replicas, 1)
 
-  def test_task_requirements(self):
+  def test_construct_requirements(self):
     requirements = resources.JobRequirements(
         {resources.ResourceType.CPU: 4}, v100=1
     )
@@ -155,32 +155,20 @@ class JobRequirementsTest(parameterized.TestCase):
         repr(resources.JobRequirements(cpu=1)), 'xm.JobRequirements(cpu=1.0)'
     )
 
-  @parameterized.named_parameters(
-      dict(
-          testcase_name='equal',
-          requirements1=resources.JobRequirements(
-              v100=4,
-              cpu=1,
-              location='ab',
-              replicas=2,
-          ),
-          requirements2=resources.JobRequirements(
-              v100=4,
-              cpu=1,
-              location='ab',
-              replicas=2,
-          ),
-          expected=True,
-      ),
-      dict(
-          testcase_name='not equal',
-          requirements1=resources.JobRequirements(v100=2),
-          requirements2=resources.JobRequirements(v100=4),
-          expected=False,
-      ),
-  )
-  def test_equality(self, requirements1, requirements2, expected):
-    self.assertEqual(requirements1 == requirements2, expected)
+  def test_is_gpu_tpu_given_cpu(self):
+    requirements = resources.JobRequirements(cpu=1, ram=4 * xm.GiB)
+    self.assertNotIn(requirements.accelerator, xm.GpuType)
+    self.assertNotIn(requirements.accelerator, xm.TpuType)
+
+  def test_is_gpu_tpu_given_gpu(self):
+    requirements = resources.JobRequirements(cpu=1, v100=4)
+    self.assertIn(requirements.accelerator, xm.GpuType)
+    self.assertNotIn(requirements.accelerator, xm.TpuType)
+
+  def test_is_gpu_tpu_given_tpu(self):
+    requirements = resources.JobRequirements(cpu=1, tpu_v2='2x2')
+    self.assertNotIn(requirements.accelerator, xm.GpuType)
+    self.assertIn(requirements.accelerator, xm.TpuType)
 
 
 class EnumSubsetTest(parameterized.TestCase):

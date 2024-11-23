@@ -485,15 +485,3 @@ class JobRequirements:
       args.append(f'replicas={self.replicas}')
 
     return f'xm.JobRequirements({", ".join(args)})'
-
-  def __eq__(self, other: 'JobRequirements') -> bool:
-    if not isinstance(other, JobRequirements):
-      return False
-    return (
-        self.task_requirements == other.task_requirements
-        and self.accelerator == other.accelerator
-        and self.topology == other.topology
-        and self.location == other.location
-        and self.service_tier == other.service_tier
-        and self.replicas == other.replicas
-    )
