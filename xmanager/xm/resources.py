@@ -41,6 +41,13 @@ class _CaseInsensitiveResourceTypeMeta(enum.EnumMeta):
       raise KeyError(f'Unknown {cls.__name__} {resource_name!r}')  # pylint: disable=raise-missing-from
 
 
+class Architecture(enum.Enum):
+  """CPU architecture types for resources."""
+
+  HASWELL = 1
+  ARM = 2
+
+
 class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
   """Type of a countable resource (e.g., CPU, memory, accelerators etc).
 
@@ -363,6 +370,7 @@ class JobRequirements:
     accelerator: The accelerator the jobs uses, if there is one. Jobs using
       multiple accelerators are not supported because different kinds of
       accelerators are usually not installed on the same host.
+    architecture: The architecture of the CPU the job should run on.
     topology: Accelerator topology, if an accelerator is used.
     location: Place where the job should run. For example a cluster name or a
       Borg cell.
@@ -373,6 +381,7 @@ class JobRequirements:
 
   task_requirements: ResourceDict
   accelerator: Optional[ResourceType]
+  architecture: Optional[Architecture]
   topology: Optional[Topology]
 
   location: Optional[str]
@@ -384,6 +393,7 @@ class JobRequirements:
           Union[ResourceType, str], ResourceQuantity
       ] = immutabledict.immutabledict(),
       *,
+      architecture: Optional[Architecture] = None,
       location: Optional[str] = None,
       replicas: Optional[int] = None,
       service_tier: Optional[ServiceTier] = None,
@@ -395,6 +405,8 @@ class JobRequirements:
     Args:
       resources: resource amounts as a dictionary, for example
         {xm.ResourceType.V100: 2}.
+      architecture: The architecture of the CPU the job should run on. If 
+        not specified, the default architecture for the resource will be used.
       location: Place where the job should run. For example a cluster name or a
         Borg cell.
       replicas: Number of identical tasks to run within a job. 1 by default.
@@ -417,6 +429,8 @@ class JobRequirements:
     self.task_requirements = ResourceDict()
     self.accelerator = None
     self.topology = None
+    # TODO: Add validation for architecture for fail-fast.
+    self.architecture = architecture
 
     for resource_name, value in itertools.chain(
         resources.items(), kw_resources.items()
@@ -479,6 +493,8 @@ class JobRequirements:
 
     if self.location:
       args.append(f'location={self.location!r}')
+    if self.architecture:
+      args.append(f'architecture={self.architecture}')
     if self.service_tier != ServiceTier.PROD:
       args.append(f'service_tier=xm.{self.service_tier}')
     if self.replicas != 1:

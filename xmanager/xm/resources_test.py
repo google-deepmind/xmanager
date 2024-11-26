@@ -15,7 +15,6 @@
 
 from absl.testing import absltest
 from absl.testing import parameterized
-
 from xmanager import xm
 from xmanager.xm import resources
 from xmanager.xm.resources import JobRequirements
