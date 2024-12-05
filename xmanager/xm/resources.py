@@ -389,6 +389,23 @@ class JobRequirements:
   location: Optional[str]
   _service_tier: ServiceTier
 
+  def _validate_architecture_and_accelerator(self):
+    """Validates that the architecture is compatible with the accelerator."""
+    if self.architecture is None or self.accelerator is None:
+      return
+    if self.architecture != self.accelerator.architecture():
+      if (
+          self.architecture == Architecture.ARM  # GLP is supported on ARM
+          and self.accelerator == ResourceType.GLP
+      ):
+        return
+      else:
+        raise ValueError(
+            f'Accelerator {self.accelerator} requires architecture'
+            f' {self.accelerator.architecture()}, but {self.architecture} was'
+            ' specified.'
+        )
+
   def __init__(
       self,
       resources: Mapping[
@@ -431,8 +448,6 @@ class JobRequirements:
     self.task_requirements = ResourceDict()
     self.accelerator = None
     self.topology = None
-    # TODO: Add validation for architecture for fail-fast.
-    self.architecture = architecture
 
     for resource_name, value in itertools.chain(
         resources.items(), kw_resources.items()
@@ -474,6 +489,9 @@ class JobRequirements:
       replicas = self.topology.dimensions[1]
 
     self.replicas = replicas or 1
+
+    self.architecture = architecture
+    self._validate_architecture_and_accelerator()
 
   @property
   def service_tier(self):
