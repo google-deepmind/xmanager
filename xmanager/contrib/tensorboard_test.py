@@ -124,16 +124,14 @@ class TensorboardTest(parameterized.TestCase):
     provider = tensorboard.TensorboardProvider
 
     args = provider.get_tensorboard_job_args(log_dir, port, additional_args)
-    self.assertDictContainsSubset(
-        dict(
-            {
-                'logdir': log_dir,
-                'port': port or provider.DEFAULT_TENSORBOARD_PORT,
-            },
-            **(additional_args if additional_args else {}),
-        ),
-        args,
+    expected = dict(
+        {
+            'logdir': log_dir,
+            'port': port or provider.DEFAULT_TENSORBOARD_PORT,
+        },
+        **(additional_args if additional_args else {}),
     )
+    self.assertEqual(args, {**args, **expected})
 
 
 if __name__ == '__main__':
