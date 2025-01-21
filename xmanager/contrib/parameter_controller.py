@@ -27,7 +27,6 @@ Usage:
   experiment.add(my_controller(foo=1, bar=2))
 """
 import asyncio
-import json
 import os
 import shutil
 from typing import Any, Callable, Dict, Optional
@@ -37,30 +36,6 @@ import launchpad as lp
 import launchpad.nodes.python.xm_docker as lp_docker
 from xmanager import xm
 from xmanager import xm_local
-
-
-def _parameter_controller_job_args(
-    controller_args: Dict[str, Any]
-) -> Dict[str, Any]:
-  """Converts given XM flags to coresponding Launchpad's `process_entry` flags.
-
-  The XM client runs inside `process_entry`, but flags are not defined yet.
-  The `flags_to_populate` flag in `process_entry` is used to define the
-  given flags before calling `app.run()`. This function converts XM flags
-  to the format desired by `process_entry`.
-
-  Args:
-    controller_args: XM flags to be passed.
-
-  Returns:
-    Flags used to populate XM flags in `process_entry`
-  """
-  args = {
-      'lp_task_id': 0,
-      'flags_to_populate': xm.ShellSafeArg(json.dumps(controller_args)),
-  }
-
-  return args
 
 
 def _to_python_container(
@@ -149,33 +124,17 @@ async def _launch_remote_controller(
       name=controller_name,
       executable=executable,
       executor=executor,
-      args=_parameter_controller_job_args(controller_args) or {},
+      args={
+          'lp_task_id': 0,
+          **controller_args,
+      },
       env_vars=controller_env_vars or {},
   )
 
   aux_unit.add(controller_job)
 
 
-def _populate_flags(controller_args: Dict[str, Any]) -> None:
-  """Sets flag values at runtime.
-
-  This is meant to be used in conjunction with the `flags_to_populate`
-  flags of `process_entry`. Since flag values can't be passed normally,
-  this function sets values programmatically. This function is meant
-  to be serialized and run inside `process_entry` through `_controller_body`.
-
-  Args:
-    controller_args: Mapping of flag names and values to be set.
-  """
-  for name, value in controller_args.items():
-    flags.FLAGS[name].value = value
-
-
-async def _controller_body(
-    experiment_id, f, controller_args, *args, **kwargs
-) -> None:
-  _populate_flags(controller_args)
-
+async def _controller_body(experiment_id, f, *args, **kwargs) -> None:
   async with xm_local.get_experiment(experiment_id) as experiment:
     await f(experiment, *args, **kwargs)
 
@@ -226,7 +185,6 @@ def controller(
                     xm.run_in_asyncio_loop(_controller_body),
                     experiment_id,
                     f,
-                    controller_args,
                     *args,
                     **kwargs,
                 ),
