@@ -69,6 +69,7 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
   LOCAL_GPU = 100006
   P4 = 21
   T4 = 22
+  L4 = 68
   P100 = 14
   V100 = 17
   A100 = 46
@@ -192,6 +193,7 @@ GpuType = _enum_subset(
         # LOCAL_GPU is missing as only specific GPU types should be added.
         ResourceType.P4,
         ResourceType.T4,
+        ResourceType.L4,
         ResourceType.P100,
         ResourceType.V100,
         ResourceType.A100,
