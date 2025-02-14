@@ -729,7 +729,6 @@ class Experiment(abc.ABC):
 
     self._current_experiment_token = _current_experiment.set(self)
     self._event_loop = asyncio.new_event_loop()
-    asyncio.get_child_watcher().attach_loop(self._event_loop)
     self._event_loop_thread = self._thread_factory()(
         target=self._event_loop.run_forever, daemon=True
     )
