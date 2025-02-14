@@ -18,7 +18,9 @@ import os
 import tempfile
 from typing import Any, Dict, List, Optional, Type, TypeVar
 
-import alembic
+from alembic import command
+from alembic import migration
+from alembic import script as alembic_script
 from alembic.config import Config
 import attr
 import sqlalchemy
@@ -189,7 +191,7 @@ class Database:
       # Allows sharing connection across multiple commands.
       self.alembic_cfg.attributes['connection'] = connection
       try:
-        alembic.command.upgrade(self.alembic_cfg, revision)
+        command.upgrade(self.alembic_cfg, revision)
       except Exception as e:
         raise RuntimeError(
             'Database upgrade failed. The DB may be in an undefined state or '
@@ -199,13 +201,13 @@ class Database:
       finally:
         self.alembic_cfg.attributes['connection'] = None
 
-  def database_version(self) -> str:
+  def database_version(self) -> Optional[str]:
     with self.engine.begin() as connection:
-      context = alembic.migration.MigrationContext.configure(connection)
+      context = migration.MigrationContext.configure(connection)
       return context.get_current_revision()
 
-  def latest_version_available(self) -> str:
-    script_directory = alembic.script.ScriptDirectory.from_config(
+  def latest_version_available(self) -> Optional[str]:
+    script_directory = alembic_script.ScriptDirectory.from_config(
         self.alembic_cfg
     )
     return script_directory.get_current_head()
