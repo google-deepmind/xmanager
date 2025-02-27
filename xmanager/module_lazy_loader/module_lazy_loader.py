@@ -92,7 +92,7 @@ class XManagerLazyLoader:
       try:
         return importlib.import_module(module_name)
       except ImportError as e:
-        return _import_module_with_reloaded_parent(e)
+        return _import_module_with_reloaded_parent(module_name, e)
 
     def _module_getattr(name: str) -> types.ModuleType | Any | None:
       if name in self._loaded_attrs:
