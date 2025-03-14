@@ -26,6 +26,7 @@ import getpass
 import os
 
 from absl import app
+from xmanager import xm_abc
 from xmanager import xm_flags
 
 _GS_PREFIX = 'gs://'

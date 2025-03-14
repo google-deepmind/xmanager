@@ -19,6 +19,7 @@ from absl import app
 from absl.testing import absltest
 from absl.testing import flagsaver
 from absl.testing import parameterized
+from xmanager import xm_abc
 from xmanager.contrib import gcs
 
 # Error patterns.
@@ -26,6 +27,14 @@ _GCS_PATH_ERROR = (
     '--xm_gcs_path not in gs://bucket/directory or /gcs/path format.'
 )
 _PATH_ERROR = 'Path not in gs://bucket/directory or /gcs/path format'
+
+_MOUNT_POINT_ERROR = 'Mount point is not a valid path'
+
+_EXPECTED_VOLUME = xm_abc.GcsVolume(
+    bucket='xcloud-shared',
+    directory_path='directory_path/1/2',
+    mount_path='/mount_path',
+)
 
 
 class GcsTest(parameterized.TestCase):
@@ -42,6 +51,57 @@ class GcsTest(parameterized.TestCase):
     with flagsaver.flagsaver(xm_gcs_path='file://dir'):
       with self.assertRaisesRegex(app.UsageError, _GCS_PATH_ERROR):
         gcs.get_gcs_path_or_fail('project')
+
+  @parameterized.named_parameters(
+      (
+          'gs_prefix',
+          'gs://xcloud-shared/directory_path/1/2',
+          '/mount_path',
+          _EXPECTED_VOLUME,
+          None,
+      ),
+      (
+          'gcs_prefix',
+          '/gcs/xcloud-shared/directory_path/1/2',
+          '/mount_path',
+          _EXPECTED_VOLUME,
+          None,
+      ),
+      (
+          'no_bucket_path',
+          '',
+          '/mount_path',
+          None,
+          _PATH_ERROR,
+      ),
+      (
+          'no_mount_path',
+          '/gcs/xcloud-shared/directory_path/1/2',
+          '',
+          None,
+          _MOUNT_POINT_ERROR,
+      ),
+      (
+          'invalid_prefix',
+          'xcloud-shared/directory_path/1/2',
+          '/mount_path',
+          None,
+          _PATH_ERROR,
+      ),
+      (
+          'invalid_mount_point',
+          'gs://xcloud-shared/directory_path/1/2',
+          'mount_path',
+          None,
+          _MOUNT_POINT_ERROR,
+      ),
+  )
+  def test_path_to_volume(self, path, mount_point, expected, error):
+    if error is not None:
+      with self.assertRaisesRegex(ValueError, error):
+        gcs.path_to_volume(path, mount_point)
+    else:
+      self.assertEqual(gcs.path_to_volume(path, mount_point), expected)
 
   # pylint: disable=bad-whitespace
   @parameterized.named_parameters(
