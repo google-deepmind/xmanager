@@ -16,6 +16,7 @@
 import copy
 import itertools
 from typing import Any, Callable, List, Sequence, Tuple
+import uuid
 
 import attr
 from xmanager.xm import job_blocks
@@ -114,11 +115,9 @@ def aggregate_constraint_cliques(
   """
   group_id = 0
 
-  def construct_group_name(job_group: job_blocks.JobGroup) -> str:
+  def construct_group_name() -> str:
     nonlocal group_id
-    group_name = (
-        '_'.join([name for name in job_group.jobs.keys()]) + '_' + str(group_id)
-    )
+    group_name = f'jobgroup_{group_id}_{uuid.uuid4().hex}'
     group_id += 1
     return group_name
 
@@ -132,7 +131,7 @@ def aggregate_constraint_cliques(
       case job_blocks.JobGroup() as job_group:
         cliques: List[ConstraintClique] = []
         jobs: List[job_blocks.Job] = []
-        group_name = construct_group_name(job_group)
+        group_name = construct_group_name()
         size = len(job_group.jobs)
         for job in job_group.jobs.values():
           subcliques, subjobs = matcher(

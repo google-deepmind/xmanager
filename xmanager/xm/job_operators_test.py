@@ -13,9 +13,15 @@
 # limitations under the License.
 
 import unittest
+from unittest import mock
+import uuid
+
 from xmanager import xm_mock
 from xmanager.xm import job_blocks
 from xmanager.xm import job_operators
+
+
+TEST_UUID = uuid.UUID('40c2fc75-9424-4e33-a929-2e0cc631dccf')
 
 
 def construct_job(name=None):
@@ -56,7 +62,8 @@ class JobOperatorsTest(unittest.TestCase):
         [foo, baz],
     )
 
-  def test_aggregate_constraint_cliques(self):
+  @mock.patch.object(uuid, 'uuid4', return_value=TEST_UUID)
+  def test_aggregate_constraint_cliques(self, _):
     outer_1 = construct_job('outer_1')
     inner_1 = construct_job('inner_1')
     inner_2 = construct_job('inner_2')
@@ -73,29 +80,31 @@ class JobOperatorsTest(unittest.TestCase):
         constraints=[constraint_a],
     )
 
+    group0_name = f'jobgroup_0_{TEST_UUID.hex}'
+    group1_name = f'jobgroup_1_{TEST_UUID.hex}'
     self.assertEqual(
         job_operators.aggregate_constraint_cliques(job_group),
         [
             job_operators.ConstraintClique(
                 constraint=constraint_a,
                 jobs=[outer_1, inner_1, inner_2],
-                group_name='outer_1_outer_2_0',
+                group_name=group0_name,
                 size=2,
                 parent_group_name=None,
             ),
             job_operators.ConstraintClique(
                 constraint=constraint_b,
                 jobs=[inner_1, inner_2],
-                group_name='inner_1_inner_2_1',
+                group_name=group1_name,
                 size=2,
-                parent_group_name='outer_1_outer_2_0',
+                parent_group_name=group0_name,
             ),
             job_operators.ConstraintClique(
                 constraint=constraint_c,
                 jobs=[inner_1, inner_2],
-                group_name='inner_1_inner_2_1',
+                group_name=group1_name,
                 size=2,
-                parent_group_name='outer_1_outer_2_0',
+                parent_group_name=group0_name,
             ),
         ],
     )
