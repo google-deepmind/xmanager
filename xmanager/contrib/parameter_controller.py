@@ -37,7 +37,7 @@ import pathlib
 import shutil
 import sys
 import tempfile
-from typing import Any, Callable, Dict, Optional, Sequence
+from typing import Any, Callable, Sequence
 
 from absl import flags
 import cloudpickle
@@ -249,7 +249,7 @@ def _to_docker_executables(
 
 def _use_host_db_config(
     package_path: str,
-    controller_args: Dict[str, Any],
+    controller_args: dict[str, Any],
 ) -> None:
   """Make DB config file used by host available to controller job.
 
@@ -291,9 +291,10 @@ async def _launch_remote_controller(
     function_label: str,
     executor: xm.Executor,
     controller_name: str,
-    controller_args: Dict[str, Any],
-    controller_env_vars: Dict[str, str],
+    controller_args: dict[str, Any],
+    controller_env_vars: dict[str, str],
     package_path: str,
+    python_path: list[str] | None,
     use_host_db_config: bool,
 ) -> None:
   """Launches remote Job with the given controller."""
@@ -303,7 +304,11 @@ async def _launch_remote_controller(
     _use_host_db_config(package_path, controller_args)
 
   docker_requirements = os.path.join(package_path, 'requirements.txt')
-  docker_config = _DockerConfig(package_path, docker_requirements)
+  docker_config = _DockerConfig(
+      code_directory=package_path,
+      docker_requirements=docker_requirements,
+      python_path=python_path,
+  )
 
   executable_spec = _to_python_container(
       node, f'{aux_unit.experiment_unit_name}_{function_label}', docker_config
@@ -345,9 +350,10 @@ def controller(
     *,
     executor: xm.Executor,
     controller_name: str = 'parameter_controller',
-    controller_env_vars: Optional[Dict[str, str]] = None,
-    controller_args: Optional[Dict[str, Any]] = None,
-    package_path: Optional[str] = '.',
+    controller_env_vars: dict[str, str] | None = None,
+    controller_args: dict[str, Any] | None = None,
+    package_path: str = '.',
+    python_path: list[str] | None = None,
     use_host_db_config: bool = True,
 ):
   """Converts a function to a controller which can be added to an experiment.
@@ -366,6 +372,8 @@ def controller(
       will be packaged. This directory must contain a `requirements.txt` file
       for the job, as well as other things necessary to run the controller job,
       like a DB YAML config or things for the to be launched jobs.
+    python_path: Additional paths to be added to PYTHONPATH prior to executing
+      the controller job.
     use_host_db_config: Specifies if the DB config used by the host should be
       copied and used by the parameter controller job. Defaults to True. Can't
       be used in conjuction with passing the `xm_db_yaml_config` flag to the
@@ -396,6 +404,7 @@ def controller(
                 controller_args=controller_args,
                 controller_env_vars=controller_env_vars,
                 package_path=package_path,
+                python_path=python_path,
                 use_host_db_config=use_host_db_config,
             )
         )
