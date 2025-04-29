@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build wheel absl-py
+          pip install -e .
+
+      - name: Syntax check
+        run: |
+          python -m compileall xmanager
+
+      - name: Simple unit tests
+        run: |
+          # Run the existing test modules directly
+          cd xmanager
+          python -m xmanager.xm.resources_test
+          python -m xmanager.xm.core_test
+          python -m xmanager.xm.utils_test
+          # Add other test modules as needed
+
+      - name: Build wheel
+        run: |
+          python -m build --wheel --no-isolation -o dist
+
+      - name: Install wheel
+        run: |
+          pip install dist/*.whl
+
+      - name: Import sanity check
+        run: |
+          python -c "import xmanager; print('XManager import OK')"
+
+      - name: Example code check
+        run: |
+          # Verify examples are syntactically correct
+          python -m compileall xmanager/examples/
+
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black pycodestyle pylint wheel
+
+      - name: Check formatting with black
+        run: |
+          black --check --diff xmanager
+        continue-on-error: true
+
+      - name: Basic style check with pycodestyle
+        run: |
+          pycodestyle --max-line-length=127 --statistics xmanager
+        continue-on-error: true
+
+      - name: Basic code analysis with pylint
+        run: |
+          pylint --disable=all --enable=error,warning xmanager
+        continue-on-error: true
