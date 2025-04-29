@@ -164,7 +164,7 @@ class MockExperiment(core.Experiment):
 
   @property
   def work_unit_count(self) -> int:
-    return len(self.work_units)
+    return len(self._work_units)
 
   @property
   def work_units(self):
@@ -197,7 +197,7 @@ class MockExperiment(core.Experiment):
   ) -> Awaitable[core.ExperimentUnit]:
     del identity
     future = asyncio.Future()
-    future.set_result(self.work_units[0])
+    future.set_result(self._work_units[0])
     return future
 
 
