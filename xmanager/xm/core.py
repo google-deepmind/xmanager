@@ -92,6 +92,23 @@ def _apply_args(job_type: job_blocks.JobType, args: Mapping[str, Any]) -> None:
   # pytype: enable=attribute-error
 
 
+def get_contextvar_value_by_name(name: str) -> Any | None:
+  ctx = contextvars.copy_context()
+  # Note: returns None when the var is unset, even if the ContextVar is defined
+  # with a non-None `default` kwarg.
+  for k, v in ctx.items():
+    if k.name == name:
+      return v
+  return None
+
+
+def get_xid_from_context() -> int:
+  """Returns the XID from the context. Returns -1 if not found."""
+  if experiment := get_contextvar_value_by_name('_xm_current_experiment'):
+    return experiment.experiment_id
+  return -1
+
+
 def _is_coro_context() -> bool:
   """Returns whether we are currently running in a coroutine context."""
   is_coro_context = False
@@ -155,7 +172,7 @@ class ExperimentUnitError(RuntimeError):
   """Experiment unit could not be completed.
 
   Attrs:
-    work_unit: The work unit in which the error occured, if available.
+    work_unit: The work unit in which the error occurred, if available.
   """
 
   work_unit: Optional['WorkUnit'] = None
