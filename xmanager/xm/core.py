@@ -34,7 +34,7 @@ import queue
 import sys
 import threading
 import traceback
-from typing import Any, Awaitable, Callable, Collection, Coroutine, Counter, Dict, Generator, List, Mapping, Optional, Sequence, Type, overload
+from typing import Any, Awaitable, Callable, ClassVar, Collection, Coroutine, Counter, Dict, Generator, List, Mapping, Optional, Sequence, Type, overload
 
 from absl import logging
 import attr
@@ -708,7 +708,7 @@ class Experiment(abc.ABC):
   # Work unit ID predictor.
   _work_unit_id_predictor: id_predictor.Predictor
   # A class variable for batching packaging requests.
-  _async_packager: async_packager.AsyncPackager
+  _async_packager: ClassVar[async_packager.AsyncPackager]
   # ContextVars token when entering the context.
   _current_experiment_token: contextvars.Token
   _current_async_experiment_token: contextvars.Token
