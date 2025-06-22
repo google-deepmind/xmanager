@@ -2,7 +2,22 @@
 #    uv pip compile ./requirements.in -o ./requirements.txt
 absl-py==2.3.0
     # via -r ./requirements.in
-bottle==0.13.4
+blinker==1.9.0
+    # via flask
+click==8.2.1
+    # via flask
+flask==3.1.1
     # via -r ./requirements.in
+itsdangerous==2.2.0
+    # via flask
+jinja2==3.1.6
+    # via flask
+markupsafe==3.0.2
+    # via
+    #   flask
+    #   jinja2
+    #   werkzeug
 redis==6.2.0
     # via -r ./requirements.in
+werkzeug==3.1.3
+    # via flask
