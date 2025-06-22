@@ -10,14 +10,12 @@ bazel_dep(name = "rules_img", version = "0.3.12")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 
-# `bottle-redis` uses `inspect.getargspec`, which was deprecated in `python==3.11`.
-# Thus, we need to use 3.10 for this example. This also forces us to use `redis<4`.
-python.toolchain(python_version = "3.10")
+python.toolchain(python_version = "3.13")
 
 pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
 pip.parse(
     hub_name = "pypi",
-    python_version = "3.10",
+    python_version = "3.13",
     requirements_lock = "requirements.txt",
     # Use the Bazel downloader to fetch per-platform wheels from PyPI so the
     # container image (Linux) can be cross-built from any host (e.g. macOS).
@@ -43,5 +41,5 @@ pull(
     layer_handling = "eager",
     registry = "index.docker.io",
     repository = "library/python",
-    tag = "3.10.18-slim",
+    tag = "3.13-slim",
 )
