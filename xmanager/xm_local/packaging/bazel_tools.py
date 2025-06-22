@@ -66,7 +66,7 @@ def _get_workspace_directory(events: Sequence[bes_pb2.BuildEvent]) -> str:
 def _read_build_events(path: str) -> List[bes_pb2.BuildEvent]:
   """Parses build events from a file referenced by a given `path`.
 
-  The file should contain serialized length-delimited`bes_pb2.BuildEvent`
+  The file should contain serialized, length-delimited, `bes_pb2.BuildEvent`
   messages. See
   https://docs.bazel.build/versions/master/build-event-protocol.html#consume-in-binary-format
   for details.
