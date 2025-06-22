@@ -1,16 +1,3 @@
-# Copyright 2021 DeepMind Technologies Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """An HTTP server incrementing a value in Redis."""
 
 from typing import Sequence
@@ -18,24 +5,50 @@ from typing import Sequence
 from absl import app
 from absl import flags
 import bottle
-import bottle.ext.redis
+import redis
 
-redis_host = flags.DEFINE_string('redis_host', None, "Redis' host.")
+redis_host = flags.DEFINE_string("redis_host", None, "Address to Redis server.")
 
 server = bottle.Bottle()
+rdb = None
 
 
-@server.route('/increment')
-def increment(rdb):
-  return str(rdb.incr('counter'))
+@server.route("/increment")
+def increment():
+  global rdb
+  if rdb is None:
+    return "Redis host not set."
+  counter = rdb.incr("counter")
+  return f"{counter=}"
+
+
+@server.route("/")
+def index():
+  global rdb
+  if rdb is None:
+    return "Redis host not set."
+  counter = int(rdb.get("counter"))
+  return f"{counter=}\nIncrement it by visiting `/increment`."
 
 
 def main(argv: Sequence[str]) -> None:
-  del argv  # Unused.
+  del argv
 
-  server.install(bottle.ext.redis.RedisPlugin(host=redis_host.value))
-  bottle.run(server, host='0.0.0.0', port=8080, debug=True)
+  global rdb
+  rdb = redis.Redis(host=redis_host.value, decode_responses=True)
+
+  while True:
+    print("Waiting for Redis to be available...")
+    try:
+      rdb.ping()
+      break
+    except redis.exceptions.ConnectionError:
+      time.sleep(1)
+
+  rdb.set("counter", 0)
+
+  bottle.run(server, host="0.0.0.0", port=8080, debug=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
   app.run(main)

@@ -3,12 +3,6 @@
 absl-py==2.3.0
     # via -r ./requirements.in
 bottle==0.13.4
-    # via
-    #   -r ./requirements.in
-    #   bottle-redis
-bottle-redis==0.2.3
     # via -r ./requirements.in
-redis==3.5.3
-    # via
-    #   -r ./requirements.in
-    #   bottle-redis
+redis==6.2.0
+    # via -r ./requirements.in
