@@ -10,7 +10,7 @@ py_binary(
     srcs = ["server.py"],
     deps = [
         "@pypi//absl_py",
-        "@pypi//bottle",
+        "@pypi//flask",
         "@pypi//redis",
     ],
 )
