@@ -7,15 +7,8 @@ absl-py==2.4.0 \
 bottle==0.13.4 \
     --hash=sha256:045684fbd2764eac9cdeb824861d1551d113e8b683d8d26e296898d3dd99a12e \
     --hash=sha256:787e78327e12b227938de02248333d788cfe45987edca735f8f88e03472c3f47
-    # via
-    #   -r ./requirements.in
-    #   bottle-redis
-bottle-redis==0.2.3 \
-    --hash=sha256:2843af0f98107469857f9681e4dd330ce589de4da8b606e7a69db503d3821cce
     # via -r ./requirements.in
 redis==3.5.3 \
     --hash=sha256:0e7e0cfca8660dea8b7d5cd8c4f6c5e29e11f31158c0b0ae91a397f00e5a05a2 \
     --hash=sha256:432b788c4530cfe16d8d943a09d40ca6c16149727e4afe8c2c9d5580c59d9f24
-    # via
-    #   -r ./requirements.in
-    #   bottle-redis
+    # via -r ./requirements.in

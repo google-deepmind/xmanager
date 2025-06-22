@@ -11,7 +11,8 @@ py_binary(
     legacy_create_init = 0,
     deps = [
         "@pypi//absl_py",
-        "@pypi//bottle_redis",
+        "@pypi//bottle",
+        "@pypi//redis",
     ],
 )
 
