@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import asyncio
-from collections.abc import Awaitable, Sequence
-from typing import Callable, Optional
+from collections.abc import Awaitable, Mapping, Sequence
+from typing import Any, Callable, Optional
 
 from absl import logging
 from xmanager import xm
@@ -34,6 +34,7 @@ def executable_graph(
     *,
     jobs: dict[str, xm.JobType],
     jobs_deps: dict[str, Sequence[str]],
+    jobs_args: dict[str, Mapping[str, Any] | None] | None = None,
     # Have to redefine external symbol to allow both
     # `flow.controller` and `flow.executable_graph(controller=)`
     controller: Optional[_Controller] = None,
@@ -66,6 +67,7 @@ def executable_graph(
       defined in `jobs_deps` are assumed to not have any dependencies and run
       directly.
     jobs_deps: Mapping job-name to list of job dependencies.
+    jobs_args: Mapping job-name to list of job arguments.
     controller: A `flow.controller()` (alias of
       `xmanager.contrib.parameter_controller.controller()`) to customize the
       executor parameters. If missing, a default executor is used.
@@ -75,6 +77,9 @@ def executable_graph(
   Returns:
     The controller to pass to `experiment.add()`
   """
+  if jobs_args is None:
+    jobs_args = {}
+
   # Normalize the graph by adding missing values
   for job_name in jobs:
     jobs_deps.setdefault(job_name, [])
@@ -117,7 +122,9 @@ def executable_graph(
       # Schedule the job
       log(f'`All deps finished for: {job_name}`. Launching...')
       if all(deps_finished):
-        op = await experiment.add(jobs[job_name], identity=job_name)
+        op = await experiment.add(
+            jobs[job_name], identity=job_name, args=jobs_args.get(job_name)
+        )
       else:
         op = _UnlaunchedJob()
       log(f'`{job_name}` launched. Notify other waiting jobs...')
