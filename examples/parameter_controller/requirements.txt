@@ -1,7 +1,6 @@
 absl-py
 six
 sqlparse
-dm-launchpad[tensorflow]
 numpy
 cloudpickle
 cloud-sql-python-connector[pymysql]

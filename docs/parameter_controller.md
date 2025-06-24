@@ -94,7 +94,6 @@ provided through a `requirements.txt` file which is packaged with the job:
 absl-py
 six
 sqlparse
-dm-launchpad[tensorflow]
 cloudpickle
 ```
 
