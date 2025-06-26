@@ -14,6 +14,7 @@
 
 import asyncio
 from concurrent import futures
+import re
 import threading
 import unittest
 
@@ -273,6 +274,60 @@ class ExperimentTest(unittest.TestCase):
 
     async with xm_mock.MockExperiment() as experiment:
       experiment.add(generator)
+
+  def test_cancelled_tasks_are_ignored(self):
+    experiment = xm_mock.MockExperiment()
+    with experiment:
+      future = experiment.add(
+          job_blocks.Job(
+              xm_mock.MockExecutable(), xm_mock.MockExecutor(), args={}
+          )
+      )
+      future.cancel()
+
+  @utils.run_in_asyncio_loop
+  async def test_cancelled_tasks_are_ignored_async(self):
+    experiment = xm_mock.MockExperiment()
+    async with experiment:
+      future = experiment.add(
+          job_blocks.Job(
+              xm_mock.MockExecutable(), xm_mock.MockExecutor(), args={}
+          )
+      )
+      future.cancel()
+
+  def test_cancelled_tasks_are_logged(self):
+    experiment = xm_mock.MockExperiment()
+    with self.assertLogs(level='WARNING') as log_output:
+      with experiment:
+        for _ in range(10):
+          future = experiment.add(
+              job_blocks.Job(
+                  xm_mock.MockExecutable(), xm_mock.MockExecutor(), args={}
+              )
+          )
+          future.cancel()
+    for log in log_output.output:
+      if re.search(r"""Ignored \d+ cancelled task""", log):
+        return
+    self.fail(f'Expected log not found in {log_output.output}')
+
+  @utils.run_in_asyncio_loop
+  async def test_cancelled_tasks_are_logged_async(self):
+    experiment = xm_mock.MockExperiment()
+    with self.assertLogs(level='WARNING') as log_output:
+      async with experiment:
+        for _ in range(10):
+          future = experiment.add(
+              job_blocks.Job(
+                  xm_mock.MockExecutable(), xm_mock.MockExecutor(), args={}
+              )
+          )
+          future.cancel()
+    for log in log_output.output:
+      if re.search(r"""Ignored \d+ cancelled task""", log):
+        return
+    self.fail(f'Expected log not found in {log_output.output}')
 
 
 class ContextvarsTest(unittest.TestCase):

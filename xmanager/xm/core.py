@@ -755,19 +755,27 @@ class Experiment(abc.ABC):
     """
     return threading.Thread
 
-  def _wait_for_tasks(self):
+  def _wait_for_tasks(self) -> None:
     """Waits for pending tasks to complete, raising the first error."""
     exception = None
+    number_of_cancelled_tasks = 0
     while not self._running_tasks.empty():
       try:
         self._running_tasks.get_nowait().result()
       except futures.CancelledError:
-        # Ignore cancelled tasks.
-        pass
+        logging.exception('Ignoring cancelled task.')
+        number_of_cancelled_tasks += 1
       except Exception as e:  # pylint: disable=broad-except
         # Allow remaining tasks to complete before raising the first exception.
         if not exception:
           exception = e
+        else:
+          logging.exception(
+              'Multiple exceptions occurred. Only the first will be re-raised.'
+              ' This exception will be ignored'
+          )
+    if number_of_cancelled_tasks > 0:
+      logging.warning('Ignored %d cancelled tasks.', number_of_cancelled_tasks)
     if exception:
       raise exception
 
@@ -787,9 +795,33 @@ class Experiment(abc.ABC):
     )
     return self
 
-  async def _await_for_tasks(self):
+  async def _await_for_tasks(self) -> None:
+    """Awaits pending tasks.
+
+    Raises:
+      The first exception raised by a task, ignoring cancellations.
+    """
+    exception = None
+    number_of_cancelled_tasks = 0
     while not self._running_tasks.empty():
-      await asyncio.wrap_future(self._running_tasks.get_nowait())
+      try:
+        await asyncio.wrap_future(self._running_tasks.get_nowait())
+      except asyncio.exceptions.CancelledError:
+        logging.exception('Ignoring cancelled task.')
+        number_of_cancelled_tasks += 1
+      except Exception as e:  # pylint: disable=broad-except
+        # Allow remaining tasks to complete before raising the first exception.
+        if not exception:
+          exception = e
+        else:
+          logging.exception(
+              'Multiple exceptions occurred. Only the first will be re-raised.'
+              ' This exception will be ignored'
+          )
+    if number_of_cancelled_tasks > 0:
+      logging.warning('Ignored %d cancelled tasks.', number_of_cancelled_tasks)
+    if exception:
+      raise exception
 
   async def __aexit__(self, exc_type, exc_value, traceback):  # pylint:disable=redefined-outer-name
     _current_experiment.reset(self._current_async_experiment_token)
