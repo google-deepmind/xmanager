@@ -38,6 +38,14 @@ def _get_important_outputs(
     if event.id.HasField('named_set'):
       named_sets[event.id.named_set.id] = event.named_set_of_files
 
+  # TODO(hartikainen): Is this the right way to get the binary directory? See usage
+  # below.
+  bindir = (
+      next(e for e in events if e.id.HasField("configuration"))
+      .configuration
+      .make_variable['BINDIR']
+  )
+
   label_to_output =  collections.defaultdict(list)
   for event in events:
     if event.id.HasField('target_completed'):
@@ -56,10 +64,16 @@ def _get_important_outputs(
             if current in visited:
               continue
             visited.add(current)
-            ns = named_sets.get(current)
-            if ns:
-              outputs.extend(ns.files)
-              for nested in ns.file_sets:
+            named_set = named_sets.get(current)
+            if named_set:
+              # TODO(hartikainen): Check this logic.
+              # NOTE(hartikainen): Only gather binary outputs. `py_binary` targets, for
+              # example, include more than one file in the output group (one for the
+              # binary and at least one for the source code), but I think we only care
+              # for the binary.
+              binary_outputs = [file for file in named_set.files if bindir in file.uri]
+              outputs.extend(binary_outputs)
+              for nested in named_set.file_sets:
                 queue.append(nested.id)
 
       label_to_output[label] = outputs
