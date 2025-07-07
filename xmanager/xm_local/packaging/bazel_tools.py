@@ -13,6 +13,7 @@
 # limitations under the License.
 """Bazel tools for local packaging."""
 
+import collections
 import functools
 import itertools
 import os
@@ -32,13 +33,51 @@ from xmanager.generated import build_event_stream_pb2 as bes_pb2
 def _get_important_outputs(
     events: Sequence[bes_pb2.BuildEvent], labels: Sequence[str]
 ) -> List[List[bes_pb2.File]]:
-  label_to_output: Dict[str, List[bes_pb2.File]] = {}
+  named_sets = {}
+  for event in events:
+    if event.id.HasField('named_set'):
+      named_sets[event.id.named_set.id] = event.named_set_of_files
+
+  # TODO(hartikainen): Is this the right way to get the binary directory? See usage
+  # below.
+  bindir = (
+      next(e for e in events if e.id.HasField("configuration"))
+      .configuration
+      .make_variable['BINDIR']
+  )
+
+  label_to_output =  collections.defaultdict(list)
   for event in events:
     if event.id.HasField('target_completed'):
-      # Note that we ignore `event.id.target_completed.aspect`.
-      label_to_output[event.id.target_completed.label] = list(
-          event.completed.important_output
-      )
+      label = event.id.target_completed.label
+
+      # Start with whatever is in important_output (may be empty).
+      outputs = list(event.completed.important_output)
+
+      # Collect from output_group.file_sets references
+      for group in event.completed.output_group:
+        for file_set in group.file_sets:
+          queue = collections.deque([file_set.id])
+          visited = set()
+          while queue:
+            current = queue.popleft()
+            if current in visited:
+              continue
+            visited.add(current)
+            named_set = named_sets.get(current)
+            if named_set:
+              # TODO(hartikainen): Check this logic.
+              # NOTE(hartikainen): Only gather binary outputs. `py_binary` targets, for
+              # example, include more than one file in the output group (one for the
+              # binary and at least one for the source code), but I think we only care
+              # for the binary.
+              binary_outputs = [file for file in named_set.files if bindir in file.uri]
+              outputs.extend(binary_outputs)
+              for nested in named_set.file_sets:
+                queue.append(nested.id)
+
+      label_to_output[label] = outputs
+
   return [label_to_output[label] for label in labels]
 
 
