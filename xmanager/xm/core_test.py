@@ -398,6 +398,14 @@ class ContextvarsTest(unittest.TestCase):
     self.assertIsNone(core._current_experiment.get(None))
     self.assertIsNone(core._current_experiment_unit.get(None))
 
+  def test_new_thread_pool_executor_copies_context(self):
+    with xm_mock.MockExperiment() as experiment:
+      self.assertEqual(core._current_experiment.get(), experiment)
+      executor = core.new_thread_pool_executor()
+      executor.submit(
+          lambda: self.assertEqual(core._current_experiment.get(), experiment)
+      ).result()
+
 
 if __name__ == '__main__':
   unittest.main()

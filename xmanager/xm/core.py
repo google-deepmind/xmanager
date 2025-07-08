@@ -92,6 +92,37 @@ def _apply_args(job_type: job_blocks.JobType, args: Mapping[str, Any]) -> None:
   # pytype: enable=attribute-error
 
 
+def _set_context(context: contextvars.Context) -> None:
+  for var, value in context.items():
+    var.set(value)
+
+
+def get_contextvar_value_by_name(name: str) -> Any | None:
+  ctx = contextvars.copy_context()
+  # Note: returns None when the var is unset, even if the ContextVar is defined
+  # with a non-None `default` kwarg.
+  for k, v in ctx.items():
+    if k.name == name:
+      return v
+  return None
+
+
+def new_thread_pool_executor(
+    executor_class: Type[
+        futures.ThreadPoolExecutor
+    ] = futures.ThreadPoolExecutor,
+    *args,
+    **kwargs,
+) -> futures.ThreadPoolExecutor:
+  """Returns a new ThreadpoolExecutor of the given subclass with context set."""
+  return executor_class(
+      *args,
+      initializer=_set_context,
+      initargs=(contextvars.copy_context(),),
+      **kwargs,
+  )
+
+
 def _is_coro_context() -> bool:
   """Returns whether we are currently running in a coroutine context."""
   is_coro_context = False
