@@ -1119,7 +1119,7 @@ class Experiment(abc.ABC):
     """Returns how many work units the experiment has."""
     raise NotImplementedError
 
-  @abc.abstractmethod
+  @property
   def work_units(self) -> Mapping[int, WorkUnit]:
     """Returns a mapping from work_unit_id to an instance of the work unit."""
     raise NotImplementedError
