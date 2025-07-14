@@ -27,6 +27,7 @@ from concurrent import futures
 from typing import Any, Awaitable, Callable, List, Mapping, Optional, Set
 
 import attr
+from typing_extensions import override
 from xmanager.xm import async_packager
 from xmanager.xm import core
 from xmanager.xm import id_predictor
@@ -129,7 +130,7 @@ class MockExperiment(core.Experiment):
     super().__init__()
     self.launched_jobs = []
     self.launched_jobs_args = []
-    self._work_units = []
+    self._work_units = {}
     self._auxiliary_units = []
 
     self._context = MockMetadataContext()
@@ -153,7 +154,7 @@ class MockExperiment(core.Experiment):
         identity,
     )
     if isinstance(role, core.WorkUnitRole):
-      self._work_units.append(experiment_unit)
+      self._work_units[experiment_unit.work_unit_id] = experiment_unit
     elif isinstance(role, core.AuxiliaryUnitRole):
       self._auxiliary_units.append(experiment_unit)
     else:
@@ -167,7 +168,8 @@ class MockExperiment(core.Experiment):
     return len(self._work_units)
 
   @property
-  def work_units(self):
+  @override
+  def work_units(self) -> Mapping[int, MockExperimentUnit]:
     return self._work_units
 
   @property

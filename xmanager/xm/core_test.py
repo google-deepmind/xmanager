@@ -254,7 +254,7 @@ class ExperimentTest(unittest.TestCase):
               xm_mock.MockExecutable(), xm_mock.MockExecutor(), args={}
           )
       )
-      completion_future = experiment.work_units[0].wait_until_complete()
+      completion_future = experiment.work_units[1].wait_until_complete()
       self.assertEqual(completion_future.work_unit.work_unit_id, 1)
       await completion_future
 
@@ -265,7 +265,7 @@ class ExperimentTest(unittest.TestCase):
       async with experiment:
         experiment.add(failing_job_generator)
         with self.assertRaises(core.ExperimentUnitError):
-          await experiment.work_units[0].wait_until_complete()
+          await experiment.work_units[1].wait_until_complete()
 
   @utils.run_in_asyncio_loop
   async def test_get_full_job_name(self):
