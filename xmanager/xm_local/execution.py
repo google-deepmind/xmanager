@@ -114,7 +114,14 @@ async def _launch_local_binary(
     raise TypeError(f'Expected {job!r} to have the Local executor')
 
   args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
-  env_vars = {**os.environ, **executable.env_vars, **job.env_vars}
+  env_vars = {
+      **os.environ,
+      **executable.env_vars,
+      **job.env_vars,
+      # Unbuffer stdout/stderr for python so that logs are printed immediately
+      # instead of being buffered until the end of the process.
+      'PYTHONUNBUFFERED': '1',
+  }
 
   if xm_flags.should_use_multiplexer():
     multiplexer = multiplexer_lib.instance()
