@@ -14,7 +14,7 @@
 """A module for communicating with the Bazel server."""
 
 import abc
-from typing import List, Sequence, Tuple
+from typing import List, Sequence
 
 import attr
 
@@ -52,9 +52,8 @@ class BazelService(abc.ABC):
     raise NotImplementedError
 
 
-def _to_tuple(sequence: Sequence[str]) -> Tuple[str, ...]:
-  """A standalone function to satisfy PyType."""
-  return tuple(sequence)
+def _to_sorted_tuple(sequence: Sequence[str]) -> tuple[str, ...]:
+  return tuple(sorted(sequence))
 
 
 @attr.s(auto_attribs=True, frozen=True)
@@ -62,4 +61,4 @@ class BazelTarget:
   """A Bazel target to be built."""
 
   label: str
-  bazel_args: Tuple[str, ...] = attr.ib(converter=_to_tuple)
+  bazel_args: tuple[str, ...] = attr.ib(converter=_to_sorted_tuple)
