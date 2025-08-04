@@ -78,10 +78,14 @@ class FrameworkDefaultsTest(parameterized.TestCase):
   )
   def test_torch_base_image(self, accelerator):
     base_image = framework_defaults.base_image(MLFramework.PYTORCH, accelerator)
-    self.assertStartsWith(base_image, 'gcr.io/')
-    self.assertIn('pytorch', base_image)
+
     if accelerator in xm.TpuType:
-      self.assertIn('tpu', base_image)
+      self.assertStartsWith(
+          base_image, 'us-central1-docker.pkg.dev/tpu-pytorch-releases'
+      )
+    else:
+      self.assertStartsWith(base_image, 'gcr.io/deeplearning-platform-release/')
+      self.assertIn('pytorch', base_image)
 
   @parameterized.named_parameters(
       ('cpu', None),
