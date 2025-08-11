@@ -17,6 +17,7 @@ import os
 import unittest
 from unittest import mock
 
+from absl.testing import parameterized
 from google import auth
 from google.auth import credentials
 from google.cloud import aiplatform
@@ -31,7 +32,7 @@ from xmanager.xm_local import executors as local_executors
 from xmanager.cloud import vertex  # pylint: disable=g-bad-import-order
 
 
-class VertexTest(unittest.TestCase):
+class VertexTest(parameterized.TestCase):
 
   @mock.patch.object(xm_auth, 'get_service_account')
   @mock.patch.object(auth, 'default')
@@ -153,6 +154,57 @@ class VertexTest(unittest.TestCase):
             'accelerator_type': vertex.aip_v1.AcceleratorType.NVIDIA_TESLA_A100,
             'accelerator_count': 2,
         },
+    )
+
+  @parameterized.parameters(
+    {'cpus': 4, 'gpus': 1, 'expected': 'g2-standard-4'},
+    {'cpus': 8, 'gpus': 1, 'expected': 'g2-standard-8'},
+    {'cpus': 12, 'gpus': 1, 'expected': 'g2-standard-12'},
+    {'cpus': 16, 'gpus': 1, 'expected': 'g2-standard-16'},
+    {'cpus': 32, 'gpus': 1, 'expected': 'g2-standard-32'},
+    {'cpus': 24, 'gpus': 2, 'expected': 'g2-standard-24'},
+    {'cpus': 48, 'gpus': 4, 'expected': 'g2-standard-48'},
+    {'cpus': 96, 'gpus': 8, 'expected': 'g2-standard-96'},
+  )
+  def test_get_machine_spec_l4(self, cpus, gpus, expected):
+    job = xm.Job(
+        executable=local_executables.GoogleContainerRegistryImage('name', ''),
+        executor=local_executors.Vertex(
+            requirements=xm.JobRequirements(l4=gpus, cpu=cpus)
+        ),
+        args={},
+    )
+    machine_spec = vertex.get_machine_spec(job)
+    self.assertDictEqual(
+        machine_spec,
+        {
+            'machine_type': expected,
+            'accelerator_type': vertex.aip_v1.AcceleratorType.NVIDIA_L4,
+            'accelerator_count': gpus,
+        },
+    )
+
+  @parameterized.parameters(
+    {'cpus': 33, 'gpus': 1},
+    {'cpus': 25, 'gpus': 2},
+    {'cpus': 12, 'gpus': 3},
+    {'cpus': 49, 'gpus': 4},
+    {'cpus': 97, 'gpus': 8},
+  )
+  def test_get_machine_spec_l4_failure(self, cpus, gpus):
+    job = xm.Job(
+        executable=local_executables.GoogleContainerRegistryImage('name', ''),
+        executor=local_executors.Vertex(
+            requirements=xm.JobRequirements(l4=gpus, cpu=cpus)
+        ),
+        args={},
+    )
+    with self.assertRaises(ValueError) as cm:
+      vertex.get_machine_spec(job)
+
+    self.assertIn(
+        f'l4={gpus} with {cpus} CPUs does not fit in any valid machine type.',
+        str(cm.exception),
     )
 
   def test_get_machine_spec_tpu(self):
