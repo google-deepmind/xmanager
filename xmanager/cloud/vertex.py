@@ -93,6 +93,8 @@ def aip_v1_gpu_accelerator_type_str(gpu_type: xm.GpuType) -> str:
   match gpu_type:
     case _ if gpu_type in _TESLA_GPU_TYPES:
       return f'NVIDIA_TESLA_{gpu_type.name.upper()}'
+    case xm.ResourceType.L4:
+      return 'NVIDIA_L4'
     case xm.ResourceType.L4_24TH:
       return 'NVIDIA_L4'
     case xm.ResourceType.A100_80GIB:

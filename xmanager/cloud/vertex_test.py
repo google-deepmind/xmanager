@@ -170,7 +170,7 @@ class VertexTest(parameterized.TestCase):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Vertex(
-            requirements=xm.JobRequirements(l4_24th=gpus, cpu=cpus)
+            requirements=xm.JobRequirements(l4=gpus, cpu=cpus)
         ),
         args={},
     )
@@ -195,7 +195,7 @@ class VertexTest(parameterized.TestCase):
     job = xm.Job(
         executable=local_executables.GoogleContainerRegistryImage('name', ''),
         executor=local_executors.Vertex(
-            requirements=xm.JobRequirements(l4_24th=gpus, cpu=cpus)
+            requirements=xm.JobRequirements(l4=gpus, cpu=cpus)
         ),
         args={},
     )
