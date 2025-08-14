@@ -194,22 +194,3 @@ GCS_PATH = flags.DEFINE_string(
         '(in gs://bucket/directory format).'
     ),
 )
-
-
-class XMLaunchMode(enum.Enum):
-  """Specifies an executor to run an experiment."""
-
-  VERTEX = 'vertex'
-  LOCAL = 'local'
-  INTERACTIVE = 'interactive'
-
-
-XM_LAUNCH_MODE = flags.DEFINE_enum_class(
-    'xm_launch_mode',
-    XMLaunchMode.VERTEX,
-    XMLaunchMode,
-    'How to launch the experiment. Supports local and interactive execution, '
-    + 'launch on '
-    +
-    'Vertex.',
-)
