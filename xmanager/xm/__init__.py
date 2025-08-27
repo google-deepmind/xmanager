@@ -18,6 +18,7 @@ Provides XManager public API for configuring and launching experiments.
 
 from xmanager.xm import job_operators
 from xmanager.xm.compute_units import *
+from xmanager.xm.core import AuxiliaryUnit
 from xmanager.xm.core import AuxiliaryUnitJob
 from xmanager.xm.core import AuxiliaryUnitRole
 from xmanager.xm.core import DebugInterrupt

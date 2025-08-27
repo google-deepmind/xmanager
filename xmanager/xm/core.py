@@ -672,6 +672,15 @@ class AuxiliaryUnitRole(ExperimentUnitRole):
   termination_delay_secs: int
 
 
+class AuxiliaryUnit(ExperimentUnit):
+  """Auxiliary units are experiment units with the auxiliary unit role."""
+
+  @property
+  @abc.abstractmethod
+  def auxiliary_unit_id(self) -> int:
+    raise NotImplementedError
+
+
 class AuxiliaryUnitJob(abc.ABC):
   """A job bundled with an AuxiliaryUnitRole.
 
@@ -931,7 +940,7 @@ class Experiment(abc.ABC):
       args: Optional[Mapping[str, Any]] = ...,
       *,  # parameters after “*” are keyword-only parameters
       identity: str = '',
-  ) -> asyncio.Future[ExperimentUnit]:
+  ) -> asyncio.Future[AuxiliaryUnit]:
     ...
 
   @overload
@@ -943,6 +952,17 @@ class Experiment(abc.ABC):
       role: WorkUnitRole = ...,
       identity: str = '',
   ) -> asyncio.Future[WorkUnit]:
+    ...
+
+  @overload
+  def add(
+      self,
+      job: job_blocks.JobType,
+      args: Optional[Mapping[str, Any]] = ...,
+      *,  # parameters after “*” are keyword-only parameters
+      role: AuxiliaryUnitRole = ...,
+      identity: str = '',
+  ) -> asyncio.Future[AuxiliaryUnit]:
     ...
 
   @overload
