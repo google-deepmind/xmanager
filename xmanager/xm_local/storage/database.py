@@ -115,8 +115,9 @@ class SqliteConnector(SqlConnector):
           "Can't use SqliteConnector with a backendother than `sqlite`"
       )
 
-    if not os.path.isdir(os.path.dirname(settings.db_name)):
-      os.makedirs(os.path.dirname(settings.db_name))
+    db_dir = os.path.dirname(settings.db_name)
+    if settings.db_name != ':memory:' and db_dir and not os.path.isdir(db_dir):
+      os.makedirs(db_dir)
 
     return GenericSqlConnector.create_engine(settings)
 
