@@ -46,7 +46,7 @@ setup(
         'immutabledict',
         'kubernetes',
         'pyyaml',
-        'sqlalchemy==1.4.54',
+        'sqlalchemy==2.0.43',
         'sqlparse',
         'termcolor',
     ],
