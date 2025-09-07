@@ -1,11 +1,13 @@
 """Tests for xmanager.xm_local.storage.database."""
 
-import unittest
+import os
+import tempfile
+from unittest import mock
 
 from absl.testing import absltest
 
-from xmanager.generated import data_pb2
-from xmanager.xm_local.storage import database
+from xmanager.xm_local import experiment as local_experiment
+from xmanager.xm_local.storage import database as db_module
 
 from google.protobuf import text_format
 
@@ -14,32 +16,72 @@ class DatabaseTest(absltest.TestCase):
 
   def setUp(self):
     super().setUp()
-    # Use an in-memory SQLite database for testing.
-    # The Database class will automatically create the schema.
-    settings = database.sqlite_settings(db_file=':memory:')
-    self.db = database.Database(database.SqliteConnector, settings)
+    self.temp_dir = tempfile.TemporaryDirectory()
+    self.db_path = os.path.join(self.temp_dir.name, 'db.sqlite')
 
-  def test_insert_and_get_vertex_job(self):
-    experiment_id = 1
-    work_unit_id = 1
-    vertex_job_id = 'projects/p/locations/l/customJobs/123'
-
-    self.db.insert_experiment(experiment_id, 'test_experiment')
-    self.db.insert_work_unit(experiment_id, work_unit_id)
-
-    self.db.insert_vertex_job(experiment_id, work_unit_id, vertex_job_id)
-
-    work_unit = self.db.get_work_unit(experiment_id, work_unit_id)
-    self.assertIn(vertex_job_id, work_unit.jobs)
-
-    retrieved_job = work_unit.jobs[vertex_job_id]
-    self.assertEqual(retrieved_job.caip.resource_name, vertex_job_id)
-
-    expected_job = data_pb2.Job()
-    text_format.Parse(
-        f'caip: {{ resource_name: "{vertex_job_id}" }}', expected_job
+    settings = db_module.SqlConnectionSettings(
+        backend='sqlite', db_name=self.db_path
     )
-    self.assertEqual(retrieved_job, expected_job)
+
+    self.database = db_module.Database(db_module.SqliteConnector, settings)
+
+    self.patcher = mock.patch(
+        'xmanager.xm_local.experiment.database.database',
+        return_value=self.database,
+    )
+    self.mock_db = self.patcher.start()
+
+  def tearDown(self):
+    self.patcher.stop()
+    self.temp_dir.cleanup()
+    super().tearDown()
+
+  def test_create_experiment(self):
+    with local_experiment.create_experiment(
+        experiment_title='test_experiment_1'
+    ) as experiment:
+      self.assertIsNotNone(experiment.experiment_id)
+
+      with self.database.engine.connect() as connection:
+        result = connection.execute(db_module.text('SELECT * FROM experiment'))
+        rows = result.all()
+        self.assertLen(rows, 1)
+        self.assertEqual(rows[0].experiment_title, 'test_experiment_1')
+
+    with local_experiment.create_experiment(
+        experiment_title='test_experiment_2'
+    ) as experiment:
+      self.assertIsNotNone(experiment.experiment_id)
+
+      with self.database.engine.connect() as connection:
+        result = connection.execute(db_module.text('SELECT * FROM experiment'))
+        rows = result.all()
+        self.assertLen(rows, 2)
+        self.assertEqual(rows[1].experiment_title, 'test_experiment_2')
+
+  def test_job_data_roundtrip(self):
+    self.database.insert_experiment(1, 'test_experiment')
+    self.database.insert_work_unit(1, 1)
+    self.database.insert_vertex_job(
+        1, 1, 'projects/p/locations/l/customJobs/123'
+    )
+    self.database.insert_kubernetes_job(1, 1, 'test_namespace', 'k8s_job')
+
+    work_unit = self.database.get_work_unit(1, 1)
+
+    self.assertCountEqual(
+        work_unit.jobs.keys(),
+        ['projects/p/locations/l/customJobs/123', 'k8s_job'],
+    )
+
+    vertex_job = work_unit.jobs['projects/p/locations/l/customJobs/123']
+    self.assertEqual(
+        vertex_job.caip.resource_name, 'projects/p/locations/l/customJobs/123'
+    )
+
+    kubernetes_job = work_unit.jobs['k8s_job']
+    self.assertEqual(kubernetes_job.kubernetes.namespace, 'test_namespace')
+    self.assertEqual(kubernetes_job.kubernetes.job_name, 'k8s_job')
 
 
 if __name__ == '__main__':
