@@ -89,7 +89,7 @@ class GenericSqlConnector(SqlConnector):
         f'+{settings.driver}' if settings.driver else ''
     )
 
-    url = sqlalchemy.engine.url.URL(
+    url = sqlalchemy.URL.create(
         drivername=driver_name,
         username=settings.username,
         password=settings.password,
@@ -157,7 +157,7 @@ class CloudSqlConnector(SqlConnector):
           password=settings.password,
           db=settings.db_name)
 
-    url = sqlalchemy.engine.url.URL(drivername=f'{settings.backend}+{driver}',
+    url = sqlalchemy.URL.create(drivername=f'{settings.backend}+{driver}',
                                     host='localhost')
     return sqlalchemy.create_engine(url, creator=get_connection)
 
