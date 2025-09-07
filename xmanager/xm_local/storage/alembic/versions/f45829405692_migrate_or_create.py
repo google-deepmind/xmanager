@@ -29,7 +29,6 @@ Create Date: 2022-09-16 10:50:41.096403
 """
 from alembic import op
 import sqlalchemy as sa
-from sqlalchemy.engine.reflection import Inspector
 
 # revision identifiers, used by Alembic.
 revision = 'f45829405692'
@@ -40,7 +39,7 @@ depends_on = None
 
 def using_legacy_sqlite_db() -> bool:
   connection = op.get_bind()
-  return 'VersionHistory' in Inspector.from_engine(connection).get_table_names()
+  return 'VersionHistory' in sa.inspect(connection).get_table_names()
 
 
 def update_columns() -> None:
