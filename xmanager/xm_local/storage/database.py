@@ -256,7 +256,7 @@ class Database:
       self, experiment_id: int, work_unit_id: int, vertex_job_id: str
   ) -> None:
     job = data_pb2.Job(caip=data_pb2.AIPlatformJob(resource_name=vertex_job_id))
-    data = text_format.MessageToBytes(job)
+    data = text_format.MessageToString(job)
     query = text(
         'INSERT INTO '
         'job (experiment_id, work_unit_id, job_name, job_data) '
