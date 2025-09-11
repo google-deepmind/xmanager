@@ -23,20 +23,6 @@ class BazelService(abc.ABC):
   """An interface for Bazel operations."""
 
   @abc.abstractmethod
-  def fetch_kinds(self, labels: Sequence[str]) -> List[str]:
-    """Fetches kinds of given targets.
-
-    See https://docs.bazel.build/versions/main/query.html#output-label_kind.
-
-    Args:
-      labels: Labels of the targets to query.
-
-    Returns:
-      A list of kinds, for example, `['py_binary rule']`.
-    """
-    raise NotImplementedError
-
-  @abc.abstractmethod
   def build_targets(
       self, labels: Sequence[str], tail_args: Sequence[str]
   ) -> List[List[str]]:
