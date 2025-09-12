@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import unittest
 from unittest import mock
 
 from absl.testing import absltest
+import attr
 from xmanager.xm import job_blocks
 from xmanager.xm import utils
 
@@ -95,6 +97,14 @@ class JobBlocksTest(unittest.TestCase):
     )
 
     self.assertEqual(args.to_list(str), ['--pass_me=None'])
+
+  def test_json_serialize(self):
+    args = job_blocks.SequentialArgs.from_collection({
+        'a': 1,
+        'b': [2, '3'],
+        'c': None,
+    })
+    json.dumps(attr.asdict(args))
 
   def test_remove_args(self):
     args = job_blocks.merge_args(

@@ -38,6 +38,7 @@ def _is_nested_structure(structure: Union[List[Any], Tuple[Any]]) -> bool:
   return any(type(element) in (list, tuple) for element in structure)
 
 
+@attr.s(auto_attribs=True)
 class SequentialArgs:
   """A sequence of positional and keyword arguments for a binary.
 
@@ -76,15 +77,9 @@ class SequentialArgs:
   class _KeywordItem:
     name: str
 
-  def __init__(self) -> None:
-    """Constructs an empty SequentialArgs.
-
-    Prefer using xm.merge_args to construct SequentialArgs objects.
-    """
-    self._items: List[
-        Union[SequentialArgs._RegularItem, SequentialArgs._KeywordItem]
-    ] = []
-    self._kwvalues: Dict[str, Any] = {}
+  # Prefer using xm.merge_args to construct SequentialArgs objects.
+  _items: List[Union[_RegularItem, _KeywordItem]] = attr.ib(factory=list)
+  _kwvalues: Dict[str, Any] = attr.ib(factory=dict)
 
   def _ingest_regular_item(self, value: Any) -> None:
     self._items.append(SequentialArgs._RegularItem(value))
