@@ -45,6 +45,7 @@ from xmanager.xm import job_blocks
 from xmanager.xm import job_operators
 from xmanager.xm import metadata_context
 
+
 # ContextVars holding the current experiment (when within an Experiment context)
 # and current experiment unit (when inside a JobGenerator).
 _current_experiment: contextvars.ContextVar['Experiment'] = (
@@ -53,6 +54,8 @@ _current_experiment: contextvars.ContextVar['Experiment'] = (
 _current_experiment_unit: contextvars.ContextVar['ExperimentUnit'] = (
     contextvars.ContextVar('_xm_current_experiment_unit')
 )
+
+xmanager_experiment_id = -1
 
 
 def _check_if_unsupported_args_are_present(
@@ -833,6 +836,7 @@ class Experiment(abc.ABC):
     self._work_unit_id_predictor = id_predictor.Predictor(
         1 + self.work_unit_count
     )
+
     return self
 
   async def _await_for_tasks(self) -> None:

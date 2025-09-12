@@ -406,6 +406,18 @@ class ContextvarsTest(unittest.TestCase):
           lambda: self.assertEqual(core._current_experiment.get(), experiment)
       ).result()
 
+  def test_get_xid_from_context_with_active_experiment(self):
+    with xm_mock.MockExperiment() as experiment:
+      self.assertEqual(core.get_xid_from_context(), experiment.experiment_id)
+
+  def test_get_xid_from_context_with_global_variable(self):
+    core.xmanager_experiment_id = 12345
+    self.assertEqual(core.get_xid_from_context(), 12345)
+
+  def test_get_xid_from_context_with_no_experiment_or_global_variable(self):
+    core.xmanager_experiment_id = None
+    self.assertEqual(core.get_xid_from_context(), -1)
+
 
 if __name__ == '__main__':
   unittest.main()
