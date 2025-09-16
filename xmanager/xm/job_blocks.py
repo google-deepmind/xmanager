@@ -38,6 +38,7 @@ def _is_nested_structure(structure: Union[List[Any], Tuple[Any]]) -> bool:
   return any(type(element) in (list, tuple) for element in structure)
 
 
+@attr.s(init=False, auto_attribs=True)
 class SequentialArgs:
   """A sequence of positional and keyword arguments for a binary.
 
@@ -76,18 +77,21 @@ class SequentialArgs:
   class _KeywordItem:
     name: str
 
-  def __init__(self) -> None:
-    """Constructs an empty SequentialArgs.
+  _items: list[_RegularItem | _KeywordItem] = attr.ib(factory=list)
+  _kwvalues: dict[str, Any] = attr.ib(factory=dict)
 
-    Prefer using xm.merge_args to construct SequentialArgs objects.
-    """
-    self._items: List[
-        Union[SequentialArgs._RegularItem, SequentialArgs._KeywordItem]
-    ] = []
-    self._kwvalues: Dict[str, Any] = {}
+  # Prefer using xm.merge_args to construct SequentialArgs objects.
+  def __init__(
+      self,
+      _items: list[_RegularItem | _KeywordItem] | None = None,  # pylint: disable=invalid-name
+      _kwvalues: dict[str, Any] | None = None,  # pylint: disable=invalid-name
+  ):
+    self._items = _items if _items is not None else []
+    self._kwvalues = _kwvalues if _kwvalues is not None else {}
 
   def _ingest_regular_item(self, value: Any) -> None:
-    self._items.append(SequentialArgs._RegularItem(value))
+    # PyType cannot infer the attr-generated init for _RegularItem.
+    self._items.append(SequentialArgs._RegularItem(value))  # pytype: disable=wrong-arg-count
 
   def _ingest_keyword_item(self, name: str, value: Any) -> None:
     if name not in self._kwvalues:
