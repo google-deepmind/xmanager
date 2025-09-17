@@ -14,9 +14,24 @@
 """A module for communicating with the Bazel server."""
 
 import abc
-from typing import List, Sequence, Tuple
+from typing import Generic, Optional, Sequence, TypeVar
 
 import attr
+
+T = TypeVar('T')
+
+
+@attr.s(auto_attribs=True, frozen=True)
+class BuildResult(Generic[T]):
+  """Holds the result of a build operation.
+
+  Attributes:
+    resources: The resources produced by the build.
+    build_id: The unique identifier for the build invocation (e.g., Sponge ID).
+  """
+
+  resources: T
+  build_id: Optional[str] = None
 
 
 class BazelService(abc.ABC):
@@ -25,7 +40,7 @@ class BazelService(abc.ABC):
   @abc.abstractmethod
   def build_targets(
       self, labels: Sequence[str], tail_args: Sequence[str]
-  ) -> List[List[str]]:
+  ) -> BuildResult[list[list[str]]]:
     """Builds given targets and returns paths to their important outputs.
 
     Args:
@@ -33,12 +48,14 @@ class BazelService(abc.ABC):
       tail_args: Arguments to append to the Bazel command.
 
     Returns:
-      For each label returns a list of its important outputs.
+      A BuildResult object, where `BuildResult.resources[i]` is a list of
+      important outputs for `labels[i]`, and `BuildResult.build_id` is the build
+      identifier for the build invocation.
     """
     raise NotImplementedError
 
 
-def _to_tuple(sequence: Sequence[str]) -> Tuple[str, ...]:
+def _to_tuple(sequence: Sequence[str]) -> tuple[str, ...]:
   """A standalone function to satisfy PyType."""
   return tuple(sequence)
 
@@ -48,4 +65,4 @@ class BazelTarget:
   """A Bazel target to be built."""
 
   label: str
-  bazel_args: Tuple[str, ...] = attr.ib(converter=_to_tuple)
+  bazel_args: tuple[str, ...] = attr.ib(converter=_to_tuple)

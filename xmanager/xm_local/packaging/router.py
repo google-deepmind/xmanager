@@ -14,7 +14,7 @@
 """Methods for routing packageables to appropriate packagers."""
 
 import collections
-from typing import Dict, List, Sequence, Tuple
+from typing import Sequence
 
 from xmanager import xm
 from xmanager.bazel import client as bazel_client
@@ -53,10 +53,10 @@ def _packaging_router(
       )
 
 
-_ArgsToTargets = Dict[Tuple[str, ...], List[bazel_client.BazelTarget]]
+_ArgsToTargets = dict[tuple[str, ...], list[bazel_client.BazelTarget]]
 
 
-def package(packageables: Sequence[xm.Packageable]) -> List[xm.Executable]:
+def package(packageables: Sequence[xm.Packageable]) -> list[xm.Executable]:
   """Routes a packageable to an appropriate packaging mechanism."""
   built_targets: bazel_tools.TargetOutputs = {}
   bazel_targets = bazel_tools.collect_bazel_targets(packageables)
@@ -67,12 +67,14 @@ def package(packageables: Sequence[xm.Packageable]) -> List[xm.Executable]:
     args_to_targets: _ArgsToTargets = collections.defaultdict(list)
     for target in bazel_targets:
       args_to_targets[target.bazel_args].append(target)
+    # TODO: Add support for collection of build_ids for builds in
+    # local packaging.
     for args, targets in args_to_targets.items():
       outputs = bazel_service.build_targets(
           labels=tuple(target.label for target in targets),
           bazel_args=args,
       )
-      for target, output in zip(targets, outputs):
+      for target, output in zip(targets, outputs.resources):
         built_targets[target] = output
 
   return [

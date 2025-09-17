@@ -18,7 +18,7 @@ import itertools
 import os
 import re
 import subprocess
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Optional, Sequence
 
 from xmanager import xm
 from xmanager import xm_flags
@@ -31,8 +31,8 @@ from xmanager.generated import build_event_stream_pb2 as bes_pb2
 
 def _get_important_outputs(
     events: Sequence[bes_pb2.BuildEvent], labels: Sequence[str]
-) -> List[List[bes_pb2.File]]:
-  label_to_output: Dict[str, List[bes_pb2.File]] = {}
+) -> list[list[bes_pb2.File]]:
+  label_to_output: dict[str, list[bes_pb2.File]] = {}
   for event in events:
     if event.id.HasField('target_completed'):
       # Note that we ignore `event.id.target_completed.aspect`.
@@ -44,8 +44,8 @@ def _get_important_outputs(
 
 def _get_normalized_labels(
     events: Sequence[bes_pb2.BuildEvent], labels: Sequence[str]
-) -> List[str]:
-  label_to_expansion: Dict[str, str] = {}
+) -> list[str]:
+  label_to_expansion: dict[str, str] = {}
   for event in events:
     if event.id.HasField('pattern'):
       for index, pattern in enumerate(event.id.pattern.pattern):
@@ -63,7 +63,7 @@ def _get_workspace_directory(events: Sequence[bes_pb2.BuildEvent]) -> str:
   raise ValueError('Missing start event in Bazel logs')
 
 
-def _read_build_events(path: str) -> List[bes_pb2.BuildEvent]:
+def _read_build_events(path: str) -> list[bes_pb2.BuildEvent]:
   """Parses build events from a file referenced by a given `path`.
 
   The file should contain serialized length-delimited`bes_pb2.BuildEvent`
@@ -110,7 +110,7 @@ def _root_absolute_path() -> str:
 
 def _build_multiple_targets(
     labels: Sequence[str], bazel_args: Sequence[str] = ()
-) -> List[List[str]]:
+) -> list[list[str]]:
   """Builds the targets and returns paths to their important outputs.
 
   The definition of 'important artifacts in an output group' can be found at
@@ -141,7 +141,7 @@ def _build_multiple_targets(
     normalized_labels = _get_normalized_labels(events, labels)
     output_lists = _get_important_outputs(events, normalized_labels)
     workspace = _get_workspace_directory(events)
-    results: List[List[str]] = []
+    results: list[list[str]] = []
     for files in output_lists:
       results.append(
           [
@@ -157,7 +157,7 @@ _NAME_RE = r'(?:[^.*:/]|\.(?!\.\.))+'
 _LABEL_LEXER = re.compile(
     f'^//(?P<packages>{_NAME_RE}(/{_NAME_RE})*)?(?P<target>:{_NAME_RE})?$'
 )
-_LexedLabel = Tuple[List[str], str]
+_LexedLabel = tuple[list[str], str]
 
 
 def _lex_label(label: str) -> _LexedLabel:
@@ -182,7 +182,7 @@ def _assemble_label(parts: _LexedLabel) -> str:
   return f"//{'/'.join(init)}:{last}"
 
 
-def _label_kind_lines_to_dict(lines: Sequence[str]) -> Dict[str, str]:
+def _label_kind_lines_to_dict(lines: Sequence[str]) -> dict[str, str]:
   kind_label_tuples = [line.rsplit(' ', 1) for line in lines]
   return {label: kind for kind, label in kind_label_tuples}
 
@@ -190,7 +190,7 @@ def _label_kind_lines_to_dict(lines: Sequence[str]) -> Dict[str, str]:
 class LocalBazelService(client.BazelService):
   """Local implementation of `BazelService`."""
 
-  def fetch_kinds(self, labels: Sequence[str]) -> List[str]:
+  def fetch_kinds(self, labels: Sequence[str]) -> list[str]:
     """Retrieves kind for each given target in the current workspace."""
     labels = [_assemble_label(_lex_label(label)) for label in labels]
 
@@ -215,9 +215,13 @@ class LocalBazelService(client.BazelService):
     return [label_kinds[label] for label in labels]
 
   def build_targets(
-      self, labels: Sequence[str], bazel_args: Sequence[str]
-  ) -> List[List[str]]:
-    return _build_multiple_targets(labels, bazel_args)
+      self,
+      labels: Sequence[str],
+      bazel_args: Sequence[str],
+  ) -> client.BuildResult[list[list[str]]]:
+    return client.BuildResult(
+        resources=_build_multiple_targets(labels, bazel_args)
+    )
 
 
 @functools.lru_cache()
@@ -233,7 +237,7 @@ def apply_default_bazel_args(args: list[str]) -> tuple[str, ...]:
 
 def _collect_executables(
     executable: xm.ExecutableSpec,
-) -> List[client.BazelTarget]:
+) -> list[client.BazelTarget]:
   match executable:
     case xm.BazelBinary() as bazel_binary:
       return [
@@ -255,7 +259,7 @@ def _collect_executables(
 
 def collect_bazel_targets(
     packageables: Sequence[xm.Packageable],
-) -> List[client.BazelTarget]:
+) -> list[client.BazelTarget]:
   """Extracts Bazel targets to package from a sequence of `Packageable`s."""
   return list(
       itertools.chain(
@@ -267,4 +271,4 @@ def collect_bazel_targets(
   )
 
 
-TargetOutputs = Dict[client.BazelTarget, List[str]]
+TargetOutputs = dict[client.BazelTarget, list[str]]
