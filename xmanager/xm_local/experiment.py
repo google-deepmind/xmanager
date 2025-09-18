@@ -261,6 +261,7 @@ class LocalExperiment(xm.Experiment):
     self._experiment_title = experiment_title
     self._experiment_units = []
     self._work_unit_count = 0
+    self._work_unit_id_predictor = id_predictor.Predictor(1)
 
   def _create_experiment_unit(
       self,
@@ -398,7 +399,6 @@ def get_experiment(experiment_id: int) -> xm.Experiment:
   experiment_result = database.database().get_experiment(experiment_id)
   experiment = LocalExperiment(experiment_result.experiment_title)
   experiment._id = experiment_id
-  experiment._work_unit_id_predictor = id_predictor.Predictor(1)
   for work_unit_result in experiment_result.work_units:
     work_unit = LocalWorkUnit(
         experiment,

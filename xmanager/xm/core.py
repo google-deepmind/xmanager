@@ -40,7 +40,6 @@ from absl import logging
 import attr
 from typing_extensions import Self
 from xmanager.xm import async_packager
-from xmanager.xm import id_predictor
 from xmanager.xm import job_blocks
 from xmanager.xm import job_operators
 from xmanager.xm import metadata_context
@@ -748,8 +747,6 @@ class Experiment(abc.ABC):
   _event_loop: asyncio.AbstractEventLoop
   # A queue of background tasks that launch work units.
   _running_tasks: queue.Queue[futures.Future[Any]]
-  # Work unit ID predictor.
-  _work_unit_id_predictor: id_predictor.Predictor
   # A class variable for batching packaging requests.
   _async_packager: ClassVar[async_packager.AsyncPackager]
   # ContextVars token when entering the context.
@@ -833,10 +830,6 @@ class Experiment(abc.ABC):
     self._current_async_experiment_token = _current_experiment.set(self)
     self._event_loop = asyncio.get_event_loop()
     self._running_tasks = queue.Queue()
-    self._work_unit_id_predictor = id_predictor.Predictor(
-        1 + self.work_unit_count
-    )
-
     return self
 
   async def _await_for_tasks(self) -> None:

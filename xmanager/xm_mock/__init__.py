@@ -130,6 +130,7 @@ class MockExperiment(core.Experiment):
     super().__init__()
     self.launched_jobs = []
     self.launched_jobs_args = []
+    self._work_unit_id_predictor = id_predictor.Predictor(1)
     self._work_units = {}
     self._auxiliary_units = []
 
