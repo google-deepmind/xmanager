@@ -1,36 +1,39 @@
-# Copyright 2021 DeepMind Technologies Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-load("@io_bazel_rules_docker//container:container.bzl", "container_image")
-load("@python_deps//:requirements.bzl", "requirement")
-load("@subpar//:subpar.bzl", "par_binary")
+load("@aspect_rules_py//py:defs.bzl", "py_image_layer")
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
 
 licenses(["notice"])
 
-par_binary(
+py_binary(
     name = "server",
     srcs = ["server.py"],
     deps = [
-        requirement("absl-py"),
-        requirement("bottle"),
-        requirement("bottle-redis"),
+        "@pypi//absl_py",
+        "@pypi//flask",
+        "@pypi//redis",
     ],
 )
 
-container_image(
+oci_image(
     name = "server_image",
-    base = "@io_docker_index_library_python//image",
-    entrypoint = ["/server.par"],
-    files = [":server.par"],
+    base = "@docker_io_python",
+    entrypoint = ["/app/server"],
+    tars = py_image_layer(
+        name = "server_layer",
+        binary = ":server",
+        root = "/app/",
+    ),
+)
+
+oci_load(
+    name = "server_image.load",
+    image = ":server_image",
+    repo_tags = ["local_container_links_server:latest"],
+)
+
+filegroup(
+    name = "server_image.tar",
+    srcs = [":server_image.load"],
+    output_group = "tarball",
 )
