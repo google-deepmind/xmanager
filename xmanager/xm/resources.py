@@ -77,6 +77,7 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
   H100 = 70
   H200 = 86
   B200 = 87
+  GB200 = 89
 
   # TPUs
   TPU_V2 = 3
@@ -202,6 +203,7 @@ GpuType = _enum_subset(
         ResourceType.H100,
         ResourceType.H200,
         ResourceType.B200,
+        ResourceType.GB200,
     ],
 )
 
