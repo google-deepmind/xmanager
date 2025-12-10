@@ -119,7 +119,12 @@ class JobRequirementsTest(parameterized.TestCase):
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
 
   def test_replicas(self):
+    # CPU
     requirements = resources.JobRequirements(replicas=2)
+    self.assertEqual(requirements.replicas, 2)
+
+    # TPU
+    requirements = resources.JobRequirements(replicas=2, tpu_v3='1x1')
     self.assertEqual(requirements.replicas, 2)
 
     requirements = resources.JobRequirements(replicas=2, tpu_v3='4x4')
@@ -128,8 +133,16 @@ class JobRequirementsTest(parameterized.TestCase):
     assert requirements.topology is not None
     self.assertEqual(requirements.topology.name, '4x4')
 
-    resources.JobRequirements(replicas=2, v100='4x2')
-    resources.JobRequirements(v100='4x2')
+    # GPU
+    requirements = resources.JobRequirements(replicas=2, v100='4x2')
+    self.assertEqual(requirements.replicas, 2)
+
+    requirements = resources.JobRequirements(v100='4x2')
+    self.assertEqual(requirements.replicas, 2)
+
+    requirements = resources.JobRequirements(gb200='4x18x2')
+    self.assertEqual(requirements.replicas, 36)
+
     with self.assertRaises(ValueError):
       resources.JobRequirements(replicas=4, v100='4x2')
 

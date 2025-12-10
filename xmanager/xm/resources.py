@@ -484,15 +484,17 @@ class JobRequirements:
     if (
         self.accelerator in GpuType
         and self.topology
-        and len(self.topology.dimensions) == 2
+        and len(self.topology.dimensions) > 1
     ):
-      if replicas is not None and replicas != self.topology.dimensions[1]:
+      inferred_replicas = functools.reduce(
+          operator.mul, self.topology.dimensions[1:]
+      )
+      if replicas is not None and replicas != inferred_replicas:
         raise ValueError(
             f'For multihost GPUs with topology {self.topology}, replicas should'
-            f'be either None or {self.topology.dimensions[1]}. Found: '
-            f'{replicas}'
+            f'be either None or {inferred_replicas}. Got: {replicas}'
         )
-      replicas = self.topology.dimensions[1]
+      replicas = inferred_replicas
 
     self.replicas = replicas or 1
 
