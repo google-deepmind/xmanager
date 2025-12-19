@@ -165,7 +165,9 @@ def _package_bazel_container(
   paths = bazel_outputs[
       bazel_client.BazelTarget(
           label=bazel_container.label,
-          bazel_args=bazel_container.bazel_args,
+          bazel_args=bazel_tools.apply_default_bazel_args(
+              bazel_container.bazel_args
+          ),
       )
   ]
 
