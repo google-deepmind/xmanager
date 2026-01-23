@@ -824,7 +824,8 @@ class Experiment(abc.ABC):
     self._wait_for_tasks()
     self._event_loop.call_soon_threadsafe(self._event_loop.stop)
     self._event_loop_thread.join()
-    self._validate_added_roles()
+    if not isinstance(exc_type, KeyboardInterrupt):
+      self._validate_added_roles()
 
   async def __aenter__(self) -> Self:
     self._current_async_experiment_token = _current_experiment.set(self)
