@@ -114,6 +114,23 @@ class JobRequirementsTest(parameterized.TestCase):
     with self.assertRaises(ValueError):
       resources.JobRequirements({resources.ResourceType.CPU: 1}, cpu=2)
 
+  def test_replicas_in_kwargs(self):
+    requirements = resources.JobRequirements({'replicas': 5})
+    self.assertEqual(requirements.replicas, 5)
+
+    with self.assertRaisesRegex(
+        ValueError, 'replicas has been specified twice'
+    ):
+      resources.JobRequirements({'replicas': 5}, replicas=6)
+    with self.assertRaisesRegex(
+        ValueError, 'replicas must be a positive integer.'
+    ):
+      resources.JobRequirements({'replicas': 5.5})
+    with self.assertRaisesRegex(
+        ValueError, 'replicas must be a positive integer.'
+    ):
+      resources.JobRequirements({'replicas': 0})
+
   def test_tpu_job(self):
     requirements = resources.JobRequirements(tpu_v3='4x4')
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)

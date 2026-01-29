@@ -461,6 +461,15 @@ class JobRequirements:
       scalar, topology = _parse_resource_quantity(resource_name, value)  # pylint: disable=unpacking-non-sequence
       match resource_name:
         case builtins.str() as r:
+          if r == 'replicas':
+            if replicas is not None:
+              raise ValueError('replicas has been specified twice.')
+            if not float.is_integer(scalar) or scalar < 1:
+              raise ValueError(
+                  f'replicas must be a positive integer, got {scalar}'
+              )
+            replicas = int(scalar)
+            continue
           resource = ResourceType[r]
         case ResourceType():
           resource = resource_name
