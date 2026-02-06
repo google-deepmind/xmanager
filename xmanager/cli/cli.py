@@ -51,6 +51,8 @@ def _help_command(argv):
 
 def _launch_command(argv):
   """Launches an experiment using XManager."""
+  if len(argv) < 3:
+    raise app.UsageError('Please specify a launch script.')
   launch_script = argv[2]
   if not os.path.exists(launch_script):
     raise OSError(errno.ENOENT, f'File not found: {launch_script}')
@@ -67,6 +69,10 @@ def _launch_command(argv):
 
 def _cluster_command(argv):
   """Creates or deletes a GKE cluster for use with xm_local."""
+  if len(argv) < 3:
+    raise app.UsageError(
+        'Please specify a cluster create or delete subcommand.'
+    )
   caliban_gke = importlib.import_module('caliban.platform.gke.cli')
   caliban_gke_types = importlib.import_module('caliban.platform.gke.types')
   subcmd = argv[2]
@@ -88,19 +94,19 @@ def _cluster_command(argv):
 
 
 def main(argv):
-  if len(argv) < 3:
-    if argv[1] == 'help':
+  if len(argv) < 2:
+    raise app.UsageError(
+        'Please specify a command. See `xmc help` for more details.'
+    )
+  match argv[1]:
+    case 'help':
       _help_command(argv)
-    else:
-      raise app.UsageError('There must be at least 2 command-line arguments')
-  else:
-    cmd = argv[1]
-    if cmd == 'launch':
+    case 'launch':
       _launch_command(argv)
-    elif cmd == 'cluster':
+    case 'cluster':
       _cluster_command(argv)
-    else:
-      raise app.UsageError(f'Command `{cmd}` is not a supported command')
+    case _:
+      raise app.UsageError(f'Command `{argv[1]}` is not a supported command')
 
 
 def entrypoint():
