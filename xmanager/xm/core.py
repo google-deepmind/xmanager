@@ -872,7 +872,11 @@ class Experiment(abc.ABC):
     By default, logs a warning if no work units were added, which is usually
     unintentional.
     """
-    if not self._added_roles[WorkUnitRole]:
+    has_work_units = any(
+        issubclass(role_type, WorkUnitRole) and count > 0
+        for role_type, count in self._added_roles.items()
+    )
+    if not has_work_units:
       logging.warning(
           'No work units were added to this experiment, which is usually not'
           ' intended.'

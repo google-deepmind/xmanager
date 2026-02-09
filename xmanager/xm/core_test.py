@@ -14,6 +14,7 @@
 
 import asyncio
 from concurrent import futures
+import logging
 import re
 import threading
 import unittest
@@ -328,6 +329,25 @@ class ExperimentTest(unittest.TestCase):
       if re.search(r"""Ignored \d+ cancelled task""", log):
         return
     self.fail(f'Expected log not found in {log_output.output}')
+
+  def test_work_unit_role_subclass_validation(self):
+
+    class SubWorkUnitRole(core.WorkUnitRole):
+      pass
+
+    experiment = xm_mock.MockExperiment()
+    with self.assertLogs(level='WARNING') as log_output:
+      # Log something to avoid failure if no other logs are produced.
+      logging.warning('Dummy warning')
+      with experiment:
+        job = job_blocks.Job(
+            xm_mock.MockExecutable(), xm_mock.MockExecutor(), args={}
+        )
+        experiment.add(job, role=SubWorkUnitRole())
+
+    for log in log_output.output:
+      if 'No work units were added to this experiment' in log:
+        self.fail('Unexpected warning about missing work units found.')
 
 
 class ContextvarsTest(unittest.TestCase):
