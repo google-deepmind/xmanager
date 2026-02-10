@@ -647,6 +647,13 @@ class WorkUnit(ExperimentUnit):
   def work_unit_id(self) -> int:
     raise NotImplementedError
 
+  def __str__(self) -> str:
+    """Returns a string representation including experiment and work unit IDs."""
+    return (
+        f'WorkUnit(experiment_id={self.experiment_id},'
+        f' work_unit_id={self.work_unit_id})'
+    )
+
   def wait_until_complete(self) -> WorkUnitCompletedAwaitable:
     """Waits until the unit is in a final state: completed/failed/stopped.
 

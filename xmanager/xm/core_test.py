@@ -276,6 +276,18 @@ class ExperimentTest(unittest.TestCase):
     async with xm_mock.MockExperiment() as experiment:
       experiment.add(generator)
 
+  def test_work_unit_str(self):
+    experiment = xm_mock.MockExperiment()
+    with experiment:
+      experiment.add(
+          job_blocks.Job(xm_mock.MockExecutable(), xm_mock.MockExecutor())
+      )
+      work_unit = experiment.work_units[1]
+      self.assertEqual(
+          str(work_unit),
+          f'WorkUnit(experiment_id={experiment.experiment_id}, work_unit_id=1)',
+      )
+
   def test_cancelled_tasks_are_ignored(self):
     experiment = xm_mock.MockExperiment()
     with experiment:
