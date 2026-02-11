@@ -64,6 +64,16 @@ _A100_GPUS_TO_MACHINE_TYPE = {
     8: 'a2-highgpu-8g',
     16: 'a2-megagpu-16g',
 }
+_L4_GPUS_TO_MACHINE_TYPE = {
+    (1, 4): 'g2-standard-4',
+    (1, 8): 'g2-standard-8',
+    (1, 12): 'g2-standard-12',
+    (1, 16): 'g2-standard-16',
+    (1, 32): 'g2-standard-32',
+    (2, 24): 'g2-standard-24',
+    (4, 48): 'g2-standard-48',
+    (8, 96): 'g2-standard-96',
+}
 
 _CLOUD_TPU_ACCELERATOR_TYPES = {
     xm.ResourceType.TPU_V2: 'TPU_V2',
@@ -96,6 +106,28 @@ _STATE_TO_STATUS = {
         local_status.LocalWorkUnitStatusEnum.FAILED
     ),
 }
+
+def aip_v1_gpu_accelerator_type_str(gpu_type: xm.GpuType) -> str:
+  tesla_architectures = {xm.ResourceType.P4, xm.ResourceType.T4, xm.ResourceType.P100, xm.ResourceType.V100, xm.ResourceType.A100}
+  match gpu_type:
+    case _ if gpu_type in tesla_architectures:
+      return f"NVIDIA_TESLA_{gpu_type.name.upper()}"
+    case xm.ResourceType.L4:
+      return 'NVIDIA_L4'
+    case xm.ResourceType.L4_24TH:
+      return 'NVIDIA_L4'
+    case xm.ResourceType.A100_80GIB:
+      return 'NVIDIA_A100_80GB'
+    case xm.ResourceType.H100:
+      return 'NVIDIA_H100_80GB'
+    case xm.ResourceType.H200:
+      return 'NVIDIA_H200_141GB'
+    case xm.ResourceType.B200:
+      return 'NVIDIA_B200'
+    case _:
+      raise ValueError(
+          f'Unsupported GPU type {gpu_type}. Supported types are: {GpuType}'
+      )
 
 # Hide noisy warning regarding:
 # `file_cache is unavailable when using oauth2client >= 4.0.0 or google-auth`
@@ -298,7 +330,7 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   for resource, value in requirements.task_requirements.items():
     accelerator_type = None
     if resource in xm.GpuType:
-      accelerator_type = 'NVIDIA_TESLA_' + str(resource).upper()
+      accelerator_type = aip_v1_gpu_accelerator_type_str(resource)
     elif resource in xm.TpuType:
       accelerator_type = _CLOUD_TPU_ACCELERATOR_TYPES[resource]
     if accelerator_type:
@@ -306,6 +338,8 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
       spec['accelerator_count'] = int(value)
   accelerator = spec.get('accelerator_type', None)
   if accelerator and accelerator == aip_v1.AcceleratorType.NVIDIA_TESLA_A100:
+    print(f'Available A100 machine types (gpus: machine_type): {_A100_GPUS_TO_MACHINE_TYPE}')
+
     for gpus, machine_type in sorted(_A100_GPUS_TO_MACHINE_TYPE.items()):
       if spec['accelerator_count'] <= gpus:
         spec['machine_type'] = machine_type
@@ -316,6 +350,30 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
               spec['accelerator_count']
           )
       )
+  elif accelerator and accelerator == aip_v1.AcceleratorType.NVIDIA_L4:
+    print(f'Available L4 machine types ((gpus, cpus): machine_type): {_L4_GPUS_TO_MACHINE_TYPE}')
+
+    required_gpus = spec['accelerator_count']
+    required_cpus = requirements.task_requirements.get(xm.ResourceType.CPU, None)
+    gpus_matches = lambda gpus: spec['accelerator_count'] <= gpus
+    cpus_matches = lambda cpus: required_cpus is None or cpus == required_cpus
+
+    l4_candidates = [
+      (machine_type, (gpus, cpus))
+      for (gpus, cpus), machine_type in _L4_GPUS_TO_MACHINE_TYPE.items()
+      if gpus_matches(gpus) and cpus_matches(cpus)
+    ]
+
+    if not l4_candidates:
+      cpu_str = f' with {required_cpus} CPUs' if required_cpus else ''
+      raise ValueError(
+          f'l4={required_gpus}{cpu_str} does not fit in any valid machine type.'
+      )
+
+    # Find the best fit (smallest machine that satisfies the requirements).
+    # The key for sorting is (gpus, cpus).
+    best_fit_machine_type, _ = min(l4_candidates, key=lambda item: item[1])
+    spec['machine_type'] = best_fit_machine_type
   elif (
       accelerator == aip_v1.AcceleratorType.TPU_V2
       or accelerator == aip_v1.AcceleratorType.TPU_V3
