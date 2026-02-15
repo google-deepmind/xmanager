@@ -89,13 +89,14 @@ class GenericSqlConnector(SqlConnector):
         f'+{settings.driver}' if settings.driver else ''
     )
 
-    url = sqlalchemy.engine.url.URL(
+    url = sqlalchemy.URL.create(
         drivername=driver_name,
         username=settings.username,
         password=settings.password,
         host=settings.host,
         port=settings.port,
         database=settings.db_name,
+        query={},
     )
 
     return sqlalchemy.engine.create_engine(url)
@@ -115,7 +116,9 @@ class SqliteConnector(SqlConnector):
           "Can't use SqliteConnector with a backendother than `sqlite`"
       )
 
-    if not os.path.isdir(os.path.dirname(settings.db_name)):
+    if settings.db_name != ':memory:' and not os.path.isdir(
+        os.path.dirname(settings.db_name)
+    ):
       os.makedirs(os.path.dirname(settings.db_name))
 
     return GenericSqlConnector.create_engine(settings)
@@ -154,7 +157,7 @@ class CloudSqlConnector(SqlConnector):
           password=settings.password,
           db=settings.db_name)
 
-    url = sqlalchemy.engine.url.URL(drivername=f'{settings.backend}+{driver}',
+    url = sqlalchemy.URL.create(drivername=f'{settings.backend}+{driver}',
                                     host='localhost')
     return sqlalchemy.create_engine(url, creator=get_connection)
 
@@ -167,9 +170,6 @@ class Database:
   ):
     self.settings = settings
     self.engine: Engine = connector.create_engine(settings)
-    # https://github.com/sqlalchemy/sqlalchemy/issues/5645
-    # TODO: Remove this line after using sqlalchemy>=1.14.
-    self.engine.dialect.description_encoding = None
     storage_dir = os.path.dirname(__file__)
 
     alembic_ini_path = os.path.join(storage_dir, 'alembic.ini')
@@ -216,9 +216,7 @@ class Database:
     """Enforces the latest version of the database to be used."""
     db_version = self.database_version()
     with self.engine.connect() as connection:
-      legacy_sqlite_db = self.engine.dialect.has_table(
-          connection, 'VersionHistory'
-      )
+      legacy_sqlite_db = sqlalchemy.inspect(connection).has_table('VersionHistory')
 
     need_to_update = (
         db_version != self.latest_version_available() and db_version
@@ -239,36 +237,46 @@ class Database:
         'INSERT INTO experiment (experiment_id, experiment_title) '
         'VALUES (:experiment_id, :experiment_title)'
     )
-    self.engine.execute(
-        query, experiment_id=experiment_id, experiment_title=experiment_title
-    )
+    with self.engine.begin() as connection:
+      connection.execute(
+          query,
+          {
+              'experiment_id': experiment_id,
+              'experiment_title': experiment_title,
+          },
+      )
 
   def insert_work_unit(self, experiment_id: int, work_unit_id: int) -> None:
     query = text(
         'INSERT INTO work_unit (experiment_id, work_unit_id) '
         'VALUES (:experiment_id, :work_unit_id)'
     )
-    self.engine.execute(
-        query, experiment_id=experiment_id, work_unit_id=work_unit_id
-    )
+    with self.engine.begin() as connection:
+      connection.execute(
+          query,
+          {'experiment_id': experiment_id, 'work_unit_id': work_unit_id},
+      )
 
   def insert_vertex_job(
       self, experiment_id: int, work_unit_id: int, vertex_job_id: str
   ) -> None:
     job = data_pb2.Job(caip=data_pb2.AIPlatformJob(resource_name=vertex_job_id))
-    data = text_format.MessageToBytes(job)
+    data = text_format.MessageToString(job)
     query = text(
         'INSERT INTO '
         'job (experiment_id, work_unit_id, job_name, job_data) '
         'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)'
     )
-    self.engine.execute(
-        query,
-        experiment_id=experiment_id,
-        work_unit_id=work_unit_id,
-        job_name=vertex_job_id,
-        job_data=data,
-    )
+    with self.engine.begin() as connection:
+      connection.execute(
+          query,
+          {
+              'experiment_id': experiment_id,
+              'work_unit_id': work_unit_id,
+              'job_name': vertex_job_id,
+              'job_data': data,
+          },
+      )
 
   def insert_kubernetes_job(
       self, experiment_id: int, work_unit_id: int, namespace: str, job_name: str
@@ -285,19 +293,23 @@ class Database:
         'job (experiment_id, work_unit_id, job_name, job_data) '
         'VALUES (:experiment_id, :work_unit_id, :job_name, :job_data)'
     )
-    self.engine.execute(
-        query,
-        experiment_id=experiment_id,
-        work_unit_id=work_unit_id,
-        job_name=job_name,
-        job_data=data,
-    )
+    with self.engine.begin() as connection:
+      connection.execute(
+          query,
+          {
+              'experiment_id': experiment_id,
+              'work_unit_id': work_unit_id,
+              'job_name': job_name,
+              'job_data': data,
+          },
+      )
 
   def list_experiment_ids(self) -> List[int]:
     """Lists all the experiment ids from local database."""
     query = text('SELECT experiment_id FROM experiment')
-    rows = self.engine.execute(query)
-    return [r['experiment_id'] for r in rows]
+    with self.engine.connect() as connection:
+      rows = connection.execute(query).scalars().all()
+    return rows
 
   def get_experiment(self, experiment_id: int) -> ExperimentResult:
     """Gets an experiment from local database."""
@@ -305,11 +317,10 @@ class Database:
         'SELECT experiment_title FROM experiment '
         'WHERE experiment_id=:experiment_id'
     )
-    rows = self.engine.execute(query, experiment_id=experiment_id)
-    title = None
-    for r in rows:
-      title = r['experiment_title']
-      break
+    with self.engine.connect() as connection:
+      title = connection.execute(
+          query, {'experiment_id': experiment_id}
+      ).scalar_one_or_none()
     if title is None:
       raise ValueError(f"Experiment Id {experiment_id} doesn't exist.")
     return ExperimentResult(
@@ -321,8 +332,16 @@ class Database:
     query = text(
         'SELECT work_unit_id FROM work_unit WHERE experiment_id=:experiment_id'
     )
-    rows = self.engine.execute(query, experiment_id=experiment_id)
-    return [self.get_work_unit(experiment_id, r['work_unit_id']) for r in rows]
+    with self.engine.connect() as connection:
+      work_unit_ids = (
+          connection.execute(query, {'experiment_id': experiment_id})
+          .scalars()
+          .all()
+      )
+    return [
+        self.get_work_unit(experiment_id, work_unit_id)
+        for work_unit_id in work_unit_ids
+    ]
 
   def get_work_unit(
       self, experiment_id: int, work_unit_id: int
@@ -333,13 +352,16 @@ class Database:
         'WHERE experiment_id=:experiment_id '
         'AND work_unit_id=:work_unit_id'
     )
-    rows = self.engine.execute(
-        query, experiment_id=experiment_id, work_unit_id=work_unit_id
-    )
-    jobs = {}
-    for r in rows:
-      job = data_pb2.Job()
-      jobs[r['job_name']] = text_format.Parse(r['job_data'], job)
+    with self.engine.connect() as connection:
+      rows = connection.execute(
+          query,
+          {'experiment_id': experiment_id, 'work_unit_id': work_unit_id},
+      )
+      jobs = {}
+      for r in rows:
+        job = data_pb2.Job()
+        text_format.Parse(r.job_data, job)
+        jobs[r.job_name] = job
     return WorkUnitResult(work_unit_id, jobs)
 
 
