@@ -1,0 +1,35 @@
+module(
+    name = "xmanager_local_container_links_bzlmod",
+    version = "1.0.0",
+)
+
+bazel_dep(name = "aspect_rules_py", version = "1.6.0")
+bazel_dep(name = "rules_python", version = "1.5.0-rc2")
+bazel_dep(name = "rules_oci", version = "2.2.6")
+bazel_dep(name = "rules_pkg", version = "1.1.0")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+
+python.toolchain(python_version = "3.13")
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "pypi",
+    python_version = "3.13",
+    requirements_lock = "requirements.txt",
+)
+use_repo(pip, "pypi")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+
+oci.pull(
+    name = "docker_io_python",
+    digest = "sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2c2dcedb1da95114372b6d7",
+    image = "docker.io/library/python",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+    tag = "3.13-slim",
+)
+use_repo(oci, "docker_io_python", "docker_io_python_linux_amd64", "docker_io_python_linux_arm64_v8")
