@@ -135,6 +135,58 @@ class JobRequirementsTest(parameterized.TestCase):
     requirements = resources.JobRequirements(tpu_v3='4x4')
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
 
+  @parameterized.parameters([
+      xm.Architecture.HASWELL,
+      xm.Architecture.ARM,
+  ])
+  def test_architecture(self, architecture):
+    requirements = resources.JobRequirements(cpu=1, architecture=architecture)
+    self.assertEqual(
+        requirements.architecture,
+        architecture,
+    )
+
+  @parameterized.parameters([
+      (xm.Architecture.ARM, xm.ResourceType.P100, True),
+      (xm.Architecture.ARM, xm.ResourceType.GB200, False),
+  ])
+  def test_architecture_accelerator_validation(
+      self, architecture, accelerator, raises_error
+  ):
+    if raises_error:
+      with self.assertRaises(ValueError):
+        resources.JobRequirements(
+            {accelerator: '4x4'},
+            architecture=architecture,
+        )
+    else:
+      try:
+        resources.JobRequirements(
+            {accelerator: '4x4'},
+            architecture=architecture,
+        )
+      except ValueError:
+        self.fail(
+            f'Validation Error failed for {architecture} and {accelerator}'
+        )
+
+  def test_location(self):
+    requirements = resources.JobRequirements(location='lon_r7')
+    self.assertEqual(requirements.location, 'lon_r7')
+
+  def test_service_tier(self):
+    requirements = resources.JobRequirements(
+        service_tier=resources.ServiceTier.PROD
+    )
+    self.assertEqual(requirements.service_tier, resources.ServiceTier.PROD)
+
+  def test_service_tier_mutable(self):
+    requirements = resources.JobRequirements(
+        service_tier=resources.ServiceTier.PROD
+    )
+    requirements.service_tier = resources.ServiceTier.BATCH
+    self.assertEqual(requirements.service_tier, resources.ServiceTier.BATCH)
+
   def test_replicas(self):
     # CPU
     requirements = resources.JobRequirements(replicas=2)

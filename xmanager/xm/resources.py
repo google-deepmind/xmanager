@@ -416,6 +416,9 @@ class JobRequirements:
             ' specified.'
         )
 
+  def _validate_accelerator_topology(self):
+    """Validates that the topology is compatible with the accelerator."""
+
   def __init__(
       self,
       resources: Mapping[
@@ -485,6 +488,7 @@ class JobRequirements:
           raise ValueError('Accelerator already set.')
         self.accelerator = resource
         self.topology = topology or Topology(f'{scalar:g}')
+        self._validate_accelerator_topology()
       elif topology is not None:
         raise ValueError(
             f'A topology specified for non accelerator resource {resource}.'
