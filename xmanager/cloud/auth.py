@@ -15,7 +15,7 @@
 
 import functools
 import os
-from typing import Any, Dict, Iterable
+from typing import Any, Dict, Sequence
 
 from absl import flags
 from google import auth
@@ -26,7 +26,7 @@ from xmanager import xm_flags
 _DEFAULT_SCOPES = ('https://www.googleapis.com/auth/cloud-platform',)
 
 
-def get_project_name() -> str:
+def get_project_name() -> str | None:
   """Gets the Project ID of the GCP Project."""
   _, project = auth.default()
   return project
@@ -39,7 +39,7 @@ def get_project_number() -> str:
   return response['projectNumber']
 
 
-def get_creds(scopes: Iterable[str] = _DEFAULT_SCOPES):
+def get_creds(scopes: Sequence[str] = _DEFAULT_SCOPES):
   """Gets the google credentials to be used with GCP APIs."""
   creds, _ = auth.default(scopes=scopes)
   return creds

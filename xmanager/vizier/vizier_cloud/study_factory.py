@@ -76,7 +76,10 @@ class NewStudy(StudyFactory):
       project: Optional[str] = None,
       location: Optional[str] = None,
   ) -> None:
-    self.project = project or auth.get_project_name()
+    project = project or auth.get_project_name()
+    if project is None:
+      raise RuntimeError('Project not found. Run `gcloud auth login`')
+    self.project = project
     self.location = location or _DEFAULT_LOCATION
 
     super().__init__(
