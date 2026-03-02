@@ -108,7 +108,7 @@ to access Vertex AI to run jobs.
 
    ```bash
    export GOOGLE_CLOUD_BUCKET_NAME=<GOOGLE_CLOUD_BUCKET_NAME>
-   gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME
+   gcloud storage buckets create --location=us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME
    ```
 
    Add `GOOGLE_CLOUD_BUCKET_NAME` to the environment variables or your .bashrc:

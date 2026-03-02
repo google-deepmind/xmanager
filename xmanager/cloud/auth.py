@@ -175,5 +175,5 @@ def get_bucket() -> str:
       '`export GOOGLE_CLOUD_BUCKET_NAME=<bucket-name>`, '
       'replacing <bucket-name> with a Google Cloud Storage bucket. '
       'You can create a bucket with '
-      '`gsutil mb -l us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME`'
+      '`gcloud storage buckets create --location=us-central1 gs://$GOOGLE_CLOUD_BUCKET_NAME`'
   )
