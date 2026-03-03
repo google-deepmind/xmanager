@@ -298,7 +298,11 @@ def get_machine_spec(job: xm.Job) -> Dict[str, Any]:
   for resource, value in requirements.task_requirements.items():
     accelerator_type = None
     if resource in xm.GpuType:
-      accelerator_type = 'NVIDIA_TESLA_' + str(resource).upper()
+      # TODO(b/289373107): Remove this special case.
+      if resource == xm.GpuType.L4_24TH:
+        accelerator_type = 'NVIDIA_L4'
+      else:
+        accelerator_type = 'NVIDIA_TESLA_' + str(resource).upper()
     elif resource in xm.TpuType:
       accelerator_type = _CLOUD_TPU_ACCELERATOR_TYPES[resource]
     if accelerator_type:
