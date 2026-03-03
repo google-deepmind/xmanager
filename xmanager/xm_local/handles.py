@@ -4,6 +4,7 @@ import abc
 import asyncio
 from concurrent import futures
 import logging
+import os
 
 import attr
 import docker
@@ -16,6 +17,12 @@ _DEFAULT_ENCODING = 'utf-8'
 
 def _print_chunk(name: str, line: str) -> None:
   print('[{}] {}'.format(name, line.strip()))
+
+
+def _log_chunk(log_path: str, line: str) -> None:
+  """Appends a line to the log file at the given path."""
+  with open(log_path, 'a') as f:
+    f.write(line)
 
 
 class ExecutionHandle(abc.ABC):
@@ -41,6 +48,8 @@ class ExecutionHandle(abc.ABC):
 
 class LocalExecutionHandle(ExecutionHandle, abc.ABC):
   """An interface for operating on local executions."""
+
+  log_dir: str | None = None
 
   @abc.abstractmethod
   async def monitor(self) -> None:
@@ -89,10 +98,19 @@ class ContainerHandle(LocalExecutionHandle):
     if self.model is None:
       return
 
+    log_path = None
+    if self.log_dir:
+      os.makedirs(self.log_dir, exist_ok=True)
+      log_path = os.path.join(self.log_dir, f'{self.name}.log')
+      open(log_path, 'w').close()  # Truncate on each new run.
+
     def _stream_chunks() -> None:
       try:
         for chunk in self.model.logs(stream=True, follow=True):
-          _print_chunk(self.name, chunk.decode(_DEFAULT_ENCODING))
+          decoded = chunk.decode(_DEFAULT_ENCODING)
+          _print_chunk(self.name, decoded)
+          if log_path:
+            _log_chunk(log_path, decoded)
       except docker.errors.NotFound:
         logging.info(
             'Container %s not found (it may have already been removed).',
@@ -130,8 +148,16 @@ class BinaryHandle(LocalExecutionHandle):
         raise ValueError(
             'No stdout available from process. Cannot stream output.'
         )
+      log_path = None
+      if self.log_dir:
+        os.makedirs(self.log_dir, exist_ok=True)
+        log_path = os.path.join(self.log_dir, f'{self.name}.log')
+        open(log_path, 'w').close()  # Truncate on each new run.
       while True:
         line = await self.process.stdout.readline()
         if not line:
           break
-        _print_chunk(self.name, line.decode(_DEFAULT_ENCODING))
+        decoded = line.decode(_DEFAULT_ENCODING)
+        _print_chunk(self.name, decoded)
+        if log_path:
+          _log_chunk(log_path, decoded)
