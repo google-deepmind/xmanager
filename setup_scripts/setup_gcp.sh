@@ -108,11 +108,17 @@ select_bucket() {
   if [ -z "${GOOGLE_CLOUD_BUCKET_NAME}" ]; then
     read_prompt "Name of your cloud storage bucket (if it doesn't already exist, a new one will be created): " bucket_name
 
-    user_buckets="$(gsutil ls)"
+    # Note: Bucket Listing with Wildcards: When using a wildcard for buckets, gcloud storage ls groups the results by bucket name, whereas gsutil provides a flat list of objects.
+    # Note: -L (Full Listing) Output: The format of the full listing output is different. gcloud storage uses a title case for keys and will not display a field if its value is "None".
+    # Note: Order of objects: The order of objects returned by gcloud storage ls may not be the same as gsutil ls. Scripts that rely on a specific ordering of results should check for this before updating.
+    # Note: Time Format Differences: gsutil, while displays time with Z at the end, suggesting that the timestamp is for UTC timezone, may in fact be of any timezone (gsutil is not strict about this). Gcloud on the other end will convert the timestamp to UTC.
+    # Note: Error Message Display: gcloud storage moves error messages to the end of the command's output, whereas gsutil may display them at the beginning.
+    user_buckets="$(gcloud storage ls)"
 
     if ! echo "${user_buckets}" | grep -Exq "gs://${bucket_name}/"; then
       # TODO: Make location configurable by the user
-      (set -x; gsutil mb -l us-central1 "gs://${bucket_name}")
+      # Note: Command Structure: The gcloud storage buckets create command is the direct equivalent of gsutil mb. The various aliases for gsutil mb are not supported.
+      (set -x; gcloud storage buckets create --location=us-central1 "gs://${bucket_name}")
     fi
 
     export GOOGLE_CLOUD_BUCKET_NAME="${bucket_name}"
