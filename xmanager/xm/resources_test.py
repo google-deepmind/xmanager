@@ -263,6 +263,36 @@ class JobRequirementsTest(parameterized.TestCase):
   def test_equality(self, requirements1, requirements2, expected):
     self.assertEqual(requirements1 == requirements2, expected)
 
+  def test_merge(self):
+    req1 = resources.JobRequirements(cpu=1, location='loc1')
+    req2 = resources.JobRequirements(ram=2 * xm.GiB, location='loc2')
+
+    merged = req1.merge(req2)
+
+    self.assertEqual(merged.task_requirements[resources.ResourceType.CPU], 1)
+    self.assertEqual(
+        merged.task_requirements[resources.ResourceType.RAM], 2 * xm.GiB
+    )
+    self.assertEqual(merged.location, 'loc2')
+
+  def test_merge_override_resource(self):
+    req1 = resources.JobRequirements(cpu=1)
+    req2 = resources.JobRequirements(cpu=2)
+
+    merged = req1.merge(req2)
+
+    self.assertEqual(merged.task_requirements[resources.ResourceType.CPU], 2)
+
+  def test_merge_accelerators(self):
+    req1 = resources.JobRequirements(v100=1)
+    req2 = resources.JobRequirements(p100=1)
+
+    merged = req1.merge(req2)
+
+    self.assertEqual(merged.accelerator, resources.ResourceType.P100)
+    self.assertNotIn(resources.ResourceType.V100, merged.task_requirements)
+    self.assertEqual(merged.task_requirements[resources.ResourceType.P100], 1)
+
 
 class EnumSubsetTest(parameterized.TestCase):
 

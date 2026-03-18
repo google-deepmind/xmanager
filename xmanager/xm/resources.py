@@ -126,6 +126,9 @@ class ServiceTier(enum.Enum, metaclass=_CaseInsensitiveServiceTierMeta):
   FREEBIE = 25
 
 
+_DEFAULT_SERVICE_TIER = ServiceTier.PROD
+
+
 def _enum_subset(class_name: str, values: Iterable[ResourceType]) -> type:  # pylint: disable=g-bare-generic
   """Returns an enum subset class.
 
@@ -456,7 +459,7 @@ class JobRequirements:
     """
     # pyformat: enable
     self.location = location
-    self._service_tier = service_tier or ServiceTier.PROD
+    self._service_tier = service_tier or _DEFAULT_SERVICE_TIER
 
     self.task_requirements = ResourceDict()
     self.accelerator = None
@@ -541,12 +544,49 @@ class JobRequirements:
       args.append(f'location={self.location!r}')
     if self.architecture:
       args.append(f'architecture={self.architecture}')
-    if self.service_tier != ServiceTier.PROD:
+    if self.service_tier != _DEFAULT_SERVICE_TIER:
       args.append(f'service_tier=xm.{self.service_tier}')
     if self.replicas != 1:
       args.append(f'replicas={self.replicas}')
 
     return f'xm.JobRequirements({", ".join(args)})'
+
+  def merge(self, other: 'JobRequirements') -> 'JobRequirements':
+    """Merges another JobRequirements into self, returning a new instance.
+
+    Semantics: Override (other values overwrite self values if set/non-default).
+    For task_requirements, keys in other overwrite keys in self.
+    If other specifies an accelerator, self's accelerator is removed first.
+
+    Args:
+      other: The other JobRequirements to merge into self.
+
+    Returns:
+      A new JobRequirements instance representing the merged requirements.
+    """
+    merged_resources = dict(self.task_requirements)
+    if other.accelerator is not None and self.accelerator is not None:
+      if self.accelerator in merged_resources:
+        del merged_resources[self.accelerator]
+    merged_resources.update(other.task_requirements)
+
+    kwargs = {}
+    if other.location is not None:
+      kwargs['location'] = other.location
+    else:
+      kwargs['location'] = self.location
+
+    if other.architecture is not None:
+      kwargs['architecture'] = other.architecture
+    else:
+      kwargs['architecture'] = self.architecture
+
+    if other.replicas != 1:
+      kwargs['replicas'] = other.replicas
+    else:
+      kwargs['replicas'] = self.replicas
+
+    return JobRequirements(merged_resources, **kwargs)
 
   def __eq__(self, other: 'JobRequirements') -> bool:
     if not isinstance(other, JobRequirements):
