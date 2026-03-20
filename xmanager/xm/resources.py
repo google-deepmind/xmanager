@@ -519,6 +519,11 @@ class JobRequirements:
 
     self.replicas = replicas or 1
 
+    if architecture is None and self.accelerator is not None:
+      try:
+        architecture = self.accelerator.architecture()
+      except ValueError:
+        pass
     self.architecture = architecture
     self._validate_architecture_and_accelerator()
 
