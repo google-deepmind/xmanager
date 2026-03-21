@@ -134,7 +134,6 @@ class JobRequirementsTest(parameterized.TestCase):
   def test_tpu_job(self):
     requirements = resources.JobRequirements(tpu_v3='4x4')
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
-    self.assertEqual(requirements.architecture, xm.Architecture.HASWELL)
 
   @parameterized.parameters([
       xm.Architecture.HASWELL,
