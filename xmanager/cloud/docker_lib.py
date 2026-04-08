@@ -13,6 +13,7 @@
 # limitations under the License.
 """Utility functions for building Docker images."""
 import datetime
+import json
 import os
 import pathlib
 import shutil
@@ -118,20 +119,61 @@ def build_docker_image(
   return image
 
 
+def _check_push_for_errors(response: str) -> None:
+  """Checks a Docker push JSONL response for errors.
+
+  Args:
+    response: Raw string from docker_client.images.push(), containing
+      newline-delimited JSON objects.
+
+  Raises:
+    RuntimeError: If the push response contains an explicit error.
+  """
+  for line in response.strip().splitlines():
+    line = line.strip()
+    if not line:
+      continue
+    try:
+      event = json.loads(line)
+    except json.JSONDecodeError:
+      continue
+    if 'error' in event:
+      detail = event.get('errorDetail', {}).get('message', event['error'])
+      raise RuntimeError(f'Docker push failed: {detail}')
+
+
 def push_docker_image(image: str) -> str:
   """Pushes a Docker image to the designated repository."""
   docker_client = docker.from_env()
   repository, tag = docker_utils.parse_repository_tag(image)
-  push = docker_client.images.push(repository=repository, tag=tag)
-  logging.info(push)
-  if not isinstance(push, str) or '"Digest":' not in push:
+  push_response = docker_client.images.push(repository=repository, tag=tag)
+  logging.info('%s', push_response)
+  # Check for errors embedded in the push response body.
+  if not isinstance(push_response, str):
     raise RuntimeError(
-        'Expected docker push to return a string with `status: Pushed` and a '
-        'Digest. This is probably a temporary issue with '
-        '--xm_build_image_locally and you should try again'
+        f'Unexpected response type from docker push: {type(push_response)}. '
+        'Expected a string.'
     )
+  _check_push_for_errors(push_response)
+  # Verify the image is actually accessible in the registry.
+  try:
+    docker_client.api.inspect_distribution(image)
+  except docker.errors.APIError as e:
+    raise RuntimeError(
+        f'Push appeared to succeed but image {image} is not accessible in '
+        f'the registry. Push response:\n{push_response}'
+    ) from e
   # If we are pushing an image, then :latest should also be present.
-  docker_client.images.push(repository=repository, tag='latest')
+  latest_push_response = docker_client.images.push(
+      repository=repository, tag='latest'
+  )
+  if not isinstance(latest_push_response, str):
+    raise RuntimeError(
+        'Unexpected response type from docker push for latest tag:'
+        f' {type(latest_push_response)}. Expected a string.'
+    )
+  logging.info(latest_push_response)
+  _check_push_for_errors(latest_push_response)
   print('Your image URI is:', termcolor.colored(image, color='blue'))
   return image
 
