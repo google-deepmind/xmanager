@@ -1,6 +1,6 @@
 ## Description
 
-launcher.py packages and executes (locally) two Docker containers:
+`launcher.py` packages and executes (locally) two Docker containers:
 [Redis](https://hub.docker.com/_/redis), a key-value database, and a
 [Bottle](https://bottlepy.org/)-based HTTP server that listens on port 8080 and
 responds to requests at `/increment` by running
