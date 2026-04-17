@@ -31,7 +31,7 @@ setup(
     python_requires='>=3.10',
     install_requires=[
         'absl-py',
-        'alembic==1.4.3',
+        'alembic==1.16.5',
         'async_generator',
         'attrs',
         'cloud-sql-python-connector',
@@ -46,7 +46,7 @@ setup(
         'immutabledict',
         'kubernetes',
         'pyyaml',
-        'sqlalchemy==1.2.19',
+        'sqlalchemy==2.0.43',
         'sqlparse',
         'termcolor',
     ],
