@@ -28,10 +28,13 @@ class BuildResult(Generic[T]):
   Attributes:
     resources: The resources produced by the build.
     build_id: The unique identifier for the build invocation (e.g., Sponge ID).
+    skycache_outcome: Whether Skycache was enabled for the build, and if not,
+      why. Corresponds to the `SkycacheDetails.Outcome` enum.
   """
 
   resources: T
   build_id: Optional[str] = None
+  skycache_outcome: int = 0
 
 
 class BazelService(abc.ABC):
