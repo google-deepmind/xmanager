@@ -22,6 +22,8 @@ from xmanager import xm_foo
 ```
 """
 
+from __future__ import annotations
+
 import abc
 import asyncio
 import collections
@@ -44,14 +46,13 @@ from xmanager.xm import job_blocks
 from xmanager.xm import job_operators
 from xmanager.xm import metadata_context
 
-
 # ContextVars holding the current experiment (when within an Experiment context)
 # and current experiment unit (when inside a JobGenerator).
-_current_experiment: contextvars.ContextVar['Experiment'] = (
-    contextvars.ContextVar('_xm_current_experiment')
+_current_experiment: contextvars.ContextVar[Experiment | None] = (
+    contextvars.ContextVar('_xm_current_experiment', default=None)
 )
-_current_experiment_unit: contextvars.ContextVar['ExperimentUnit'] = (
-    contextvars.ContextVar('_xm_current_experiment_unit')
+_current_experiment_unit: contextvars.ContextVar[ExperimentUnit | None] = (
+    contextvars.ContextVar('_xm_current_experiment_unit', default=None)
 )
 
 xmanager_experiment_id = -1
@@ -94,11 +95,6 @@ def _apply_args(job_type: job_blocks.JobType, args: Mapping[str, Any]) -> None:
   # pytype: enable=attribute-error
 
 
-def _set_context(context: contextvars.Context) -> None:
-  for var, value in context.items():
-    var.set(value)
-
-
 def get_contextvar_value_by_name(name: str) -> Any | None:
   ctx = contextvars.copy_context()
   # Note: returns None when the var is unset, even if the ContextVar is defined
@@ -107,22 +103,6 @@ def get_contextvar_value_by_name(name: str) -> Any | None:
     if k.name == name:
       return v
   return None
-
-
-def new_thread_pool_executor(
-    executor_class: Type[
-        futures.ThreadPoolExecutor
-    ] = futures.ThreadPoolExecutor,
-    *args,
-    **kwargs,
-) -> futures.ThreadPoolExecutor:
-  """Returns a new ThreadpoolExecutor of the given subclass with context set."""
-  return executor_class(
-      *args,
-      initializer=_set_context,
-      initargs=(contextvars.copy_context(),),
-      **kwargs,
-  )
 
 
 def _is_coro_context() -> bool:
@@ -191,9 +171,9 @@ class ExperimentUnitError(RuntimeError):
     work_unit: The work unit in which the error occurred, if available.
   """
 
-  work_unit: Optional['WorkUnit'] = None
+  work_unit: Optional[WorkUnit] = None
 
-  def __init__(self, message: Any, *, work_unit: Optional['WorkUnit'] = None):
+  def __init__(self, message: Any, *, work_unit: Optional[WorkUnit] = None):
     super().__init__(message)
     self.work_unit = work_unit
 
@@ -337,11 +317,11 @@ class ExperimentUnitRole(abc.ABC):
 class ExperimentUnit(abc.ABC):
   """ExperimentUnit is a collection of semantically associated `Job`s."""
 
-  experiment: 'Experiment'
+  experiment: Experiment
 
   def __init__(
       self,
-      experiment: 'Experiment',
+      experiment: Experiment,
       create_task: Callable[[Awaitable[Any]], futures.Future[Any]],
       args: Optional[Mapping[str, Any]],
       role: ExperimentUnitRole,
@@ -483,7 +463,7 @@ class ExperimentUnit(abc.ABC):
     await self._wait_until_complete()
     return self
 
-  def wait_until_complete(self) -> Coroutine[Any, Any, 'ExperimentUnit']:
+  def wait_until_complete(self) -> Coroutine[Any, Any, ExperimentUnit]:
     """Waits until the unit is in a final state: completed/failed/stopped.
 
     Raises:
@@ -613,20 +593,18 @@ class WorkUnitCompletedAwaitable(Coroutine):
           print(f'Work unit {wid} failed: {e}.')
   """
 
-  def __init__(
-      self, work_unit: 'WorkUnit', awaitable: Callable[[], Any]
-  ) -> None:
+  def __init__(self, work_unit: WorkUnit, awaitable: Callable[[], Any]) -> None:
     self.work_unit = work_unit
     self._awaitable = awaitable
     self._wait_coro = self._wait()
 
-  async def _wait(self) -> 'WorkUnit':
+  async def _wait(self) -> WorkUnit:
     # Coroutine must be created inside of async function to avoid
     # "coroutine ... was never awaited" runtime warning.
     await self._awaitable()
     return self.work_unit
 
-  def __await__(self) -> Generator[Any, None, 'WorkUnit']:
+  def __await__(self) -> Generator[Any, None, WorkUnit]:
     return self._wait_coro.__await__()
 
   def send(self, value: Any) -> Any:
