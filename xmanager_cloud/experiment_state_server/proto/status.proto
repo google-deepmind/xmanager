@@ -1,0 +1,177 @@
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+package cloud.xmanager.v1;
+
+import "google/protobuf/timestamp.proto";
+import "xmanager_cloud/experiment_state_server/proto/structured_message.proto";
+
+option java_multiple_files = true;
+
+message ExperimentStatus {
+  enum ActiveState {
+    ACTIVE_STATE_UNSPECIFIED = 0;
+    // This means that at least one work unit is active OR the experiment is
+    // currently being launched.
+    ACTIVE = 1;
+    // There are no active work units.
+    INACTIVE = 2;
+  }
+
+  enum LaunchState {
+    LAUNCH_STATE_UNSPECIFIED = 0;
+    // The experiment is currently being launched.
+    LAUNCHING = 1;
+    // The experiment launch has completed.
+    COMPLETED = 2;
+    // The experiment launch has failed.
+    FAILED = 3;
+  }
+
+  // A tuple containing the number of child work units in a given state.
+  message StateCount {
+    WorkUnitStatus.WorkUnitState state = 1;
+    int64 count = 2;
+  }
+
+  message MessageSeverityCount {
+    StructuredMessage.Severity severity = 1;
+    int64 count = 2;
+  }
+
+  // The state of the experiment.
+  ActiveState active_state = 1;
+  // The state of the experiment launch.
+  LaunchState launch_state = 2;
+  // The UUID of the experiment launch.
+  string launch_id = 3;
+  // The aggregated counts of how many child work units
+  // of the experiment are in each state.
+  repeated StateCount child_state_counts = 4;
+  // The aggregated counts of how many structured messages
+  // of the experiment's work units are in each severity level.
+  repeated MessageSeverityCount message_severity_counts = 8;
+  // The last time any child work unit status has changed.
+  google.protobuf.Timestamp last_child_status_update_time = 5;
+  // The latest time the state was updated.
+  google.protobuf.Timestamp update_time = 6;
+  // The structured status message of the experiment.
+  StructuredMessage structured_status_message = 7;
+}
+
+// WorkUnitStatus contains the status of a work unit.
+message WorkUnitStatus {
+  reserved 2;
+
+  enum WorkUnitState {
+    // UNSPECIFIED work unit state. This should not occur in practice.
+    WORK_UNIT_STATE_UNSPECIFIED = 0;
+    // The work unit is being prepared before launch.
+    INITIALIZING = 1;
+    // The work unit is waiting for resources from the scheduler.
+    SCHEDULING = 2;
+    // The work unit was scheduled and is being launched now.
+    STARTING = 3;
+    // The work unit is running. That is, all of its jobs are running.
+    RUNNING = 4;
+    // The work unit has at least one failed job and one that is still
+    // active.
+    PARTIALLY_FAILED = 5;
+    // The work unit was requested to be stopped by the user and is
+    // in the process of transitioning to the STOPPED state.
+    STOPPING = 6;
+    // The work unit was requested to be restarted by the user and is
+    // in the process of stopping the underlying job before transitioning to
+    // the STARTING state.
+    RESTARTING = 7;
+    // The work unit was stopped by the user, and will not continue
+    // running without user interaction.
+    STOPPED = 8;
+    // The work unit was descheduled by the scheduler and is in the
+    // process of transitioning to the SCHEDULING state.
+    DESCHEDULING = 9;
+    // The work unit finished successfully. This is a terminal state.
+    COMPLETED = 10;
+    // The work unit finished unsuccessfully or bringing it up has failed.
+    // This is a terminal state.
+    FAILED = 11;
+  }
+
+  // The state of the work unit.
+  WorkUnitState state = 1;
+  // The detailed work unit status message.
+  ExecutableStatus detailed_status = 3;
+  // The timestamp of the last update to the work unit status.
+  google.protobuf.Timestamp update_time = 4;
+  // The timestamp of the last update to the work unit state.
+  google.protobuf.Timestamp state_update_time = 5;
+  // System-generated status information (e.g. from actuator).
+  StructuredMessage system_message = 6;
+  // Application/User-generated status information.
+  StructuredMessage user_message = 7;
+  // Scheduling information for the work unit.
+  StructuredMessage scheduling_information = 8;
+}
+
+// ExecutableStatus contains the detailed status of a work unit's executable.
+message ExecutableStatus {
+  // The kinds of executable the work unit could be running.
+  oneof kind {
+    JobSetStatus jobset_status = 1;
+  }
+}
+
+// This is a representation of the JobSet status proto.
+message JobSetStatus {
+  // conditions represent the latest available observations of the JobSet's
+  // state.
+  repeated Condition conditions = 1;
+  // restarts is the number of times the JobSet has been recreated.
+  int64 restarts = 2;
+  // replicated_jobs_status is the aggregated status of the replicated jobs.
+  repeated ReplicatedJobStatus replicated_jobs_status = 3;
+}
+
+// ReplicatedJobStatus defines the status of a single ReplicatedJob within a
+// JobSet.
+message ReplicatedJobStatus {
+  // name is the name of the ReplicatedJob.
+  string name = 1;
+  // ready is the number of pods that are in a ready state.
+  int64 ready = 2;
+  // succeeded is the number of pods that have completed successfully.
+  int64 succeeded = 3;
+  // active is the number of pods that are currently running or pending.
+  int64 active = 4;
+  // failed is the number of pods that have failed.
+  int64 failed = 5;
+}
+
+// Condition contains details for one aspect of the resource's state.
+message Condition {
+  // type of condition in CamelCase or in foo.example.com/CamelCase.
+  string type = 1;
+  // status of the condition, one of True, False, Unknown.
+  string status = 2;
+  // update_time is the last time the condition
+  // transitioned from one status to another.
+  google.protobuf.Timestamp update_time = 3;
+  // reason is a brief, machine-readable reason for the
+  // condition's last transition.
+  string reason = 4;
+  // message is a human-readable message indicating details
+  // about the last transition.
+  string message = 5;
+}

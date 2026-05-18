@@ -1,0 +1,40 @@
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+package cloud.xmanager.v1;
+
+option java_multiple_files = true;
+
+// The priority of an experiment or work unit. Priority is used by Kueue to
+// determine the order in which workloads are scheduled. The scheduling order
+// is, from low to high priority:
+// 1. Low experiment priority, low work unit priority.
+// 2. Low experiment priority, normal work unit priority.
+// 3. Low experiment priority, high work unit priority.
+// 4. Normal experiment priority, low work unit priority.
+// 5. Normal experiment priority, normal work unit priority.
+// 6. Normal experiment priority, high work unit priority.
+// 7. High experiment priority, low work unit priority.
+// 8. High experiment priority, normal work unit priority.
+// 9. High experiment priority, high work unit priority.
+//
+// On Kueue, these priorities are mapped to a WorkloadPriorityClass.
+enum Priority {
+  // Unspecified priority.
+  PRIORITY_UNSPECIFIED = 0;
+  LOW = 1;
+  NORMAL = 2;
+  HIGH = 3;
+}

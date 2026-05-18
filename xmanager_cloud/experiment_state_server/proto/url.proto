@@ -1,0 +1,33 @@
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+package cloud.xmanager.v1;
+
+import "google/api/field_behavior.proto";
+
+option java_multiple_files = true;
+
+message Url {
+  // URL to link to.
+  string url = 1 [(google.api.field_behavior) = REQUIRED];
+  // Icon to display next to the URL. This icon should be a Material icon name
+  // (https://fonts.google.com/icons), e.g. `arrow_upward`.
+  string icon = 2 [(google.api.field_behavior) = OPTIONAL];
+  // Human-readable label for the URL.
+  string display_name = 3 [(google.api.field_behavior) = OPTIONAL];
+  // Priority of the URL. Lower numbers indicate higher priority. This is used
+  // to determine the order in which URLs are displayed in the UI.
+  int32 priority = 4 [(google.api.field_behavior) = OPTIONAL];
+}

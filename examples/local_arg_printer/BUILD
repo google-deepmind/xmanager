@@ -15,7 +15,6 @@
 licenses(["notice"])
 
 package(
-    default_applicable_licenses = ["//third_party/py/xmanager:license"],
 )
 
 load("@rules_cc//cc:defs.bzl", "cc_binary")

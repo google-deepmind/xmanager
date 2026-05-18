@@ -1,0 +1,727 @@
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+package cloud.xmanager.v1;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/longrunning/operations.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/field_mask.proto";
+import "xmanager_cloud/experiment_state_server/proto/artifact.proto";
+import "xmanager_cloud/experiment_state_server/proto/experiment.proto";
+import "xmanager_cloud/experiment_state_server/proto/status.proto";
+import "xmanager_cloud/experiment_state_server/proto/status_message.proto";
+import "xmanager_cloud/experiment_state_server/proto/structured_message.proto";
+import "xmanager_cloud/experiment_state_server/proto/work_unit.proto";
+import "xmanager_cloud/experiment_state_server/proto/work_unit_execution.proto";
+
+// ExperimentStateService provides APIs for managing the lifecycle of
+// experiments, work units, and their associated artifacts.
+service ExperimentStateService {
+  // Creates a new experiment.
+  // AIP-133 compliant.
+  rpc CreateExperiment(CreateExperimentRequest) returns (Experiment) {
+    option (google.api.http) = {
+      post: "/v1/experiments"
+      body: "experiment"
+    };
+    option (google.api.method_signature) = "experiment";
+  }
+
+  // Updates the launch state of an experiment. This is a custom method that
+  // allows the user to transition the launch state from LAUNCHING to COMPLETED
+  // or FAILED. The call will fail if the experiment is not in the LAUNCHING
+  // state.
+  rpc UpdateExperimentLaunchState(UpdateExperimentLaunchStateRequest)
+      returns (Experiment) {
+    option (google.api.http) = {
+      post: "/v1/{name=experiments/*}:updateLaunchState"
+      body: "*"
+    };
+    option (google.api.method_signature) = "name,launch_state";
+  }
+
+  // Gets the current state and metadata of an experiment.
+  // AIP-131 compliant.
+  rpc GetExperiment(GetExperimentRequest) returns (Experiment) {
+    option (google.api.http) = {
+      get: "/v1/{name=experiments/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  // An efficient method to get just the status of an experiment.
+  // AIP-131 compliant, and mostly AIP-136 compliant, but the status is not
+  // a sub-resource.
+  rpc GetExperimentStatus(GetExperimentStatusRequest)
+      returns (ExperimentStatus) {
+    option (google.api.http) = {
+      get: "/v1/{name=experiments/*}/status"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  // Lists experiments, potentially with filters. This operation is strongly
+  // consistent, which has latency and database load implications. If strong
+  // consistency is not required, use SearchExperiments instead.
+  // AIP-132 compliant.
+  rpc ListExperiments(ListExperimentsRequest)
+      returns (ListExperimentsResponse) {
+    option (google.api.http) = {
+      get: "/v1/experiments"
+    };
+  }
+
+  // Lists experiments, potentially with filters. This operation is eventually
+  // consistent, which has lower latency and database load implications. If
+  // strong consistency is required, use ListExperiments instead.
+  // Data returned from this method is at most 15 seconds stale.
+  // AIP-132 compliant.
+  rpc SearchExperiments(ListExperimentsRequest)
+      returns (ListExperimentsResponse) {
+    option (google.api.http) = {
+      get: "/v1/experiments:search"
+    };
+  }
+
+  // Updates metadata for an experiment.
+  // AIP-134 compliant.
+  rpc UpdateExperiment(UpdateExperimentRequest) returns (Experiment) {
+    option (google.api.http) = {
+      patch: "/v1/{experiment.name=experiments/*}"
+      body: "experiment"
+    };
+    option (google.api.method_signature) = "experiment,update_mask";
+  }
+
+  // Creates a new work unit for a given experiment.
+  //
+  // AIP-133 compliant.
+  // This method is idempotent when client-specified work_unit_ids are used.
+  rpc CreateWorkUnit(CreateWorkUnitRequest)
+      returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1/{parent=experiments/*}/workUnits"
+      body: "work_unit"
+    };
+    option (google.longrunning.operation_info) = {
+      response_type: "WorkUnit"
+      metadata_type: "OperationMetadata"
+    };
+    option (google.api.method_signature) = "parent,work_unit,work_unit_id";
+  }
+
+  // Gets the state, metadata, and current execution of a work unit.
+  // AIP-131 compliant.
+  rpc GetWorkUnit(GetWorkUnitRequest) returns (WorkUnit) {
+    option (google.api.http) = {
+      get: "/v1/{name=experiments/*/workUnits/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  // An efficient method to get just the current execution that was run for a
+  // work unit, including its status. AIP-131 compliant.
+  rpc GetCurrentWorkUnitExecution(GetCurrentWorkUnitExecutionRequest)
+      returns (WorkUnitExecution) {
+    option (google.api.http) = {
+      get: "/v1/{name=experiments/*/workUnits/*}/currentExecution"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  // Lists the executions of a work unit.
+  // As the number of executions is expected to be small, we accept this
+  // deviation.
+  // The current execution is always included in the list.
+  // AIP-132 compliant.
+  rpc ListWorkUnitExecutions(ListWorkUnitExecutionsRequest)
+      returns (ListWorkUnitExecutionsResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=experiments/*/workUnits/*}/executions"
+    };
+    option (google.api.method_signature) = "parent";
+  }
+
+  // Lists work units, potentially with filters. This operation is strongly
+  // consistent, which has latency and database load implications. If strong
+  // consistency is not required, use SearchWorkUnits instead.
+  // AIP-132 compliant.
+  rpc ListWorkUnits(ListWorkUnitsRequest) returns (ListWorkUnitsResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=experiments/*}/workUnits"
+    };
+    option (google.api.method_signature) = "parent";
+  }
+
+  // Lists work units, potentially with filters. This operation is eventually
+  // consistent, which has lower latency and database load implications. If
+  // strong consistency is required, use ListWorkUnits instead.
+  // Data returned from this method is at most 15 seconds stale.
+  // AIP-132 compliant.
+  rpc SearchWorkUnits(ListWorkUnitsRequest) returns (ListWorkUnitsResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=experiments/*}/workUnits:search"
+    };
+    option (google.api.method_signature) = "parent";
+  }
+
+  // Stops the specified work unit.
+  // AIP-136 compliant.
+  rpc StopWorkUnit(StopWorkUnitRequest) returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1/{name=experiments/*/workUnits/*}:stop"
+      body: "*"
+    };
+    option (google.longrunning.operation_info) = {
+      response_type: "WorkUnit"
+      metadata_type: "OperationMetadata"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  // Stops the specified work units in batch.
+  // AIP-136 compliant.
+  rpc BatchStopWorkUnits(BatchStopWorkUnitsRequest)
+      returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1/{parent=experiments/*}/workUnits:batchStop"
+      body: "*"
+    };
+    option (google.longrunning.operation_info) = {
+      response_type: "WorkUnits"
+      metadata_type: "OperationMetadata"
+    };
+  }
+
+  // Restarts the specified work unit.
+  // AIP-136 compliant.
+  rpc RestartWorkUnit(RestartWorkUnitRequest)
+      returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1/{name=experiments/*/workUnits/*}:restart"
+      body: "*"
+    };
+    option (google.longrunning.operation_info) = {
+      response_type: "WorkUnit"
+      metadata_type: "OperationMetadata"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  // Restarts the specified work units in batch.
+  // AIP-136 compliant.
+  rpc BatchRestartWorkUnits(BatchRestartWorkUnitsRequest)
+      returns (google.longrunning.Operation) {
+    option (google.api.http) = {
+      post: "/v1/{parent=experiments/*}/workUnits:batchRestart"
+      body: "*"
+    };
+    option (google.longrunning.operation_info) = {
+      response_type: "WorkUnits"
+      metadata_type: "OperationMetadata"
+    };
+  }
+
+  // Updates mutable metadata for a work unit.
+  // AIP-134 compliant.
+  rpc UpdateWorkUnit(UpdateWorkUnitRequest) returns (WorkUnit) {
+    option (google.api.http) = {
+      patch: "/v1/{work_unit.name=experiments/*/workUnits/*}"
+      body: "work_unit"
+    };
+    option (google.api.method_signature) = "work_unit,update_mask";
+  }
+
+  // Creates an artifact linked to an experiment or work unit.
+  // AIP-133 compliant.
+  rpc CreateArtifact(CreateArtifactRequest) returns (Artifact) {
+    option (google.api.http) = {
+      post: "/v1/{parent=experiments/*}/artifacts"
+      body: "artifact"
+      additional_bindings {
+        post: "/v1/{parent=experiments/*/workUnits/*}/artifacts"
+        body: "artifact"
+      }
+    };
+    option (google.api.method_signature) = "parent,artifact";
+  }
+
+  // Gets an artifact by name.
+  // AIP-131 compliant.
+  rpc GetArtifact(GetArtifactRequest) returns (Artifact) {
+    option (google.api.http) = {
+      get: "/v1/{name=artifacts/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  // Lists artifacts for an experiment or work unit. This operation is strongly
+  // consistent, which has latency and database load implications. If strong
+  // consistency is not required, use SearchArtifacts instead.
+  // AIP-132 compliant.
+  rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse) {
+    option (google.api.http) = {
+      get: "/v1/artifacts"
+      additional_bindings { get: "/v1/{parent=experiments/*}/artifacts" }
+      additional_bindings {
+        get: "/v1/{parent=experiments/*/workUnits/*}/artifacts"
+      }
+    };
+    option (google.api.method_signature) = "parent";
+  }
+
+  // Lists artifacts for an experiment or work unit. This operation is
+  // eventually consistent, which has lower latency and database load
+  // implications. If strong consistency is required, use ListArtifacts instead.
+  // Data returned from this method is at most 15 seconds stale.
+  // AIP-132 compliant.
+  rpc SearchArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse) {
+    option (google.api.http) = {
+      get: "/v1/artifacts:search"
+      additional_bindings { get: "/v1/{parent=experiments/*}/artifacts:search" }
+      additional_bindings {
+        get: "/v1/{parent=experiments/*/workUnits/*}/artifacts:search"
+      }
+    };
+    option (google.api.method_signature) = "parent";
+  }
+
+  // Deletes an artifact.
+  // AIP-135 compliant.
+  rpc DeleteArtifact(DeleteArtifactRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=artifacts/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  // Updates an artifact's metadata.
+  // AIP-134 compliant.
+  rpc UpdateArtifact(UpdateArtifactRequest) returns (Artifact) {
+    option (google.api.http) = {
+      patch: "/v1/{artifact.name=artifacts/*}"
+      body: "artifact"
+    };
+    option (google.api.method_signature) = "artifact,update_mask";
+  }
+
+  // Lists status messages for an experiment or work unit.
+  // AIP-132 compliant.
+  rpc ListStatusMessages(ListStatusMessagesRequest)
+      returns (ListStatusMessagesResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=experiments/*}/statusMessages"
+      additional_bindings {
+        get: "/v1/{parent=experiments/*/workUnits/*}/statusMessages"
+      }
+    };
+    option (google.api.method_signature) = "parent";
+  }
+
+  // Lists status messages for an experiment or work unit. This operation is
+  // eventually consistent, which has lower latency and database load
+  // implications. If strong consistency is required, use ListStatusMessages
+  // instead. Data returned from this method is at most 15 seconds stale.
+  // AIP-132 compliant.
+  rpc SearchStatusMessages(ListStatusMessagesRequest)
+      returns (ListStatusMessagesResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=experiments/*}/statusMessages:search"
+      additional_bindings {
+        get: "/v1/{parent=experiments/*/workUnits/*}/statusMessages:search"
+      }
+    };
+    option (google.api.method_signature) = "parent";
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Experiment Messages
+// -----------------------------------------------------------------------------
+
+message CreateExperimentRequest {
+  // The experiment resource to create.
+  // The `name` field on this experiment is ignored.
+  Experiment experiment = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// AIP-131 compliant Get message.
+message GetExperimentRequest {
+  // The resource name of the experiment to retrieve.
+  // Format: experiments/{xid}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/Experiment"
+    }
+  ];
+}
+
+message GetExperimentStatusRequest {
+  // The resource name of the experiment to get the status for.
+  // Format: experiments/{xid}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/Experiment"
+    }
+  ];
+}
+
+message ListExperimentsRequest {
+  // No parent is provided, as this is a top-level collection.
+
+  // The maximum number of experiments to return.
+  int32 page_size = 1 [(google.api.field_behavior) = OPTIONAL];
+
+  // A page token, received from a previous `ListExperiments` call.
+  string page_token = 2 [(google.api.field_behavior) = OPTIONAL];
+
+  // A filter expression to constrain the results.
+  string filter = 3 [(google.api.field_behavior) = OPTIONAL];
+
+  // A comma-separated list of fields to order by.
+  string order_by = 4 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message ListExperimentsResponse {
+  // The experiments that match the filter.
+  repeated Experiment experiments = 1;
+  // The page token to use for the next request.
+  string next_page_token = 2;
+}
+
+message UpdateExperimentRequest {
+  // The experiment to update.
+  // The experiment's `name` field is used to identify which experiment
+  // to update.
+  Experiment experiment = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The list of fields to be updated.
+  google.protobuf.FieldMask update_mask = 2
+      [(google.api.field_behavior) = REQUIRED];
+}
+
+message UpdateExperimentLaunchStateRequest {
+  // The experiment to update the launch state for.
+  // The experiment's `name` field is used to identify which experiment
+  // to update.
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/Experiment"
+    }
+  ];
+
+  // The launch state to update the experiment to.
+  ExperimentStatus.LaunchState launch_state = 2
+      [(google.api.field_behavior) = REQUIRED];
+}
+
+// -----------------------------------------------------------------------------
+// Work Unit Messages
+// -----------------------------------------------------------------------------
+
+message CreateWorkUnitRequest {
+  // The resource name of the parent experiment.
+  // Format: experiments/{xid}
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/Experiment"
+    }
+  ];
+
+  // The work unit resource to create.
+  // The `name` field on this resource is ignored.
+  WorkUnit work_unit = 2 [(google.api.field_behavior) = REQUIRED];
+
+  // The ID to use for the work unit, which will become the
+  // final component of the work unit's resource name. The requester SHOULD
+  // specify a value, but if they don't, the server will generate a value.
+  // Server-side generation is much less efficient and should be avoided.
+  // Per AIP-155, requests are idempotent if a `work_unit_id` is provided.
+  int64 work_unit_id = 3 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message GetWorkUnitRequest {
+  // The resource name of the work unit to retrieve.
+  // Format: experiments/{xid}/workUnits/{wid}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/WorkUnit"
+    }
+  ];
+}
+
+message GetCurrentWorkUnitExecutionRequest {
+  // The resource name of the work unit to get the current work unit execution
+  // for. This is a special case of the GetWorkUnit method, which returns the
+  // current work unit execution for a given work unit. Format:
+  // experiments/{xid}/workUnits/{wid}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/WorkUnit"
+    }
+  ];
+}
+
+message ListWorkUnitExecutionsRequest {
+  // The resource name of the parent work unit. Format:
+  // experiments/{xid}/workUnits/{wid}
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/WorkUnit"
+    }
+  ];
+}
+
+// The response message for ListWorkUnitExecutions. Since we expect the number
+// of work unit executions to be small, we do not paginate the response.
+message ListWorkUnitExecutionsResponse {
+  // The work unit executions that match the filter.
+  repeated WorkUnitExecution work_unit_executions = 1;
+}
+
+message ListWorkUnitsRequest {
+  // The resource name of the parent experiment.
+  // Format: experiments/{xid}
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/Experiment"
+    }
+  ];
+
+  // The maximum number of work units to return.
+  int32 page_size = 2 [(google.api.field_behavior) = OPTIONAL];
+
+  // A page token, received from a previous `ListWorkUnits` call.
+  string page_token = 3 [(google.api.field_behavior) = OPTIONAL];
+
+  // A filter expression to constrain the results.
+  string filter = 4 [(google.api.field_behavior) = OPTIONAL];
+
+  // A comma-separated list of fields to order by.
+  string order_by = 5 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message ListWorkUnitsResponse {
+  // The work units that match the filter.
+  repeated WorkUnit work_units = 1;
+  // The page token to use for the next request.
+  string next_page_token = 2;
+}
+
+message StopWorkUnitRequest {
+  // The resource name of the work unit to stop.
+  // Format: experiments/{xid}/workUnits/{wid}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/WorkUnit"
+    }
+  ];
+}
+
+message BatchStopWorkUnitsRequest {
+  // The parent resource shared by all work units being stopped.
+  // Format: experiments/{xid}
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/Experiment"
+    }
+  ];
+
+  // AIP-160 compliant filter expression. If the filter is empty, all work
+  // units will be stopped (as the filter matches all work units).
+  string filter = 2 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message RestartWorkUnitRequest {
+  // The resource name of the work unit to restart.
+  // Format: experiments/{xid}/workUnits/{wid}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/WorkUnit"
+    }
+  ];
+}
+
+message BatchRestartWorkUnitsRequest {
+  // The parent resource shared by all work units being restarted.
+  // Format: experiments/{xid}
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/Experiment"
+    }
+  ];
+
+  // AIP-160 compliant filter expression. If the filter is empty, all work
+  // units will be restarted (as the filter matches all work units).
+  string filter = 2 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message UpdateWorkUnitRequest {
+  // The work unit to update.
+  // The work_unit's `name` field is used to identify which work unit
+  // to update.
+  WorkUnit work_unit = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The list of fields to be updated.
+  google.protobuf.FieldMask update_mask = 2
+      [(google.api.field_behavior) = REQUIRED];
+}
+
+// -----------------------------------------------------------------------------
+// Artifact Messages
+// -----------------------------------------------------------------------------
+
+// CreateArtifactRequest is the request message for CreateArtifact.
+message CreateArtifactRequest {
+  // The resource name of the parent (either an Experiment or a WorkUnit)
+  // under which the artifact is to be created.
+  // Format is one of the following:
+  // "experiments/{xid}"
+  // "experiments/{xid}/workUnits/{wid}"
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      child_type: "cloud.xmanager.googleapis.com/Artifact"
+    }
+  ];
+
+  // The artifact resource to create.
+  // The `name` field and `parent` field on this resource are ignored.
+  Artifact artifact = 2 [(google.api.field_behavior) = REQUIRED];
+}
+
+// GetArtifactRequest is the request message for GetArtifact.
+message GetArtifactRequest {
+  // The resource name of the artifact to retrieve.
+  // Format: artifacts/{aid}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/Artifact"
+    }
+  ];
+}
+
+// ListArtifactsRequest is the request message for ListArtifacts.
+message ListArtifactsRequest {
+  // The resource name of the parent (either an Experiment or a WorkUnit)
+  // whose artifacts are to be listed.
+  // Format is one of the following:
+  // "experiments/{xid}"
+  // "experiments/{xid}/workUnits/{wid}"
+  // If the parent is not specified, all artifacts that match the filter will
+  // be returned.
+  string parent = 1 [
+    (google.api.field_behavior) = OPTIONAL,
+    (google.api.resource_reference) = {
+      child_type: "cloud.xmanager.googleapis.com/Artifact"
+    }
+  ];
+
+  // The maximum number of artifacts to return.
+  int32 page_size = 2 [(google.api.field_behavior) = OPTIONAL];
+
+  // A page token, received from a previous `ListArtifacts` call.
+  string page_token = 3 [(google.api.field_behavior) = OPTIONAL];
+
+  // A filter expression to constrain the results.
+  string filter = 4 [(google.api.field_behavior) = OPTIONAL];
+
+  // A comma-separated list of fields to order by.
+  string order_by = 5 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message DeleteArtifactRequest {
+  // The resource name of the artifact to delete.
+  // Format: artifacts/{aid}
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/Artifact"
+    }
+  ];
+}
+
+message UpdateArtifactRequest {
+  // The artifact to update.
+  // The artifact's `name` field is used to identify which artifact
+  // to update.
+  Artifact artifact = 1 [(google.api.field_behavior) = REQUIRED];
+
+  // The list of fields to be updated.
+  google.protobuf.FieldMask update_mask = 2
+      [(google.api.field_behavior) = REQUIRED];
+}
+
+message ListArtifactsResponse {
+  // The artifacts that match the filter.
+  repeated Artifact artifacts = 1;
+  // The page token to use for the next request.
+  string next_page_token = 2;
+}
+
+// -----------------------------------------------------------------------------
+// Status Message Messages
+// -----------------------------------------------------------------------------
+
+// ListStatusMessagesRequest is the request message for ListStatusMessages.
+message ListStatusMessagesRequest {
+  // The resource name of the parent (either an Experiment or a WorkUnit)
+  // whose status messages are to be listed.
+  // Format is one of the following:
+  // "experiments/{xid}"
+  // "experiments/{xid}/workUnits/{wid}"
+  string parent = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      child_type: "cloud.xmanager.googleapis.com/StatusMessage"
+    }
+  ];
+
+  // The maximum number of status messages to return.
+  int32 page_size = 2 [(google.api.field_behavior) = OPTIONAL];
+
+  // A page token, received from a previous `ListStatusMessages` call.
+  string page_token = 3 [(google.api.field_behavior) = OPTIONAL];
+
+  // A filter expression to constrain the results.
+  string filter = 4 [(google.api.field_behavior) = OPTIONAL];
+
+  // A comma-separated list of fields to order by.
+  string order_by = 5 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message ListStatusMessagesResponse {
+  // The status messages that match the filter.
+  repeated StatusMessage status_messages = 1;
+  // The page token to use for the next request.
+  string next_page_token = 2;
+}

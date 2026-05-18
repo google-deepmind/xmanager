@@ -1,0 +1,33 @@
+"""Stop command for XManager Cloud CLI."""
+
+from collections.abc import Sequence
+
+from absl import app
+
+from google.longrunning import operations_pb2
+from xmanager_cloud.experiment_state_server import experiment_state_api
+from xmanager_cloud.experiment_state_server.proto import api_pb2 as experiment_state_service_pb2
+
+
+def _stop_experiment(experiment_id: str) -> operations_pb2.Operation:
+  """Stops an experiment."""
+  return experiment_state_api.get_experiment_state_api().batch_stop_work_units(
+      experiment_state_service_pb2.BatchStopWorkUnitsRequest(
+          parent=f'experiments/{experiment_id}',
+      )
+  )
+
+
+def stop_command(argv: Sequence[str]) -> None:
+  if len(argv) < 3:
+    raise app.UsageError('Please specify an experiment ID to stop.')
+  if len(argv) > 3:
+    raise app.UsageError(
+        'Too many command-line arguments. Please specify a single experiment ID'
+        ' to stop.'
+    )
+  experiment_id = argv[2]
+  print(f'Stopping experiment {experiment_id}.')
+  _stop_experiment(experiment_id)
+  # TODO: (internal issue) - Add nicer logs once WaitOperation is implemented in the
+  # backend.

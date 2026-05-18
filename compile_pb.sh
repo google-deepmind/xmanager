@@ -15,10 +15,21 @@
 # limitations under the License.
 
 readonly BAZEL_DIR="/tmp/bazel"
+# copybara:strip_begin(xmc)
+readonly GOOGLEAPIS_DIR="/tmp/googleapis"
+# copybara:strip_end
 readonly SOURCE_ROOT_DIR="$(realpath $(dirname $0))"
 readonly GENERATED_DIR="$SOURCE_ROOT_DIR/generated"
 
-git clone https://github.com/bazelbuild/bazel.git "${BAZEL_DIR}"
+if [ ! -d "${BAZEL_DIR}" ]; then
+  git clone --depth 1 https://github.com/bazelbuild/bazel.git "${BAZEL_DIR}"
+fi
+
+# copybara:strip_begin(xmc)
+if [ ! -d "${GOOGLEAPIS_DIR}" ]; then
+  git clone --depth 1 https://github.com/googleapis/googleapis.git "${GOOGLEAPIS_DIR}"
+fi
+# copybara:strip_end
 
 protoc --proto_path="${BAZEL_DIR}" --python_out="${BAZEL_DIR}" \
   "${BAZEL_DIR}/src/main/java/com/google/devtools/build/lib/buildeventstream/proto/build_event_stream.proto" \
@@ -43,3 +54,20 @@ find "${GENERATED_DIR}/" -name '*pb2*' -exec \
 # Add NOLINT line.
 find "${GENERATED_DIR}/" -name '*pb2*' -exec \
   sed -i 's/DO NOT EDIT!/DO NOT EDIT!\n# pylint: skip-file/' {} \;
+
+# copybara:strip_begin(xmc)
+# Compile xmanager_cloud protos
+if python3 -c "import grpc_tools" &> /dev/null; then
+  echo "Compiling xmanager_cloud protos..."
+  python3 -m grpc_tools.protoc \
+    --proto_path="$SOURCE_ROOT_DIR" \
+    --proto_path="${GOOGLEAPIS_DIR}" \
+    --python_out="$SOURCE_ROOT_DIR" \
+    --grpc_python_out="$SOURCE_ROOT_DIR" \
+    "$SOURCE_ROOT_DIR"/xmanager_cloud/xid_service/proto/*.proto \
+    "$SOURCE_ROOT_DIR"/xmanager_cloud/experiment_state_server/proto/*.proto
+else
+  echo "WARNING: grpc_tools not found. Skipping xmanager_cloud proto compilation."
+  echo "Please install grpcio-tools: pip install grpcio-tools"
+fi
+# copybara:strip_end

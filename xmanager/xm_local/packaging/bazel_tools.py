@@ -114,7 +114,7 @@ def _build_multiple_targets(
   """Builds the targets and returns paths to their important outputs.
 
   The definition of 'important artifacts in an output group' can be found at
-  https://github.com/bazelbuild/bazel/blob/8346ea4cfdd9fbd170d51a528fee26f912dad2d5/src/main/java/com/google/devtools/build/lib/analysis/TopLevelArtifactHelper.java#L223-L224.
+  https://github.com/bazelbuild/bazel/blo(internal issue)ea4cfdd9fbd170d51a528fee26f912dad2d5/src/main/java/com/google/devtools/build/lib/analysis/TopLevelArtifactHelper.java#L223-L224.
 
   Args:
     labels: Labels of the targets to build.

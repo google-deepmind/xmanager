@@ -1,0 +1,108 @@
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+edition = "2023";
+
+package cloud.xmanager.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+
+message XidEntry {
+  option (google.api.resource) = {
+    type: "cloud.xmanager.googleapis.com/XidEntry"
+    pattern: "xids/{xid}"
+    singular: "xidEntry"
+    plural: "xidEntries"
+  };
+
+  // The resource name of the XidEntry.
+  // Format: "xids/{xid}"
+  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
+
+  string creator = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  google.protobuf.Timestamp create_time = 3
+      [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  google.protobuf.Timestamp update_time = 4
+      [(google.api.field_behavior) = OUTPUT_ONLY];
+
+  // The system that created the XID. Currently only stores the endpoint, but
+  // could be extended to store other information.
+  OriginatingSystem origin = 5 [(google.api.field_behavior) = IMMUTABLE];
+
+  // ACLs for the XID. This is required because an XID with no ACLs is not
+  // accessible by anyone.
+  XidAcls acls = 6 [(google.api.field_behavior) = REQUIRED];
+
+  // Parent XID for this XID. This is primarily used for artifacts to inherit
+  // ACLs from the experiment that created them.
+  string parent_xid = 7 [(google.api.field_behavior) = OPTIONAL];
+}
+
+message XidAcls {
+  message Role {
+    oneof principal {
+      // A user's email address, e.g., "alfred@isolabs.com".
+      string user = 1;
+
+      // A Google Group email address, e.g., "ml-researchers@isolabs.com".
+      string group = 2;
+
+      // A GCP service account email, e.g.,
+      // "xmanager_cloud-operator@project.iam.gserviceaccount.com".
+      string service_account = 3;
+
+      // An entire GCP domain, e.g., "isolabs.com".
+      string domain = 4;
+
+      // All authenticated users.
+      bool all_authenticated_users = 5;
+
+      // If true, the ACLs from the parent XID will be inherited by this XID.
+      // If this is set and the XID has no parent, it will resolve to an empty
+      // ACL.
+      bool inherit_from_parent = 6;
+    }
+  }
+
+  // The role of a principal in an ACL. These are used to determine if a user
+  // has permission to perform an action on an XID.
+  // A role with a higher value includes all permissions of roles with a lower
+  // value (e.g. OWNER includes WRITER and READER permissions).
+  enum RoleType {
+    ROLE_TYPE_UNSPECIFIED = 0;
+    READER = 1;
+    WRITER = 2;
+    OWNER = 3;
+  }
+
+  // Owners are equivalent to writers for now, but this may change in the
+  // future. We keep them separate for now to allow for easier evolution.
+  repeated Role owners = 1;
+
+  // Roles that can write data related to this XID. Writers are also readers.
+  repeated Role writers = 2;
+
+  // Roles that can read data related to this XID.
+  repeated Role readers = 3;
+}
+
+// The system that created the XID.
+message OriginatingSystem {
+  string endpoint = 1;
+}

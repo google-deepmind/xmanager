@@ -1,0 +1,145 @@
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+package cloud.xmanager.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/timestamp.proto";
+import "xmanager_cloud/experiment_state_server/proto/priority.proto";
+import "xmanager_cloud/experiment_state_server/proto/resources.proto";
+import "xmanager_cloud/experiment_state_server/proto/url.proto";
+import "xmanager_cloud/experiment_state_server/proto/work_unit_execution.proto";
+
+option java_multiple_files = true;
+
+message WorkUnit {
+  option (google.api.resource) = {
+    type: "cloud.xmanager.googleapis.com/WorkUnit"
+    pattern: "experiments/{xid}/workUnits/{wid}"
+    singular: "workUnit"
+    plural: "workUnits"
+  };
+
+  enum WorkUnitType {
+    WORK_UNIT_TYPE_UNSPECIFIED = 0;
+    STANDARD = 1;
+    AUXILIARY = 2;
+  }
+
+  // Resource name of the work unit.
+  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
+  // The type of the work unit.
+  WorkUnitType work_unit_type = 2 [(google.api.field_behavior) = IMMUTABLE];
+  // Priority of the work unit. Higher values indicate higher priority.
+  Priority priority = 3 [(google.api.field_behavior) = REQUIRED];
+  // Time when the work unit was created.
+  google.protobuf.Timestamp create_time = 4
+      [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Time when the work unit was last updated.
+  google.protobuf.Timestamp update_time = 5
+      [(google.api.field_behavior) = OUTPUT_ONLY];
+  // URLs associated with the work unit.
+  repeated Url urls = 6 [(google.api.field_behavior) = OPTIONAL];
+  // The executable to run for the work unit. Cannot be changed after creation.
+  Executable executable = 7 [(google.api.field_behavior) = IMMUTABLE];
+  // Tags associated with the work unit.
+  repeated string tags = 8 [(google.api.field_behavior) = OPTIONAL];
+  // Notes associated with the work unit.
+  string notes = 9 [(google.api.field_behavior) = OPTIONAL];
+  // The current work unit execution.
+  WorkUnitExecution current_work_unit_execution = 10
+      [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message Executable {
+  // The scheduling constraints for the executable.
+  SchedulingConstraints scheduling_constraints = 1
+      [(google.api.field_behavior) = REQUIRED];
+  // The type of executable. This is a oneof to allow for different executable
+  // types to be added in the future.
+  oneof type {
+    JobSetExecutable jobset = 2;
+  }
+}
+
+// A JobSetExecutable is a collection of KubernetesJobs that are run together
+// as a JobSet resource.
+message JobSetExecutable {
+  // The Jobs that make up the JobSet.
+  repeated KubernetesJob jobs = 1;
+}
+
+// A KubernetesJob is a single Kubernetes Job that is run as part of a
+// JobSetExecutable.
+message KubernetesJob {
+  message DependencyOrder {
+    // The name of the Kubernetes Job that this Job depends on. This must be the
+    // name of a KubernetesJob in the same JobSetExecutable.
+    string job_name = 1;
+    // The state that the dependent job must be in for this job to be started.
+    enum JobDependencyState {
+      JOB_DEPENDENCY_STATE_UNSPECIFIED = 0;
+      // The dependent job must be ready to start this job. This is useful for
+      // server-client dependencies where the client job should not start until
+      // the server job is ready.
+      READY = 1;
+      // The dependent job must be completed successfully for this job to be
+      // started.
+      COMPLETED = 2;
+    }
+    JobDependencyState job_dependency_state = 2;
+  }
+
+  // The name of the Kubernetes Job.
+  string name = 1;
+
+  // The spec of the Kubernetes Job.
+  ExecutableSpec spec = 2;
+  // The annotations to apply to the Kubernetes Job.
+  map<string, string> annotations = 3;
+  // The number of replicas to run for the Kubernetes Job.
+  int32 replicas = 4;
+  // The maximum number of times to retry the Kubernetes Job.
+  int32 retry_limit = 5;
+  // The active deadline of the Kubernetes Job. This is the maximum amount of
+  // time the Kubernetes Job can run before it is killed. Note this is not a
+  // deadline per execution, this is a deadline for the entire Kubernetes Job
+  // to be active. If a pod fails and is restarted, the deadline is not reset.
+  int64 active_deadline_seconds = 6;
+  // The dependencies of the Kubernetes Job. This is used to specify the
+  // ordering of jobs within the JobSet. If a job depends upon another job, it
+  // must be specified after the dependent job in the list of jobs.
+  DependencyOrder dependency_order = 7;
+}
+
+message ExecutableSpec {
+  // The resources required to run the executable.
+  ResourceSet resources = 1;
+  // The docker image to use for the executable.
+  string docker_image = 2;
+  // The arguments to pass to the executable.
+  map<string, string> args = 3;
+  // The environment variables to set for the executable.
+  map<string, string> env_vars = 4;
+}
+
+// SchedulingConstraints contains the scheduling constraints for the
+// executable. For now, this is just a Kueue queue name, but we leave this
+// extensible to other routing schemes in the future.
+message SchedulingConstraints {
+  // Queue to schedule the executable on.
+  string queue_name = 1;
+}
