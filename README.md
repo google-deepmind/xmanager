@@ -43,7 +43,7 @@ cd xmanager/setup_scripts && chmod +x setup_all.sh && . ./setup_all.sh
 
 ## Prerequisites
 
-The codebase assumes Python 3.9+.
+The codebase assumes Python 3.10+.
 
 ### Install Docker (optional)
 
