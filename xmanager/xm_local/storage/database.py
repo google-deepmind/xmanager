@@ -23,13 +23,12 @@ from alembic import migration
 from alembic import script as alembic_script
 from alembic.config import Config
 import attr
+from google.protobuf import text_format
 import sqlalchemy
 from xmanager import xm
 from xmanager import xm_flags
 from xmanager.generated import data_pb2
 import yaml
-
-from google.protobuf import text_format
 
 from google.cloud.sql.connector import Connector, IPTypes
 
