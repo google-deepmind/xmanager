@@ -81,6 +81,9 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
   GB200 = 89
   GB300 = 100
   B40_48TH = 93
+  # Defaults to HASWELL but is also permitted on ARM (see
+  # _validate_architecture_and_accelerator).
+  GLP = 666  # This is completely made up at the moment.
 
   # TPUs
   TPU_V2 = 3
@@ -95,6 +98,24 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
 
   def __str__(self):
     return self._name_
+
+  def architecture(self) -> 'Architecture':
+    """Returns the CPU architecture the accelerator is hosted on.
+
+    Accelerators backed by NVIDIA Grace superchips (e.g. GB200/GB300) are
+    hosted on ARM CPUs; everything else defaults to HASWELL (x86).
+    """
+    if self in _ARM_HOSTED_ACCELERATORS:
+      return Architecture.ARM
+    return Architecture.HASWELL
+
+
+# Accelerators hosted on ARM CPUs. Defined at module scope (rather than as a
+# class attribute) to avoid being interpreted as an enum member.
+_ARM_HOSTED_ACCELERATORS = frozenset({
+    ResourceType.GB200,
+    ResourceType.GB300,
+})
 
 
 class _CaseInsensitiveServiceTierMeta(enum.EnumMeta):
