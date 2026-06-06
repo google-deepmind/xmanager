@@ -1,6 +1,7 @@
 load("@aspect_rules_py//py:defs.bzl", "py_image_layer")
+load("@rules_img//img:image.bzl", "image_manifest")
+load("@rules_img//img:load.bzl", "image_load")
 load("@rules_python//python:defs.bzl", "py_binary")
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load")
 
 licenses(["notice"])
 
@@ -32,21 +33,21 @@ platform(
     ],
 )
 
-oci_image(
+image_manifest(
     name = "server_image",
     base = "@docker_io_python",
     entrypoint = ["/app/server"],
-    tars = py_image_layer(
+    layers = py_image_layer(
         name = "server_layer",
         binary = ":server",
         root = "/app/",
     ),
 )
 
-oci_load(
+image_load(
     name = "server_image.load",
     image = ":server_image",
-    repo_tags = ["local_container_links_server:latest"],
+    tag_list = ["local_container_links_server:latest"],
 )
 
 filegroup(
