@@ -96,6 +96,31 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
   def __str__(self):
     return self._name_
 
+  def architecture(self) -> 'Architecture':
+    """Returns the default host CPU architecture for this accelerator.
+
+    Accelerators backed by NVIDIA Grace superchips (e.g. GB200/GB300) are
+    hosted on ARM CPUs; other accelerators with a fixed host architecture
+    default to HASWELL (x86).
+
+    Raises:
+      ValueError: If this resource is not an accelerator or its host
+        architecture depends on the local machine.
+    """
+    if self not in AcceleratorType or self == ResourceType.LOCAL_GPU:
+      raise ValueError(f'{self} does not have a default architecture.')
+    if self in _ARM_HOSTED_ACCELERATORS:
+      return Architecture.ARM
+    return Architecture.HASWELL
+
+
+# Accelerators hosted on ARM CPUs. Defined at module scope (rather than as a
+# class attribute) to avoid being interpreted as an enum member.
+_ARM_HOSTED_ACCELERATORS = frozenset({
+    ResourceType.GB200,
+    ResourceType.GB300,
+})
+
 
 class _CaseInsensitiveServiceTierMeta(enum.EnumMeta):
   """Metaclass which allows case-insensitive enum lookup.
@@ -418,18 +443,15 @@ class JobRequirements:
     """Validates that the architecture is compatible with the accelerator."""
     if self.architecture is None or self.accelerator is None:
       return
-    if self.architecture != self.accelerator.architecture():
-      if (
-          self.architecture == Architecture.ARM  # GLP is supported on ARM
-          and self.accelerator == ResourceType.GLP
-      ):
-        return
-      else:
-        raise ValueError(
-            f'Accelerator {self.accelerator} requires architecture'
-            f' {self.accelerator.architecture()}, but {self.architecture} was'
-            ' specified.'
-        )
+    try:
+      accelerator_architecture = self.accelerator.architecture()
+    except ValueError:
+      return
+    if self.architecture != accelerator_architecture:
+      raise ValueError(
+          f'Accelerator {self.accelerator} requires architecture'
+          f' {accelerator_architecture}, but {self.architecture} was specified.'
+      )
 
   def _validate_accelerator_topology(self):
     """Validates that the topology is compatible with the accelerator."""
