@@ -19,20 +19,9 @@ from xmanager.xm_local.packaging import bazel_tools
 
 from xmanager.generated import build_event_stream_pb2 as bes_pb2
 
-_BINDIR = 'bazel-out/k8-fastbuild/bin'
-
 
 def _file(name: str, uri: str) -> bes_pb2.File:
   return bes_pb2.File(name=name, uri=uri)
-
-
-def _configuration_event(config_id: str = 'cfg') -> bes_pb2.BuildEvent:
-  return bes_pb2.BuildEvent(
-      id=bes_pb2.BuildEventId(
-          configuration=bes_pb2.BuildEventId.ConfigurationId(id=config_id)
-      ),
-      configuration=bes_pb2.Configuration(make_variable={'BINDIR': _BINDIR}),
-  )
 
 
 def _named_set_event(
@@ -54,10 +43,20 @@ def _named_set_event(
   )
 
 
+def _output_group(name: str, file_set_ids: list[str]) -> bes_pb2.OutputGroup:
+  return bes_pb2.OutputGroup(
+      name=name,
+      file_sets=[
+          bes_pb2.BuildEventId.NamedSetOfFilesId(id=file_set_id)
+          for file_set_id in file_set_ids
+      ],
+  )
+
+
 def _target_completed_event(
     label: str,
-    important_output: list[bes_pb2.File] = (),
-    file_set_ids: list[str] = (),
+    important_output: Sequence[bes_pb2.File] = (),
+    output_groups: Sequence[bes_pb2.OutputGroup] = (),
 ) -> bes_pb2.BuildEvent:
   return bes_pb2.BuildEvent(
       id=bes_pb2.BuildEventId(
@@ -66,15 +65,7 @@ def _target_completed_event(
       completed=bes_pb2.TargetComplete(
           success=True,
           important_output=important_output,
-          output_group=[
-              bes_pb2.OutputGroup(
-                  name='default',
-                  file_sets=[
-                      bes_pb2.BuildEventId.NamedSetOfFilesId(id=file_set_id)
-                      for file_set_id in file_set_ids
-                  ],
-              )
-          ],
+          output_group=output_groups,
       ),
   )
 
@@ -135,58 +126,66 @@ class BazelToolsTest(unittest.TestCase):
       bazel_tools._lex_label('//project/directory:all')
 
   def test_get_important_outputs_from_important_output(self):
-    binary = _file('bin', f'file:///root/{_BINDIR}/bin')
-    events = [
-        _configuration_event(),
-        _target_completed_event('//:bin', important_output=[binary]),
-    ]
+    binary = _file('bin', 'file:///root/bin')
+    events = [_target_completed_event('//:bin', important_output=[binary])]
     self.assertEqual(
         bazel_tools._get_important_outputs(events, ['//:bin']), [[binary]]
     )
 
   def test_get_important_outputs_from_named_set(self):
-    binary = _file('bin', f'file:///root/{_BINDIR}/bin')
+    binary = _file('bin', 'file:///root/bin')
     events = [
-        _configuration_event(),
         _named_set_event('0', [binary]),
-        _target_completed_event('//:bin', file_set_ids=['0']),
+        _target_completed_event(
+            '//:bin', output_groups=[_output_group('default', ['0'])]
+        ),
     ]
     self.assertEqual(
         bazel_tools._get_important_outputs(events, ['//:bin']), [[binary]]
     )
 
-  def test_get_important_outputs_filters_non_bindir_files(self):
-    binary = _file('bin', f'file:///root/{_BINDIR}/bin')
-    source = _file('bin.py', 'file:///root/bazel-out/../bin.py')
+  def test_get_important_outputs_ignores_non_default_groups(self):
+    binary = _file('bin', 'file:///root/bin')
+    binary_zip = _file('bin.zip', 'file:///root/bin.zip')
     events = [
-        _configuration_event(),
-        _named_set_event('0', [binary, source]),
-        _target_completed_event('//:bin', file_set_ids=['0']),
+        _named_set_event('0', [binary]),
+        _named_set_event('1', [binary_zip]),
+        _target_completed_event(
+            '//:bin',
+            output_groups=[
+                _output_group('default', ['0']),
+                _output_group('python_zip_file', ['1']),
+            ],
+        ),
     ]
     self.assertEqual(
         bazel_tools._get_important_outputs(events, ['//:bin']), [[binary]]
     )
 
-  def test_get_important_outputs_keeps_all_without_configuration(self):
-    binary = _file('bin', f'file:///root/{_BINDIR}/bin')
-    source = _file('bin.py', 'file:///root/bin.py')
+  def test_get_important_outputs_prefers_important_output(self):
+    binary = _file('bin', 'file:///root/bin')
+    other = _file('other', 'file:///root/other')
     events = [
-        _named_set_event('0', [binary, source]),
-        _target_completed_event('//:bin', file_set_ids=['0']),
+        _named_set_event('0', [other]),
+        _target_completed_event(
+            '//:bin',
+            important_output=[binary],
+            output_groups=[_output_group('default', ['0'])],
+        ),
     ]
     self.assertEqual(
-        bazel_tools._get_important_outputs(events, ['//:bin']),
-        [[binary, source]],
+        bazel_tools._get_important_outputs(events, ['//:bin']), [[binary]]
     )
 
   def test_get_important_outputs_resolves_nested_file_sets(self):
-    first = _file('first', f'file:///root/{_BINDIR}/first')
-    second = _file('second', f'file:///root/{_BINDIR}/second')
+    first = _file('first', 'file:///root/first')
+    second = _file('second', 'file:///root/second')
     events = [
-        _configuration_event(),
         _named_set_event('0', [first], nested_ids=['1']),
         _named_set_event('1', [second]),
-        _target_completed_event('//:bin', file_set_ids=['0']),
+        _target_completed_event(
+            '//:bin', output_groups=[_output_group('default', ['0'])]
+        ),
     ]
     self.assertEqual(
         bazel_tools._get_important_outputs(events, ['//:bin']),
@@ -194,34 +193,22 @@ class BazelToolsTest(unittest.TestCase):
     )
 
   def test_get_important_outputs_handles_cyclic_file_sets(self):
-    first = _file('first', f'file:///root/{_BINDIR}/first')
-    second = _file('second', f'file:///root/{_BINDIR}/second')
+    first = _file('first', 'file:///root/first')
+    second = _file('second', 'file:///root/second')
     events = [
-        _configuration_event(),
         _named_set_event('0', [first], nested_ids=['1']),
         _named_set_event('1', [second], nested_ids=['0']),
-        _target_completed_event('//:bin', file_set_ids=['0']),
+        _target_completed_event(
+            '//:bin', output_groups=[_output_group('default', ['0'])]
+        ),
     ]
     self.assertEqual(
         bazel_tools._get_important_outputs(events, ['//:bin']),
         [[first, second]],
     )
 
-  def test_get_important_outputs_dedupes_overlapping_files(self):
-    binary = _file('bin', f'file:///root/{_BINDIR}/bin')
-    events = [
-        _configuration_event(),
-        _named_set_event('0', [binary]),
-        _target_completed_event(
-            '//:bin', important_output=[binary], file_set_ids=['0']
-        ),
-    ]
-    self.assertEqual(
-        bazel_tools._get_important_outputs(events, ['//:bin']), [[binary]]
-    )
-
   def test_get_important_outputs_missing_label_raises(self):
-    events = [_configuration_event()]
+    events = [_named_set_event('0', [_file('bin', 'file:///root/bin')])]
     with self.assertRaises(KeyError):
       bazel_tools._get_important_outputs(events, ['//:missing'])
 

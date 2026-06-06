@@ -19,7 +19,7 @@ import itertools
 import os
 import re
 import subprocess
-from typing import Optional, Sequence
+from typing import Mapping, Optional, Sequence
 
 from xmanager import xm
 from xmanager import xm_flags
@@ -30,35 +30,47 @@ from google.protobuf.internal.decoder import _DecodeVarint32
 from xmanager.generated import build_event_stream_pb2 as bes_pb2
 
 
+def _resolve_named_sets(
+    named_sets: Mapping[str, bes_pb2.NamedSetOfFiles],
+    file_set_ids: Sequence[str],
+) -> list[bes_pb2.File]:
+  """Transitively flattens the named sets referenced by `file_set_ids`.
+
+  The `visited` set guards against cycles and avoids re-walking shared sets.
+  """
+  files: list[bes_pb2.File] = []
+  visited: set[str] = set()
+  queue = collections.deque(file_set_ids)
+  while queue:
+    current = queue.popleft()
+    if current in visited:
+      continue
+    visited.add(current)
+    named_set = named_sets.get(current)
+    if named_set is None:
+      continue
+    files.extend(named_set.files)
+    for nested in named_set.file_sets:
+      queue.append(nested.id)
+  return files
+
+
 def _get_important_outputs(
     events: Sequence[bes_pb2.BuildEvent], labels: Sequence[str]
 ) -> list[list[bes_pb2.File]]:
-  """Returns the important outputs for each of `labels`.
+  """Returns the important (default) outputs for each of `labels`.
 
-  Newer Bazel versions (notably with Bzlmod) often leave
-  `completed.important_output` empty and instead reference the produced
-  artifacts through `completed.output_group[*].file_sets`, which point into
-  `NamedSetOfFiles` events. We therefore resolve those named sets transitively
-  and merge them with `important_output`.
+  `completed.important_output` historically mirrored the files of the target's
+  "default" output group. Newer Bazel versions (notably with Bzlmod) leave it
+  empty and instead reference those files indirectly through
+  `completed.output_group[*].file_sets`, which point into `NamedSetOfFiles`
+  events. When `important_output` is empty we reconstruct it by transitively
+  resolving the "default" output group's named sets.
   """
   named_sets: dict[str, bes_pb2.NamedSetOfFiles] = {}
   for event in events:
     if event.id.HasField('named_set'):
       named_sets[event.id.named_set.id] = event.named_set_of_files
-
-  # `py_binary` (and similar) output groups contain the source files alongside
-  # the binary, while callers such as `xm_local/packaging/local.py` expect a
-  # single output per target. We therefore keep only artifacts under the
-  # configuration's binary directory (`BINDIR`). When no configuration event is
-  # available we fall back to keeping every artifact.
-  configuration = next(
-      (event for event in events if event.id.HasField('configuration')), None
-  )
-  bindir = (
-      configuration.configuration.make_variable['BINDIR']
-      if configuration is not None
-      else None
-  )
 
   label_to_output: dict[str, list[bes_pb2.File]] = {}
   for event in events:
@@ -68,40 +80,18 @@ def _get_important_outputs(
     label = event.id.target_completed.label
 
     outputs = list(event.completed.important_output)
+    if not outputs:
+      # Only the "default" output group corresponds to `important_output`;
+      # other groups (e.g. a `py_binary`'s zip) would add spurious files.
+      default_file_sets = [
+          file_set.id
+          for group in event.completed.output_group
+          if group.name == 'default'
+          for file_set in group.file_sets
+      ]
+      outputs = _resolve_named_sets(named_sets, default_file_sets)
 
-    # Transitively resolve the named sets referenced by the output groups. The
-    # `visited` set guards against cycles and avoids re-walking shared sets.
-    visited: set[str] = set()
-    queue = collections.deque(
-        file_set.id
-        for group in event.completed.output_group
-        for file_set in group.file_sets
-    )
-    while queue:
-      current = queue.popleft()
-      if current in visited:
-        continue
-      visited.add(current)
-      named_set = named_sets.get(current)
-      if named_set is None:
-        continue
-      for file in named_set.files:
-        if bindir is None or bindir in file.uri:
-          outputs.append(file)
-      for nested in named_set.file_sets:
-        queue.append(nested.id)
-
-    # A file may show up both in `important_output` and in the resolved named
-    # sets, so de-duplicate by `uri` while preserving order.
-    seen_uris: set[str] = set()
-    deduped: list[bes_pb2.File] = []
-    for file in outputs:
-      if file.uri in seen_uris:
-        continue
-      seen_uris.add(file.uri)
-      deduped.append(file)
-
-    label_to_output[label] = deduped
+    label_to_output[label] = outputs
 
   return [label_to_output[label] for label in labels]
 
