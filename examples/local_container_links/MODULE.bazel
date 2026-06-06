@@ -6,8 +6,7 @@ module(
 bazel_dep(name = "platforms", version = "1.1.0")
 bazel_dep(name = "aspect_rules_py", version = "1.11.7")
 bazel_dep(name = "rules_python", version = "2.2.0")
-bazel_dep(name = "rules_oci", version = "2.3.0")
-bazel_dep(name = "rules_pkg", version = "1.2.0")
+bazel_dep(name = "rules_img", version = "0.3.17")
 
 python = use_extension("@rules_python//python/extensions:python.bzl", "python")
 
@@ -32,15 +31,17 @@ pip.parse(
 )
 use_repo(pip, "pypi")
 
-oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
-oci.pull(
+pull = use_repo_rule("@rules_img//img:pull.bzl", "pull")
+
+# `rules_img` selects the right platform variant at build time, so neither
+# `platforms` nor per-platform repos are needed here. `layer_handling = "eager"`
+# downloads the base image's layer blobs so the `tarball` output is a complete,
+# Docker-loadable image (XManager loads it via the Docker SDK).
+pull(
     name = "docker_io_python",
     digest = "sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2c2dcedb1da95114372b6d7",
-    image = "docker.io/library/python",
-    platforms = [
-        "linux/amd64",
-        "linux/arm64/v8",
-    ],
+    layer_handling = "eager",
+    registry = "index.docker.io",
+    repository = "library/python",
     tag = "3.10.18-slim",
 )
-use_repo(oci, "docker_io_python", "docker_io_python_linux_amd64", "docker_io_python_linux_arm64_v8")
