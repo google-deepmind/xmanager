@@ -19,7 +19,9 @@ import itertools
 import os
 import re
 import subprocess
-from typing import Mapping, Optional, Sequence
+from typing import Callable, Mapping, Optional, Sequence
+import urllib.parse
+import urllib.request
 
 from xmanager import xm
 from xmanager import xm_flags
@@ -110,13 +112,6 @@ def _get_normalized_labels(
   return [label_to_expansion[label] for label in labels]
 
 
-def _get_workspace_directory(events: Sequence[bes_pb2.BuildEvent]) -> str:
-  for event in events:
-    if event.id.HasField('started'):
-      return event.started.workspace_directory
-  raise ValueError('Missing start event in Bazel logs')
-
-
 def _read_build_events(path: str) -> list[bes_pb2.BuildEvent]:
   """Parses build events from a file referenced by a given `path`.
 
@@ -162,6 +157,66 @@ def _root_absolute_path() -> str:
   )
 
 
+def _execution_root() -> str:
+  """Returns the absolute Bazel execution root for the current workspace.
+
+  `<execution_root>/bazel-out/...` is where Bazel materializes outputs on disk
+  regardless of `--symlink_prefix`, so joining it with a `File.path_prefix`
+  avoids depending on the default `bazel-out` convenience symlink.
+  """
+  return subprocess.run(
+      [xm_flags.BAZEL_COMMAND.value, 'info', 'execution_root'],
+      check=True,
+      stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE,
+      universal_newlines=True,
+      cwd=_root_absolute_path(),
+  ).stdout.strip()
+
+
+def _resolve_output_path(
+    file: bes_pb2.File, exec_root_fn: Callable[[], str]
+) -> str:
+  """Resolves the local on-disk path of a Bazel output `File`.
+
+  Args:
+    file: A `File` from a `target_completed` BEP event.
+    exec_root_fn: Callable returning the Bazel execution root, invoked only when
+      the `path_prefix` fallback is taken so local builds avoid an extra `bazel
+      info`.
+
+  Returns:
+    The absolute local path where the artifact would be materialized.
+
+  NOTE: This only computes *where* the artifact would live locally; callers
+  still read the bytes off disk. Under `--remote_download_minimal` the output
+  is never materialized locally, so downstream consumers (e.g. loading a Docker
+  image tarball) will fail regardless of the path returned here.
+  """
+  parsed = urllib.parse.urlparse(file.uri) if file.uri else None
+  if parsed is not None and parsed.scheme == 'file':
+    # Local artifact: decode the `file://` URI. This handles percent-encoding
+    # and platform path conventions, and is independent of `--symlink_prefix`
+    # (unlike the logical `bazel-out/...` `path_prefix`, which only resolves
+    # via the default `bazel-out` convenience symlink).
+    path = urllib.request.url2pathname(parsed.path)
+    # Bazel emits `file:///abs/path` (empty authority), but preserve a
+    # non-empty, non-`localhost` authority as a UNC host instead of dropping
+    # it. This is best-effort: on Windows `url2pathname` already emits
+    # backslashes, so the resulting separators here may be mixed. In practice
+    # local Bazel outputs are `file:///...` with an empty authority, so this
+    # branch is rarely (if ever) taken.
+    if parsed.netloc and parsed.netloc != 'localhost':
+      return f'//{parsed.netloc}{path}'
+    return path
+  # `bytestream://`, `http(s)://`, or a missing URI (e.g. remote builds): fall
+  # back to the exec-root-relative `path_prefix`. `<exec_root>/bazel-out/...`
+  # is the canonical on-disk location under any `--symlink_prefix`, and
+  # resolves for remotely-built outputs that were downloaded locally (e.g.
+  # `--remote_download_outputs=toplevel`).
+  return os.path.join(exec_root_fn(), *file.path_prefix, file.name)
+
+
 def _build_multiple_targets(
     labels: Sequence[str], bazel_args: Sequence[str] = ()
 ) -> list[list[str]]:
@@ -194,16 +249,14 @@ def _build_multiple_targets(
     events = _read_build_events(bep_path)
     normalized_labels = _get_normalized_labels(events, labels)
     output_lists = _get_important_outputs(events, normalized_labels)
-    workspace = _get_workspace_directory(events)
-    results: list[list[str]] = []
-    for files in output_lists:
-      results.append(
-          [
-              os.path.join(workspace, *file.path_prefix, file.name)
-              for file in files
-          ]
-      )
-    return results
+    # Resolve the execution root lazily and at most once, only when a
+    # non-`file://` output forces the `path_prefix` fallback, to avoid an extra
+    # `bazel info` for local builds.
+    exec_root_fn = functools.lru_cache(_execution_root)
+    return [
+        [_resolve_output_path(file, exec_root_fn) for file in files]
+        for files in output_lists
+    ]
 
 
 # Expansions (`...`, `*`) are not allowed.

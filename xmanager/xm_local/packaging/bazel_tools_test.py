@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Sequence
+import functools
 import unittest
-
-from xmanager.xm_local.packaging import bazel_tools
+from typing import Sequence
 
 from xmanager.generated import build_event_stream_pb2 as bes_pb2
+from xmanager.xm_local.packaging import bazel_tools
 
 
 def _file(name: str, uri: str) -> bes_pb2.File:
@@ -68,6 +68,10 @@ def _target_completed_event(
           output_group=output_groups,
       ),
   )
+
+
+def _fail_exec_root() -> str:
+  raise AssertionError('exec_root should not be queried for `file://` URIs')
 
 
 class BazelToolsTest(unittest.TestCase):
@@ -211,6 +215,123 @@ class BazelToolsTest(unittest.TestCase):
     events = [_named_set_event('0', [_file('bin', 'file:///root/bin')])]
     with self.assertRaises(KeyError):
       bazel_tools._get_important_outputs(events, ['//:missing'])
+
+  def test_resolve_output_path_prefers_file_uri(self):
+    # A `file://` URI is the authoritative on-disk path and must be used
+    # without querying the execution root.
+    file = bes_pb2.File(
+        uri='file:///output_base/execroot/ws/bazel-out/bin/foo',
+        name='foo',
+        path_prefix=['bazel-out', 'bin'],
+    )
+    self.assertEqual(
+        bazel_tools._resolve_output_path(file, _fail_exec_root),
+        '/output_base/execroot/ws/bazel-out/bin/foo',
+    )
+
+  def test_resolve_output_path_decodes_percent_encoding(self):
+    file = bes_pb2.File(uri='file:///tmp/out%20dir/foo%2Bbar')
+    self.assertEqual(
+        bazel_tools._resolve_output_path(file, _fail_exec_root),
+        '/tmp/out dir/foo+bar',
+    )
+
+  def test_resolve_output_path_preserves_uri_authority(self):
+    file = bes_pb2.File(uri='file://host/share/foo')
+    self.assertEqual(
+        bazel_tools._resolve_output_path(file, _fail_exec_root),
+        '//host/share/foo',
+    )
+
+  def test_resolve_output_path_ignores_localhost_authority(self):
+    file = bes_pb2.File(uri='file://localhost/tmp/foo')
+    self.assertEqual(
+        bazel_tools._resolve_output_path(file, _fail_exec_root),
+        '/tmp/foo',
+    )
+
+  def test_resolve_output_path_falls_back_for_non_file_uri(self):
+    # Remote outputs (e.g. `bytestream://`) have no usable `file://` URI, so we
+    # join the execution root with the workspace-relative `path_prefix`.
+    file = bes_pb2.File(
+        uri='bytestream://remote.example.com/blobs/abc/123',
+        name='foo',
+        path_prefix=['bazel-out', 'k8-fastbuild', 'bin'],
+    )
+    self.assertEqual(
+        bazel_tools._resolve_output_path(file, lambda: '/exec/root'),
+        '/exec/root/bazel-out/k8-fastbuild/bin/foo',
+    )
+
+  def test_resolve_output_path_falls_back_for_missing_uri(self):
+    # The `uri` field is unset (e.g. inlined `contents`); fall back to the
+    # `path_prefix`.
+    file = bes_pb2.File(name='foo', path_prefix=['bazel-out', 'bin'])
+    self.assertEqual(
+        bazel_tools._resolve_output_path(file, lambda: '/exec/root'),
+        '/exec/root/bazel-out/bin/foo',
+    )
+
+  def test_resolve_output_path_queries_exec_root_at_most_once(self):
+    # Mirrors the wrapping in `_build_multiple_targets`: a single
+    # `lru_cache`-wrapped callable shared across all outputs must shell out to
+    # `bazel info` at most once, even when several outputs take the fallback.
+    calls = 0
+
+    def _counting_exec_root() -> str:
+      nonlocal calls
+      calls += 1
+      return '/exec/root'
+
+    exec_root_fn = functools.lru_cache(_counting_exec_root)
+    files = [
+        bes_pb2.File(
+            uri='file:///exec/root/bazel-out/bin/local',
+            name='local',
+            path_prefix=['bazel-out', 'bin'],
+        ),
+        bes_pb2.File(
+            uri='bytestream://remote.example.com/blobs/abc/1',
+            name='remote_a',
+            path_prefix=['bazel-out', 'bin'],
+        ),
+        bes_pb2.File(
+            uri='bytestream://remote.example.com/blobs/abc/2',
+            name='remote_b',
+            path_prefix=['bazel-out', 'bin'],
+        ),
+    ]
+
+    paths = [bazel_tools._resolve_output_path(f, exec_root_fn) for f in files]
+
+    self.assertEqual(
+        paths,
+        [
+            '/exec/root/bazel-out/bin/local',
+            '/exec/root/bazel-out/bin/remote_a',
+            '/exec/root/bazel-out/bin/remote_b',
+        ],
+    )
+    self.assertEqual(calls, 1)
+
+  def test_resolve_output_path_never_queries_exec_root_for_file_uris(self):
+    # When every output has a `file://` URI the exec root is never queried.
+    calls = 0
+
+    def _counting_exec_root() -> str:
+      nonlocal calls
+      calls += 1
+      return '/exec/root'
+
+    exec_root_fn = functools.lru_cache(_counting_exec_root)
+    files = [
+        bes_pb2.File(uri='file:///exec/root/bazel-out/bin/a', name='a'),
+        bes_pb2.File(uri='file:///exec/root/bazel-out/bin/b', name='b'),
+    ]
+
+    [bazel_tools._resolve_output_path(f, exec_root_fn) for f in files]
+
+    self.assertEqual(calls, 0)
 
 
 if __name__ == '__main__':
