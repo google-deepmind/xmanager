@@ -55,8 +55,6 @@ _current_experiment_unit: contextvars.ContextVar[ExperimentUnit | None] = (
     contextvars.ContextVar('_xm_current_experiment_unit', default=None)
 )
 
-xmanager_experiment_id = -1
-
 
 def _check_if_unsupported_args_are_present(
     args: Mapping[str, Any], supported_args: Collection[str], job_type: str
@@ -93,16 +91,6 @@ def _apply_args(job_type: job_blocks.JobType, args: Mapping[str, Any]) -> None:
     case _:
       pass
   # pytype: enable=attribute-error
-
-
-def get_contextvar_value_by_name(name: str) -> Any | None:
-  ctx = contextvars.copy_context()
-  # Note: returns None when the var is unset, even if the ContextVar is defined
-  # with a non-None `default` kwarg.
-  for k, v in ctx.items():
-    if k.name == name:
-      return v
-  return None
 
 
 def _is_coro_context() -> bool:
@@ -735,8 +723,8 @@ class Experiment(abc.ABC):
   # A class variable for batching packaging requests.
   _async_packager: ClassVar[async_packager.AsyncPackager]
   # ContextVars token when entering the context.
-  _current_experiment_token: contextvars.Token
-  _current_async_experiment_token: contextvars.Token
+  _current_experiment_token: contextvars.Token[Experiment]
+  _current_async_experiment_token: contextvars.Token[Experiment]
   # Counts how many of each role were added to the experiment.
   _added_roles: Counter[Type[ExperimentUnitRole]] = collections.Counter()
 
