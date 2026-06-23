@@ -1,0 +1,141 @@
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+edition = "2023";
+
+package cloud.xmanager.v1;
+
+import "google/api/annotations.proto";
+import "google/api/client.proto";
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/field_mask.proto";
+import "xmanager_cloud/xid_service/proto/messages.proto";
+
+service XidService {
+  // AIP-131 compliant Get API call.
+  rpc GetXidEntry(GetXidEntryRequest) returns (XidEntry) {
+    option (google.api.http) = {
+      get: "/v1/{name=xids/*}"
+    };
+    option (google.api.method_signature) = "name";
+  }
+
+  // A utility API call to authorize a user to act on a given XID. This is
+  // intended to be used by the XManager client libraries without calling
+  // GetXidEntry spuriously.
+  rpc CheckUserAuthorization(CheckUserAuthorizationRequest)
+      returns (CheckUserAuthorizationResponse) {
+    option (google.api.http) = {
+      post: "/v1/{name=xids/*}:checkUserAuthorization"
+      body: "*"
+    };
+    option (google.api.method_signature) = "name,user,role_type";
+  }
+
+  // AIP-132 compliant List API call. Data returned from this method is strongly
+  // consistent.
+  rpc ListXidEntries(ListXidEntriesRequest) returns (ListXidEntriesResponse) {
+    option (google.api.http) = {
+      get: "/v1/xids"
+    };
+  }
+
+  // Search API call that mimics AIP-132 List behavior for searching. Data
+  // returned from this method is at most 15 seconds stale.
+  rpc SearchXidEntries(ListXidEntriesRequest) returns (ListXidEntriesResponse) {
+    option (google.api.http) = {
+      post: "/v1/xids:search"
+      body: "*"
+    };
+  }
+
+  // AIP-133 compliant Create API call.
+  rpc CreateXidEntry(CreateXidEntryRequest) returns (XidEntry) {
+    option (google.api.http) = {
+      post: "/v1/xids"
+      body: "xid_entry"
+    };
+    option (google.api.method_signature) = "xid_entry";
+  }
+
+  // AIP-134 compliant Update API call.
+  rpc UpdateXidEntry(UpdateXidEntryRequest) returns (XidEntry) {
+    option (google.api.http) = {
+      patch: "/v1/{xid_entry.name=xids/*}"
+      body: "xid_entry"
+    };
+    option (google.api.method_signature) = "xid_entry,update_mask";
+  }
+}
+
+// AIP-131 compliant Get message.
+message GetXidEntryRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/XidEntry"
+    }
+  ];
+}
+
+message CheckUserAuthorizationRequest {
+  string name = 1 [
+    (google.api.field_behavior) = REQUIRED,
+    (google.api.resource_reference) = {
+      type: "cloud.xmanager.googleapis.com/XidEntry"
+    }
+  ];
+  string user = 2 [(google.api.field_behavior) = REQUIRED];
+  XidAcls.RoleType role_type = 3 [(google.api.field_behavior) = REQUIRED];
+}
+
+// AIP-132 compliant List message.
+message ListXidEntriesRequest {
+  // No parent is provided, as this is a top-level collection.
+  // The maximum number of XID entries to return.
+  int32 page_size = 1 [(google.api.field_behavior) = OPTIONAL];
+
+  // A page token, received from a previous `ListXidEntries` call.
+  string page_token = 2 [(google.api.field_behavior) = OPTIONAL];
+
+  // A comma-separated list of fields to order by.
+  string order_by = 3 [(google.api.field_behavior) = OPTIONAL];
+
+  // A filter expression to constrain the results.
+  string filter = 4 [(google.api.field_behavior) = OPTIONAL];
+}
+
+// Mostly AIP-133 compliant Create message.
+message CreateXidEntryRequest {
+  // No parent is provided, as this is a top-level collection.
+  // No ID is provided, as the server is responsible for generating it.
+  XidEntry xid_entry = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+// AIP-134 compliant Update message.
+message UpdateXidEntryRequest {
+  XidEntry xid_entry = 1 [(google.api.field_behavior) = REQUIRED];
+  google.protobuf.FieldMask update_mask = 2
+      [(google.api.field_behavior) = REQUIRED];
+}
+
+// AIP-132 compliant List response message.
+message ListXidEntriesResponse {
+  repeated XidEntry xid_entries = 1;
+  string next_page_token = 2;
+}
+
+message CheckUserAuthorizationResponse {
+  bool authorized = 1;
+}

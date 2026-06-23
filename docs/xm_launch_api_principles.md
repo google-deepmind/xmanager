@@ -59,7 +59,7 @@ more extensible and “hackable”.
 *   The execution structure (processes launched and their command line
     parameters) is not required to match the experiment structure (work units
     and their hyperparameters). With
-    [JobGenerators](https://github.com/deepmind/xmanager/blob/6d3809ed36c070cc07c84e31ca24f37b5fbc19af/xmanager/xm/job_blocks.py#L320)
+    [JobGenerators](https://github.com/deepmind/xmanager/blo(internal issue)d3809ed36c070cc07c84e31ca24f37b5fbc19af/xmanager/xm/job_blocks.py#L320)
     one can define an arbitrary mapping from work unit parameters to underlying
     process structure and how to encode parameters.
 *   `xmanager.xm` provides a generic API structure, but support for concrete

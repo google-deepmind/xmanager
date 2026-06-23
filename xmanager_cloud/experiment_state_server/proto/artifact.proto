@@ -1,0 +1,145 @@
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+package cloud.xmanager.v1;
+
+import "google/api/field_behavior.proto";
+import "google/api/resource.proto";
+import "google/protobuf/timestamp.proto";
+import "xmanager_cloud/experiment_state_server/proto/url.proto";
+import "xmanager_cloud/xid_service/proto/messages.proto";
+
+option java_multiple_files = true;
+
+// An Artifact represents a link to a resource created by, or associated with,
+// an Experiment or WorkUnit.
+message Artifact {
+  option (google.api.resource) = {
+    type: "cloud.xmanager.googleapis.com/Artifact"
+    pattern: "artifacts/{aid}"
+    singular: "artifact"
+    plural: "artifacts"
+  };
+
+  // Lifecycle phase of the artifact. This represents the phase of the
+  // experiment lifecycle that the artifact is associated with.
+  enum LifecyclePhase {
+    LIFECYCLE_PHASE_UNSPECIFIED = 0;
+    // Datasets, buckets, or other resources that are inputs to the experiment
+    // execution.
+    INPUT = 1;
+    // Logs, metrics, or other resources created during the experiment
+    // execution.
+    EXECUTION = 2;
+    // Datasets, models, or other resources created as outputs of the
+    // experiment execution.
+    OUTPUT = 3;
+  }
+
+  enum DataType {
+    DATA_TYPE_UNSPECIFIED = 0;
+
+    // --- Storage Primitives ---
+    URL = 1;        // External links (Dashboards, GCS, etc.)
+    FILE = 2;       // Generic file
+    DIRECTORY = 3;  // Generic directory
+
+    // --- Core ML Assets ---
+    MODEL_SNAPSHOTS = 4;  // Checkpoints/SavedModels (Training artifacts)
+    INFERENCE_MODEL = 5;  // Optimized models (ONNX, TFLite)
+    ML_DATASET = 6;       // Reference to the actual data
+    EMBEDDING = 7;        // Embeddings (e.g. text embeddings)
+
+    // --- Media & Visualization ---
+    VIDEO = 8;         // RL agents, video processing results
+    IMAGE = 9;         // Plots, generated images
+    AUDIO = 10;        // TTS/STT audio samples
+    HTML_REPORT = 11;  // Interactive reports
+    TEXT = 12;         // Logs, summaries, READMEs
+
+    // --- Specialized Media ---
+    POINT_CLOUD = 13;  // Lidar/Depth data
+    MESH = 14;         // 3D Geometry
+
+    // --- Metadata & Ops ---
+    DATA_SCHEMA = 15;      // Expected structure of input data
+    DATA_STATISTICS = 16;  // Distribution stats (for drift detection)
+    CONTAINER_IMAGE = 17;  // The environment used
+    CODE_SOURCE = 18;      // The exact code snapshot
+    CONFIGURATION = 19;    // Hyperparameters/Config files
+    EVENT_LOGS = 20;       // Binary logs
+
+    // --- Evaluation & Metrics ---
+    METRICS = 21;       // Scalar metrics (JSON/YAML) for experiment tracking
+    TEST_RESULTS = 22;  // Structured test results (e.g., JUnit XML)
+
+    // --- GenAI & NLP ---
+    PROMPT_TEMPLATE = 23;  // Prompt templates
+    VECTOR_INDEX = 24;     // Searchable indices
+    TOKENIZER = 25;        // Tokenizer vocab/merges
+
+    // --- Structure & Explainability ---
+    PIPELINE_GRAPH = 26;  // Compiled DAG/Workflow definition
+  }
+
+  // Resource name of the artifact in the format:
+  // - artifacts/{aid}
+  string name = 1 [(google.api.field_behavior) = IDENTIFIER];
+
+  // The resource name of the parent (either an Experiment or a WorkUnit).
+  // Format is one of the following:
+  // "experiments/{xid}"
+  // "experiments/{xid}/workUnits/{wid}"
+  string parent = 2 [(google.api.field_behavior) = IMMUTABLE];
+
+  Url url = 3 [(google.api.field_behavior) = REQUIRED];
+
+  // ACLs to control access to the artifact. The artifact inherits ACLs from
+  // the parent XID. The ACLs per artifact are the merged ACLs of it's parent
+  // XID(s) and the ACLs specified in this field, e.g. any writer of the parent
+  // XID can also write this artifact.
+  XidAcls acls = 4 [(google.api.field_behavior) = OPTIONAL];
+
+  // Tags for the artifact.
+  repeated string tags = 5 [(google.api.field_behavior) = OPTIONAL];
+  // Notes for the artifact.
+  string notes = 6 [(google.api.field_behavior) = OPTIONAL];
+
+  // The lifecycle phase of the artifact. This defines the phase of the
+  // experiment lifecycle that the artifact is associated with.
+  LifecyclePhase lifecycle_phase = 7 [(google.api.field_behavior) = OPTIONAL];
+  // The type of data that the artifact represents.
+  DataType data_type = 8 [(google.api.field_behavior) = OPTIONAL];
+  // The MIME type of the artifact, if applicable.
+  string mime_type = 9 [(google.api.field_behavior) = OPTIONAL];
+
+  message AdditionalInfo {
+    string title = 1;
+    oneof content {
+      string code_block = 2;
+      string text = 3;
+    }
+  }
+
+  // Additional info for the artifact.
+  AdditionalInfo additional_info = 12 [(google.api.field_behavior) = OPTIONAL];
+
+  // The timestamp of the artifact creation.
+  google.protobuf.Timestamp create_time = 10
+      [(google.api.field_behavior) = OUTPUT_ONLY];
+  // The timestamp of the artifact last update.
+  google.protobuf.Timestamp update_time = 11
+      [(google.api.field_behavior) = OUTPUT_ONLY];
+}

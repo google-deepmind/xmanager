@@ -21,6 +21,13 @@ import sys
 import textwrap
 
 from absl import app
+# copybara:strip_begin(xmc)
+from xmanager.xm_cloud.cli import list_command
+from xmanager.xm_cloud.cli import restart_command
+from xmanager.xm_cloud.cli import stop_command
+
+
+# copybara:strip_end
 
 _DEFAULT_ZONE = 'us-west1-b'
 _DEFAULT_CLUSTER_NAME = 'xmanager-via-caliban'
@@ -34,13 +41,31 @@ def _help_command(argv):
     width = shutil.get_terminal_size().columns
   except OSError:
     width = 80
-  print('usage: xmanager {launch,cluster} ...')
+  # copybara:strip_begin(xmc)
+  print('usage: xmc {launch,restart,stop,list} ...')
+  # copybara:strip_end_and_replace_begin
+  # print('usage: xmanager {launch,cluster} ...')
+  # copybara:replace_end
   print()
   opts = {
       'launch': 'Launches an experiment on XManager.',
-      'cluster': (
-         'Creates or deletes a GKE cluster for use with xm_local.'
+      # copybara:strip_begin(xmc)
+      'restart': (
+          'Restarts experiments launched by xm_cloud. Does not'
+          ' work with xm_local.'
       ),
+      'stop': (
+          'Stops experiments launched by xm_cloud. Does not work with xm_local.'
+      ),
+      'list': (
+          'Lists xm_cloud experiments matching a filter. Does not work with'
+          ' xm_local.'
+      ),
+      # copybara:strip_end_and_replace_begin
+      # 'cluster': (
+      #    'Creates or deletes a GKE cluster for use with xm_local.'
+      # ),
+      # copybara:replace_end
   }
   for k, v in opts.items():
     wrapper = textwrap.TextWrapper(
@@ -105,6 +130,14 @@ def main(argv):
       _launch_command(argv)
     case 'cluster':
       _cluster_command(argv)
+    # copybara:strip_begin(xmc)
+    case 'stop':
+      stop_command.stop_command(argv)
+    case 'restart':
+      restart_command.restart_command(argv)
+    case 'list':
+      list_command.list_command()
+    # copybara:strip_end
     case _:
       raise app.UsageError(f'Command `{argv[1]}` is not a supported command')
 

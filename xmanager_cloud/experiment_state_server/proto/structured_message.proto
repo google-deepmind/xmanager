@@ -1,0 +1,107 @@
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+syntax = "proto3";
+
+package cloud.xmanager.v1;
+
+import "google/api/field_behavior.proto";
+import "google/protobuf/timestamp.proto";
+import "xmanager_cloud/experiment_state_server/proto/url.proto";
+
+option java_multiple_files = true;
+
+message StructuredMessage {
+  // Each severity level is preempted by the ones below, and the user will only
+  // see the highest severity message.
+  enum Severity {
+    SEVERITY_UNSPECIFIED = 0;
+    // A DEBUG message is used to provide secondary information about the
+    // status of an resource. If information is not actionable and is otherwise
+    // represented by a different piece of information, it should be represented
+    // as a DEBUG message.
+    DEBUG = 10;
+    // An INFO message is used to provide information about the status of an
+    // resource. If information is not actionable, but does provide useful
+    // context or insight into the status of a resource, it should be
+    // represented as an INFO message.
+    INFO = 20;
+    // A WARNING message should be used to provide non-critical information to
+    // the user. This information may be actionable, and may be used to indicate
+    // a problem that the user should be made aware of but may not need to take
+    // immediate action to resolve.
+    WARNING = 30;
+    // An ERROR message should be used to provide critical information to the
+    // user. This information should be actionable, and should be used to
+    // indicate a problem that the user should be made aware of.
+    ERROR = 40;
+    // A FATAL message should be used to indicate a problem that is not
+    // recoverable. Any FATAL message should indicate that the resource cannot
+    // progress without restarting or changing the resource, or that the state
+    // of the resource is inconsistent and should not be relied upon.
+    // E.G. a launch script failure or a failed attempt to queue a create action
+    // would result in a FATAL message.
+    FATAL = 50;
+  }
+
+  // Each source indicates the component that is responsible for the message.
+  // This is used to determine whether a message should be displayed on the UI,
+  // and in certain cases, whether a higher priority message should be shown
+  // instead of a lower priority message.
+  enum Source {
+    SOURCE_UNSPECIFIED = 0;
+    XMANAGER_CLIENT = 1;   // Status messages from the XManager client.
+    XMANAGER_BACKEND = 2;  // Status messages from the XManager backend.
+    ADAPTER = 3;           // Status messages from the adapter.
+    KUBERNETES = 4;        // Status messages from Kubernetes.
+    SCHEDULER = 5;         // Status messages from the scheduler.
+    APPLICATION = 6;       // Status messages from the application.
+    // We don't support this now, but we may want to support implicit logs from
+    // the user application in the future, or user-defined status messages from
+    // API calls (StopWorkUnit, etc.).
+    USER_DEFINED = 7;  // Status messages defined by the user.
+  }
+
+  // The severity of the message.
+  Severity severity = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // The source of the message.
+  Source source = 2 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Parent of this structured message, by resource name. This should be either
+  // empty or the name of the parent resource. This is used when structured
+  // messages are denormalized to parent resources, such as when a work unit
+  // message is denormalized to the experiment level.
+  string parent = 3 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // The message intended to be shown to users.
+  string user_facing_text = 4 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // The URL to be shown to users. This is optional.
+  Url user_facing_url = 5 [(google.api.field_behavior) = OUTPUT_ONLY];
+  // The timestamp of the creation of the message. Messages cannot be updated,
+  // only created, so this is also the timestamp of the last update to the
+  // message.
+  google.protobuf.Timestamp create_time = 6
+      [(google.api.field_behavior) = OUTPUT_ONLY];
+  // Auxiliary information associated with the message.
+  AuxiliaryInfo auxiliary_info = 7 [(google.api.field_behavior) = OUTPUT_ONLY];
+}
+
+message AuxiliaryInfo {
+  oneof detail {
+    string stack_trace = 1;
+    QueueInfo queue_info = 2;
+  }
+}
+
+message QueueInfo {
+  int32 position_in_queue = 1;
+  int32 total_workloads_in_queue = 2;
+}
