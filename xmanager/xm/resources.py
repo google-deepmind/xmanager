@@ -85,6 +85,11 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
   # TPUs
   TPU_V2 = 3
   TPU_V3 = 16
+  TPU_V4 = 34
+  TPU_V5E = 60
+  TPU_V5P = 59
+  TPU_V6E = 63
+  TPU_V7X = 92
 
   # TODO: do we need V2_DONUT and V3_DONUT?
 
@@ -191,6 +196,11 @@ TpuType = _enum_subset(
     [
         ResourceType.TPU_V2,
         ResourceType.TPU_V3,
+        ResourceType.TPU_V4,
+        ResourceType.TPU_V5E,
+        ResourceType.TPU_V5P,
+        ResourceType.TPU_V6E,
+        ResourceType.TPU_V7X,
     ],
 )
 
