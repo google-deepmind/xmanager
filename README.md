@@ -1,6 +1,10 @@
 # XManager: A framework for managing machine learning experiments 🧑‍🔬
 
 <!-- Note that links in README.md have to be absolute as it also lands on PyPI. -->
+NOTE: If you are looking for the private preview of XManager on Cloud (XMC),
+reach out to your GCP account team or xmanager_cloud@google.com. This repository
+only contains the client code, and not the server/UI code required for full
+integration.
 
 XManager is a platform for packaging, running and keeping track of machine
 learning experiments. It currently enables one to launch experiments locally or
@@ -43,7 +47,7 @@ cd xmanager/setup_scripts && chmod +x setup_all.sh && . ./setup_all.sh
 
 ## Prerequisites
 
-The codebase assumes Python 3.9+.
+The codebase assumes Python 3.10+.
 
 ### Install Docker (optional)
 

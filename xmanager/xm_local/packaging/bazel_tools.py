@@ -20,6 +20,7 @@ import re
 import subprocess
 from typing import Optional, Sequence
 
+from google.protobuf.internal.decoder import _DecodeVarint32
 from xmanager import xm
 from xmanager import xm_flags
 from xmanager.bazel import client

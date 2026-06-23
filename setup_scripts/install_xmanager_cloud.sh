@@ -14,8 +14,7 @@
 set -e
 
 # Determine the workspace root directory.
-SOURCE_ROOT_DIR="$(realpath "$(dirname "$0")/..")"
-
+SOURCE_ROOT_DIR="$(realpath "$(dirname "$0")")"
 
 if [ ! -d "$SOURCE_ROOT_DIR/venv" ]; then
   echo "Virtual environment 'venv' not found. Creating it..."

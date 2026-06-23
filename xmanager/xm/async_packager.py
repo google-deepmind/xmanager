@@ -16,7 +16,7 @@
 import asyncio
 import concurrent.futures as concurrent_futures
 import threading
-from typing import Awaitable, Callable, Sequence, TypeVar
+from typing import Any, Awaitable, Callable, Sequence
 
 from xmanager.xm import job_blocks
 
@@ -25,17 +25,12 @@ class PackageHasNotBeenCalledError(RuntimeError):
   """Access to package_async() awaitable prior to calling .package()."""
 
 
-Awaited = TypeVar('Awaited')
-
-
 class PicklableAwaitableImpl:
   """Awaitable type with known value which can be pickled."""
 
   def __init__(
       self,
-      get_future: Callable[
-          [], asyncio.Future[Awaited] | concurrent_futures.Future[Awaited]
-      ],
+      get_future: Callable[[], concurrent_futures.Future[Any]],
   ):
     self._get_future = get_future
 
@@ -47,12 +42,12 @@ class PicklableAwaitableImpl:
 
 
 def _return_awaited(
-    awaited: Awaited,
-) -> Awaitable[Awaited]:
+    awaited: Any,
+) -> Awaitable[Any]:
   """Returns a picklable awaitable for an already known value."""
 
-  def get_future() -> asyncio.Future[Awaited]:
-    future = asyncio.Future()
+  def get_future() -> concurrent_futures.Future[Any]:
+    future = concurrent_futures.Future()
     future.set_result(awaited)
     return future
 
