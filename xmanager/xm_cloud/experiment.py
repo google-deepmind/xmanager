@@ -39,7 +39,6 @@ FLAGS = flags.FLAGS
 _WELCOME_MESSAGE = """
 Welcome to XManager on Cloud!"""
 
-_DEFAULT_XMANAGER_UI_URL = 'https://ui.alpha.xmanageriso.dev'
 _DEFAULT_QUEUE_NAME = 'cpu-queue'
 
 _TPU_TYPE_TO_GKE_ACCELERATOR = {
@@ -78,9 +77,7 @@ def _tpu_type_to_gke_accelerator(
 
 
 def _get_xmanager_ui_url() -> str:
-  if env_var := os.environ.get('XMANAGER_UI_URL'):
-    return env_var
-  return _DEFAULT_XMANAGER_UI_URL
+  return os.environ.get('XMANAGER_UI_URL', '')
 
 
 def _get_kueue_queue_name() -> str:
@@ -572,8 +569,9 @@ class XManagerCloudExperiment(xm.Experiment):
   def _print_experiment_link(self) -> None:
     print()
     print(f'Launched experiment {self.id} {self.title!r}.')
-    print()
-    print(f'XManager UI: {_get_xmanager_ui_url()}/{self.resource_name}')
+    if ui_url := _get_xmanager_ui_url():
+      print()
+      print(f'XManager UI: {ui_url}/{self.resource_name}')
 
   def _update_experiment_launch_state(
       self,
