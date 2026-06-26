@@ -13,12 +13,13 @@
 # limitations under the License.
 """Bazel tools for local packaging."""
 
+import collections
 import functools
 import itertools
 import os
 import re
 import subprocess
-from typing import Optional, Sequence
+from typing import Mapping, Optional, Sequence
 
 from google.protobuf.internal.decoder import _DecodeVarint32
 from xmanager import xm
@@ -30,16 +31,69 @@ from google.protobuf.internal.decoder import _DecodeVarint32
 from xmanager.generated import build_event_stream_pb2 as bes_pb2
 
 
+def _resolve_named_sets(
+    named_sets: Mapping[str, bes_pb2.NamedSetOfFiles],
+    file_set_ids: Sequence[str],
+) -> list[bes_pb2.File]:
+  """Transitively flattens the named sets referenced by `file_set_ids`.
+
+  The `visited` set guards against cycles and avoids re-walking shared sets.
+  """
+  files: list[bes_pb2.File] = []
+  visited: set[str] = set()
+  queue = collections.deque(file_set_ids)
+  while queue:
+    current = queue.popleft()
+    if current in visited:
+      continue
+    visited.add(current)
+    named_set = named_sets.get(current)
+    if named_set is None:
+      continue
+    files.extend(named_set.files)
+    for nested in named_set.file_sets:
+      queue.append(nested.id)
+  return files
+
+
 def _get_important_outputs(
     events: Sequence[bes_pb2.BuildEvent], labels: Sequence[str]
 ) -> list[list[bes_pb2.File]]:
+  """Returns the important (default) outputs for each of `labels`.
+
+  `completed.important_output` historically mirrored the files of the target's
+  "default" output group. Newer Bazel versions (notably with Bzlmod) leave it
+  empty and instead reference those files indirectly through
+  `completed.output_group[*].file_sets`, which point into `NamedSetOfFiles`
+  events. When `important_output` is empty we reconstruct it by transitively
+  resolving the "default" output group's named sets.
+  """
+  named_sets: dict[str, bes_pb2.NamedSetOfFiles] = {}
+  for event in events:
+    if event.id.HasField('named_set'):
+      named_sets[event.id.named_set.id] = event.named_set_of_files
+
   label_to_output: dict[str, list[bes_pb2.File]] = {}
   for event in events:
-    if event.id.HasField('target_completed'):
-      # Note that we ignore `event.id.target_completed.aspect`.
-      label_to_output[event.id.target_completed.label] = list(
-          event.completed.important_output
-      )
+    if not event.id.HasField('target_completed'):
+      continue
+    # Note that we ignore `event.id.target_completed.aspect`.
+    label = event.id.target_completed.label
+
+    outputs = list(event.completed.important_output)
+    if not outputs:
+      # Only the "default" output group corresponds to `important_output`;
+      # other groups (e.g. a `py_binary`'s zip) would add spurious files.
+      default_file_sets = [
+          file_set.id
+          for group in event.completed.output_group
+          if group.name == 'default'
+          for file_set in group.file_sets
+      ]
+      outputs = _resolve_named_sets(named_sets, default_file_sets)
+
+    label_to_output[label] = outputs
+
   return [label_to_output[label] for label in labels]
 
 
