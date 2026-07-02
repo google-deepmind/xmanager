@@ -3,7 +3,6 @@
 from xmanager.xm_cloud import executor
 from xmanager.xm_cloud import experiment
 
-from xmanager_cloud.experiment_state_server.proto import artifact_pb2
 from xmanager_cloud.experiment_state_server.proto import priority_pb2
 from xmanager_cloud.experiment_state_server.proto import structured_message_pb2
 from xmanager_cloud.experiment_state_server.proto import url_pb2
@@ -30,5 +29,5 @@ Priority = priority_pb2.Priority
 Url = url_pb2.Url
 Acls = xid_messages_pb2.XidAcls
 SchedulingConstraints = work_unit_pb2.SchedulingConstraints
-Artifact = artifact_pb2.Artifact
+Artifact = experiment.Artifact
 StructuredMessage = structured_message_pb2.StructuredMessage
