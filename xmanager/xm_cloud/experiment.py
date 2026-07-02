@@ -800,19 +800,48 @@ def _convert_xm_job_to_ess_job(
         ),
     )
 
+  explicit_executable_fields = {'resources', 'docker_image', 'args', 'env_vars'}
+  executable_proto_kwargs = {}
+  for field in work_unit_pb2.ExecutableSpec.DESCRIPTOR.fields:
+    if field.name in explicit_executable_fields:
+      continue
+    val = getattr(job.executable, field.name, None)
+    if val is not None:
+      executable_proto_kwargs[field.name] = val
+
+  spec = work_unit_pb2.ExecutableSpec(
+      resources=resources,
+      docker_image=job.executable.image_path,
+      args=args,
+      env_vars=job.env_vars,
+      **executable_proto_kwargs,
+  )
+
+  explicit_job_fields = {
+      'name',
+      'spec',
+      'dependency_order',
+      'replicas',
+      'annotations',
+      'retry_limit',
+  }
+  job_proto_kwargs = {}
+  for field in work_unit_pb2.KubernetesJob.DESCRIPTOR.fields:
+    if field.name in explicit_job_fields:
+      continue
+    val = getattr(job, field.name, None)
+    if val is not None:
+      job_proto_kwargs[field.name] = val
+
   return work_unit_pb2.KubernetesJob(
       name=job.name,
-      spec=work_unit_pb2.ExecutableSpec(
-          resources=resources,
-          docker_image=job.executable.image_path,
-          args=args,
-          env_vars=job.env_vars,
-      ),
+      spec=spec,
       annotations=executor.annotations,
       replicas=executor.requirements.replicas,
       retry_limit=executor.replica_retry_limit,
       active_deadline_seconds=executor.active_deadline_seconds,
       dependency_order=dependency_order,
+      **job_proto_kwargs,
   )
 
 
