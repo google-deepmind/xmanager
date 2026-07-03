@@ -22,6 +22,7 @@ from absl.testing import parameterized
 # if they have the definitions
 from xmanager_cloud.experiment_state_server.proto import api_pb2 as experiment_state_service_pb2
 from xmanager_cloud.experiment_state_server.proto import artifact_pb2
+from xmanager_cloud.experiment_state_server.proto import url_pb2
 
 # Suppress git executable warning/errors in sandboxed test environments
 os.environ['GIT_PYTHON_REFRESH'] = 'quiet'
@@ -112,12 +113,12 @@ if is_mocked:
 
 # According to the Python style guide, third-party imports (like 'xmanager')
 # should typically come before and previous other imports. However, in this
-# test, we need to mock classes within 'experiment'
-# *before* the 'xmanager.xm_cloud.experiment' module is imported, as
-# 'experiment' depends on them. The mocking logic must execute before
-# 'experiment' is loaded. Thus, we temporarily disable the import order check.
+# test, we need to mock classes within 'artifact'
+# *before* the 'xmanager.xm_cloud.artifact' module is imported, as
+# 'artifact' depends on them. The mocking logic must execute before
+# 'artifact' is loaded. Thus, we temporarily disable the import order check.
 # pylint: disable=g-import-not-at-top,g-bad-import-order
-from xmanager.xm_cloud import experiment
+from xmanager.xm_cloud import artifact
 
 # pylint: enable=g-import-not-at-top,g-bad-import-order
 
@@ -165,7 +166,7 @@ class ProcessArtifactPayloadTest(parameterized.TestCase):
       artifact_pb2.TextArtifact.return_value.text = 'some text'
       artifact_pb2.TextArtifact.return_value.title = 'My Text Artifact'
 
-    payload, additional_info, metadata = experiment._process_artifact_payload(
+    payload, additional_info, metadata = artifact._process_artifact_payload(
         title='My Text Artifact',
         kwargs=kwargs,
         default_url='http://default',
@@ -202,7 +203,7 @@ class ProcessArtifactPayloadTest(parameterized.TestCase):
     if is_mocked:
       artifact_pb2.UrlArtifact.return_value.url = 'http://foo'
 
-    payload, additional_info, metadata = experiment._process_artifact_payload(
+    payload, additional_info, metadata = artifact._process_artifact_payload(
         title='My Url Artifact',
         kwargs=kwargs,
         default_url='http://default',
@@ -228,7 +229,7 @@ class ProcessArtifactPayloadTest(parameterized.TestCase):
       artifact_pb2.CodeSourceArtifact.return_value.code_url = 'http://code_url'
       artifact_pb2.CodeSourceArtifact.return_value.title = 'My Code Artifact'
 
-    payload, additional_info, metadata = experiment._process_artifact_payload(
+    payload, additional_info, metadata = artifact._process_artifact_payload(
         title='My Code Artifact',
         kwargs=kwargs,
         default_url='http://default',
@@ -266,7 +267,7 @@ class ProcessArtifactPayloadTest(parameterized.TestCase):
   def test_process_payload_multiple_errors(self):
     kwargs = {'text': 'some text', 'url': 'http://foo'}
     with self.assertRaisesRegex(ValueError, 'Only one artifact payload type'):
-      experiment._process_artifact_payload(
+      artifact._process_artifact_payload(
           title='Error',
           kwargs=kwargs,
           default_url='http://default',
@@ -286,7 +287,7 @@ class ProcessArtifactPayloadTest(parameterized.TestCase):
 
     kwargs = {'text': 'new text'}
     with self.assertRaisesRegex(ValueError, 'Cannot specify both legacy'):
-      experiment._process_artifact_payload(
+      artifact._process_artifact_payload(
           title='Error',
           kwargs=kwargs,
           default_url='http://default',
@@ -299,7 +300,7 @@ class ProcessArtifactPayloadTest(parameterized.TestCase):
       artifact_pb2.TextArtifact.return_value.text = 'legacy text'
       artifact_pb2.TextArtifact.return_value.title = 'Legacy Text'
 
-    payload, additional_info, _ = experiment._process_artifact_payload(
+    payload, additional_info, _ = artifact._process_artifact_payload(
         title='Legacy Text',
         kwargs=kwargs,
         default_url='http://default',
@@ -349,7 +350,7 @@ class ProcessArtifactPayloadTest(parameterized.TestCase):
 
     kwargs = {'url': 'http://sibling_url'}
 
-    payload, additional_info, _ = experiment._process_artifact_payload(
+    payload, additional_info, _ = artifact._process_artifact_payload(
         title='Legacy Title',
         kwargs=kwargs,
         default_url='http://default',
@@ -401,7 +402,7 @@ class CreateArtifactTest(parameterized.TestCase):
   def test_create_artifact_unexpected_args(self):
     mock_stub = mock.MagicMock()
     with self.assertRaisesRegex(TypeError, 'unexpected keyword arguments'):
-      experiment._create_artifact(
+      artifact.create_artifact(
           stub=mock_stub,
           parent_resource_name='experiments/123',
           text='some text',
@@ -437,7 +438,7 @@ class CreateArtifactTest(parameterized.TestCase):
 
     mock_stub.create_artifact.return_value = mock_proto_response
 
-    art = experiment._create_artifact(
+    art = artifact.create_artifact(
         stub=mock_stub,
         parent_resource_name='experiments/123',
         text='hello',
@@ -473,6 +474,200 @@ class CreateArtifactTest(parameterized.TestCase):
       self.assertEqual(called_request.parent, 'experiments/123')
       self.assertEqual(called_request.artifact.payload.text.text, 'hello')
       self.assertEqual(called_request.artifact.payload.text.title, 'My Title')
+
+
+class UpdateArtifactTest(parameterized.TestCase):
+
+  def setUp(self):
+    super().setUp()
+    if is_mocked:
+      artifact_pb2.Artifact.reset_mock()
+      artifact_pb2.Artifact.AdditionalInfo.reset_mock()
+      artifact_pb2.ArtifactPayload.reset_mock()
+      artifact_pb2.TextArtifact.reset_mock()
+      artifact_pb2.UrlArtifact.reset_mock()
+      artifact_pb2.CodeSourceArtifact.reset_mock()
+      experiment_state_service_pb2.UpdateArtifactRequest = mock.MagicMock(
+          name='UpdateArtifactRequest'
+      )
+
+      artifact_pb2.TextArtifact.return_value.text = ''
+      artifact_pb2.TextArtifact.return_value.title = ''
+
+  def test_update_artifact_no_args_error(self):
+    mock_stub = mock.MagicMock()
+    with self.assertRaisesRegex(
+        ValueError, 'At least one field must be specified'
+    ):
+      artifact.update_artifact(
+          stub=mock_stub,
+          artifact_resource_name='experiments/123/artifacts/456',
+      )
+
+  def test_update_artifact_unexpected_args(self):
+    mock_stub = mock.MagicMock()
+    with self.assertRaisesRegex(TypeError, 'unexpected keyword arguments'):
+      artifact.update_artifact(
+          stub=mock_stub,
+          artifact_resource_name='experiments/123/artifacts/456',
+          notes='new note',
+          invalid_arg='value',
+      )
+
+  def test_update_artifact_success_common_fields(self):
+    mock_stub = mock.MagicMock()
+
+    if is_mocked:
+      mock_proto_response = mock.MagicMock(name='ArtifactProtoResponse')
+      mock_proto_response.name = 'experiments/123/artifacts/456'
+      mock_proto_response.notes = 'new note'
+      mock_proto_response.payload.WhichOneof.return_value = 'unspecified'
+    else:
+      mock_proto_response = artifact_pb2.Artifact(
+          name='experiments/123/artifacts/456',
+          notes='new note',
+      )
+
+    mock_stub.update_artifact.return_value = mock_proto_response
+
+    art = artifact.update_artifact(
+        stub=mock_stub,
+        artifact_resource_name='experiments/123/artifacts/456',
+        notes='new note',
+    )
+
+    self.assertEqual(art.id, 456)
+    self.assertEqual(art.name, 'experiments/123/artifacts/456')
+    self.assertEqual(art.type, 'unspecified')
+
+    if is_mocked:
+      experiment_state_service_pb2.UpdateArtifactRequest.assert_called_once_with(
+          artifact=artifact_pb2.Artifact.return_value,
+          update_mask=mock.ANY,
+      )
+      called_mask = (
+          experiment_state_service_pb2.UpdateArtifactRequest.call_args[1][
+              'update_mask'
+          ]
+      )
+      self.assertEqual(list(called_mask.paths), ['notes'])
+    else:
+      called_request = mock_stub.update_artifact.call_args[0][0]
+      self.assertEqual(
+          called_request.artifact.name, 'experiments/123/artifacts/456'
+      )
+      self.assertEqual(called_request.artifact.notes, 'new note')
+      self.assertEqual(list(called_request.update_mask.paths), ['notes'])
+
+  def test_update_artifact_success_payload(self):
+    mock_stub = mock.MagicMock()
+
+    if is_mocked:
+      mock_proto_response = mock.MagicMock(name='ArtifactProtoResponse')
+      mock_proto_response.name = 'experiments/123/artifacts/456'
+      mock_proto_response.payload.WhichOneof.return_value = 'text'
+      mock_text_inst = mock.MagicMock(name='TextArtifactInstance')
+      mock_text_inst.text = 'new text'
+      mock_text_inst.title = 'Updated Title'
+      mock_proto_response.payload.text = mock_text_inst
+
+      artifact_pb2.TextArtifact.return_value.text = 'new text'
+      artifact_pb2.TextArtifact.return_value.title = 'Updated Title'
+    else:
+      mock_proto_response = artifact_pb2.Artifact(
+          name='experiments/123/artifacts/456',
+          payload=artifact_pb2.ArtifactPayload(
+              text=artifact_pb2.TextArtifact(
+                  text='new text', title='Updated Title'
+              )
+          ),
+      )
+
+    mock_stub.update_artifact.return_value = mock_proto_response
+
+    art = artifact.update_artifact(
+        stub=mock_stub,
+        artifact_resource_name='experiments/123/artifacts/456',
+        text='new text',
+        title='Updated Title',
+    )
+
+    self.assertEqual(art.id, 456)
+    self.assertEqual(art.type, 'text')
+    self.assertEqual(art.text.text, 'new text')
+
+    if is_mocked:
+      artifact_pb2.TextArtifact.assert_called_once_with(
+          text='new text', title='Updated Title'
+      )
+      artifact_pb2.ArtifactPayload.assert_called_once_with(
+          text=artifact_pb2.TextArtifact.return_value
+      )
+      called_mask = (
+          experiment_state_service_pb2.UpdateArtifactRequest.call_args[1][
+              'update_mask'
+          ]
+      )
+      self.assertEqual(
+          set(called_mask.paths), {'payload', 'url', 'additional_info'}
+      )
+    else:
+      called_request = mock_stub.update_artifact.call_args[0][0]
+      self.assertEqual(called_request.artifact.payload.text.text, 'new text')
+      self.assertEqual(
+          called_request.artifact.payload.text.title, 'Updated Title'
+      )
+      self.assertEqual(
+          set(called_request.update_mask.paths),
+          {'payload', 'url', 'additional_info'},
+      )
+
+  def test_update_artifact_success_legacy_url(self):
+    mock_stub = mock.MagicMock()
+
+    legacy_url = url_pb2.Url(
+        url='http://legacy', display_name='Legacy', icon='Icon'
+    )
+
+    if is_mocked:
+      mock_proto_response = mock.MagicMock(name='ArtifactProtoResponse')
+      mock_proto_response.name = 'experiments/123/artifacts/456'
+      mock_proto_response.url = legacy_url
+      mock_proto_response.payload.WhichOneof.return_value = 'unspecified'
+    else:
+      mock_proto_response = artifact_pb2.Artifact(
+          name='experiments/123/artifacts/456',
+          url=legacy_url,
+      )
+
+    mock_stub.update_artifact.return_value = mock_proto_response
+
+    art = artifact.update_artifact(
+        stub=mock_stub,
+        artifact_resource_name='experiments/123/artifacts/456',
+        url=legacy_url,
+    )
+
+    self.assertEqual(art.id, 456)
+    self.assertEqual(art.type, 'unspecified')
+
+    if is_mocked:
+      experiment_state_service_pb2.UpdateArtifactRequest.assert_called_once_with(
+          artifact=artifact_pb2.Artifact.return_value,
+          update_mask=mock.ANY,
+      )
+      called_mask = (
+          experiment_state_service_pb2.UpdateArtifactRequest.call_args[1][
+              'update_mask'
+          ]
+      )
+      self.assertEqual(list(called_mask.paths), ['url'])
+    else:
+      called_request = mock_stub.update_artifact.call_args[0][0]
+      self.assertEqual(called_request.artifact.url.url, 'http://legacy')
+      self.assertEqual(called_request.artifact.url.display_name, 'Legacy')
+      self.assertEqual(called_request.artifact.url.icon, 'Icon')
+      self.assertEqual(list(called_request.update_mask.paths), ['url'])
 
 
 if __name__ == '__main__':

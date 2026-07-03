@@ -227,8 +227,8 @@ else
 fi
 
 # Copy unit tests
-echo "Copying experiment unit tests..."
-cp "${XMANAGER_DIR}/${XM_CLOUD_REL_PATH}/experiment_test.py" "${XMANAGER_SRC_DIR}/${XM_CLOUD_REL_PATH}/experiment_test.py"
+echo "Copying artifact unit tests..."
+cp "${XMANAGER_DIR}/${XM_CLOUD_REL_PATH}/artifact_test.py" "${XMANAGER_SRC_DIR}/${XM_CLOUD_REL_PATH}/artifact_test.py"
 
 # Create package namespace file for xmanager_cloud
 mkdir -p "${XMANAGER_SRC_DIR}/xmanager_cloud"
@@ -259,7 +259,7 @@ find "${XMANAGER_SRC_DIR}/xmanager_cloud/experiment_state_server" \
   -name "*.py" -type f -exec "${SED_I[@]}" 's|from longrunning|from google.longrunning|g' {} +
 
 # Adjust python imports in copied test files
-"${SED_I[@]}" 's|g'oogle3'.third_party.||g' "${XMANAGER_SRC_DIR}/${XM_CLOUD_REL_PATH}/experiment_test.py"
+"${SED_I[@]}" 's|g'oogle3'.third_party.||g' "${XMANAGER_SRC_DIR}/${XM_CLOUD_REL_PATH}/artifact_test.py"
 
 # 6. Compile protos
 echo "Compiling xmanager_cloud protos..."
