@@ -75,4 +75,5 @@ class KubernetesJobExecutor(xm.Executor):
   active_deadline_seconds: int | None = attr.ib(kw_only=True, default=None)
   annotations: dict[str, str] | None = attr.ib(kw_only=True, default=None)
   dependency: Dependency | None = attr.ib(kw_only=True, default=None)
+  service_account: str | None = attr.ib(kw_only=True, default=None)
   Spec = KubernetesJobExecutorSpec  # pylint: disable=invalid-name

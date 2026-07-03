@@ -750,12 +750,14 @@ def _convert_xm_job_to_ess_job(
       'replicas',
       'annotations',
       'retry_limit',
+      'active_deadline_seconds',
   }
   job_proto_kwargs = {}
+  # map Executor fields to KubernetesJob fields.
   for field in work_unit_pb2.KubernetesJob.DESCRIPTOR.fields:
     if field.name in explicit_job_fields:
       continue
-    val = getattr(job, field.name, None)
+    val = getattr(job.executor, field.name, None)
     if val is not None:
       job_proto_kwargs[field.name] = val
 
