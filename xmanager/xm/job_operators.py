@@ -32,7 +32,7 @@ def shallow_copy_job_type(
   if isinstance(job_type, job_blocks.JobGroup):
     job_type = copy.copy(job_type)
     job_type.jobs = {
-        key: shallow_copy_job_type(job) for key, job in job_type.jobs.items()
+        key: shallow_copy_job_type(job) for key, job in job_type.jobs.items()  # pyrefly: ignore[bad-specialization]
     }
     return job_type
 
@@ -49,7 +49,7 @@ def populate_job_names(job_type: job_blocks.JobTypeVar) -> None:
           target.name = '_'.join(prefix) if prefix else target.executable.name
       case job_blocks.JobGroup() as target:
         for key, job in target.jobs.items():  # pytype: disable=attribute-error
-          matcher([*prefix, key], job)
+          matcher([*prefix, key], job)  # pyrefly: ignore[bad-argument-type]
       case _:
         return
 
@@ -62,20 +62,20 @@ def collect_jobs_by_filter(
 ) -> List[job_blocks.Job]:
   """Flattens a given job group and filters the result."""
 
-  def job_collector(job_type: job_blocks.JobTypeVar) -> List[job_blocks.Job]:
+  def job_collector(job_type: job_blocks.JobTypeVar) -> List[job_blocks.Job]:  # pyrefly: ignore[invalid-type-var]
     match job_type:
       case job_blocks.Job() as job:
         return [job] if predicate(job) else []  # pytype: disable=bad-return-type
       case job_blocks.JobGroup() as job_group:
         return list(
             itertools.chain.from_iterable(
-                [job_collector(job) for job in job_group.jobs.values()]
+                [job_collector(job) for job in job_group.jobs.values()]  # pyrefly: ignore[bad-argument-type]
             )
         )
       case _:
         raise TypeError(f'Unsupported job_type: {job_type!r}')
 
-  return job_collector(job_group)
+  return job_collector(job_group)  # pyrefly: ignore[bad-argument-type]
 
 
 @attr.s(auto_attribs=True)
@@ -122,7 +122,7 @@ def aggregate_constraint_cliques(
     return group_name
 
   def matcher(
-      job_type: job_blocks.JobTypeVar,
+      job_type: job_blocks.JobTypeVar,  # pyrefly: ignore[invalid-type-var]
       parent_group_name: str | None,
   ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
     match job_type:
@@ -135,7 +135,7 @@ def aggregate_constraint_cliques(
         size = len(job_group.jobs)
         for job in job_group.jobs.values():
           subcliques, subjobs = matcher(
-              job, group_name if job_group.constraints else None
+              job, group_name if job_group.constraints else None  # pyrefly: ignore[bad-argument-type]
           )
           cliques += subcliques
           jobs += subjobs
@@ -153,7 +153,7 @@ def aggregate_constraint_cliques(
       case _:
         raise TypeError(f'Unsupported job_type: {job_type!r}')
 
-  result, _ = matcher(job_group, None)  # pylint: disable=unpacking-non-sequence
+  result, _ = matcher(job_group, None)  # pylint: disable=unpacking-non-sequence  # pyrefly: ignore[bad-argument-type]
   return result
 
 
@@ -180,7 +180,7 @@ def get_jobs(job_group: job_blocks.JobGroup) -> dict[str, job_blocks.JobType]:
   for key, value in job_group.jobs.items():
     match value:
       case job_blocks.Job():
-        _check_job_exists(value.name, jobs)
+        _check_job_exists(value.name, jobs)  # pyrefly: ignore[bad-argument-type]
         jobs[str(value.name)] = value
       case job_blocks.JobGroup():
         jobs.update(get_jobs(value))

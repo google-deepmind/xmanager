@@ -346,7 +346,7 @@ class Topology:
   def __repr__(self) -> str:
     return f'xm.Topology({self.name!r})'
 
-  def __eq__(self, other: 'Topology') -> bool:
+  def __eq__(self, other: 'Topology') -> bool:  # pyrefly: ignore[bad-override]
     if not isinstance(other, Topology):
       return False
     return self.name == other.name
@@ -480,7 +480,7 @@ class JobRequirements:
     for resource_name, value in itertools.chain(
         resources.items(), kw_resources.items()
     ):
-      scalar, topology = _parse_resource_quantity(resource_name, value)  # pylint: disable=unpacking-non-sequence
+      scalar, topology = _parse_resource_quantity(resource_name, value)  # pylint: disable=unpacking-non-sequence  # pyrefly: ignore[bad-argument-type]
       match resource_name:
         case builtins.str() as r:
           if r == 'replicas':
@@ -527,7 +527,7 @@ class JobRequirements:
             f'For multihost GPUs with topology {self.topology}, replicas'
             f' should be either None or {inferred_replicas}. Got: {replicas}'
         )
-      replicas = inferred_replicas
+      replicas = inferred_replicas  # pyrefly: ignore[bad-assignment]
 
     self.replicas = replicas or 1
 
@@ -603,9 +603,9 @@ class JobRequirements:
     else:
       kwargs['replicas'] = self.replicas
 
-    return JobRequirements(merged_resources, **kwargs)
+    return JobRequirements(merged_resources, **kwargs)  # pyrefly: ignore[bad-argument-type]
 
-  def __eq__(self, other: 'JobRequirements') -> bool:
+  def __eq__(self, other: 'JobRequirements') -> bool:  # pyrefly: ignore[bad-override]
     if not isinstance(other, JobRequirements):
       return False
     return (

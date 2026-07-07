@@ -74,7 +74,7 @@ def _packaging_router(
         | xm.BazelContainer()
         | xm.PythonContainer()
     ):
-      return cloud_packaging.package_cloud_executable(
+      return cloud_packaging.package_cloud_executable(  # pyrefly: ignore[bad-return]
           built_targets,
           packageable,
           packageable.executable_spec,

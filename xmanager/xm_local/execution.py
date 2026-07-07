@@ -87,7 +87,7 @@ async def _launch_loaded_container_image(
       )
 
   container = instance.run_container(
-      name=get_full_job_name(job.name),
+      name=get_full_job_name(job.name),  # pyrefly: ignore[bad-argument-type]
       image_id=executable.image_id,
       network=_BRIDGE_NETWORK_NAME,
       args=args,
@@ -98,7 +98,7 @@ async def _launch_loaded_container_image(
       interactive=options.interactive,
   )
   return handles.ContainerHandle(
-      name=job.name,
+      name=job.name,  # pyrefly: ignore[bad-argument-type]
       model=container,
       stream_output=executor.experimental_stream_output,
   )
@@ -126,7 +126,7 @@ async def _launch_local_binary(
   if xm_flags.should_use_multiplexer():
     multiplexer = multiplexer_lib.instance()
     process = await multiplexer.add(
-        executable.command, args, env_vars, get_full_job_name(job.name)
+        executable.command, args, env_vars, get_full_job_name(job.name)  # pyrefly: ignore[bad-argument-type]
     )
   else:
     command = ' '.join([executable.command] + args)
@@ -143,7 +143,7 @@ async def _launch_local_binary(
         limit=1024 * 1024,  # 1 MB
     )
   return handles.BinaryHandle(
-      name=job.name,
+      name=job.name,  # pyrefly: ignore[bad-argument-type]
       process=process,
       stream_output=job.executor.experimental_stream_output,
   )

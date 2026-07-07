@@ -24,11 +24,11 @@ from xmanager.xm.resources import ResourceType
 class ResourceDictTest(absltest.TestCase):
 
   def test_resource_type_by_name(self):
-    self.assertEqual(ResourceType['cpu'], ResourceType.CPU)
-    self.assertEqual(ResourceType['Cpu'], ResourceType.CPU)
+    self.assertEqual(ResourceType['cpu'], ResourceType.CPU)  # pyrefly: ignore[bad-index]
+    self.assertEqual(ResourceType['Cpu'], ResourceType.CPU)  # pyrefly: ignore[bad-index]
     self.assertEqual(ResourceType['CPU'], ResourceType.CPU)
     with self.assertRaises(KeyError):
-      ResourceType['UPC']  # pylint: disable=pointless-statement
+      ResourceType['UPC']  # pylint: disable=pointless-statement  # pyrefly: ignore[bad-index]
 
   def test_resource_dict_to_string(self):
     resource_dict = resources.ResourceDict()
@@ -298,9 +298,9 @@ class JobRequirementsTest(parameterized.TestCase):
 class EnumSubsetTest(parameterized.TestCase):
 
   def test_construction(self):
-    self.assertEqual(resources.GpuType['V100'], resources.GpuType(17))
+    self.assertEqual(resources.GpuType['V100'], resources.GpuType(17))  # pyrefly: ignore[unsupported-operation]
     with self.assertRaises(AttributeError):
-      resources.GpuType['TPU_V3']  # pylint: disable=pointless-statement
+      resources.GpuType['TPU_V3']  # pylint: disable=pointless-statement  # pyrefly: ignore[unsupported-operation]
     with self.assertRaises(ValueError):
       resources.GpuType(170)
 

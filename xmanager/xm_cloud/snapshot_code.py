@@ -117,7 +117,7 @@ def push_repo_state(
           exc_info=True,
       )
       return RepoStateSnapshot(
-          commit_hash=commit_hash, repo_root=repo.working_dir
+          commit_hash=commit_hash, repo_root=repo.working_dir  # pyrefly: ignore[bad-argument-type]
       )
     commit_url = _get_commit_url(repo, commit_hash)
     if commit_url:
@@ -151,7 +151,7 @@ def push_repo_state(
             experiment_id,
         )
   return RepoStateSnapshot(
-      commit_hash=commit_hash, commit_url=commit_url, repo_root=repo.working_dir
+      commit_hash=commit_hash, commit_url=commit_url, repo_root=repo.working_dir  # pyrefly: ignore[bad-argument-type]
   )
 
 

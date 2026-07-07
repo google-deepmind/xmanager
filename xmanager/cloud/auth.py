@@ -98,7 +98,7 @@ def get_service_account() -> str:
     # API is not enabled.
     # The project admin probably already has set up IAM roles, so the former
     # check can be skipped.
-    if e.resp.status != 403 or 'cloudresourcemanager.googleapis.com' in e.uri:
+    if e.resp.status != 403 or 'cloudresourcemanager.googleapis.com' in e.uri:  # pyrefly: ignore[not-iterable]
       raise e
   return service_account
 
@@ -109,7 +109,7 @@ def _maybe_create_service_account(service_account: str) -> None:
   accounts = (
       iam.projects()
       .serviceAccounts()
-      .list(name='projects/' + get_project_name())
+      .list(name='projects/' + get_project_name())  # pyrefly: ignore[unsupported-operation]
       .execute()
   )
   for account in accounts.get('accounts', []):
@@ -127,7 +127,7 @@ def _maybe_create_service_account(service_account: str) -> None:
   accounts = (
       iam.projects()
       .serviceAccounts()
-      .create(name='projects/' + get_project_name(), body=body)
+      .create(name='projects/' + get_project_name(), body=body)  # pyrefly: ignore[unsupported-operation]
       .execute()
   )
 

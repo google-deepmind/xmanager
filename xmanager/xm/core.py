@@ -383,16 +383,16 @@ class ExperimentUnit(abc.ABC):
     # units.
     identity = self.identity or identity
 
-    job = job_operators.shallow_copy_job_type(job)
+    job = job_operators.shallow_copy_job_type(job)  # pyrefly: ignore[bad-specialization]
     if args is not None:
       _apply_args(job, args)
-    job_operators.populate_job_names(job)
+    job_operators.populate_job_names(job)  # pyrefly: ignore[bad-specialization]
 
     def launch_job(job: job_blocks.Job) -> Awaitable[None]:
       _current_experiment.set(self.experiment)
       _current_experiment_unit.set(self)
       return self._launch_job_group(
-          job_blocks.JobGroup(**{job.name: job}),
+          job_blocks.JobGroup(**{job.name: job}),  # pyrefly: ignore[bad-unpacking]
           _work_unit_arguments(job, self._args),
           identity,
       )
@@ -432,7 +432,7 @@ class ExperimentUnit(abc.ABC):
       case job_blocks.JobGroup() as job_group:
         job_awaitable = launch_job_group(job_group)
       case job_generator if job_blocks.is_job_generator(job):
-        job_awaitable = launch_job_generator(job_generator)
+        job_awaitable = launch_job_generator(job_generator)  # pyrefly: ignore[bad-argument-type]
       case job_blocks.JobConfig() as job_config:
         job_awaitable = launch_job_config(job_config)
       case _:
@@ -686,7 +686,7 @@ class AuxiliaryUnitJob(abc.ABC):
       return
 
     job_generator = self._job
-    coroutine = job_generator(aux_unit, **kwargs)
+    coroutine = job_generator(aux_unit, **kwargs)  # pyrefly: ignore[not-callable]
     assert coroutine is not None
     await coroutine
 
@@ -740,7 +740,7 @@ class Experiment(abc.ABC):
           '`async with` syntax'
       )
 
-    self._current_experiment_token = _current_experiment.set(self)
+    self._current_experiment_token = _current_experiment.set(self)  # pyrefly: ignore[bad-assignment]
     self._event_loop = asyncio.new_event_loop()
     self._event_loop_thread = self._thread_factory()(
         target=self._event_loop.run_forever, daemon=True
@@ -793,7 +793,7 @@ class Experiment(abc.ABC):
       raise exception
 
   def __exit__(self, exc_type, exc_value, traceback):  # pylint:disable=redefined-outer-name
-    _current_experiment.reset(self._current_experiment_token)
+    _current_experiment.reset(self._current_experiment_token)  # pyrefly: ignore[bad-argument-type]
     self._wait_for_tasks()
     self._event_loop.call_soon_threadsafe(self._event_loop.stop)
     self._event_loop_thread.join()
@@ -801,7 +801,7 @@ class Experiment(abc.ABC):
       self._validate_added_roles()
 
   async def __aenter__(self) -> Self:
-    self._current_async_experiment_token = _current_experiment.set(self)
+    self._current_async_experiment_token = _current_experiment.set(self)  # pyrefly: ignore[bad-assignment]
     self._event_loop = asyncio.get_event_loop()
     self._running_tasks = queue.Queue()
     return self
@@ -835,7 +835,7 @@ class Experiment(abc.ABC):
       raise exception
 
   async def __aexit__(self, exc_type, exc_value, traceback):  # pylint:disable=redefined-outer-name
-    _current_experiment.reset(self._current_async_experiment_token)
+    _current_experiment.reset(self._current_async_experiment_token)  # pyrefly: ignore[bad-argument-type]
     await self._await_for_tasks()
     self._validate_added_roles()
 
@@ -1105,7 +1105,7 @@ class Experiment(abc.ABC):
           'Event loop is not running. Have you entered Experiment context '
           'manager (e.g. with xm.create-experiment() as experiment:)?'
       )
-    future = asyncio.run_coroutine_threadsafe(task, loop=self._event_loop)
+    future = asyncio.run_coroutine_threadsafe(task, loop=self._event_loop)  # pyrefly: ignore[bad-argument-type]
     self._running_tasks.put_nowait(future)
     return future
 

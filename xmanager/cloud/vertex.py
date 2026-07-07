@@ -145,7 +145,7 @@ class Client:
       args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
       env_vars = {**executable.env_vars, **job.env_vars}
       env = [{'name': k, 'value': v} for k, v in env_vars.items()]
-      if i == 0 and job.executor.requirements.replicas > 1:
+      if i == 0 and job.executor.requirements.replicas > 1:  # pyrefly: ignore[missing-attribute]
         raise ValueError(
             'The first job in a JobGroup using the Vertex AI '
             'executor cannot have requirements.replicas > 1.'
@@ -157,7 +157,7 @@ class Client:
               args=args,
               env=env,
           ),
-          replica_count=job.executor.requirements.replicas,
+          replica_count=job.executor.requirements.replicas,  # pyrefly: ignore[missing-attribute]
       )
       pools.append(pool)
 
@@ -245,7 +245,7 @@ class Client:
   async def get_or_create_tensorboard(self, name: str) -> str:
     """Gets or creates a Vertex Tensorboard instance."""
     tensorboard_client = aip_v1.TensorboardServiceAsyncClient(
-        client_options={
+        client_options={  # pyrefly: ignore[bad-argument-type]
             'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
         }
     )
@@ -261,7 +261,7 @@ class Client:
   async def create_tensorboard(self, name: str) -> str:
     """Creates a Vertex Tensorboard instance."""
     tensorboard_client = aip_v1.TensorboardServiceAsyncClient(
-        client_options={
+        client_options={  # pyrefly: ignore[bad-argument-type]
             'api_endpoint': f'{self.location}-aiplatform.googleapis.com'
         }
     )
@@ -343,7 +343,7 @@ class VertexHandle(handles.ExecutionHandle):
 
   def get_status(self) -> local_status.LocalWorkUnitStatus:
     state = get_default_client().get_state(self.job_name)
-    status = _STATE_TO_STATUS[int(state)]
+    status = _STATE_TO_STATUS[int(state)]  # pyrefly: ignore[bad-index]
     return local_status.LocalWorkUnitStatus(status=status)
 
   def save_to_storage(self, experiment_id: int, work_unit_id: int) -> None:

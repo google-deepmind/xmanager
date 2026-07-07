@@ -66,7 +66,7 @@ def _package_container(
     GoogleContainerRegistryImage Executable.
   """
   del bazel_outputs
-  gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
+  gcr_project_prefix = 'gcr.io/' + auth.get_project_name()  # pyrefly: ignore[unsupported-operation]
   if (
       container.image_path.startswith(gcr_project_prefix)
       or not docker_lib.is_docker_installed()
@@ -113,7 +113,7 @@ def _package_dockerfile(
   del bazel_outputs
   push_image_tag = _get_push_image_tag(packageable.executor_spec)
   if not push_image_tag:
-    gcr_project_prefix = 'gcr.io/' + auth.get_project_name()
+    gcr_project_prefix = 'gcr.io/' + auth.get_project_name()  # pyrefly: ignore[unsupported-operation]
     tag = docker_lib.create_tag()
     push_image_tag = f'{gcr_project_prefix}/{dockerfile.name}:{tag}'
 
@@ -185,7 +185,7 @@ def _package_bazel_container(
 
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
-      image_path=push_image_tag,
+      image_path=push_image_tag,  # pyrefly: ignore[bad-argument-type]
   )
 
 

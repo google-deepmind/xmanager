@@ -100,11 +100,11 @@ class Client:
         )
       all_env_vars = {**executable.env_vars, **job.env_vars}
       env = [k8s_client.V1EnvVar(k, v) for k, v in all_env_vars.items()]
-      job_name = convert_to_valid_label(get_full_job_name(job.name))
+      job_name = convert_to_valid_label(get_full_job_name(job.name))  # pyrefly: ignore[bad-argument-type]
       container = k8s_client.V1Container(
           name=job_name,
           image=executable.image_path,
-          resources=requirements_from_executor(executor),
+          resources=requirements_from_executor(executor),  # pyrefly: ignore[bad-argument-type]
           args=xm.merge_args(executable.args, job.args).to_list(
               utils.ARG_ESCAPER
           ),
@@ -116,7 +116,7 @@ class Client:
           template=k8s_client.V1PodTemplateSpec(
               metadata=k8s_client.V1ObjectMeta(
                   labels={'service': service},
-                  annotations=annotations_from_executor(executor),
+                  annotations=annotations_from_executor(executor),  # pyrefly: ignore[bad-argument-type]
               ),
               spec=k8s_client.V1PodSpec(
                   service_account=xm_flags.K8S_SERVICE_ACCOUNT_NAME.value,
@@ -124,7 +124,7 @@ class Client:
                   subdomain=service,
                   restart_policy='Never',
                   containers=[container],
-                  node_selector=node_selector_from_executor(executor),
+                  node_selector=node_selector_from_executor(executor),  # pyrefly: ignore[bad-argument-type]
               ),
           ),
           backoff_limit=0,

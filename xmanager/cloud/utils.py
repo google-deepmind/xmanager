@@ -55,7 +55,7 @@ def get_world_size_rank() -> Tuple[int, int]:
       rank = world_size + cluster_spec['task']['index']
     world_size += len(cluster_spec['cluster'][pool])
 
-  logging.info('WORLD SIZE: %d; RANK: %d', world_size, rank)
+  logging.info('WORLD SIZE: %d; RANK: %d', world_size, rank)  # pyrefly: ignore[unbound-name]
   return world_size, rank
 
 

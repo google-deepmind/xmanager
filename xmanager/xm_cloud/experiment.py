@@ -174,7 +174,7 @@ class XManagerCloudExperiment(xm.Experiment):
     return self._experiment_proto.status
 
   @property
-  def work_units(self) -> Mapping[int, xm.ExperimentUnit]:
+  def work_units(self) -> Mapping[int, xm.ExperimentUnit]:  # pyrefly: ignore[bad-override]
     """The first page of work units created via self.add().
 
     To fetch all work units, use `list_all_work_units()`.
@@ -213,7 +213,7 @@ class XManagerCloudExperiment(xm.Experiment):
     """Number of work units on the first page of the experiment."""
     return len(self.list_all_work_units())
 
-  def add(
+  def add(  # pyrefly: ignore[bad-override]
       self,
       job,
       args=None,
@@ -222,7 +222,7 @@ class XManagerCloudExperiment(xm.Experiment):
       identity: str = '',
   ):
     """Adds a job to the experiment."""
-    return super().add(
+    return super().add(  # pyrefly: ignore[no-matching-overload]
         job,
         args=args,
         role=settings,
@@ -622,9 +622,9 @@ def create_experiment(
   stub = experiment_state_api.get_experiment_state_api()
   experiment_proto = stub.create_experiment(
       request=_generate_create_experiment_request(
-          experiment_title=experiment_title,
+          experiment_title=experiment_title,  # pyrefly: ignore[bad-argument-type]
           acls=acls,
-          priority=priority,
+          priority=priority,  # pyrefly: ignore[bad-argument-type]
           urls=urls,
           tags=tags,
           notes=notes,
@@ -779,7 +779,7 @@ def _collect_args_for_job(
   """Collects the args for a job from the job itself and the job group args."""
   return {
       **job.args.to_dict(),
-      **args_view.get(job.name, {}),
+      **args_view.get(job.name, {}),  # pyrefly: ignore[no-matching-overload]
   }
 
 
@@ -789,7 +789,7 @@ def _convert_job_group_to_ess_job_set(
 ) -> list[work_unit_pb2.KubernetesJob]:
   """Converts a JobGroup to a list of ESS KubernetesJobs."""
   return [
-      _convert_xm_job_to_ess_job(job, _collect_args_for_job(job, args_view))
+      _convert_xm_job_to_ess_job(job, _collect_args_for_job(job, args_view))  # pyrefly: ignore[bad-argument-type]
       for job in job_group.jobs.values()
   ]
 
@@ -817,7 +817,7 @@ class XManagerCloudWorkUnit(xm.WorkUnit):
     self._experiment = experiment
     self._experiment_state_stub = experiment_state_stub
     self._work_unit_id_predictor = work_unit_id_predictor
-    self._identity = identity
+    self._identity = identity  # pyrefly: ignore[bad-assignment]
     self._args = args
     self._settings = settings
     self._work_unit_proto = work_unit_proto
@@ -927,13 +927,13 @@ class XManagerCloudWorkUnit(xm.WorkUnit):
       tags: The tags to add to the list of tags for the work unit.
     """
     existing_tags = self._settings.tags
-    self._update_work_unit(tags=list(itertools.chain(existing_tags, tags)))
+    self._update_work_unit(tags=list(itertools.chain(existing_tags, tags)))  # pyrefly: ignore[bad-argument-type]
 
   def remove_tags(self, tags_to_remove: Sequence[str]) -> None:
     """Removes specified tags from the work unit, if present."""
     existing_tags = self._settings.tags
     self._update_work_unit(
-        tags=[tag for tag in existing_tags if tag not in tags_to_remove],
+        tags=[tag for tag in existing_tags if tag not in tags_to_remove],  # pyrefly: ignore[not-iterable]
     )
 
   # Methods for updating URLs.
@@ -957,13 +957,13 @@ class XManagerCloudWorkUnit(xm.WorkUnit):
       urls: The URLs to add to the list of URLs for the work unit.
     """
     existing_urls = self._settings.urls
-    self._update_work_unit(urls=list(itertools.chain(existing_urls, urls)))
+    self._update_work_unit(urls=list(itertools.chain(existing_urls, urls)))  # pyrefly: ignore[bad-argument-type]
 
   def remove_urls(self, urls_to_remove: Sequence[url_pb2.Url]) -> None:
     """Removes URLs from the work unit, if present."""
     existing_urls = self._settings.urls
     self._update_work_unit(
-        urls=[url for url in existing_urls if url not in urls_to_remove],
+        urls=[url for url in existing_urls if url not in urls_to_remove],  # pyrefly: ignore[not-iterable]
     )
 
   # Methods related to artifacts.

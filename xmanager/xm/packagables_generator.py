@@ -70,11 +70,11 @@ _DOCSTRING_SUFFIX = """
 def generate_docstring(executable: Type[job_blocks.ExecutableSpec]) -> str:
   """Returns a docstring for a ExecutableSpec factory method."""
   docstring = executable.__doc__
-  if _ATTRIBUTES_SECTION_HEADER not in docstring:
+  if _ATTRIBUTES_SECTION_HEADER not in docstring:  # pyrefly: ignore[not-iterable]
     raise Exception(
         f'Please add Attributes: section to {executable.__name__} docstring.'
     )
-  docstring = re.sub(_ATTRIBUTES_SECTION_HEADER, _ARGS_DOCSTRING, docstring)
+  docstring = re.sub(_ATTRIBUTES_SECTION_HEADER, _ARGS_DOCSTRING, docstring)  # pyrefly: ignore[no-matching-overload]
   docstring = docstring.rstrip() + _DOCSTRING_SUFFIX.rstrip()
   return docstring
 
@@ -99,7 +99,7 @@ def generate_factory_parameters(parameters: List[inspect.Parameter]) -> str:
       keyword_args_started = True
       source += '    *,\n'
 
-    parameter_source = _KNOWN_ARGS_DICT[parameter.name]
+    parameter_source = _KNOWN_ARGS_DICT[parameter.name]  # pyrefly: ignore[bad-index]
     if (
         parameter.default != inspect.Parameter.empty
         and '=' not in parameter_source

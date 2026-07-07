@@ -401,8 +401,8 @@ def controller(
                 function_label=f.__name__,
                 executor=executor,
                 controller_name=controller_name,
-                controller_args=controller_args,
-                controller_env_vars=controller_env_vars,
+                controller_args=controller_args,  # pyrefly: ignore[bad-argument-type]
+                controller_env_vars=controller_env_vars,  # pyrefly: ignore[bad-argument-type]
                 package_path=package_path,
                 python_path=python_path,
                 use_host_db_config=use_host_db_config,
@@ -418,6 +418,6 @@ def controller(
           termination_delay_secs=0,
       )
 
-    return make_controller
+    return make_controller  # pyrefly: ignore[bad-return]
 
   return wrap

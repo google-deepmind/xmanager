@@ -388,12 +388,12 @@ def db_connector() -> Type[TSqlConnector]:
   sql_connector = _db_config().get('sql_connector')
 
   if sql_connector is None or sql_connector == 'sqlite':
-    return SqliteConnector
+    return SqliteConnector  # pyrefly: ignore[bad-return]
 
   if sql_connector == 'cloudsql':
     return CloudSqlConnector
 
-  return GenericSqlConnector
+  return GenericSqlConnector  # pyrefly: ignore[bad-return]
 
 
 @functools.lru_cache()

@@ -367,7 +367,7 @@ class Packageable:
 
   executable_spec: ExecutableSpec
   executor_spec: ExecutorSpec
-  args: SequentialArgs = attr.ib(
+  args: SequentialArgs = attr.ib(  # pyrefly: ignore[bad-assignment]
       factory=list, converter=SequentialArgs.from_collection
   )  # pytype: disable=annotation-type-mismatch
   env_vars: Dict[str, Any] = attr.ib(
@@ -414,7 +414,7 @@ class Job:
   executable: Executable
   executor: Executor
   name: Optional[str] = None
-  args: SequentialArgs = attr.ib(
+  args: SequentialArgs = attr.ib(  # pyrefly: ignore[bad-assignment]
       factory=list, converter=SequentialArgs.from_collection
   )  # pytype: disable=annotation-type-mismatch
   env_vars: Dict[str, Any] = attr.ib(

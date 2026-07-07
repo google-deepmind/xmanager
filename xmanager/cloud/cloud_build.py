@@ -144,7 +144,7 @@ class Client:
         'timeout': str(self.cloud_build_timeout_seconds) + 's',
     }
     if self.use_kaniko:
-      body.update(
+      body.update(  # pyrefly: ignore[no-matching-overload]
           {
               'steps': [{
                   'name': 'gcr.io/kaniko-project/executor:latest',
@@ -163,7 +163,7 @@ class Client:
           if self.use_cloud_build_cache
           else []
       )
-      body.update({
+      body.update({  # pyrefly: ignore[no-matching-overload]
           'steps': [{
               'name': 'gcr.io/cloud-builders/docker',
               'args': (

@@ -115,7 +115,7 @@ class LocalExperimentUnit(xm.ExperimentUnit):
       )
     except RuntimeError as error:
       raise xm.ExperimentUnitFailedError(
-          error, work_unit=self if isinstance(self, LocalWorkUnit) else None
+          error, work_unit=self if isinstance(self, LocalWorkUnit) else None  # pyrefly: ignore[bad-argument-type]
       )
 
   async def wait_for_local_jobs(self, is_exit_abrupt: bool):
@@ -281,7 +281,7 @@ class LocalExperiment(xm.Experiment):
           self,
           self._experiment_title,
           self._create_task,
-          args,
+          args,  # pyrefly: ignore[bad-argument-type]
           role,
           self._work_unit_id_predictor,
       )
@@ -349,7 +349,7 @@ class LocalExperiment(xm.Experiment):
     return self._work_unit_count
 
   @property
-  def work_units(self) -> Mapping[int, LocalExperimentUnit]:
+  def work_units(self) -> Mapping[int, LocalExperimentUnit]:  # pyrefly: ignore[bad-override]
     """Gets work units created via self.add()."""
     raise NotImplementedError
 
@@ -403,7 +403,7 @@ def get_experiment(experiment_id: int) -> xm.Experiment:
     work_unit = LocalWorkUnit(
         experiment,
         experiment_result.experiment_title,
-        lambda _: None,
+        lambda _: None,  # pyrefly: ignore[bad-argument-type]
         {},
         xm.WorkUnitRole(),
         experiment._work_unit_id_predictor,
@@ -423,13 +423,13 @@ def get_experiment(experiment_id: int) -> xm.Experiment:
         )
       # "caip" is the legacy field name of vertex inside the proto.
       elif data.HasField('caip'):
-        handle = registry.get_create_handle_method(local_executors.Vertex)(
+        handle = registry.get_create_handle_method(local_executors.Vertex)(  # pyrefly: ignore[not-callable]
             data=data
         )
         assert handle
         non_local_handles = [handle]
       elif data.HasField('kubernetes'):
-        handle = registry.get_create_handle_method(local_executors.Kubernetes)(
+        handle = registry.get_create_handle_method(local_executors.Kubernetes)(  # pyrefly: ignore[not-callable]
             data=data, kubernetes_jobs=kubernetes_jobs
         )
         assert handle
