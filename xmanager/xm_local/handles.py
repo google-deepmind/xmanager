@@ -140,7 +140,10 @@ class BinaryHandle(LocalExecutionHandle):
     raise NotImplementedError
 
   def terminate(self) -> None:
-    self.process.terminate()
+    try:
+      self.process.terminate()
+    except ProcessLookupError:
+      pass
 
   async def monitor(self) -> None:
     if self.stream_output:
