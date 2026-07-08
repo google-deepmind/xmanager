@@ -132,8 +132,16 @@ def executable_graph(
       jobs_launched[job_name].set_result(op)
       log(f'`{job_name}` complete.')
 
+    initial_jobs = [j for j in jobs if not jobs_deps[j]]
+    remaining_jobs = [j for j in jobs if jobs_deps[j]]
+
     try:
-      await asyncio.gather(*(launch_single_job(job_name) for job_name in jobs))
+      await asyncio.gather(
+          *(launch_single_job(job_name) for job_name in initial_jobs)
+      )
+      await asyncio.gather(
+          *(launch_single_job(job_name) for job_name in remaining_jobs)
+      )
     except StopControllerError as e:
       log(str(e))
       # This is expected, so exit normally.
