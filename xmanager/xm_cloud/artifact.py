@@ -257,9 +257,10 @@ def _extract_metadata(
       metadata['url'] = url_val
       break
 
-  if payload_key == 'url':
+  if payload_key in ('url', 'managed_xprof'):
     if hasattr(payload_proto, 'display_name') and payload_proto.display_name:
       metadata['display_name'] = payload_proto.display_name
+  if payload_key == 'url':
     if hasattr(payload_proto, 'icon') and payload_proto.icon:
       metadata['icon'] = payload_proto.icon
 
