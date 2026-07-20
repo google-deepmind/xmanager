@@ -122,6 +122,66 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
         interactive=interactive,
     )
 
+  async def _launched_volumes(
+      self, docker_options: local_executors.DockerOptions
+  ) -> dict[str, str]:
+    executable = local_executables.LoadedContainerImage(
+        name='test',
+        image_id='test-image',
+        args=xm.SequentialArgs.from_collection({}),
+        env_vars={},
+    )
+    job = xm.Job(
+        name='test-job',
+        executable=executable,
+        executor=local_executors.Local(docker_options=docker_options),
+    )
+    adapter = mock.MagicMock()
+    adapter.has_network.return_value = True
+    adapter.run_container.return_value = mock.sentinel.container
+
+    with mock.patch.object(docker_adapter, 'instance', return_value=adapter):
+      await execution._launch_loaded_container_image(  # pylint: disable=protected-access
+          lambda name: name,
+          job,
+          executable,
+      )
+
+    return adapter.run_container.call_args.kwargs['volumes']
+
+  async def test_can_disable_gcloud_config_mount(self):
+    configured_volumes = {'a': 'b'}
+
+    launched_volumes = await self._launched_volumes(
+        local_executors.DockerOptions(
+            volumes=configured_volumes,
+            mount_gcs_path=False,
+            mount_gcloud_config=False,
+        )
+    )
+
+    self.assertEqual(launched_volumes, {'a': 'b'})
+    self.assertEqual(configured_volumes, {'a': 'b'})
+
+  async def test_gcloud_config_mount_remains_enabled_by_default(self):
+    configured_volumes = {'a': 'b'}
+
+    launched_volumes = await self._launched_volumes(
+        local_executors.DockerOptions(
+            volumes=configured_volumes,
+            mount_gcs_path=False,
+        )
+    )
+
+    self.assertEqual(
+        launched_volumes,
+        {
+            'a': 'b',
+            os.path.expanduser('~/.config/gcloud'): '/root/.config/gcloud',
+        },
+    )
+    self.assertEqual(configured_volumes, {'a': 'b'})
+
   @parameterized.product(
       mount_gcs_path=[True, False],
       gcs_dir_exists=[True, False],
