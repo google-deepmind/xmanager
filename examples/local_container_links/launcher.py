@@ -16,11 +16,28 @@
 See README.md for details.
 """
 
+import platform
 from typing import Sequence
 
 from absl import app
 from xmanager import xm
 from xmanager import xm_local
+
+
+def _container_platform() -> str:
+  # The server image is built as a Linux container (Docker always runs Linux
+  # containers), so we cross-compile it for the Linux platform matching the host
+  # CPU. This avoids embedding the host's (e.g. macOS) Python interpreter.
+  match platform.machine().lower():
+    case 'arm64' | 'aarch64':
+      return '//:linux_arm64'
+    case 'x86_64' | 'amd64':
+      return '//:linux_amd64'
+    case other:
+      raise ValueError(
+          f'Unsupported host machine {other!r}; expected one of '
+          'arm64/aarch64 or x86_64/amd64.'
+      )
 
 
 def main(argv: Sequence[str]) -> None:
@@ -35,7 +52,10 @@ def main(argv: Sequence[str]) -> None:
             executor_spec=xm_local.Local.Spec(),
         ),
         xm.Packageable(
-            executable_spec=xm.BazelContainer(label='//:server_image.tar'),
+            executable_spec=xm.BazelContainer(
+                label='//:server_image.tar',
+                bazel_args=[f'--platforms={_container_platform()}'],
+            ),
             executor_spec=xm_local.Local.Spec(),
         ),
     ])
