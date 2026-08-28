@@ -192,9 +192,12 @@ source "${VENV_DIR}/bin/activate"
 
 echo "Updating pip and installing dependencies..."
 pip install --index-url https://pypi.org/simple --upgrade pip
+# grpcio-tools is pinned because generated code records the version that produced
+# it and protobuf refuses to load it on an older runtime. Resolved freely, it
+# yields stubs that the runtime installed alongside them cannot import.
 pip install --index-url https://pypi.org/simple \
   grpcio \
-  grpcio-tools \
+  grpcio-tools==1.78.0 \
   google-auth \
   googleapis-common-protos \
   requests \
@@ -242,6 +245,7 @@ git clone --depth 1 https://github.com/googleapis/googleapis.git "${GOOGLEAPIS_S
 echo "Copying xmc protos and source files..."
 copy_service_to_package "xid" "xid_service"
 copy_service_to_package "experiment" "experiment_state_server"
+copy_service_to_package "dashboard" "dashboard_service"
 
 # 5. Adjust proto imports (rewrite third_party/xmanager_cloud/ to xmanager_cloud/)
 echo "Adjusting proto and python import paths..."
@@ -252,6 +256,7 @@ else
 fi
 find "${XMANAGER_SRC_DIR}/xmanager_cloud/xid_service/proto" \
   "${XMANAGER_SRC_DIR}/xmanager_cloud/experiment_state_server/proto" \
+  "${XMANAGER_SRC_DIR}/xmanager_cloud/dashboard_service/proto" \
   -name "*.proto" -type f -exec "${SED_I[@]}" 's|third_party/xmanager_cloud/|xmanager_cloud/|g' {} +
 
 # Adjust python imports in copied files
@@ -269,7 +274,8 @@ python3 -m grpc_tools.protoc \
   --python_out="${XMANAGER_SRC_DIR}" \
   --grpc_python_out="${XMANAGER_SRC_DIR}" \
   "${XMANAGER_SRC_DIR}"/xmanager_cloud/xid_service/proto/*.proto \
-  "${XMANAGER_SRC_DIR}"/xmanager_cloud/experiment_state_server/proto/*.proto
+  "${XMANAGER_SRC_DIR}"/xmanager_cloud/experiment_state_server/proto/*.proto \
+  "${XMANAGER_SRC_DIR}"/xmanager_cloud/dashboard_service/proto/*.proto
 
 # 7. Install package
 echo "Installing XManager library..."
