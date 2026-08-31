@@ -769,7 +769,7 @@ def _convert_xm_job_to_ess_job(
         ),
     )
 
-  explicit_executable_fields = {'resources', 'docker_image', 'args', 'env_vars'}
+  explicit_executable_fields = {'resources', 'docker_image', 'args', 'env_vars', 'name'}
   executable_proto_kwargs = {}
   for field in work_unit_pb2.ExecutableSpec.DESCRIPTOR.fields:
     if field.name in explicit_executable_fields:
