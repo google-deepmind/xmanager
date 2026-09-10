@@ -248,7 +248,11 @@ class ExtractEmailFromJwtTest(unittest.TestCase):
     payload = (
         base64.urlsafe_b64encode(payload_json).decode('utf-8').rstrip('=')
     )
-    sig = 'signature'
+    sig = (
+        base64.urlsafe_b64encode(b'signature')
+        .decode('utf-8')
+        .rstrip('=')
+    )
     return f'{header}.{payload}.{sig}'
 
   def test_valid_jwt_with_email_claim(self):

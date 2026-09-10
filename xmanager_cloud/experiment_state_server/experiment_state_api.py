@@ -21,6 +21,7 @@ import os
 from typing import Any, Callable
 
 import google.auth
+from google.auth import jwt as google_jwt
 from google.auth.transport import requests
 from google.oauth2 import id_token
 import grpc
@@ -48,26 +49,17 @@ def _get_xmanager_endpoint() -> str:
 
 
 def _extract_email_from_jwt(token: str) -> str | None:
-  """Attempts to extract an email or user identity claim from a JWT without verification."""
+  """Extracts user identity claim from an unverified JWT using google-auth."""
   try:
-    parts = token.split('.')
-    if len(parts) != 3:
-      return None
-    payload_b64 = parts[1]
-    padding = len(payload_b64) % 4
-    if padding:
-      payload_b64 += '=' * (4 - padding)
-    decoded = base64.urlsafe_b64decode(payload_b64)
-    data = json.loads(decoded)
-    if not isinstance(data, dict):
+    payload = google_jwt.decode(token, verify=False)
+    if not isinstance(payload, dict):
       return None
     for claim in ('email', 'preferred_username', 'sub'):
-      val = data.get(claim)
-      if val and isinstance(val, str):
-        return val
-    return None
+      if val := payload.get(claim):
+        return str(val)
   except Exception:
     return None
+  return None
 
 
 def get_current_user_email() -> str:
