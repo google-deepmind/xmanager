@@ -13,7 +13,11 @@
 # limitations under the License.
 """Unit tests for experiment_state_api module."""
 
+import base64
+import json
+import logging
 import os
+from typing import Any
 import unittest
 from unittest import mock
 
@@ -229,6 +233,94 @@ class ExperimentStateApiTest(unittest.TestCase):
     self._mock_stub.BatchStopWorkUnits.assert_called_once_with(request)
 
 
+class ExtractEmailFromJwtTest(unittest.TestCase):
+
+  def _make_jwt(self, payload_dict_or_obj: Any) -> str:
+    header = (
+        base64.urlsafe_b64encode(b'{"alg":"none"}')
+        .decode('utf-8')
+        .rstrip('=')
+    )
+    if isinstance(payload_dict_or_obj, (dict, list, int, str)):
+      payload_json = json.dumps(payload_dict_or_obj).encode('utf-8')
+    else:
+      payload_json = payload_dict_or_obj
+    payload = (
+        base64.urlsafe_b64encode(payload_json).decode('utf-8').rstrip('=')
+    )
+    sig = 'signature'
+    return f'{header}.{payload}.{sig}'
+
+  def test_valid_jwt_with_email_claim(self):
+    token = self._make_jwt({'email': 'alice@example.com'})
+    self.assertEqual(
+        experiment_state_api._extract_email_from_jwt(token), 'alice@example.com'
+    )
+
+  def test_valid_jwt_with_preferred_username_claim(self):
+    token = self._make_jwt({'preferred_username': 'alice_user'})
+    self.assertEqual(
+        experiment_state_api._extract_email_from_jwt(token), 'alice_user'
+    )
+
+  def test_valid_jwt_with_sub_claim(self):
+    token = self._make_jwt({'sub': 'user_sub_123'})
+    self.assertEqual(
+        experiment_state_api._extract_email_from_jwt(token), 'user_sub_123'
+    )
+
+  def test_claim_precedence_email_over_others(self):
+    token = self._make_jwt({
+        'email': 'alice@example.com',
+        'preferred_username': 'alice_user',
+        'sub': 'user_sub_123',
+    })
+    self.assertEqual(
+        experiment_state_api._extract_email_from_jwt(token), 'alice@example.com'
+    )
+
+  def test_claim_precedence_preferred_username_over_sub(self):
+    token = self._make_jwt({
+        'preferred_username': 'alice_user',
+        'sub': 'user_sub_123',
+    })
+    self.assertEqual(
+        experiment_state_api._extract_email_from_jwt(token), 'alice_user'
+    )
+
+  def test_invalid_jwt_segments(self):
+    self.assertIsNone(experiment_state_api._extract_email_from_jwt(''))
+    self.assertIsNone(experiment_state_api._extract_email_from_jwt('one_segment'))
+    self.assertIsNone(experiment_state_api._extract_email_from_jwt('one.two'))
+    self.assertIsNone(
+        experiment_state_api._extract_email_from_jwt('one.two.three.four')
+    )
+
+  def test_bad_base64_payload_and_padding(self):
+    self.assertIsNone(
+        experiment_state_api._extract_email_from_jwt('head.???bad_b64???.sig')
+    )
+
+  def test_non_json_payload(self):
+    raw_payload = base64.urlsafe_b64encode(b'this is not valid json').decode(
+        'utf-8'
+    )
+    token = f'head.{raw_payload}.sig'
+    self.assertIsNone(experiment_state_api._extract_email_from_jwt(token))
+
+  def test_non_dict_payload(self):
+    token_list = self._make_jwt(['not', 'a', 'dict'])
+    self.assertIsNone(experiment_state_api._extract_email_from_jwt(token_list))
+    token_int = self._make_jwt(12345)
+    self.assertIsNone(experiment_state_api._extract_email_from_jwt(token_int))
+    token_str = self._make_jwt('just a string')
+    self.assertIsNone(experiment_state_api._extract_email_from_jwt(token_str))
+
+  def test_no_matching_claims(self):
+    token = self._make_jwt({'aud': 'audience', 'iat': 1234567890})
+    self.assertIsNone(experiment_state_api._extract_email_from_jwt(token))
+
+
 class GetCurrentUserEmailTest(unittest.TestCase):
 
   def setUp(self):
@@ -257,7 +349,7 @@ class GetCurrentUserEmailTest(unittest.TestCase):
           experiment_state_api.get_current_user_email(), 'custom@example.com'
       )
 
-  def test_default_user_email_with_auth_token(self):
+  def test_default_user_email_with_opaque_auth_token(self):
     with mock.patch.dict(
         os.environ, {'XMC_AUTH_TOKEN': 'token123'}, clear=True
     ):
@@ -265,10 +357,26 @@ class GetCurrentUserEmailTest(unittest.TestCase):
           experiment_state_api.get_current_user_email(), 'admin@xmc.local'
       )
 
+  def test_user_email_with_jwt_auth_token_extracts_email(self):
+    header = base64.urlsafe_b64encode(b'{"alg":"none"}').decode('utf-8')
+    payload = base64.urlsafe_b64encode(
+        b'{"email":"jwt_user@example.com"}'
+    ).decode('utf-8')
+    token = f'{header}.{payload}.sig'
+    with mock.patch.dict(os.environ, {'XMC_AUTH_TOKEN': token}, clear=True):
+      self.assertEqual(
+          experiment_state_api.get_current_user_email(), 'jwt_user@example.com'
+      )
+
   def test_user_email_override_takes_precedence_over_auth_token(self):
+    header = base64.urlsafe_b64encode(b'{"alg":"none"}').decode('utf-8')
+    payload = base64.urlsafe_b64encode(
+        b'{"email":"jwt_user@example.com"}'
+    ).decode('utf-8')
+    token = f'{header}.{payload}.sig'
     with mock.patch.dict(
         os.environ,
-        {'XMC_USER_EMAIL': 'user@example.com', 'XMC_AUTH_TOKEN': 'token123'},
+        {'XMC_USER_EMAIL': 'user@example.com', 'XMC_AUTH_TOKEN': token},
     ):
       self.assertEqual(
           experiment_state_api.get_current_user_email(), 'user@example.com'
@@ -407,68 +515,14 @@ class CreateStubTest(unittest.TestCase):
 
   def setUp(self):
     super().setUp()
-    self.enterContext(
+    self.mock_channel_ready_future = self.enterContext(
         mock.patch.object(grpc, 'channel_ready_future', autospec=True)
     )
+    self.mock_future = mock.MagicMock()
+    self.mock_channel_ready_future.return_value = self.mock_future
+    self.mock_future.result.return_value = None
 
-  def test_insecure_with_bearer_token(self):
-    with (
-        mock.patch.dict(
-            os.environ,
-            {
-                'XMC_AUTH_TOKEN': 'token_abc',
-                'XMANAGER_INSECURE_GRPC': 'true',
-                'XMC_USER_EMAIL': 'user@example.com',
-            },
-            clear=True,
-        ),
-        mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
-        mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
-    ):
-      mock_channel = mock.MagicMock()
-      mock_insecure_channel.return_value = mock_channel
-      mock_intercept_channel.return_value = mock_channel
-
-      stub, channel = experiment_state_api._create_experiment_state_server_stub(
-          'localhost:50051'
-      )
-      mock_insecure_channel.assert_called_once_with('localhost:50051')
-      self.assertEqual(mock_intercept_channel.call_count, 1)
-      interceptor = mock_intercept_channel.call_args[0][1]
-      self.assertIsInstance(
-          interceptor, experiment_state_api.BearerAuthInterceptor
-      )
-      self.assertEqual(interceptor._token, 'token_abc')
-      self.assertEqual(interceptor._user_email, 'user@example.com')
-
-  def test_insecure_with_xmc_insecure_grpc_flag(self):
-    with (
-        mock.patch.dict(
-            os.environ,
-            {
-                'XMC_AUTH_TOKEN': 'token_abc',
-                'XMC_INSECURE_GRPC': '1',
-            },
-            clear=True,
-        ),
-        mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
-        mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
-    ):
-      mock_channel = mock.MagicMock()
-      mock_insecure_channel.return_value = mock_channel
-      mock_intercept_channel.return_value = mock_channel
-
-      stub, channel = experiment_state_api._create_experiment_state_server_stub(
-          'localhost:50051'
-      )
-      mock_insecure_channel.assert_called_once_with('localhost:50051')
-      interceptor = mock_intercept_channel.call_args[0][1]
-      self.assertIsInstance(
-          interceptor, experiment_state_api.BearerAuthInterceptor
-      )
-      self.assertEqual(interceptor._user_email, 'admin@xmc.local')
-
-  def test_secure_with_auth_token(self):
+  def test_secure_channel_succeeds_with_auth_token(self):
     with (
         mock.patch.dict(
             os.environ,
@@ -479,6 +533,7 @@ class CreateStubTest(unittest.TestCase):
             clear=True,
         ),
         mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
+        mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
         mock.patch.object(
             grpc, 'access_token_call_credentials'
         ) as mock_access_token_creds,
@@ -499,11 +554,201 @@ class CreateStubTest(unittest.TestCase):
       )
       mock_access_token_creds.assert_called_once_with('token_abc')
       mock_secure_channel.assert_called_once()
+      mock_insecure_channel.assert_not_called()
       interceptor = mock_intercept_channel.call_args[0][1]
       self.assertIsInstance(
           interceptor, experiment_state_api.AuditMetadataInterceptor
       )
       self.assertEqual(interceptor._user_email, 'user@example.com')
+      self.mock_channel_ready_future.assert_called_once_with(mock_channel)
+      self.mock_future.result.assert_called_once_with(
+          experiment_state_api._CHANNEL_READY_TIMEOUT_SEC
+      )
+
+  def test_secure_channel_succeeds_even_when_insecure_flag_set(self):
+    with (
+        mock.patch.dict(
+            os.environ,
+            {
+                'XMC_AUTH_TOKEN': 'token_abc',
+                'XMC_INSECURE_GRPC': 'true',
+                'XMC_USER_EMAIL': 'user@example.com',
+            },
+            clear=True,
+        ),
+        mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
+        mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
+        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'ssl_channel_credentials'),
+        mock.patch.object(grpc, 'composite_channel_credentials'),
+        mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
+    ):
+      mock_channel = mock.MagicMock()
+      mock_secure_channel.return_value = mock_channel
+      mock_intercept_channel.return_value = mock_channel
+
+      stub, channel = experiment_state_api._create_experiment_state_server_stub(
+          'dns:///api.example.com'
+      )
+      mock_secure_channel.assert_called_once()
+      mock_insecure_channel.assert_not_called()
+
+  def test_secure_channel_fails_and_insecure_allowed_falls_back_to_insecure(self):
+    with (
+        mock.patch.dict(
+            os.environ,
+            {
+                'XMC_AUTH_TOKEN': 'token_abc',
+                'XMANAGER_INSECURE_GRPC': 'true',
+                'XMC_USER_EMAIL': 'user@example.com',
+            },
+            clear=True,
+        ),
+        mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
+        mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
+        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'ssl_channel_credentials'),
+        mock.patch.object(grpc, 'composite_channel_credentials'),
+        mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
+        mock.patch('logging.warning') as mock_warning,
+    ):
+      mock_sec_channel = mock.MagicMock()
+      mock_insec_channel = mock.MagicMock()
+      mock_secure_channel.return_value = mock_sec_channel
+      mock_insecure_channel.return_value = mock_insec_channel
+      mock_intercept_channel.side_effect = [mock_sec_channel, mock_insec_channel]
+
+      self.mock_future.result.side_effect = [
+          Exception('TLS handshake timeout'),
+          None,
+      ]
+
+      stub, channel = experiment_state_api._create_experiment_state_server_stub(
+          'localhost:50051'
+      )
+      mock_secure_channel.assert_called_once()
+      mock_insecure_channel.assert_called_once_with('localhost:50051')
+      mock_warning.assert_called_once()
+      self.assertIn('Falling back to insecure', mock_warning.call_args[0][0])
+      self.assertEqual(channel, mock_insec_channel)
+
+  def test_secure_channel_fails_and_insecure_with_xmc_insecure_grpc_flag(self):
+    with (
+        mock.patch.dict(
+            os.environ,
+            {
+                'XMC_AUTH_TOKEN': 'token_abc',
+                'XMC_INSECURE_GRPC': '1',
+            },
+            clear=True,
+        ),
+        mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
+        mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
+        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'ssl_channel_credentials'),
+        mock.patch.object(grpc, 'composite_channel_credentials'),
+        mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
+        mock.patch('logging.warning') as mock_warning,
+    ):
+      mock_sec_channel = mock.MagicMock()
+      mock_insec_channel = mock.MagicMock()
+      mock_secure_channel.return_value = mock_sec_channel
+      mock_insecure_channel.return_value = mock_insec_channel
+      mock_intercept_channel.side_effect = [mock_sec_channel, mock_insec_channel]
+
+      self.mock_future.result.side_effect = [
+          Exception('TLS connection refused'),
+          None,
+      ]
+
+      stub, channel = experiment_state_api._create_experiment_state_server_stub(
+          'localhost:50051'
+      )
+      mock_secure_channel.assert_called_once()
+      mock_insecure_channel.assert_called_once_with('localhost:50051')
+      mock_warning.assert_called_once()
+      self.assertIn('Falling back to insecure', mock_warning.call_args[0][0])
+      interceptor = mock_intercept_channel.call_args[0][1]
+      self.assertIsInstance(
+          interceptor, experiment_state_api.BearerAuthInterceptor
+      )
+      self.assertEqual(interceptor._user_email, 'admin@xmc.local')
+
+  def test_secure_channel_fails_and_insecure_not_allowed_raises_runtime_error(self):
+    with (
+        mock.patch.dict(
+            os.environ,
+            {
+                'XMC_AUTH_TOKEN': 'token_abc',
+                'XMC_USER_EMAIL': 'user@example.com',
+            },
+            clear=True,
+        ),
+        mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
+        mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
+        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'ssl_channel_credentials'),
+        mock.patch.object(grpc, 'composite_channel_credentials'),
+        mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
+    ):
+      mock_channel = mock.MagicMock()
+      mock_secure_channel.return_value = mock_channel
+      mock_intercept_channel.return_value = mock_channel
+      self.mock_future.result.side_effect = Exception('TLS connection refused')
+
+      with self.assertRaisesRegex(
+          RuntimeError,
+          r'Failed to establish secure gRPC connection to localhost:50051',
+      ):
+        experiment_state_api._create_experiment_state_server_stub(
+            'localhost:50051'
+        )
+
+      mock_secure_channel.assert_called_once()
+      mock_insecure_channel.assert_not_called()
+
+  def test_iap_and_sa_prompts_use_logging_warning_instead_of_print(self):
+    with (
+        mock.patch.dict(
+            os.environ,
+            {'XMC_USER_EMAIL': 'user@example.com'},
+            clear=True,
+        ),
+        mock.patch(
+            'builtins.input', side_effect=['test_iap_id', 'sa@example.com']
+        ),
+        mock.patch('builtins.print') as mock_print,
+        mock.patch('logging.warning') as mock_warning,
+        mock.patch.object(
+            google.auth, 'default', return_value=(mock.MagicMock(), None)
+        ),
+        mock.patch(
+            'google.auth.transport.requests.AuthorizedSession'
+        ) as mock_auth_session,
+        mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
+        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'ssl_channel_credentials'),
+        mock.patch.object(grpc, 'composite_channel_credentials'),
+        mock.patch.object(grpc, 'intercept_channel'),
+    ):
+      mock_session = mock_auth_session.return_value
+      mock_response = mock.MagicMock()
+      mock_response.status_code = 200
+      mock_response.json.return_value = {'token': 'mock_oidc_token'}
+      mock_session.post.return_value = mock_response
+
+      experiment_state_api._create_experiment_state_server_stub(
+          'dns:///api.example.com'
+      )
+
+      mock_print.assert_not_called()
+      self.assertEqual(mock_warning.call_count, 2)
+      self.assertIn(
+          'IAP_CLIENT_ID not set', mock_warning.call_args_list[0][0][0]
+      )
+      self.assertIn(
+          'XMC_CLIENT_SA not set', mock_warning.call_args_list[1][0][0]
+      )
 
 
 if __name__ == '__main__':
