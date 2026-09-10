@@ -90,7 +90,10 @@ def get_current_user_email() -> str:
   if auth_token := os.environ.get('XMC_AUTH_TOKEN'):
     if extracted_email := _extract_email_from_jwt(auth_token):
       return extracted_email
-    return 'admin@xmc.local'
+    logging.warning(
+        'XMC_AUTH_TOKEN is set but no identity claim could be extracted from'
+        ' it.'
+    )
 
   try:
     scopes = [

@@ -349,13 +349,17 @@ class GetCurrentUserEmailTest(unittest.TestCase):
           experiment_state_api.get_current_user_email(), 'custom@example.com'
       )
 
-  def test_default_user_email_with_opaque_auth_token(self):
+  def test_opaque_auth_token_without_claims_falls_through_to_google_auth(self):
     with mock.patch.dict(
-        os.environ, {'XMC_AUTH_TOKEN': 'token123'}, clear=True
+        os.environ, {'XMC_AUTH_TOKEN': 'opaque_token'}, clear=True
     ):
-      self.assertEqual(
-          experiment_state_api.get_current_user_email(), 'admin@xmc.local'
-      )
+      mock_creds = mock.MagicMock(service_account_email='sa@google.com')
+      with mock.patch.object(
+          google.auth, 'default', return_value=(mock_creds, 'project')
+      ):
+        self.assertEqual(
+            experiment_state_api.get_current_user_email(), 'sa@google.com'
+        )
 
   def test_user_email_with_jwt_auth_token_extracts_email(self):
     header = base64.urlsafe_b64encode(b'{"alg":"none"}').decode('utf-8')
@@ -639,6 +643,7 @@ class CreateStubTest(unittest.TestCase):
             {
                 'XMC_AUTH_TOKEN': 'token_abc',
                 'XMC_INSECURE_GRPC': '1',
+                'XMC_USER_EMAIL': 'user@example.com',
             },
             clear=True,
         ),
@@ -672,7 +677,7 @@ class CreateStubTest(unittest.TestCase):
       self.assertIsInstance(
           interceptor, experiment_state_api.BearerAuthInterceptor
       )
-      self.assertEqual(interceptor._user_email, 'admin@xmc.local')
+      self.assertEqual(interceptor._user_email, 'user@example.com')
 
   def test_secure_channel_fails_and_insecure_not_allowed_raises_runtime_error(self):
     with (
