@@ -93,7 +93,10 @@ def _get_important_outputs(
   for event in events:
     if not event.id.HasField('target_completed'):
       continue
-    # Note that we ignore `event.id.target_completed.aspect`.
+    # Aspect completions share the target's label but produce their own
+    # outputs. Skip them so they do not overwrite the target's default outputs.
+    if event.id.target_completed.aspect:
+      continue
     label = event.id.target_completed.label
 
     outputs = list(event.completed.important_output)

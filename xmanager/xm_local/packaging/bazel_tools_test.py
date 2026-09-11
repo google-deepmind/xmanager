@@ -60,10 +60,13 @@ def _target_completed_event(
     label: str,
     important_output: Sequence[bes_pb2.File] = (),
     output_groups: Sequence[bes_pb2.OutputGroup] = (),
+    aspect: str = '',
 ) -> bes_pb2.BuildEvent:
   return bes_pb2.BuildEvent(
       id=bes_pb2.BuildEventId(
-          target_completed=bes_pb2.BuildEventId.TargetCompletedId(label=label)
+          target_completed=bes_pb2.BuildEventId.TargetCompletedId(
+              label=label, aspect=aspect
+          )
       ),
       completed=bes_pb2.TargetComplete(
           success=True,
@@ -217,6 +220,46 @@ class BazelToolsTest(unittest.TestCase):
     self.assertEqual(
         bazel_tools._get_important_outputs(events, ['//:bin']),
         [[first, second]],
+    )
+
+  def test_get_important_outputs_ignores_aspect_completion_events(self):
+    binary = _file('bin', 'file:///root/bin')
+    aspect_file = _file('aspect_out', 'file:///root/aspect_out')
+    events = [
+        _named_set_event('0', [binary]),
+        _named_set_event('1', [aspect_file]),
+        _target_completed_event(
+            '//:bin', output_groups=[_output_group('default', ['0'])]
+        ),
+        _target_completed_event(
+            '//:bin',
+            output_groups=[_output_group('default', ['1'])],
+            aspect='//aspect:def.bzl%my_aspect',
+        ),
+    ]
+    self.assertEqual(
+        bazel_tools._get_important_outputs(events, ['//:bin']), [[binary]]
+    )
+
+  def test_get_important_outputs_aspect_without_default_group_does_not_clear_outputs(
+      self,
+  ):
+    binary = _file('bin', 'file:///root/bin')
+    typecheck_log = _file('typecheck.log', 'file:///root/typecheck.log')
+    events = [
+        _named_set_event('0', [binary]),
+        _named_set_event('1', [typecheck_log]),
+        _target_completed_event(
+            '//:bin', output_groups=[_output_group('default', ['0'])]
+        ),
+        _target_completed_event(
+            '//:bin',
+            output_groups=[_output_group('pyrefly', ['1'])],
+            aspect='@rules_pyrefly//pyrefly:aspect.bzl%pyrefly_aspect',
+        ),
+    ]
+    self.assertEqual(
+        bazel_tools._get_important_outputs(events, ['//:bin']), [[binary]]
     )
 
   def test_get_important_outputs_missing_label_raises(self):
@@ -385,6 +428,32 @@ class BazelToolsTest(unittest.TestCase):
         paths,
         [['/root/bazel-out/bin'], ['/mock/execroot/bazel-out/bin/remote']],
     )
+
+  def test_build_multiple_targets_with_aspect_events_ignores_aspect(self):
+    binary = _file('bin', 'file:///root/bazel-out/bin')
+    events = [
+        _target_completed_event('//:t1', important_output=[binary]),
+        _target_completed_event(
+            '//:t1',
+            output_groups=[_output_group('pyrefly', ['1'])],
+            aspect='@rules_pyrefly//pyrefly:aspect.bzl%pyrefly_aspect',
+        ),
+    ]
+    completed = mock.Mock()
+    with mock.patch.object(
+        bazel_tools.file_utils, 'TemporaryFilePath'
+    ), mock.patch.object(
+        bazel_tools.subprocess, 'run', return_value=completed
+    ), mock.patch.object(
+        bazel_tools, '_read_build_events', return_value=events
+    ), mock.patch.object(
+        bazel_tools, '_get_normalized_labels', return_value=['//:t1']
+    ), mock.patch.object(
+        bazel_tools, '_root_absolute_path', return_value='/workspace'
+    ):
+      paths = bazel_tools._build_multiple_targets(['//:t1'])
+
+    self.assertEqual(paths, [['/root/bazel-out/bin']])
 
 
 class QueryExecutableOutputTest(unittest.TestCase):
