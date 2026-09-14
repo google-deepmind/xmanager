@@ -14,13 +14,18 @@
 """A module for communicating with the Bazel server."""
 
 import abc
-from typing import Any, Generic, Optional, Sequence, TypeVar
+from typing import Generic, Sequence, TypeVar
 
 import attr
+from xmanager.xm import resources as xm_resources
 
 T = TypeVar('T')
 
 
+# TODO: - Split this into a `BatchBuildResult` (per-target lists,
+# returned by `build_targets.build_blaze_targets`) and a per-target
+# `BuildResult` (scalars, produced by `router.py`), so the union types below and
+# the `isinstance` narrowing in `router._populate_batch_results` can go away.
 @attr.s(auto_attribs=True, frozen=True)
 class BuildResult(Generic[T]):
   """Holds the result of a build operation.
@@ -31,18 +36,30 @@ class BuildResult(Generic[T]):
     skycache_outcome: Whether Skycache was enabled for the build, and if not,
       why. Corresponds to the `SkycacheDetails.Outcome` enum.
     portable_manifest_paths: Per-architecture manifest paths for multiarch
-      support. Typed as `Any` to avoid a circular dependency on `xm`. At runtime
-      this is: - `list[dict[xm.Architecture, str]]` (one per target) when
-      returned from a batched build in `build_targets.py`. -
-      `dict[xm.Architecture, str]` after being unpacked per-target in
-      `router.py`. - `None` for non-multiarch builds or when manifest paths are
-      absent.
-  """
+      support. At runtime this is:
+      - `list[dict[xm.Architecture, str]]` (one per target) when returned from a
+        batched build in `build_targets.py`.
+      - `dict[xm.Architecture, str]` after being unpacked per-target in
+        `router.py`.
+      - `None` for non-multiarch builds or when manifest paths are absent.
+    flat_pkgdef_path: Path to the generated .flat_pkgdef file from
+      TemporalMpmAspect, used for binary size calculation in ObjFS deployment
+      and MPM packaging. At runtime this is:
+      - `list[str | None]` (one per target) when returned from a batched build
+        in `build_targets.py`.
+      - `str | None` after being unpacked per-target in `router.py`.
+      - `None` when absent or aspect output is unavailable.
+  """  # fmt: skip
 
   resources: T
-  build_id: Optional[str] = None
+  build_id: str | None = None
   skycache_outcome: int = 0
-  portable_manifest_paths: Optional[Any] = None
+  portable_manifest_paths: (
+      list[dict[xm_resources.Architecture, str]]
+      | dict[xm_resources.Architecture, str]
+      | None
+  ) = None
+  flat_pkgdef_path: list[str | None] | str | None = None
 
 
 class BazelService(abc.ABC):
