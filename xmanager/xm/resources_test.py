@@ -147,6 +147,20 @@ class JobRequirementsTest(parameterized.TestCase):
         architecture,
     )
 
+  @parameterized.parameters(
+      xm.Architecture.HASWELL,
+      xm.Architecture.ARM,
+  )
+  def test_local_gpu_accepts_explicit_architecture(self, architecture):
+    requirements = resources.JobRequirements(
+        local_gpu=1, architecture=architecture
+    )
+    self.assertEqual(requirements.architecture, architecture)
+
+  def test_local_gpu_has_no_inferred_architecture(self):
+    requirements = resources.JobRequirements(local_gpu=1)
+    self.assertIsNone(requirements.architecture)
+
   @parameterized.parameters([
       (xm.Architecture.ARM, xm.ResourceType.P100, True),
       (xm.Architecture.ARM, xm.ResourceType.GB200, False),

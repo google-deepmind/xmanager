@@ -421,18 +421,15 @@ class JobRequirements:
     """Validates that the architecture is compatible with the accelerator."""
     if self.architecture is None or self.accelerator is None:
       return
-    if self.architecture != self.accelerator.architecture():
-      if (
-          self.architecture == Architecture.ARM  # GLP is supported on ARM
-          and self.accelerator == ResourceType.GLP
-      ):
-        return
-      else:
-        raise ValueError(
-            f'Accelerator {self.accelerator} requires architecture'
-            f' {self.accelerator.architecture()}, but {self.architecture} was'
-            ' specified.'
-        )
+    try:
+      accelerator_architecture = self.accelerator.architecture()
+    except ValueError:
+      return
+    if self.architecture != accelerator_architecture:
+      raise ValueError(
+          f'Accelerator {self.accelerator} requires architecture'
+          f' {accelerator_architecture}, but {self.architecture} was specified.'
+      )
 
   def _validate_accelerator_topology(self):
     """Validates that the topology is compatible with the accelerator."""
