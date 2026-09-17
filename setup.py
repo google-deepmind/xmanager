@@ -21,7 +21,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setup(
     name='xmanager',
-    version='0.8.0',
+    version='0.8.1',
     description='A framework for managing machine learning experiments',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -31,7 +31,7 @@ setup(
     python_requires='>=3.10',
     install_requires=[
         'absl-py',
-        'alembic==1.4.3',
+        'alembic>=1.13,<2.0',
         'async_generator',
         'attrs',
         'cloud-sql-python-connector',
@@ -46,7 +46,7 @@ setup(
         'immutabledict',
         'kubernetes',
         'pyyaml',
-        'sqlalchemy==1.2.19',
+        'sqlalchemy>=2.0,<3.0',
         'sqlparse',
         'termcolor',
     ],
