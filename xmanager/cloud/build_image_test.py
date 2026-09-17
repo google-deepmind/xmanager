@@ -11,6 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
+
 from absl.testing import absltest
 from xmanager import xm
 from xmanager.cloud import build_image
@@ -50,6 +52,23 @@ class BuildImageTest(absltest.TestCase):
     project = self.create_container(xm.CommandList(commands))
     entrypoint_commands = build_image._get_entrypoint_commands(project)
     self.assertEndsWith(entrypoint_commands, ' \'$@\' "$@"')
+
+  def test_create_entrypoint_cmd_preserves_argv(self):
+    args = xm.SequentialArgs.from_collection({
+        'config': '{"key": 4}',
+        'path': 'a path',
+    })
+
+    instruction = build_image._create_entrypoint_cmd(args)
+
+    self.assertEqual(
+        json.loads(instruction.removeprefix('ENTRYPOINT ')),
+        [
+            './entrypoint.sh',
+            '--config={"key": 4}',
+            '--path=a path',
+        ],
+    )
 
 
 if __name__ == '__main__':

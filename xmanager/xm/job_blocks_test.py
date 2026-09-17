@@ -99,6 +99,11 @@ class JobBlocksTest(unittest.TestCase):
 
     self.assertEqual(args.to_list(str), ['--pass_me=None'])
 
+  def test_to_list_default_escaper_quotes_for_a_shell(self):
+    args = job_blocks.SequentialArgs.from_collection({'config': '{"d": 4}'})
+
+    self.assertEqual(args.to_list(), ['--config=\'{"d": 4}\''])
+
   def test_json_serialize(self):
     args = job_blocks.SequentialArgs.from_collection({
         'a': 1,

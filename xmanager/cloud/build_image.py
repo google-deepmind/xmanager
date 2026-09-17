@@ -13,6 +13,7 @@
 # limitations under the License.
 """Builds images for XManager Docker executables."""
 
+import json
 import os
 import shutil
 import tempfile
@@ -297,9 +298,8 @@ def _create_entrypoint(py_executable: xm.PythonContainer) -> str:
 def _create_entrypoint_cmd(args: xm.SequentialArgs) -> str:
   """Create the entrypoint command with optional args."""
   entrypoint_args = ['./entrypoint.sh']
-  entrypoint_args.extend(args.to_list(utils.ARG_ESCAPER))
-  entrypoint = ', '.join([f'"{arg}"' for arg in entrypoint_args])
-  return f'ENTRYPOINT [{entrypoint}]'
+  entrypoint_args.extend(args.to_list(utils.ARGV_ESCAPER))
+  return f'ENTRYPOINT {json.dumps(entrypoint_args)}'
 
 
 def _wrap_late_bindings(destination: str, path: str, dockerfile: str) -> None:

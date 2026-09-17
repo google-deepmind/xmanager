@@ -67,7 +67,7 @@ class KubernetesTest(parameterized.TestCase):
         executor=local_executors.Kubernetes(
             xm.JobRequirements(cpu=1, ram=1, t4=2)
         ),
-        args={'b': 2, 'c': 3},
+        args={'b': 2, 'c': '{"d": 4}'},
     )
     expected_service = k8s_client.V1Service(
         metadata=k8s_client.V1ObjectMeta(name='experiments'),
@@ -100,7 +100,11 @@ class KubernetesTest(parameterized.TestCase):
                                     'nvidia.com/gpu': '2',
                                 },
                             ),
-                            args=['--a=1', '--b=2', '--c=3'],
+                            args=[
+                                '--a=1',
+                                '--b=2',
+                                '--c={"d": 4}',
+                            ],
                             env=[],
                         )
                     ],

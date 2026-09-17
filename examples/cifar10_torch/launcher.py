@@ -58,8 +58,8 @@ async def main(_):
                     # TODO: replace workerpool0 with the actual
                     # name of the job when Vertex AI supports custom name worker
                     # pools.
-                    'master_addr_port': xm.ShellSafeArg(
-                        utils.get_workerpool_address('workerpool0')
+                    'master_addr_port': utils.get_workerpool_address(
+                        'workerpool0'
                     ),
                 },
             ),

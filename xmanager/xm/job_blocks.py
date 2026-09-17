@@ -187,7 +187,18 @@ class SequentialArgs:
       escaper: Callable[[Any], str] = utils.ARG_ESCAPER,
       kwargs_joiner: Callable[[str, str], str] = utils.trivial_kwargs_joiner,
   ) -> List[str]:
-    """Exports items as a list ready to be passed into the command line."""
+    """Exports items as a list ready to be passed into the command line.
+
+    Args:
+      escaper: Serializes a single value into a token. The default quotes the
+        token for a POSIX shell, which suits a caller joining the tokens into
+        a command string. A backend that hands the tokens over as `argv` must
+        pass `utils.ARGV_ESCAPER`.
+      kwargs_joiner: Combines the name and the value of a keyword argument.
+
+    Returns:
+      The sought list.
+    """
 
     def export_keyword_item(
         item: SequentialArgs._KeywordItem,
