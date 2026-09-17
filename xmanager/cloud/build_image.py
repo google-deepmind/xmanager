@@ -14,6 +14,7 @@
 """Builds images for XManager Docker executables."""
 
 import os
+import re
 import shutil
 import tempfile
 from typing import Dict, List, Optional
@@ -60,6 +61,8 @@ fi
 
 {cmds}
 """
+
+_BARE_ARGS_SUFFIX = re.compile(r'\$@$', re.MULTILINE)
 
 
 def build(
@@ -277,7 +280,9 @@ def _get_entrypoint_commands(py_executable: xm.PythonContainer) -> str:
     )
   cmds = '\n'.join(cmds)
   # Allow passing extra parameters to the commands.
-  if not cmds.endswith(('$@', '"$@"')):
+  if _BARE_ARGS_SUFFIX.search(cmds):
+    cmds = _BARE_ARGS_SUFFIX.sub('"$@"', cmds)
+  elif not cmds.endswith('"$@"'):
     cmds = cmds + ' "$@"'
   return cmds
 

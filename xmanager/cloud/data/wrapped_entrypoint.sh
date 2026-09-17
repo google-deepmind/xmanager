@@ -16,5 +16,8 @@
 
 python3 -c "import vertex_utils; vertex_utils.create_workerpool_address_env_vars_script('./map_xm_env_vars')"
 source ./map_xm_env_vars
-ARGS=($(python3 -c "import vertex_utils; import sys; vertex_utils.print_workerpool_address_args(sys.argv)" $@ | tr -d '[],'))
-./entrypoint.sh ${ARGS[@]}
+ARGS=()
+while IFS= read -r ARG; do
+  ARGS+=("$ARG")
+done < <(python3 -c "import vertex_utils; import sys; vertex_utils.print_workerpool_address_args(sys.argv)" "$@")
+./entrypoint.sh "${ARGS[@]}"

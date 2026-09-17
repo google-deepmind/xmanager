@@ -137,7 +137,7 @@ command as well as the Docker instructions.
 xm.PythonContainer(
     entrypoint=xm.CommandList([
       './pre_process.sh',
-      'python3 -m cifar10 $@',
+      'python3 -m cifar10 "$@"',
       './post_process.sh',
     ]),
     docker_instructions=[
@@ -158,8 +158,9 @@ python3 -m cifar10 fixed_arg1 fixed_arg2
 ./post_process.sh
 ```
 
-IMPORTANT: Note the use of `$@` which accepts command-line arguments. Otherwise,
-all command-line arguments are ignored by your entrypoint.
+IMPORTANT: Note the use of `"$@"` which accepts command-line arguments.
+Otherwise, all command-line arguments are ignored by your entrypoint. Quote it,
+since a bare `$@` splits every argument on whitespace.
 
 `xm.python_container` is a shortener for packageable construction.
 
