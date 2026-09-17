@@ -40,9 +40,9 @@ class _DummyProto:
 # Specifically from api/protos/dashboard. During local builds before
 # present, so we fallback gracefully for analysis and testing.
 try:
-  from xmanager_cloud.dashboard_service.proto import api_pb2  # pylint: disable=g-import-not-at-top  # pyrefly: ignore[missing-import]
-  from xmanager_cloud.dashboard_service.proto import api_pb2_grpc  # pylint: disable=g-import-not-at-top  # pyrefly: ignore[missing-import]
-  from xmanager_cloud.dashboard_service.proto import dashboard_pb2  # pylint: disable=g-import-not-at-top  # pyrefly: ignore[missing-import]
+  from xmanager_cloud.dashboard_service.proto import dashboard_service_pb2 as api_pb2  # pylint: disable=g-import-not-at-top  # pyrefly: ignore[missing-import]
+  from xmanager_cloud.dashboard_service.proto import dashboard_service_pb2_grpc as api_pb2_grpc  # pylint: disable=g-import-not-at-top  # pyrefly: ignore[missing-import]
+  from xmanager_cloud.dashboard_service.proto import messages_pb2 as dashboard_pb2  # pylint: disable=g-import-not-at-top  # pyrefly: ignore[missing-import]
 except ImportError:
   api_pb2 = _DummyProto()
   api_pb2_grpc = _DummyProto()
