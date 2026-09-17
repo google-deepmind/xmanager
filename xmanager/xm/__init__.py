@@ -45,6 +45,7 @@ from xmanager.xm.executables import Container
 from xmanager.xm.executables import Dockerfile
 from xmanager.xm.executables import ModuleName
 from xmanager.xm.executables import PythonContainer
+from xmanager.xm.framework_utils import framework_label
 from xmanager.xm.job_blocks import Constraint
 from xmanager.xm.job_blocks import Executable
 from xmanager.xm.job_blocks import ExecutableSpec
