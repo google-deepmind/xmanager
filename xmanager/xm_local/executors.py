@@ -48,12 +48,16 @@ class DockerOptions:
       mount_gcs_path: If True, checks for the `~/gcs` directory on the host and
         mounts it (if found) at `/gcs` in the container. Defaults to True.
       interactive: If True, requests a run with interactive shell.
+      mount_gcloud_config: If True, mounts the host's `~/.config/gcloud`
+        directory at `/root/.config/gcloud` in the container. Defaults to True
+        for compatibility.
   """
 
   ports: Optional[docker_adapter.Ports] = None
   volumes: Optional[Dict[str, str]] = None
   mount_gcs_path: bool = True
   interactive: bool = False
+  mount_gcloud_config: bool = True
 
 
 @attr.s(auto_attribs=True)

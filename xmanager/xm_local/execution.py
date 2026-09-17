@@ -65,11 +65,12 @@ async def _launch_loaded_container_image(
   env_vars = {**executable.env_vars, **job.env_vars}
   options = executor.docker_options or executors.DockerOptions()
 
-  volumes = options.volumes or {}
-  # Add GCP credentials to Local Executor.
-  local_gcloud_config_path = os.path.expanduser('~/.config/gcloud')
-  image_gcloud_config_path = '/root/.config/gcloud'
-  volumes[local_gcloud_config_path] = image_gcloud_config_path
+  volumes = dict(options.volumes or {})
+  if options.mount_gcloud_config:
+    # Add GCP credentials to Local Executor.
+    local_gcloud_config_path = os.path.expanduser('~/.config/gcloud')
+    image_gcloud_config_path = '/root/.config/gcloud'
+    volumes[local_gcloud_config_path] = image_gcloud_config_path
 
   if options.mount_gcs_path and os.path.isdir(os.path.expanduser('~/gcs')):
     local_gcs_path = os.path.expanduser('~/gcs')
