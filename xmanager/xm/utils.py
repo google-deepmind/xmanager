@@ -44,11 +44,13 @@ class SpecialArg(abc.ABC):
 
 @attr.s(auto_attribs=True)
 class ShellSafeArg(SpecialArg):
-  """Command line argument that shouldn't be escaped.
+  """Command line argument that shouldn't be quoted.
 
-  Normally all arguments would be passed to the binary as is. To let shell
-  substitutions (such as environment variable expansion) to happen the argument
-  must be wrapped with this structure.
+  Backends that run the job through a shell quote every argument, which
+  suppresses substitutions such as environment variable expansion. Wrapping an
+  argument in this structure exempts it from that quoting. Backends that hand
+  arguments over as `argv` neither quote nor substitute, so there the wrapper
+  makes no difference.
   """
 
   arg: str
@@ -60,14 +62,24 @@ class ShellSafeArg(SpecialArg):
     )
 
 
-def ARG_ESCAPER(value: Any) -> str:  # pylint: disable=invalid-name
+def ARGV_ESCAPER(value: Any) -> str:  # pylint: disable=invalid-name
+  """Serializes a value into an `argv` token for a backend with no shell."""
   match value:
     case ShellSafeArg():
       return value.arg
     case enum.Enum():
-      return shlex.quote(str(value.name))
+      return str(value.name)
     case _:
-      return shlex.quote(str(value))
+      return str(value)
+
+
+def ARG_ESCAPER(value: Any) -> str:  # pylint: disable=invalid-name
+  """Serializes a value into a token of a command destined for a POSIX shell."""
+  match value:
+    case ShellSafeArg():
+      return value.arg
+    case _:
+      return shlex.quote(ARGV_ESCAPER(value))
 
 
 def trivial_kwargs_joiner(key: str, value: str) -> str:

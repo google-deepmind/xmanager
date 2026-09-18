@@ -16,6 +16,7 @@
 import asyncio
 import atexit
 import os
+import shlex
 import subprocess
 import threading
 from typing import Callable, List, cast
@@ -61,7 +62,7 @@ async def _launch_loaded_container_image(
           'No NVIDIA devices detected. Only NVIDIA GPUs are currently supported'
       ) from exception
 
-  args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
+  args = xm.merge_args(executable.args, job.args).to_list(utils.ARGV_ESCAPER)
   env_vars = {**executable.env_vars, **job.env_vars}
   options = executor.docker_options or executors.DockerOptions()
 
@@ -129,7 +130,7 @@ async def _launch_local_binary(
         executable.command, args, env_vars, get_full_job_name(job.name)
     )
   else:
-    command = ' '.join([executable.command] + args)
+    command = ' '.join([shlex.quote(executable.command)] + args)
     process = await asyncio.create_subprocess_shell(
         cmd=command,
         env=env_vars,

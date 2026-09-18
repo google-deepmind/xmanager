@@ -106,7 +106,7 @@ class Client:
           image=executable.image_path,
           resources=requirements_from_executor(executor),  # pyrefly: ignore[bad-argument-type]
           args=xm.merge_args(executable.args, job.args).to_list(
-              utils.ARG_ESCAPER
+              utils.ARGV_ESCAPER
           ),
           env=env,
       )

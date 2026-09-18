@@ -49,22 +49,18 @@ async def main(_):
           entrypoint=xm.ModuleName('cifar10'),
       )
 
-    [executable] = experiment.package(
-        [
-            xm.Packageable(
-                executable_spec=spec,
-                executor_spec=xm_local.Vertex.Spec(),
-                args={
-                    # TODO: replace workerpool0 with the actual
-                    # name of the job when Vertex AI supports custom name worker
-                    # pools.
-                    'master_addr_port': xm.ShellSafeArg(
-                        utils.get_workerpool_address('workerpool0')
-                    ),
-                },
-            ),
-        ]
-    )
+    [executable] = experiment.package([
+        xm.Packageable(
+            executable_spec=spec,
+            executor_spec=xm_local.Vertex.Spec(),
+            args={
+                # TODO: replace workerpool0 with the actual
+                # name of the job when Vertex AI supports custom name worker
+                # pools.
+                'master_addr_port': utils.get_workerpool_address('workerpool0'),
+            },
+        ),
+    ])
 
     batch_sizes = [64, 1024]
     learning_rates = [0.1, 0.001]

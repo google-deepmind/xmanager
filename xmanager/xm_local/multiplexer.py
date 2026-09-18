@@ -3,6 +3,7 @@
 import asyncio
 import functools
 import logging
+import shlex
 import shutil
 import subprocess
 
@@ -17,16 +18,25 @@ def _has_tmux() -> bool:
 def _get_executable_command(
     executable_path: str, args: list[str], env_vars: dict[str, str]
 ) -> str:
-  """Builds a command to run the given executable with args and envs."""
-  env_as_list = [f'{k}={v}' for k, v in env_vars.items()]
-  launch_command = subprocess.list2cmdline(
-      [*env_as_list, executable_path, *args]
-  )
+  """Builds a command to run the given executable with args and envs.
+
+  Args:
+    executable_path: Path to the executable, quoted here.
+    args: Arguments already serialized as shell tokens, e.g. through
+      `xm.utils.ARG_ESCAPER`. They are not quoted here, so that an
+      `xm.ShellSafeArg` among them keeps its meaning.
+    env_vars: Environment variables, prepended as assignments and quoted here.
+
+  Returns:
+    A command for a POSIX shell.
+  """
+  env_as_list = [f'{k}={shlex.quote(v)}' for k, v in env_vars.items()]
+  launch_command = ' '.join([*env_as_list, shlex.quote(executable_path), *args])
   # When the command is done, echo the command so it can be copy-pasted, and
   # then drop into a shell.
   command = (
-      f'{launch_command}; '
-      f'echo; echo Job completed.; echo {launch_command}; exec $SHELL'
+      f'{launch_command}; echo; echo Job completed.;'
+      f' echo {shlex.quote(launch_command)}; exec $SHELL'
   )
   return command
 
@@ -52,7 +62,7 @@ class Multiplexer:
 
     while True:
       process = await asyncio.create_subprocess_shell(
-          subprocess.list2cmdline([
+          shlex.join([
               'tmux',
               'new-session',
               '-d',
@@ -109,7 +119,7 @@ class Multiplexer:
       process = await self._new_session(inner_command, full_job_name)
     else:
       process = await asyncio.create_subprocess_shell(
-          subprocess.list2cmdline([
+          shlex.join([
               'tmux',
               'new-window',
               '-t',

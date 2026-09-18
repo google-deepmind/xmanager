@@ -40,7 +40,7 @@ def create_test_job(
       executable=local_executables.LoadedContainerImage(
           name='test',
           image_id='test-image',
-          args=xm.SequentialArgs.from_collection({'a': 1}),
+          args=xm.SequentialArgs.from_collection({'a': 'with space'}),
           env_vars={'c': '0'},
       ),
       executor=local_executors.Local(
@@ -108,7 +108,7 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
         name='test-job',
         image_id='test-image',
         network='xmanager',
-        args=['--a=1'],
+        args=['--a=with space'],
         env_vars={'c': '0'},
         ports={8080: 8080},
         volumes=(
@@ -167,7 +167,7 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
         network='xmanager',
         detach=True,
         remove=True,
-        command=['--a=1'],
+        command=['--a=with space'],
         environment={'c': '0'},
         ports={8080: 8080},
         volumes=(
@@ -279,7 +279,7 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
           name='test-job',
           image_id='test-image',
           network='xmanager',
-          args=['--a=1'],
+          args=['--a=with space'],
           env_vars={'c': '0'},
           ports={8080: 8080},
           volumes={
@@ -308,6 +308,29 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
     self.assertIsInstance(handle, local_handles.BinaryHandle)
     await handle.wait()
     self.assertEqual(handle.name, 'test-job')
+    self.assertEqual(handle.process.returncode, 0)
+    stdout_reader = cast(asyncio.StreamReader, handle.process.stdout)
+    self.assertEqual(await stdout_reader.read(), b'--arg=with space\n')
+
+  async def test_launch_local_binary_with_space_in_command(self):
+    command = os.path.join(self.create_tempdir().full_path, 'test echo')
+    with open(command, 'w') as file:
+      file.write('#!/bin/sh\necho "$@"\n')
+    os.chmod(command, 0o755)
+    job = xm.Job(
+        name='test-job',
+        executable=local_executables.LocalBinary(
+            name='test_echo',
+            command=command,
+            args=xm.SequentialArgs.from_collection({'arg': 'with space'}),
+        ),
+        executor=local_executors.Local(experimental_stream_output=True),
+    )
+    handles = await execution.launch(
+        lambda x: x, job_group=xm.JobGroup(test_job=job)
+    )
+    handle = cast(local_handles.BinaryHandle, handles[0])
+    await handle.wait()
     self.assertEqual(handle.process.returncode, 0)
     stdout_reader = cast(asyncio.StreamReader, handle.process.stdout)
     self.assertEqual(await stdout_reader.read(), b'--arg=with space\n')

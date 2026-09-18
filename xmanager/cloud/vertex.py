@@ -182,7 +182,9 @@ class Client:
             )
         )
 
-      args = xm.merge_args(executable.args, job.args).to_list(utils.ARG_ESCAPER)
+      args = xm.merge_args(executable.args, job.args).to_list(
+          utils.ARGV_ESCAPER
+      )
       env_vars = {**executable.env_vars, **job.env_vars}
       env = [{'name': k, 'value': v} for k, v in env_vars.items()]
       if i == 0 and job.executor.requirements.replicas > 1:  # pyrefly: ignore[missing-attribute]

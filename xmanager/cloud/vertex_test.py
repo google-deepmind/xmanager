@@ -51,7 +51,7 @@ class VertexTest(parameterized.TestCase):
             args=xm.SequentialArgs.from_collection({'a': 1}),
         ),
         executor=local_executors.Vertex(xm.JobRequirements(cpu=1, ram=1, t4=2)),
-        args={'b': 2, 'c': 3},
+        args={'b': 2, 'c': '{"d": 4}'},
     )
 
     expected_call = {
@@ -69,7 +69,11 @@ class VertexTest(parameterized.TestCase):
                         replica_count=1,
                         container_spec=aip_v1.ContainerSpec(
                             image_uri='image-path',
-                            args=['--a=1', '--b=2', '--c=3'],
+                            args=[
+                                '--a=1',
+                                '--b=2',
+                                '--c={"d": 4}',
+                            ],
                         ),
                     )
                 ],
