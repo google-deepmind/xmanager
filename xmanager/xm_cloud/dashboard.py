@@ -30,7 +30,7 @@ class _DummyProto:
   DashboardServiceStub: Any = _DummyProtoMessage
   Dashboard: Any = _DummyProtoMessage
   Chart: Any = _DummyProtoMessage
-  Plot: Any = _DummyProtoMessage
+  PlotSpec: Any = _DummyProtoMessage
 
   def __getattr__(self, name: str) -> Any:
     return _DummyProtoMessage
@@ -94,7 +94,7 @@ class Chart:
   @property
   def experiment_id(self) -> int:
     """The XID of the experiment referenced by this chart."""
-    return getattr(self._chart_proto, 'experiment_id', 0)
+    return getattr(self._chart_proto, 'xid', 0)
 
   @property
   def experiment_name(self) -> str:
@@ -122,9 +122,11 @@ class Dashboard:
   def __init__(
       self,
       dashboard_proto: Any,
+      charts: Sequence[Chart] | None = None,
       stub: Any | None = None,
   ):
     self._dashboard_proto = dashboard_proto
+    self._charts = list(charts) if charts is not None else None
     self._stub = stub or get_dashboard_service_stub()
 
   @property
@@ -145,6 +147,8 @@ class Dashboard:
   @property
   def charts(self) -> Sequence[Chart]:
     """The list of charts contained in this dashboard."""
+    if self._charts is not None:
+      return self._charts
     charts_list = getattr(self._dashboard_proto, 'charts', [])
     return [Chart(chart_proto) for chart_proto in charts_list]
 
@@ -209,17 +213,20 @@ class Dashboard:
     self._dashboard_proto = self._stub.UpdateDashboard(request)
 
 
-def create_plot(title: str, **kwargs: Any) -> Plot:
+def create_plot(title: str, plot_id: str | None = None, **kwargs: Any) -> Plot:
   """Creates a new Plot wrapper.
 
   Args:
-    title: The title of the plot.
-    **kwargs: Additional fields on the Plot protobuf message.
+    title: Display title for the plot.
+    plot_id: Optional unique identifier for the plot within a chart. If not
+      provided, defaults to a slug derived from title.
+    **kwargs: Additional fields passed directly to the PlotSpec protobuf.
 
   Returns:
     The created Plot wrapper instance.
   """
-  proto = dashboard_pb2.Plot(title=title, **kwargs)
+  plot_id = plot_id or title.lower().replace(' ', '_')
+  proto = dashboard_pb2.PlotSpec(title=title, plot_id=plot_id, **kwargs)
   return Plot(proto)
 
 
@@ -235,7 +242,8 @@ def create_chart(
     title: Display title for the chart.
     experiment_id: XID of the experiment referenced by this chart.
     plots: Sequence of plots to include in the chart.
-    **kwargs: Additional fields on the Chart protobuf message.
+    **kwargs: Additional fields passed directly to the Chart protobuf message
+      (such as description or plot_layout).
 
   Returns:
     The created Chart wrapper instance.
@@ -248,7 +256,7 @@ def create_chart(
   plot_protos = [p.to_proto() if isinstance(p, Plot) else p for p in plots]
   proto = dashboard_pb2.Chart(
       title=title,
-      experiment_id=experiment_id,
+      xid=experiment_id,
       plots=plot_protos,
       **kwargs,
   )
@@ -266,7 +274,8 @@ def create_dashboard(
     title: Display title for the dashboard.
     charts: One or more charts to include in the dashboard. Each chart must
       reference exactly 1 experiment.
-    **kwargs: Additional fields on the Dashboard protobuf message.
+    **kwargs: Additional fields passed directly to the Dashboard protobuf
+      message (such as description or chart_layout).
 
   Returns:
     The created Dashboard wrapper instance.
@@ -278,15 +287,13 @@ def create_dashboard(
     raise ValueError('A dashboard must contain at least one Chart.')
 
   chart_protos = [c.to_proto() if isinstance(c, Chart) else c for c in charts]
-  proto = dashboard_pb2.Dashboard(
-      title=title,
-      charts=chart_protos,
-      **kwargs,
-  )
-  request = api_pb2.CreateDashboardRequest(dashboard=proto)
+  proto = dashboard_pb2.Dashboard(title=title, **kwargs)
+  request = api_pb2.CreateDashboardRequest(dashboard=proto, charts=chart_protos)
+
   stub = get_dashboard_service_stub()
   created_proto = stub.CreateDashboard(request)
-  return Dashboard(created_proto, stub=stub)
+  chart_wrappers = [c if isinstance(c, Chart) else Chart(c) for c in charts]
+  return Dashboard(created_proto, charts=chart_wrappers, stub=stub)
 
 
 def get_dashboard(name: str) -> Dashboard:
