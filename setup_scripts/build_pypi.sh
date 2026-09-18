@@ -24,7 +24,21 @@ cd "${SOURCE_ROOT_DIR}"
 PYTHON_CMD="${PYTHON_CMD:-python3}"
 
 VENV_DIR="/tmp/xm_build_venv"
+
+cleanup() {
+  echo "Cleaning up temporary build artifacts..."
+  rm -rf "${SOURCE_ROOT_DIR}/xmc_repo" \
+         "${SOURCE_ROOT_DIR}/third_party" \
+         "${SOURCE_ROOT_DIR}/xmanager_cloud" \
+         "${SOURCE_ROOT_DIR}/xdash" \
+         "${SOURCE_ROOT_DIR}/build" \
+         "${SOURCE_ROOT_DIR}/xmanager.egg-info" \
+         "${VENV_DIR}"
+}
+trap cleanup EXIT
+
 echo "Creating and activating virtual environment at ${VENV_DIR}..."
+rm -rf "${VENV_DIR}"
 $PYTHON_CMD -m venv "${VENV_DIR}"
 source "${VENV_DIR}/bin/activate"
 
@@ -35,56 +49,20 @@ pip install --upgrade pip build twine grpcio "grpcio-tools" "protobuf<7" google-
 # By default, this fetches the latest tag, or you can specify a tag (e.g. RELEASE_TAG=0.1.0).
 RELEASE_TAG=${RELEASE_TAG:-$(git ls-remote --tags --sort=-v:refname https://github.com/google/xmc.git | grep -o 'refs/tags/[^^{}]*' | head -n 1 | sed 's#refs/tags/##')}
 echo "Cloning xmc tag: ${RELEASE_TAG}"
+rm -rf xmc_repo
 git clone --depth 1 --branch "${RELEASE_TAG}" https://github.com/google/xmc.git xmc_repo
 
-echo "Creating xmanager_cloud package structure..."
-mkdir -p xmanager_cloud/experiment_state_server/proto
-mkdir -p xmanager_cloud/xid_service/proto
-mkdir -p xmanager_cloud/dashboard_service/proto
+echo "Preparing and compiling xmanager_cloud protos via install_xmanager_cloud.sh..."
+bash ./setup_scripts/install_xmanager_cloud.sh \
+  --xmanager-dir "${SOURCE_ROOT_DIR}" \
+  --xmc-dir "${SOURCE_ROOT_DIR}/xmc_repo" \
+  --venv "${VENV_DIR}" \
+  --prepare-only
 
-echo "Copying Python client wrapper..."
-cp xmc_repo/cmd/experiment_state_server/experiment_state_api.py xmanager_cloud/experiment_state_server/
-
-echo "Copying proto files from xmc api folder..."
-cp xmc_repo/api/protos/experiment/*.proto xmanager_cloud/experiment_state_server/proto/
-cp xmc_repo/api/protos/xid/*.proto xmanager_cloud/xid_service/proto/
-cp xmc_repo/api/protos/dashboard/*.proto xmanager_cloud/dashboard_service/proto/
-
-echo "Rewriting proto import paths..."
-find xmanager_cloud -name "*.proto" -exec sed -i 's#third_party/xmanager_cloud/#xmanager_cloud/#g' {} +
-find xmanager_cloud -name "*.py" -exec sed -i 's#from longrunning#from google.longrunning#g' {} +
-find xmanager_cloud -type d -exec touch {}/__init__.py \;
-
-GOOGLEAPIS_DIR="/tmp/googleapis"
-if [ ! -d "${GOOGLEAPIS_DIR}" ]; then
-  echo "Cloning googleapis repository..."
-  git clone --depth 1 https://github.com/googleapis/googleapis.git "${GOOGLEAPIS_DIR}"
-fi
-
-echo "Compiling xmanager_cloud protos..."
-python3 -m grpc_tools.protoc \
-  --proto_path=. \
-  --proto_path=xmc_repo \
-  --proto_path="${GOOGLEAPIS_DIR}" \
-  --python_out=. \
-  --grpc_python_out=. \
-  ./xmanager_cloud/xid_service/proto/*.proto \
-  ./xmanager_cloud/experiment_state_server/proto/*.proto \
-  ./xmanager_cloud/dashboard_service/proto/*.proto
-
-echo "Verifying imports..."
-python3 -c "import xmanager_cloud"
-python3 -c "import xmanager_cloud.experiment_state_server.experiment_state_api"
-python3 -c "import xmanager_cloud.experiment_state_server.proto.api_pb2"
-python3 -c "import xmanager_cloud.dashboard_service.proto.messages_pb2"
-
-echo "Cleaning up temporary build directories..."
+echo "Cleaning up temporary clone directories before build..."
 rm -rf xmc_repo third_party
 
 echo "Building sdist and wheel packages..."
 python3 -m build
-
-echo "Cleaning up virtual environment..."
-rm -rf "${VENV_DIR}"
 
 echo "Build completed successfully! Packages are available in dist/"

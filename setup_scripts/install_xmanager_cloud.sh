@@ -38,11 +38,21 @@ copy_service_to_package() {
   mkdir -p "${dest_dir}"
   touch "${dest_dir}/__init__.py"
 
-  # Copy Python files from XMC cmd directory (if they exist)
+  # Copy Python files from XMC cmd or service directory (if they exist)
   local cmd_dir="${XMC_DIR}/cmd/${service_name}"
-  if [ -d "${cmd_dir}" ]; then
+  if [ ! -d "${cmd_dir}" ] && [ -d "${XMC_DIR}/${service_name}" ]; then
+    cmd_dir="${XMC_DIR}/${service_name}"
+  fi
+  if [ -d "${cmd_dir}" ] && compgen -G "${cmd_dir}/*.py" > /dev/null; then
     echo "Copying python files from ${cmd_dir}..."
-    cp "${cmd_dir}"/*.py "${dest_dir}/" || echo "Warning: No python files found in ${cmd_dir}"
+    cp "${cmd_dir}"/*.py "${dest_dir}/"
+    rm -f "${dest_dir}"/*_test.py
+  elif [ "${service_name}" = "experiment_state_server" ]; then
+    echo "Fetching experiment_state_api.py from xmc 0.9.0 tag via git..."
+    if ! git -C "${XMC_DIR}" cat-file -e 0.9.0:cmd/experiment_state_server/experiment_state_api.py 2>/dev/null; then
+      git -C "${XMC_DIR}" fetch --depth 1 origin refs/tags/0.9.0:refs/tags/0.9.0
+    fi
+    git -C "${XMC_DIR}" show 0.9.0:cmd/experiment_state_server/experiment_state_api.py > "${dest_dir}/experiment_state_api.py"
   fi
 
   # Clean and recreate proto destination
@@ -51,8 +61,8 @@ copy_service_to_package() {
   mkdir -p "${dest_proto_dir}"
   touch "${dest_proto_dir}/__init__.py"
 
-  # Copy proto contents
-  cp -r "${XMC_PROTOS_SRC_DIR}/${proto_subdir}/." "${dest_proto_dir}/"
+  # Copy proto contents (only .proto files, excluding BUILD.bazel)
+  cp "${XMC_PROTOS_SRC_DIR}/${proto_subdir}"/*.proto "${dest_proto_dir}/"
 }
 
 # Load dotenv file and export its variables if they are not already set in the environment
@@ -94,6 +104,7 @@ XMANAGER_DIR="${DEFAULT_XMANAGER_DIR}"
 XMC_DIR="${DEFAULT_XMC_DIR}"
 VENV_DIR="${DEFAULT_VENV_DIR}"
 DOTENV_PATH=""
+PREPARE_ONLY=false
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -113,6 +124,10 @@ while [[ $# -gt 0 ]]; do
       DOTENV_PATH="$2"
       shift 2
       ;;
+    --prepare-only)
+      PREPARE_ONLY=true
+      shift
+      ;;
     -h|--help)
       echo "Usage: $0 [options]"
       echo "Options:"
@@ -120,6 +135,7 @@ while [[ $# -gt 0 ]]; do
       echo "  --xmc-dir <path>       Path to local xmc repo (default: ${DEFAULT_XMC_DIR})"
       echo "  --venv <path>          Path to target virtual environment (default: ${DEFAULT_VENV_DIR})"
       echo "  --dotenv <path>        Path to dotenv file (default: not set)"
+      echo "  --prepare-only         Prepare and compile xmanager_cloud protos in-place inside --xmanager-dir without installing or running tests"
       exit 0
       ;;
     *)
@@ -161,6 +177,7 @@ echo "=== Configuration ==="
 echo "XManager Source: ${XMANAGER_DIR}"
 echo "XMC Source:      ${XMC_DIR}"
 echo "Venv Target:     ${VENV_DIR}"
+echo "Prepare Only:    ${PREPARE_ONLY}"
 if [ -n "${DOTENV_PATH}" ]; then
   echo "Dotenv File:     ${DOTENV_PATH}"
 else
@@ -179,7 +196,11 @@ TEMP_DIR="$(mktemp -d)"
 # Clean up temporary clones and builds on completion or failure
 trap 'echo "Cleaning up temporary setup files..."; rm -rf "${TEMP_DIR}"' EXIT
 
-XMANAGER_SRC_DIR="${TEMP_DIR}/xmanager"
+if [ "${PREPARE_ONLY}" = true ]; then
+  XMANAGER_SRC_DIR="${XMANAGER_DIR}"
+else
+  XMANAGER_SRC_DIR="${TEMP_DIR}/xmanager"
+fi
 GOOGLEAPIS_SRC_DIR="${TEMP_DIR}/googleapis"
 XMC_PROTOS_SRC_DIR="${XMC_DIR}/api/protos"
 
@@ -194,7 +215,8 @@ echo "Updating pip and installing dependencies..."
 pip install --index-url https://pypi.org/simple --upgrade pip
 pip install --index-url https://pypi.org/simple \
   grpcio \
-  grpcio-tools \
+  "grpcio-tools" \
+  "protobuf<7" \
   google-auth \
   googleapis-common-protos \
   requests \
@@ -204,31 +226,30 @@ pip install --index-url https://pypi.org/simple \
   tabulate \
   absl-py
 
-# 2. Copy local XManager code (excluding venvs, git, and build artifacts)
-echo "Copying local XManager code..."
-if command -v rsync >/dev/null 2>&1; then
-  rsync -a \
-    --exclude=.git \
-    --exclude=.venv \
-    --exclude=venv \
-    --exclude=__pycache__ \
-    --exclude=build \
-    --exclude=dist \
-    --exclude=*.egg-info \
-    "${XMANAGER_DIR}/" "${XMANAGER_SRC_DIR}/"
-else
-  echo "Warning: rsync not found. Falling back to cp."
-  mkdir -p "${XMANAGER_SRC_DIR}"
-  # cp -r "${XMANAGER_DIR}"/* "${XMANAGER_SRC_DIR}/"
-  # rm -rf "${XMANAGER_SRC_DIR}/.git" "${XMANAGER_SRC_DIR}/.venv" "${XMANAGER_SRC_DIR}/venv"
-  cp -r "${XMANAGER_DIR}/." "${XMANAGER_SRC_DIR}/"
-  # Manually remove the junk
-  rm -rf "${XMANAGER_SRC_DIR}/.git" "${XMANAGER_SRC_DIR}/venv" "${XMANAGER_SRC_DIR}"/**/__pycache__
-fi
+# 2. Copy local XManager code when not running in-place (--prepare-only)
+if [ "${PREPARE_ONLY}" = false ]; then
+  echo "Copying local XManager code..."
+  if command -v rsync >/dev/null 2>&1; then
+    rsync -a \
+      --exclude=.git \
+      --exclude=.venv \
+      --exclude=venv \
+      --exclude=__pycache__ \
+      --exclude=build \
+      --exclude=dist \
+      --exclude=*.egg-info \
+      "${XMANAGER_DIR}/" "${XMANAGER_SRC_DIR}/"
+  else
+    echo "Warning: rsync not found. Falling back to cp."
+    mkdir -p "${XMANAGER_SRC_DIR}"
+    cp -r "${XMANAGER_DIR}/." "${XMANAGER_SRC_DIR}/"
+    rm -rf "${XMANAGER_SRC_DIR}/.git" "${XMANAGER_SRC_DIR}/venv" "${XMANAGER_SRC_DIR}"/**/__pycache__
+  fi
 
-# Copy unit tests
-echo "Copying artifact unit tests..."
-cp "${XMANAGER_DIR}/${XM_CLOUD_REL_PATH}/artifact_test.py" "${XMANAGER_SRC_DIR}/${XM_CLOUD_REL_PATH}/artifact_test.py"
+  # Copy unit tests
+  echo "Copying artifact unit tests..."
+  cp "${XMANAGER_DIR}/${XM_CLOUD_REL_PATH}/artifact_test.py" "${XMANAGER_SRC_DIR}/${XM_CLOUD_REL_PATH}/artifact_test.py"
+fi
 
 # Create package namespace file for xmanager_cloud
 mkdir -p "${XMANAGER_SRC_DIR}/xmanager_cloud"
@@ -238,10 +259,22 @@ touch "${XMANAGER_SRC_DIR}/xmanager_cloud/__init__.py"
 echo "Cloning Google APIs repository..."
 git clone --depth 1 https://github.com/googleapis/googleapis.git "${GOOGLEAPIS_SRC_DIR}"
 
-# 4. Copy Protos and Python wrapper into XManager source
+# 4. Copy Protos, Python wrapper, and xdash SDK into XManager source
 echo "Copying xmc protos and source files..."
 copy_service_to_package "xid" "xid_service"
 copy_service_to_package "experiment" "experiment_state_server"
+copy_service_to_package "dashboard" "dashboard_service"
+
+if [ -d "${XMC_DIR}/sdks/python/xdash" ]; then
+  echo "Copying xdash Python SDK from ${XMC_DIR}/sdks/python/xdash..."
+  rm -rf "${XMANAGER_SRC_DIR}/xdash"
+  mkdir -p "${XMANAGER_SRC_DIR}/xdash"
+  cp "${XMC_DIR}/sdks/python/xdash"/*.py "${XMANAGER_SRC_DIR}/xdash/"
+  rm -f "${XMANAGER_SRC_DIR}/xdash"/*_test.py
+  if [ -f "${XMC_DIR}/sdks/python/xdash/py.typed" ]; then
+    cp "${XMC_DIR}/sdks/python/xdash/py.typed" "${XMANAGER_SRC_DIR}/xdash/"
+  fi
+fi
 
 # 5. Adjust proto imports (rewrite third_party/xmanager_cloud/ to xmanager_cloud/)
 echo "Adjusting proto and python import paths..."
@@ -250,26 +283,49 @@ if sed --version >/dev/null 2>&1; then
 else
   SED_I=(sed -i '')
 fi
-find "${XMANAGER_SRC_DIR}/xmanager_cloud/xid_service/proto" \
-  "${XMANAGER_SRC_DIR}/xmanager_cloud/experiment_state_server/proto" \
+find "${XMANAGER_SRC_DIR}/xmanager_cloud" \
   -name "*.proto" -type f -exec "${SED_I[@]}" 's|third_party/xmanager_cloud/|xmanager_cloud/|g' {} +
 
 # Adjust python imports in copied files
-find "${XMANAGER_SRC_DIR}/xmanager_cloud/experiment_state_server" \
-  -name "*.py" -type f -exec "${SED_I[@]}" 's|from longrunning|from google.longrunning|g' {} +
+find "${XMANAGER_SRC_DIR}/xmanager_cloud" \
+  -name "*.py" -type f \
+  -exec "${SED_I[@]}" -e 's|from longrunning|from google.longrunning|g' \
+                      -e 's|g'oogle3'\.google\.|google.|g' \
+                      -e 's|g'oogle3'\.third_party\.||g' {} +
 
-# Adjust python imports in copied test files
-"${SED_I[@]}" 's|g'oogle3'.third_party.||g' "${XMANAGER_SRC_DIR}/${XM_CLOUD_REL_PATH}/artifact_test.py"
+find "${XMANAGER_SRC_DIR}/xmanager_cloud" \
+  -type d -exec touch {}/__init__.py \;
+
+if [ "${PREPARE_ONLY}" = false ]; then
+  # Adjust python imports in copied test files
+  "${SED_I[@]}" 's|g'oogle3'.third_party.||g' "${XMANAGER_SRC_DIR}/${XM_CLOUD_REL_PATH}/artifact_test.py"
+fi
 
 # 6. Compile protos
 echo "Compiling xmanager_cloud protos..."
 python3 -m grpc_tools.protoc \
   --proto_path="${XMANAGER_SRC_DIR}" \
+  --proto_path="${XMC_DIR}" \
   --proto_path="${GOOGLEAPIS_SRC_DIR}" \
   --python_out="${XMANAGER_SRC_DIR}" \
   --grpc_python_out="${XMANAGER_SRC_DIR}" \
   "${XMANAGER_SRC_DIR}"/xmanager_cloud/xid_service/proto/*.proto \
-  "${XMANAGER_SRC_DIR}"/xmanager_cloud/experiment_state_server/proto/*.proto
+  "${XMANAGER_SRC_DIR}"/xmanager_cloud/experiment_state_server/proto/*.proto \
+  "${XMANAGER_SRC_DIR}"/xmanager_cloud/dashboard_service/proto/*.proto
+
+if [ "${PREPARE_ONLY}" = true ]; then
+  echo "Verifying prepared xmanager_cloud and xdash imports..."
+  (
+    cd "${XMANAGER_SRC_DIR}"
+    python3 -c "import xmanager_cloud"
+    python3 -c "import xmanager_cloud.experiment_state_server.experiment_state_api"
+    python3 -c "import xmanager_cloud.experiment_state_server.proto.api_pb2"
+    python3 -c "import xmanager_cloud.dashboard_service.proto.messages_pb2"
+    python3 -c "import xdash"
+  )
+  echo "In-place preparation of xmanager_cloud and xdash completed successfully!"
+  exit 0
+fi
 
 # 7. Install package
 echo "Installing XManager library..."
@@ -284,6 +340,8 @@ echo "Verifying imports..."
   python3 -c "import xmanager_cloud; print('Successfully imported xmanager_cloud:', xmanager_cloud)"
   python3 -c "import xmanager_cloud.experiment_state_server.experiment_state_api; print('Successfully imported experiment_state_api')"
   python3 -c "import xmanager_cloud.experiment_state_server.proto.api_pb2; print('Successfully imported api_pb2')"
+  python3 -c "import xmanager_cloud.dashboard_service.proto.messages_pb2; print('Successfully imported dashboard messages_pb2')"
+  python3 -c "import xdash; print('Successfully imported xdash:', xdash)"
 )
 
 # 9. Run unit tests
