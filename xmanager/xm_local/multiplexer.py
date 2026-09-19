@@ -25,18 +25,22 @@ def _get_executable_command(
     args: Arguments already serialized as shell tokens, e.g. through
       `xm.utils.ARG_ESCAPER`. They are not quoted here, so that an
       `xm.ShellSafeArg` among them keeps its meaning.
-    env_vars: Environment variables, prepended as assignments and quoted here.
+    env_vars: Environment variables, exported ahead of the command so that an
+      `xm.ShellSafeArg` referring to one expands to its value.
 
   Returns:
     A command for a POSIX shell.
   """
-  env_as_list = [f'{k}={shlex.quote(v)}' for k, v in env_vars.items()]
-  launch_command = ' '.join([*env_as_list, shlex.quote(executable_path), *args])
+  environment = [
+      f'export {key}={shlex.quote(value)}' for key, value in env_vars.items()
+  ]
+  executable_command = ' '.join([shlex.quote(executable_path), *args])
+  launch_command = '; '.join([*environment, executable_command])
   # When the command is done, echo the command so it can be copy-pasted, and
   # then drop into a shell.
   command = (
-      f'{launch_command}; echo; echo Job completed.;'
-      f' echo {shlex.quote(launch_command)}; exec $SHELL'
+      f"{launch_command}; echo; echo Job completed.; printf '%s\\n' "
+      f'{shlex.quote(launch_command)}; exec $SHELL'
   )
   return command
 
