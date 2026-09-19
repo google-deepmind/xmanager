@@ -184,6 +184,17 @@ SUBPROCESS_DOCKER = flags.DEFINE_bool(
     'Launch docker using `subprocess` command.',
 )
 
+DOCKER_CLIENT_TIMEOUT_SECONDS = flags.DEFINE_integer(
+    'xm_docker_client_timeout_seconds',
+    600,
+    (
+        'Request timeout in seconds for the cached Docker adapter client, '
+        'including image loading. Set before first use. Does not affect '
+        'separate image build/push clients or Docker subprocesses.'
+    ),
+    lower_bound=1,
+)
+
 # -------------------- contrib --------------------
 
 GCS_PATH = flags.DEFINE_string(

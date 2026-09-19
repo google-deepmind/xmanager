@@ -30,12 +30,14 @@ Ports = Dict[Union[int, str], Union[None, int, Tuple[str, int], List[int]]]
 
 @functools.lru_cache()
 def instance() -> 'DockerAdapter':
-  """Returns a thread-safe singleton adapter derived from the environment.
+  """Returns a cached adapter configured on its first call.
 
-  Allows the user to ignore the complexities of the underlying library, and
-  focus on a concrete small subset of required actions.
+  Set ``--xm_docker_client_timeout_seconds`` before creating the adapter.
+  The timeout applies to requests through this adapter's Python Docker client.
   """
-  return DockerAdapter(docker.from_env())
+  return DockerAdapter(
+      docker.from_env(timeout=xm_flags.DOCKER_CLIENT_TIMEOUT_SECONDS.value)
+  )
 
 
 class DockerAdapter(object):
