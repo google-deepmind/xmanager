@@ -13,7 +13,12 @@
 # limitations under the License.
 """Tests for xmanager.cloud.utils."""
 
+import json
 import os
+import shlex
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -34,6 +39,45 @@ _CLUSTER_SPEC = """{
 }""".replace(
     '\n', ' '
 )
+
+
+def _write_script(path: str, body: str) -> None:
+  with open(path, 'w') as f:
+    f.write(f'#!/bin/bash\n{body}\n')
+  os.chmod(path, 0o755)
+
+
+def _stage_wrapped_entrypoint(directory: str) -> str:
+  """Lays out the directory `build_image._wrap_late_bindings` produces.
+
+  Args:
+    directory: Directory to stage into, used as the working directory of the
+      wrapper.
+
+  Returns:
+    A directory to prepend to `PATH`, holding a `python3` shim.
+  """
+  data = os.path.join(os.path.dirname(utils.__file__), 'data')
+  shutil.copy(os.path.join(data, 'wrapped_entrypoint.sh'), directory)
+  # The wrapper imports this module under the name the image stages it as.
+  shutil.copy(utils.__file__, os.path.join(directory, 'vertex_utils.py'))
+
+  _write_script(
+      os.path.join(directory, 'entrypoint.sh'),
+      'exec {} -c {} "$@"'.format(
+          shlex.quote(sys.executable),
+          shlex.quote('import json, sys; print(json.dumps(sys.argv[1:]))'),
+      ),
+  )
+  # The wrapper calls `python3` by name, which need not be the interpreter
+  # running this test nor carry the dependencies of `vertex_utils`.
+  binaries = os.path.join(directory, 'bin')
+  os.makedirs(binaries)
+  _write_script(
+      os.path.join(binaries, 'python3'),
+      f'exec {shlex.quote(sys.executable)} "$@"',
+  )
+  return binaries
 
 
 class UtilsTest(unittest.TestCase):
@@ -85,6 +129,39 @@ export MY_WORKER=cmle-training-workerpool0-ab-0:2222
     """
     with open(t.name) as f:
       self.assertEqual(f.read(), expected.strip())
+
+  def test_wrapped_entrypoint_forwards_arguments(self):
+    if shutil.which('bash') is None:
+      self.skipTest('bash is unavailable')
+    os.environ['CLUSTER_SPEC'] = _CLUSTER_SPEC
+    args = [
+        '--config={"d": 4, "e": 5}',
+        '--path=a path',
+        '--master=' + utils.get_workerpool_address('workerpool0'),
+    ]
+
+    with tempfile.TemporaryDirectory() as directory:
+      binaries = _stage_wrapped_entrypoint(directory)
+      result = subprocess.run(
+          ['bash', 'wrapped_entrypoint.sh', *args],
+          cwd=directory,
+          env={
+              **os.environ,
+              'PATH': os.pathsep.join([binaries, os.environ['PATH']]),
+          },
+          capture_output=True,
+          text=True,
+          check=True,
+      )
+
+    self.assertEqual(
+        json.loads(result.stdout.splitlines()[-1]),
+        [
+            '--config={"d": 4, "e": 5}',
+            '--path=a path',
+            '--master=cmle-training-workerpool0-ab-0:2222',
+        ],
+    )
 
 
 if __name__ == '__main__':
