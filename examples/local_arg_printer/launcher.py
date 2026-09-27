@@ -14,7 +14,7 @@
 """XManager launcher that runs locally a binary built with Bazel.
 
 One must `cd` into xmanager/examples/local_arg_printer/ in order to run this
-example because Bazel needs to locate the WORKSPACE file.
+example because Bazel needs to locate the `MODULE.bazel` file.
 """
 
 from typing import Sequence

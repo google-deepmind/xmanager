@@ -1,0 +1,6 @@
+# `rules_python`'s default venv-based bootstrap (`bootstrap_impl=script`) creates
+# the interpreter as an unresolved `declare_symlink` (`_server.venv/bin/python3`),
+# which `py_image_layer`'s `tar` step cannot follow when building the image. Copy
+# the interpreter into the venv instead of symlinking it.
+# See https://github.com/bazel-contrib/rules_python/issues/2864#issuecomment-2859325467
+common --@rules_python//python/config_settings:venvs_use_declare_symlink=no

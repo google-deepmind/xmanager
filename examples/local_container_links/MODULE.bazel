@@ -1,0 +1,44 @@
+module(
+    name = "xmanager_local_container_links_bzlmod",
+    version = "1.0.0",
+)
+
+bazel_dep(name = "platforms", version = "1.1.0")
+bazel_dep(name = "aspect_rules_py", version = "1.11.7")
+bazel_dep(name = "rules_python", version = "2.2.0")
+bazel_dep(name = "rules_img", version = "0.3.17")
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(python_version = "3.13")
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    # Use the Bazel downloader to fetch per-platform wheels from PyPI so the
+    # container image (Linux) can be cross-built from any host (e.g. macOS).
+    experimental_index_url = "https://pypi.org/simple",
+    hub_name = "pypi",
+    python_version = "3.13",
+    requirements_lock = "requirements.txt",
+    target_platforms = [
+        "linux_aarch64",
+        "linux_x86_64",
+        "osx_aarch64",
+        "osx_x86_64",
+    ],
+)
+use_repo(pip, "pypi")
+
+pull = use_repo_rule("@rules_img//img:pull.bzl", "pull")
+
+# `rules_img` selects the right platform variant at build time, so neither
+# `platforms` nor per-platform repos are needed here. `layer_handling = "eager"`
+# downloads the base image's layer blobs so the `tarball` output is a complete,
+# Docker-loadable image (XManager loads it via the Docker SDK).
+pull(
+    name = "docker_io_python",
+    digest = "sha256:034724ef64585eeb0e82385e9aabcbeabfe5f7cae2c2dcedb1da95114372b6d7",
+    layer_handling = "eager",
+    registry = "index.docker.io",
+    repository = "library/python",
+    tag = "3.13-slim",
+)
