@@ -251,6 +251,15 @@ class JobRequirementsTest(parameterized.TestCase):
         repr(resources.JobRequirements(cpu=1)), 'xm.JobRequirements(cpu=1.0)'
     )
 
+  def test_str_num_slices(self):
+    self.assertIn(
+        'num_slices=2',
+        repr(resources.JobRequirements(tpu_v3='4x4', num_slices=2)),
+    )
+    self.assertNotIn(
+        'num_slices', repr(resources.JobRequirements(tpu_v3='4x4'))
+    )
+
   @parameterized.named_parameters(
       dict(
           testcase_name='equal',
@@ -259,12 +268,14 @@ class JobRequirementsTest(parameterized.TestCase):
               cpu=1,
               location='ab',
               replicas=2,
+              num_slices=2,
           ),
           requirements2=resources.JobRequirements(
               v100=4,
               cpu=1,
               location='ab',
               replicas=2,
+              num_slices=2,
           ),
           expected=True,
       ),
@@ -307,6 +318,24 @@ class JobRequirementsTest(parameterized.TestCase):
     self.assertEqual(merged.accelerator, resources.ResourceType.P100)
     self.assertNotIn(resources.ResourceType.V100, merged.task_requirements)
     self.assertEqual(merged.task_requirements[resources.ResourceType.P100], 1)
+
+  def test_merge_num_slices_other_without_accelerator(self):
+    merged = resources.JobRequirements(gb300=4, num_slices=2).merge(
+        resources.JobRequirements(location='loc1')
+    )
+    self.assertEqual(merged.num_slices, 2)
+
+  def test_merge_num_slices_other_default_keeps_self(self):
+    merged = resources.JobRequirements(gb300=4, num_slices=2).merge(
+        resources.JobRequirements(gb300=4)
+    )
+    self.assertEqual(merged.num_slices, 2)
+
+  def test_merge_num_slices_override(self):
+    merged = resources.JobRequirements(gb300=4).merge(
+        resources.JobRequirements(num_slices=2)
+    )
+    self.assertEqual(merged.num_slices, 2)
 
 
 class EnumSubsetTest(parameterized.TestCase):

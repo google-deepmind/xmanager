@@ -20,6 +20,7 @@ import builtins
 import enum
 import functools
 import itertools
+import math
 import operator
 import re
 from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, Tuple, TypeVar, Union, cast
@@ -406,6 +407,8 @@ class JobRequirements:
       Borg cell.
     service_tier: A service tier at which the job should run.
     replicas: Number of identical tasks to run within a job
+    num_slices: Number of independent accelerator slices within the job. The
+      accelerator topology describes a single slice. Defaults to 1.
   """
   # pyformat:enable
 
@@ -416,6 +419,7 @@ class JobRequirements:
 
   location: Optional[str]
   _service_tier: ServiceTier
+  _num_slices: int
 
   def _validate_architecture_and_accelerator(self):
     """Validates that the architecture is compatible with the accelerator."""
@@ -444,6 +448,7 @@ class JobRequirements:
       location: Optional[str] = None,
       replicas: Optional[int] = None,
       service_tier: Optional[ServiceTier] = None,
+      num_slices: int = 1,
       **kw_resources: ResourceQuantity,
   ) -> None:
     # pyformat: disable
@@ -458,6 +463,8 @@ class JobRequirements:
         Borg cell.
       replicas: Number of identical tasks to run within a job. 1 by default.
       service_tier: A service tier at which the job should run.
+      num_slices: Number of independent accelerator slices within the job. The
+        accelerator topology describes a single slice.
       **kw_resources: resource amounts as a kwargs, for example `v100=2` or
         `ram=1 * xm.GiB`. See xm.ResourceType enum for the list of supported
         types and aliases.
@@ -468,9 +475,13 @@ class JobRequirements:
         If the same resource is passed in a `resources` dictionary and as
           a command line argument.
         If topology is supplied for a non accelerator resource.
+        If `replicas` is not consistent with `num_slices`.
     """
     # pyformat: enable
     self.location = location
+    if num_slices < 1:
+      raise ValueError(f'num_slices must be positive, got {num_slices}')
+    self._num_slices = num_slices
     self._service_tier = service_tier or _DEFAULT_SERVICE_TIER
 
     self.task_requirements = ResourceDict()
@@ -516,16 +527,19 @@ class JobRequirements:
     if (
         self.accelerator in GpuType
         and self.topology
-        and len(self.topology.dimensions) > 1
+        and (len(self.topology.dimensions) > 1 or self._num_slices > 1)
         and self.accelerator != ResourceType.B40_48TH
     ):
-      inferred_replicas = functools.reduce(
-          operator.mul, self.topology.dimensions[1:]
+      # The topology describes a single slice, and each slice is an identical
+      # copy of it.
+      inferred_replicas = (
+          math.prod(self.topology.dimensions[1:]) * self._num_slices
       )
       if replicas is not None and replicas != inferred_replicas:
         raise ValueError(
-            f'For multihost GPUs with topology {self.topology}, replicas'
-            f' should be either None or {inferred_replicas}. Got: {replicas}'
+            f'For multihost GPUs with topology {self.topology} and num_slices'
+            f' {self._num_slices}, replicas should be either None or'
+            f' {inferred_replicas}. Got: {replicas}'
         )
       replicas = inferred_replicas  # pyrefly: ignore[bad-assignment]
 
@@ -547,6 +561,10 @@ class JobRequirements:
   def service_tier(self, new_service_tier):
     self._service_tier = new_service_tier
 
+  @property
+  def num_slices(self) -> int:
+    return self._num_slices
+
   def __repr__(self) -> str:
     """Returns string representation of the requirements."""
     args = []
@@ -565,6 +583,8 @@ class JobRequirements:
       args.append(f'service_tier=xm.{self.service_tier}')
     if self.replicas != 1:
       args.append(f'replicas={self.replicas}')
+    if self.num_slices != 1:
+      args.append(f'num_slices={self.num_slices}')
 
     return f'xm.JobRequirements({", ".join(args)})'
 
@@ -600,8 +620,15 @@ class JobRequirements:
 
     if other.replicas != 1:
       kwargs['replicas'] = other.replicas
-    else:
+    elif self.replicas != 1:
       kwargs['replicas'] = self.replicas
+    # Otherwise leave replicas unset so it can be inferred (e.g. from
+    # num_slices) instead of being forced to 1.
+
+    if other.num_slices != 1:
+      kwargs['num_slices'] = other.num_slices
+    else:
+      kwargs['num_slices'] = self.num_slices
 
     return JobRequirements(merged_resources, **kwargs)
 
@@ -615,4 +642,5 @@ class JobRequirements:
         and self.location == other.location
         and self.service_tier == other.service_tier
         and self.replicas == other.replicas
+        and self.num_slices == other.num_slices
     )
