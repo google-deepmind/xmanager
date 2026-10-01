@@ -391,6 +391,21 @@ def _parse_resource_quantity(
     ) from e
 
 
+def _parse_replicas(value: ResourceQuantity) -> int:
+  """Parses a `replicas` resource quantity into a positive integer."""
+  if isinstance(value, Topology):
+    raise ValueError(f'replicas must be a positive integer, got {value!r}')
+  try:
+    scalar = float(value)
+  except ValueError as e:
+    raise ValueError(
+        f'replicas must be a positive integer, got {value!r}'
+    ) from e
+  if not scalar.is_integer() or scalar < 1:
+    raise ValueError(f'replicas must be a positive integer, got {value!r}')
+  return int(scalar)
+
+
 class JobRequirements:
   # pyformat: disable
   """Describes the resource requirements of a Job.
@@ -491,18 +506,15 @@ class JobRequirements:
     for resource_name, value in itertools.chain(
         resources.items(), kw_resources.items()
     ):
+      if resource_name == 'replicas':
+        if replicas is not None:
+          raise ValueError('replicas has been specified twice.')
+        replicas = _parse_replicas(value)
+        continue
+
       scalar, topology = _parse_resource_quantity(resource_name, value)  # pylint: disable=unpacking-non-sequence  # pyrefly: ignore[bad-argument-type]
       match resource_name:
         case builtins.str() as r:
-          if r == 'replicas':
-            if replicas is not None:
-              raise ValueError('replicas has been specified twice.')
-            if not float.is_integer(scalar) or scalar < 1:
-              raise ValueError(
-                  f'replicas must be a positive integer, got {scalar}'
-              )
-            replicas = int(scalar)
-            continue
           resource = ResourceType[r]
         case ResourceType():
           resource = resource_name

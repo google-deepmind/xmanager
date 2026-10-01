@@ -131,6 +131,15 @@ class JobRequirementsTest(parameterized.TestCase):
     ):
       resources.JobRequirements({'replicas': 0})
 
+  def test_replicas_from_string(self):
+    requirements = resources.JobRequirements({'replicas': '3'})
+    self.assertEqual(requirements.replicas, 3)
+
+    with self.assertRaises(ValueError):
+      resources.JobRequirements({'replicas': 'abc'})
+    with self.assertRaises(ValueError):
+      resources.JobRequirements({'replicas': '1x2'})
+
   def test_tpu_job(self):
     requirements = resources.JobRequirements(tpu_v3='4x4')
     self.assertEqual(requirements.accelerator, resources.ResourceType.TPU_V3)
