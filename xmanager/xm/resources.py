@@ -364,16 +364,30 @@ _ResourceTypeOrStr = TypeVar(
 
 def _parse_resource_quantity(
     resource_name: str, value: ResourceQuantity
-) -> Tuple[float, Optional[Topology]]:
-  """Parses a string representation of a resource quantity."""
+) -> tuple[float, Topology | None, int | None]:
+  """Parses a string representation of a resource quantity.
+
+  Accelerator quantity strings may have a `*N` suffix specifying the number of
+  slices, e.g. '4x18*3' means 3 slices of topology 4x18.
+
+  Args:
+    resource_name: The name of the resource, used in error messages.
+    value: The resource quantity to parse.
+
+  Returns:
+    A tuple of (scalar, topology, num_slices). The scalar and topology describe
+    a single slice. num_slices is None if no `*N` suffix was given.
+  """
 
   def parse_string(value: str):
+    value, sep, num_slices_str = value.partition('*')
+    num_slices = int(num_slices_str) if sep else None
     if 'x' in value:
       topology = Topology(value)
-      return topology.chip_count, topology
+      return topology.chip_count, topology, num_slices
     else:
       # TODO: Parse SI suffixes, like GiB.
-      return float(value), None
+      return float(value), None, num_slices
 
   try:
     match value:
@@ -381,9 +395,9 @@ def _parse_resource_quantity(
         return parse_string(str_value)
       case Topology():
         topology = cast(Topology, value)  # needed to work around a pytype bug
-        return topology.chip_count, topology
+        return topology.chip_count, topology, None
       case _:
-        return float(value), None
+        return float(value), None, None
   except Exception as e:
     raise ValueError(
         f"Couldn't parse resource quantity for {resource_name}. "
@@ -423,7 +437,8 @@ class JobRequirements:
     service_tier: A service tier at which the job should run.
     replicas: Number of identical tasks to run within a job
     num_slices: Number of independent accelerator slices within the job. The
-      accelerator topology describes a single slice. Defaults to 1.
+      accelerator topology describes a single slice. Defaults to 1. Not yet
+      supported for TPUs.
   """
   # pyformat:enable
 
@@ -453,6 +468,38 @@ class JobRequirements:
   def _validate_accelerator_topology(self):
     """Validates that the topology is compatible with the accelerator."""
 
+  def _validate_num_slices(
+      self, num_slices: int | None, accelerator_num_slices_suffix: int | None
+  ) -> int:
+    """Validates num_slices and returns the resolved value.
+
+    Args:
+      num_slices: The `num_slices` argument, if specified.
+      accelerator_num_slices_suffix: The `*N` suffix on the accelerator, if
+        specified.
+
+    Returns:
+      The number of slices, 1 if not specified.
+    """
+    if accelerator_num_slices_suffix is not None:
+      if num_slices is not None and num_slices != accelerator_num_slices_suffix:
+        raise ValueError(
+            f'Specified num_slices={num_slices} which does not match'
+            f' {self.accelerator} suffix ({accelerator_num_slices_suffix}'
+            ' slices).'
+        )
+      num_slices = accelerator_num_slices_suffix
+    if num_slices is None:
+      return 1
+    if num_slices < 1:
+      raise ValueError(f'num_slices must be positive, got {num_slices}')
+    if num_slices > 1 and self.accelerator in TpuType:
+      raise ValueError(
+          f'num_slices is not supported for TPUs, got {num_slices} for'
+          f' {self.accelerator}.'
+      )
+    return num_slices
+
   def __init__(
       self,
       resources: Mapping[
@@ -463,7 +510,7 @@ class JobRequirements:
       location: Optional[str] = None,
       replicas: Optional[int] = None,
       service_tier: Optional[ServiceTier] = None,
-      num_slices: int = 1,
+      num_slices: int | None = None,
       **kw_resources: ResourceQuantity,
   ) -> None:
     # pyformat: disable
@@ -479,7 +526,9 @@ class JobRequirements:
       replicas: Number of identical tasks to run within a job. 1 by default.
       service_tier: A service tier at which the job should run.
       num_slices: Number of independent accelerator slices within the job. The
-        accelerator topology describes a single slice.
+        accelerator topology describes a single slice. Can alternatively be
+        specified as a `*N` suffix on the accelerator, e.g. `gb300='4x18*3'`.
+        1 by default.
       **kw_resources: resource amounts as a kwargs, for example `v100=2` or
         `ram=1 * xm.GiB`. See xm.ResourceType enum for the list of supported
         types and aliases.
@@ -490,19 +539,20 @@ class JobRequirements:
         If the same resource is passed in a `resources` dictionary and as
           a command line argument.
         If topology is supplied for a non accelerator resource.
+        If `num_slices` is specified both as an argument and as a `*N` suffix
+          with different values, or as a suffix on a non accelerator resource.
+        If `num_slices` > 1 is specified for a TPU.
         If `replicas` is not consistent with `num_slices`.
     """
     # pyformat: enable
     self.location = location
-    if num_slices < 1:
-      raise ValueError(f'num_slices must be positive, got {num_slices}')
-    self._num_slices = num_slices
     self._service_tier = service_tier or _DEFAULT_SERVICE_TIER
 
     self.task_requirements = ResourceDict()
     self.accelerator = None
     self.topology = None
 
+    accelerator_num_slices_suffix = None
     for resource_name, value in itertools.chain(
         resources.items(), kw_resources.items()
     ):
@@ -512,7 +562,7 @@ class JobRequirements:
         replicas = _parse_replicas(value)
         continue
 
-      scalar, topology = _parse_resource_quantity(resource_name, value)  # pylint: disable=unpacking-non-sequence  # pyrefly: ignore[bad-argument-type]
+      scalar, topology, resource_num_slices = _parse_resource_quantity(resource_name, value)  # pylint: disable=unpacking-non-sequence  # pyrefly: ignore[bad-argument-type]
       match resource_name:
         case builtins.str() as r:
           resource = ResourceType[r]
@@ -527,14 +577,24 @@ class JobRequirements:
         self.accelerator = resource
         self.topology = topology or Topology(f'{scalar:g}')
         self._validate_accelerator_topology()
+        accelerator_num_slices_suffix = resource_num_slices
       elif topology is not None:
         raise ValueError(
             f'A topology specified for non accelerator resource {resource}.'
+        )
+      elif resource_num_slices is not None:
+        raise ValueError(
+            '"*" operator for num_slices specified on non-accelerator resource'
+            f' {resource}.'
         )
 
       if resource in self.task_requirements:
         raise ValueError(f'{resource} has been specified twice.')
       self.task_requirements[resource] = scalar
+
+    self._num_slices = self._validate_num_slices(
+        num_slices, accelerator_num_slices_suffix
+    )
 
     if (
         self.accelerator in GpuType

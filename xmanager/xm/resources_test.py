@@ -263,11 +263,9 @@ class JobRequirementsTest(parameterized.TestCase):
   def test_str_num_slices(self):
     self.assertIn(
         'num_slices=2',
-        repr(resources.JobRequirements(tpu_v3='4x4', num_slices=2)),
+        repr(resources.JobRequirements(gb300=4, num_slices=2)),
     )
-    self.assertNotIn(
-        'num_slices', repr(resources.JobRequirements(tpu_v3='4x4'))
-    )
+    self.assertNotIn('num_slices', repr(resources.JobRequirements(gb300=4)))
 
   @parameterized.named_parameters(
       dict(
