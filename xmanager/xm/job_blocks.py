@@ -91,7 +91,7 @@ class SequentialArgs:
 
   def _ingest_regular_item(self, value: Any) -> None:
     # PyType cannot infer the attr-generated init for _RegularItem.
-    self._items.append(SequentialArgs._RegularItem(value))  # pytype: disable=wrong-arg-count
+    self._items.append(SequentialArgs._RegularItem(value))
 
   def _ingest_keyword_item(self, name: str, value: Any) -> None:
     if name not in self._kwvalues:
@@ -103,10 +103,10 @@ class SequentialArgs:
     for item in args._items:  # pylint: disable=protected-access
       match item:
         case SequentialArgs._RegularItem() as regular_item:
-          self._ingest_regular_item(regular_item.value)  # pytype: disable=attribute-error
+          self._ingest_regular_item(regular_item.value)
         case SequentialArgs._KeywordItem() as keyword_item:
           self._ingest_keyword_item(
-              keyword_item.name, args._kwvalues[keyword_item.name]  # pylint: disable=protected-access  # pytype: disable=attribute-error
+              keyword_item.name, args._kwvalues[keyword_item.name]  # pylint: disable=protected-access
           )
 
   @staticmethod
@@ -138,7 +138,6 @@ class SequentialArgs:
     result = SequentialArgs()
 
     for item in self._items:
-      # pytype: disable=attribute-error
       match item:
         case SequentialArgs._RegularItem() as regular_item:
           new_value = regular_item.value
@@ -152,7 +151,6 @@ class SequentialArgs:
           result._ingest_keyword_item(keyword_item.name, new_value)  # pylint: disable=protected-access
         case _:
           raise TypeError(f'Unsupported item type: {item!r}')
-      # pytype: enable=attribute-error
 
     return result
 
@@ -161,7 +159,6 @@ class SequentialArgs:
     result = SequentialArgs()
 
     for item in self._items:
-      # pytype: disable=attribute-error
       match item:
         case SequentialArgs._RegularItem() as regular_item:
           if (
@@ -178,7 +175,6 @@ class SequentialArgs:
           )
         case _:
           raise TypeError(f'Unsupported item type: {item!r}')
-      # pytype: enable=attribute-error
 
     return result
 
@@ -378,9 +374,9 @@ class Packageable:
 
   executable_spec: ExecutableSpec
   executor_spec: ExecutorSpec
-  args: SequentialArgs = attr.ib(  # pyrefly: ignore[bad-assignment]
+  args: SequentialArgs = attr.ib(
       factory=list, converter=SequentialArgs.from_collection
-  )  # pytype: disable=annotation-type-mismatch
+  )
   env_vars: Dict[str, Any] = attr.ib(
       converter=dict, default=attr.Factory(dict), validator=_validate_env_vars
   )
@@ -425,9 +421,9 @@ class Job:
   executable: Executable
   executor: Executor
   name: str = attr.ib(default='', converter=lambda x: '' if x is None else x)
-  args: SequentialArgs = attr.ib(  # pyrefly: ignore[bad-assignment]
+  args: SequentialArgs = attr.ib(
       factory=list, converter=SequentialArgs.from_collection
-  )  # pytype: disable=annotation-type-mismatch
+  )
   env_vars: Dict[str, Any] = attr.ib(
       converter=dict, default=attr.Factory(dict), validator=_validate_env_vars
   )
@@ -542,7 +538,7 @@ def get_args_for_all_jobs(job: JobType, args: Dict[str, Any]) -> Dict[str, Any]:
   match job:
     case JobGroup() as job_group:
       all_args = {}
-      for job_name, job_type in job_group.jobs.items():  # pytype: disable=attribute-error
+      for job_name, job_type in job_group.jobs.items():
         job_type_args = get_args_for_all_jobs(job_type, args)
         all_args[job_name] = job_type_args
       return all_args

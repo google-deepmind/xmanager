@@ -99,7 +99,7 @@ def generate_factory_parameters(parameters: List[inspect.Parameter]) -> str:
       keyword_args_started = True
       source += '    *,\n'
 
-    parameter_source = _KNOWN_ARGS_DICT[parameter.name]  # pyrefly: ignore[bad-index]
+    parameter_source = _KNOWN_ARGS_DICT[parameter.name]
     if (
         parameter.default != inspect.Parameter.empty
         and '=' not in parameter_source

@@ -822,7 +822,7 @@ def _collect_args_for_job(
   """Collects the args for a job from the job itself and the job group args."""
   return {
       **job.args.to_dict(),
-      **args_view.get(job.name, {}),  # pyrefly: ignore[no-matching-overload]
+      **args_view.get(job.name, {}),
   }
 
 

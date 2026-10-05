@@ -65,17 +65,17 @@ def collect_jobs_by_filter(
   def job_collector(job_type: job_blocks.JobTypeVar) -> List[job_blocks.Job]:  # pyrefly: ignore[invalid-type-var]
     match job_type:
       case job_blocks.Job() as job:
-        return [job] if predicate(job) else []  # pytype: disable=bad-return-type
+        return [job] if predicate(job) else []
       case job_blocks.JobGroup() as job_group:
         return list(
             itertools.chain.from_iterable(
-                [job_collector(job) for job in job_group.jobs.values()]  # pyrefly: ignore[bad-argument-type]
+                [job_collector(job) for job in job_group.jobs.values()]
             )
         )
       case _:
         raise TypeError(f'Unsupported job_type: {job_type!r}')
 
-  return job_collector(job_group)  # pyrefly: ignore[bad-argument-type]
+  return job_collector(job_group)
 
 
 @attr.s(auto_attribs=True)
@@ -127,7 +127,7 @@ def aggregate_constraint_cliques(
   ) -> Tuple[List[ConstraintClique], List[job_blocks.Job]]:
     match job_type:
       case job_blocks.Job() as job:
-        return [], [job]  # pytype: disable=bad-return-type
+        return [], [job]
       case job_blocks.JobGroup() as job_group:
         cliques: List[ConstraintClique] = []
         jobs: List[job_blocks.Job] = []
@@ -135,7 +135,7 @@ def aggregate_constraint_cliques(
         size = len(job_group.jobs)
         for job in job_group.jobs.values():
           subcliques, subjobs = matcher(
-              job, group_name if job_group.constraints else None  # pyrefly: ignore[bad-argument-type]
+              job, group_name if job_group.constraints else None
           )
           cliques += subcliques
           jobs += subjobs
@@ -153,7 +153,7 @@ def aggregate_constraint_cliques(
       case _:
         raise TypeError(f'Unsupported job_type: {job_type!r}')
 
-  result, _ = matcher(job_group, None)  # pylint: disable=unpacking-non-sequence  # pyrefly: ignore[bad-argument-type]
+  result, _ = matcher(job_group, None)  # pylint: disable=unpacking-non-sequence
   return result
 
 

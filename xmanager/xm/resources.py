@@ -37,7 +37,7 @@ class _CaseInsensitiveResourceTypeMeta(enum.EnumMeta):
 
   def __getitem__(cls, resource_name: str) -> 'ResourceType':
     try:
-      return super().__getitem__(resource_name.upper())  # pytype: disable=bad-return-type  # use-enum-overlay
+      return super().__getitem__(resource_name.upper())  # pyrefly: ignore[bad-argument-type]
     except KeyError:
       raise KeyError(f'Unknown {cls.__name__} {resource_name!r}')  # pylint: disable=raise-missing-from
 
@@ -107,7 +107,7 @@ class _CaseInsensitiveServiceTierMeta(enum.EnumMeta):
 
   def __getitem__(cls, resource_name: str) -> 'ServiceTier':
     try:
-      return super().__getitem__(resource_name.upper())  # pytype: disable=bad-return-type  # use-enum-overlay
+      return super().__getitem__(resource_name.upper())  # pyrefly: ignore[bad-argument-type]
     except KeyError:
       raise KeyError(f'Unknown {cls.__name__} {resource_name!r}')  # pylint: disable=raise-missing-from
 
@@ -613,7 +613,7 @@ class JobRequirements:
             f' {self._num_slices}, replicas should be either None or'
             f' {inferred_replicas}. Got: {replicas}'
         )
-      replicas = inferred_replicas  # pyrefly: ignore[bad-assignment]
+      replicas = inferred_replicas
 
     self.replicas = replicas or 1
 

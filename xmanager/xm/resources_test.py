@@ -348,9 +348,9 @@ class JobRequirementsTest(parameterized.TestCase):
 class EnumSubsetTest(parameterized.TestCase):
 
   def test_construction(self):
-    self.assertEqual(resources.GpuType['V100'], resources.GpuType(17))  # pyrefly: ignore[unsupported-operation]
+    self.assertEqual(resources.GpuType['V100'], resources.GpuType(17))
     with self.assertRaises(AttributeError):
-      resources.GpuType['TPU_V3']  # pylint: disable=pointless-statement  # pyrefly: ignore[unsupported-operation]
+      resources.GpuType['TPU_V3']  # pylint: disable=pointless-statement
     with self.assertRaises(ValueError):
       resources.GpuType(170)
 
