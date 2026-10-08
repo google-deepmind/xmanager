@@ -345,7 +345,7 @@ class ExperimentUnit(abc.ABC):
       args: Optional[Mapping[str, Any]] = None,
       *,
       identity: str = '',
-  ) -> Awaitable[None]:
+  ) -> asyncio.Future[None]:
     # pyformat: disable
     """Adds a Job / JobGroup to the experiment unit.
 
@@ -369,7 +369,7 @@ class ExperimentUnit(abc.ABC):
         'add if not exists' behavior. No changes to existing job would be done.
 
     Returns:
-      An awaitable that would be fulfilled when the job is launched.
+      A future that would be fulfilled when the job is launched.
     """
     # pyformat: enable
 
