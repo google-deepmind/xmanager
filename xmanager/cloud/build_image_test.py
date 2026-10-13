@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import json
+from unittest import mock
 
 from absl.testing import absltest
 from xmanager import xm
 from xmanager.cloud import build_image
+from xmanager.cloud import docker_lib
 
 
 class BuildImageTest(absltest.TestCase):
@@ -69,6 +71,42 @@ class BuildImageTest(absltest.TestCase):
             '--path=a path',
         ],
     )
+
+  def test_build_image_with_docker_command_progress(self):
+    mock_client = mock.MagicMock()
+    mock_client.version.return_value = {'Version': '24.0.0'}
+    with mock.patch.object(docker_lib.subprocess, 'run') as mock_run:
+      docker_lib._build_image_with_docker_command(
+          mock_client,
+          path='/fake/path',
+          image_tag='gcr.io/test/image:tag',
+          dockerfile='/fake/path/Dockerfile',
+          progress=True,
+      )
+      mock_run.assert_called_once()
+      command = mock_run.call_args[0][0]
+      self.assertEqual(
+          command[0:5],
+          ['docker', 'buildx', 'build', '--progress', 'plain'],
+      )
+      self.assertNotIn('--no-cache', command)
+
+  def test_build_image_with_docker_command_no_progress(self):
+    mock_client = mock.MagicMock()
+    mock_client.version.return_value = {'Version': '24.0.0'}
+    with mock.patch.object(docker_lib.subprocess, 'run') as mock_run:
+      docker_lib._build_image_with_docker_command(
+          mock_client,
+          path='/fake/path',
+          image_tag='gcr.io/test/image:tag',
+          dockerfile='/fake/path/Dockerfile',
+          progress=False,
+      )
+      mock_run.assert_called_once()
+      command = mock_run.call_args[0][0]
+      self.assertEqual(command[0:3], ['docker', 'buildx', 'build'])
+      self.assertNotIn('--progress', command)
+      self.assertNotIn('--no-cache', command)
 
 
 if __name__ == '__main__':

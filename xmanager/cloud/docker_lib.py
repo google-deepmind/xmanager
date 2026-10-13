@@ -207,11 +207,9 @@ def _build_image_with_docker_command(
       path,
   ]
 
-  # Adding flags to show progress and disabling cache.
-  # Caching prevents actual commands in layer from executing.
   # This is turn makes displaying progress redundant.
   if progress:
-    command[2:2] = ['--progress', 'plain', '--no-cache']
+    command[3:3] = ['--progress', 'plain']
 
   subprocess.run(
       command, check=True, env={**os.environ, 'DOCKER_BUILDKIT': '1'}
