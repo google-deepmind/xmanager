@@ -94,6 +94,37 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
 
   # TODO: do we need V2_DONUT and V3_DONUT?
 
+  __RESOURCE_TYPE_TO_ARCHITECTURE__ = {
+      # TPUs
+      TPU_V2: Architecture.HASWELL,
+      TPU_V3: Architecture.HASWELL,
+      TPU_V4: Architecture.HASWELL,
+      TPU_V5E: Architecture.HASWELL,
+      TPU_V5P: Architecture.HASWELL,
+      TPU_V6E: Architecture.HASWELL,
+      TPU_V7X: Architecture.HASWELL,
+      # GPUs
+      P4: Architecture.HASWELL,
+      T4: Architecture.HASWELL,
+      L4_24TH: Architecture.HASWELL,
+      P100: Architecture.HASWELL,
+      V100: Architecture.HASWELL,
+      A100: Architecture.HASWELL,
+      A100_80GIB: Architecture.HASWELL,
+      H100: Architecture.HASWELL,
+      H200: Architecture.HASWELL,
+      B200: Architecture.HASWELL,
+      GB200: Architecture.ARM,
+      GB300: Architecture.ARM,
+      B40_48TH: Architecture.HASWELL,
+      B300: Architecture.HASWELL,
+  }
+
+  def architecture(self) -> Architecture:
+    if self.value not in ResourceType.__RESOURCE_TYPE_TO_ARCHITECTURE__:
+      raise ValueError(f'No Architecture mapped for {self}.')
+    return ResourceType.__RESOURCE_TYPE_TO_ARCHITECTURE__[self.value]
+
   def __str__(self):
     return self._name_
 
