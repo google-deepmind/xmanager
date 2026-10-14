@@ -76,6 +76,7 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
   A100 = 46
   A100_80GIB = 66
   H100 = 70
+  H100_MEGA = 113
   H200 = 86
   B200 = 87
   B300 = 112
@@ -112,6 +113,7 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
       A100: Architecture.HASWELL,
       A100_80GIB: Architecture.HASWELL,
       H100: Architecture.HASWELL,
+      H100_MEGA: Architecture.HASWELL,
       H200: Architecture.HASWELL,
       B200: Architecture.HASWELL,
       GB200: Architecture.ARM,
@@ -249,6 +251,7 @@ GpuType = _enum_subset(
         ResourceType.A100,
         ResourceType.A100_80GIB,
         ResourceType.H100,
+        ResourceType.H100_MEGA,
         ResourceType.H200,
         ResourceType.B200,
         ResourceType.B300,
