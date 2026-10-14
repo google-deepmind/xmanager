@@ -128,16 +128,20 @@ def build_docker_image(
   return image
 
 
-def _check_push_for_errors(response: str) -> None:
-  """Checks a Docker push JSONL response for errors.
+def _check_push_for_errors(response: str) -> Optional[str]:
+  """Checks a Docker push JSONL response for errors and extracts the digest.
 
   Args:
     response: Raw string from docker_client.images.push(), containing
       newline-delimited JSON objects.
 
+  Returns:
+    The manifest SHA256 digest (`sha256:...`) if present in the stream, or None.
+
   Raises:
     RuntimeError: If the push response contains an explicit error.
   """
+  digest = None
   for line in response.strip().splitlines():
     line = line.strip()
     if not line:
@@ -149,13 +153,44 @@ def _check_push_for_errors(response: str) -> None:
     if 'error' in event:
       detail = event.get('errorDetail', {}).get('message', event['error'])
       raise RuntimeError(f'Docker push failed: {detail}')
+    if aux_digest := event.get('aux', {}).get('Digest'):
+      digest = aux_digest
+  return digest
+
+
+def _get_existing_repo_digest(
+    docker_client: docker.DockerClient, image: str, repository: str
+) -> Optional[str]:
+  """Returns an existing remote `repository@sha256:...` digest if pushed."""
+  try:
+    attrs = docker_client.images.get(image).attrs or {}
+    repo_digests = attrs.get('RepoDigests') or []
+  except docker.errors.DockerException:
+    return None
+
+  prefix = f'{repository}@sha256:'
+  for candidate in repo_digests:
+    if candidate.startswith(prefix):
+      try:
+        docker_client.api.inspect_distribution(candidate)
+        return candidate
+      except docker.errors.DockerException:
+        continue
+  return None
 
 
 def push_docker_image(image: str) -> str:
   """Pushes a Docker image to the designated repository."""
   docker_client = docker.from_env()
-  repository, tag = docker_utils.parse_repository_tag(image)
-  push_response = docker_client.images.push(repository=repository, tag=tag)
+  repository, _ = docker_utils.parse_repository_tag(image)
+  existing_digest = _get_existing_repo_digest(docker_client, image, repository)
+  if existing_digest is not None:
+    print(
+        'Your image URI is:', termcolor.colored(existing_digest, color='blue')
+    )
+    return existing_digest
+
+  push_response = docker_client.images.push(repository=repository, tag='latest')
   logging.info('%s', push_response)
   # Check for errors embedded in the push response body.
   if not isinstance(push_response, str):
@@ -163,28 +198,21 @@ def push_docker_image(image: str) -> str:
         f'Unexpected response type from docker push: {type(push_response)}. '
         'Expected a string.'
     )
-  _check_push_for_errors(push_response)
-  # Verify the image is actually accessible in the registry.
-  try:
-    docker_client.api.inspect_distribution(image)
-  except docker.errors.APIError as e:
-    raise RuntimeError(
-        f'Push appeared to succeed but image {image} is not accessible in '
-        f'the registry. Push response:\n{push_response}'
-    ) from e
-  # If we are pushing an image, then :latest should also be present.
-  latest_push_response = docker_client.images.push(
-      repository=repository, tag='latest'
-  )
-  if not isinstance(latest_push_response, str):
-    raise RuntimeError(
-        'Unexpected response type from docker push for latest tag:'
-        f' {type(latest_push_response)}. Expected a string.'
-    )
-  logging.info(latest_push_response)
-  _check_push_for_errors(latest_push_response)
-  print('Your image URI is:', termcolor.colored(image, color='blue'))
-  return image
+  digest = _check_push_for_errors(push_response)
+  if not digest:
+    # Verify the image is actually accessible in the registry.
+    try:
+      dist_info = docker_client.api.inspect_distribution(f'{repository}:latest')
+    except docker.errors.APIError as e:
+      raise RuntimeError(
+          f'Push appeared to succeed but image {image} is not accessible in '
+          f'the registry. Push response:\n{push_response}'
+      ) from e
+    digest = dist_info.get('Descriptor', {}).get('digest')
+
+  resolved_image = f'{repository}@{digest}' if digest else image
+  print('Your image URI is:', termcolor.colored(resolved_image, color='blue'))
+  return resolved_image
 
 
 def _build_image_with_docker_command(

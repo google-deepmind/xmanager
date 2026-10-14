@@ -124,10 +124,10 @@ def _package_dockerfile(
       pull_image=docker_lib.is_docker_installed(),
   )
   if docker_lib.is_docker_installed():
-    build_image.push(image)
+    image = build_image.push(image)
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
-      image_path=push_image_tag,
+      image_path=image,
       args=packageable.args,
       env_vars=packageable.env_vars,
   )
@@ -149,7 +149,7 @@ def _package_python_container(
       pull_image=docker_lib.is_docker_installed(),
   )
   if docker_lib.is_docker_installed():
-    build_image.push(image)
+    image = build_image.push(image)
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
       image_path=image,

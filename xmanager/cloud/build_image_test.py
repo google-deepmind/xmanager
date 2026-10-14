@@ -17,6 +17,7 @@ import tempfile
 from unittest import mock
 
 from absl.testing import absltest
+import docker
 from xmanager import xm
 from xmanager.cloud import build_image
 from xmanager.cloud import docker_lib
@@ -191,6 +192,113 @@ class BuildImageTest(absltest.TestCase):
       self.assertEqual(command[0:3], ['docker', 'buildx', 'build'])
       self.assertNotIn('--progress', command)
       self.assertNotIn('--no-cache', command)
+
+  def test_push_docker_image_cold_push_extracts_digest_from_stream(self):
+    mock_client = mock.MagicMock()
+    mock_image = mock.MagicMock()
+    mock_image.attrs = {'RepoDigests': []}
+    mock_client.images.get.return_value = mock_image
+    mock_client.images.push.return_value = (
+        '{"status":"Pushing..."}\n{"aux":{"Digest":"sha256:abcd1234ef"}}\n'
+    )
+
+    with mock.patch.object(docker, 'from_env', return_value=mock_client):
+      result = docker_lib.push_docker_image('gcr.io/test/image:v1')
+
+    self.assertEqual(result, 'gcr.io/test/image@sha256:abcd1234ef')
+    mock_client.images.push.assert_called_once_with(
+        repository='gcr.io/test/image', tag='latest'
+    )
+    mock_client.api.inspect_distribution.assert_not_called()
+
+  def test_push_docker_image_extracts_digest_from_inspect_distribution(self):
+    mock_client = mock.MagicMock()
+    mock_image = mock.MagicMock()
+    mock_image.attrs = {'RepoDigests': []}
+    mock_client.images.get.return_value = mock_image
+    mock_client.images.push.return_value = '{"status":"Pushing..."}\n'
+    mock_client.api.inspect_distribution.return_value = {
+        'Descriptor': {'digest': 'sha256:distdigest1234'}
+    }
+
+    with mock.patch.object(docker, 'from_env', return_value=mock_client):
+      result = docker_lib.push_docker_image('gcr.io/test/image:v1')
+
+    self.assertEqual(result, 'gcr.io/test/image@sha256:distdigest1234')
+    mock_client.images.push.assert_called_once_with(
+        repository='gcr.io/test/image', tag='latest'
+    )
+    mock_client.api.inspect_distribution.assert_called_once_with(
+        'gcr.io/test/image:latest'
+    )
+
+  def test_push_docker_image_falls_back_to_tag_when_no_digest_available(self):
+    mock_client = mock.MagicMock()
+    mock_image = mock.MagicMock()
+    mock_image.attrs = {'RepoDigests': []}
+    mock_client.images.get.return_value = mock_image
+    mock_client.images.push.return_value = '{"status":"Pushing..."}\n'
+    mock_client.api.inspect_distribution.return_value = {}
+
+    with mock.patch.object(docker, 'from_env', return_value=mock_client):
+      result = docker_lib.push_docker_image('gcr.io/test/image:v1')
+
+    self.assertEqual(result, 'gcr.io/test/image:v1')
+    mock_client.images.push.assert_called_once_with(
+        repository='gcr.io/test/image', tag='latest'
+    )
+
+  def test_push_docker_image_warm_push_short_circuit(self):
+    mock_client = mock.MagicMock()
+    mock_image = mock.MagicMock()
+    existing_repo_digest = 'gcr.io/test/image@sha256:existing1234'
+    mock_image.attrs = {'RepoDigests': [existing_repo_digest]}
+    mock_client.images.get.return_value = mock_image
+    mock_client.api.inspect_distribution.return_value = {}
+
+    with mock.patch.object(docker, 'from_env', return_value=mock_client):
+      result = docker_lib.push_docker_image('gcr.io/test/image:v1')
+
+    self.assertEqual(result, existing_repo_digest)
+    mock_client.images.push.assert_not_called()
+    mock_client.api.inspect_distribution.assert_called_once_with(
+        existing_repo_digest
+    )
+
+  def test_push_docker_image_warm_push_falls_back_when_remote_digest_missing(
+      self,
+  ):
+    mock_client = mock.MagicMock()
+    mock_image = mock.MagicMock()
+    mock_image.attrs = {'RepoDigests': ['gcr.io/test/image@sha256:stale1234']}
+    mock_client.images.get.return_value = mock_image
+    mock_client.api.inspect_distribution.side_effect = docker.errors.APIError(
+        '404 Not Found'
+    )
+    mock_client.images.push.return_value = (
+        '{"aux":{"Digest":"sha256:fresh5678"}}\n'
+    )
+
+    with mock.patch.object(docker, 'from_env', return_value=mock_client):
+      result = docker_lib.push_docker_image('gcr.io/test/image:v1')
+
+    self.assertEqual(result, 'gcr.io/test/image@sha256:fresh5678')
+    mock_client.images.push.assert_called_once_with(
+        repository='gcr.io/test/image', tag='latest'
+    )
+
+  def test_push_docker_image_raises_on_stream_error(self):
+    mock_client = mock.MagicMock()
+    mock_image = mock.MagicMock()
+    mock_image.attrs = {'RepoDigests': []}
+    mock_client.images.get.return_value = mock_image
+    mock_client.images.push.return_value = (
+        '{"error":"denied","errorDetail":{"message":"access denied"}}\n'
+    )
+
+    with mock.patch.object(docker, 'from_env', return_value=mock_client):
+      with self.assertRaisesRegex(RuntimeError, 'access denied'):
+        docker_lib.push_docker_image('gcr.io/test/image:v1')
 
 
 if __name__ == '__main__':
