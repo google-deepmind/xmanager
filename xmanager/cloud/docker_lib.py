@@ -62,13 +62,22 @@ def prepare_directory(
             color='magenta',
         )
     )
-  shutil.copytree(
-      source_directory, os.path.join(destination_directory, project_name)
-  )
+  staged_project_dir = os.path.join(destination_directory, project_name)
+  shutil.copytree(source_directory, staged_project_dir)
+  os.chmod(staged_project_dir, 0o775)
+  for root, dirs, files in os.walk(staged_project_dir):
+    for d in dirs:
+      dir_path = os.path.join(root, d)
+      if not os.path.islink(dir_path):
+        os.chmod(dir_path, 0o775)
+    for f in files:
+      file_path = os.path.join(root, f)
+      if not os.path.islink(file_path):
+        os.chmod(file_path, 0o775)
   shutil.copyfile(dockerfile, os.path.join(destination_directory, 'Dockerfile'))
-  shutil.copyfile(
-      entrypoint_file, os.path.join(destination_directory, 'entrypoint.sh')
-  )
+  staged_entrypoint = os.path.join(destination_directory, 'entrypoint.sh')
+  shutil.copyfile(entrypoint_file, staged_entrypoint)
+  os.chmod(staged_entrypoint, 0o775)
 
 
 def is_docker_installed() -> bool:

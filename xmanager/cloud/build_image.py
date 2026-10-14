@@ -39,8 +39,7 @@ RUN if ! id 1000; then useradd -m -u 1000 clouduser; fi
 
 {instructions}
 
-COPY entrypoint.sh ./entrypoint.sh
-RUN chown -R 1000:root ./entrypoint.sh && chmod -R 775 ./entrypoint.sh
+COPY --chown=1000:root entrypoint.sh ./entrypoint.sh
 
 {entrypoint}
 """
@@ -201,16 +200,16 @@ def default_steps(directory: str, use_deep_module: bool) -> List[str]:
   """Default commands to use in the Dockerfile."""
   workdir_setup_prefix = []
   workdir_setup_suffix = []
-  project_dir = f'/{directory}'
   if use_deep_module:
     # Setting a top-level work dir allows using the Python code without
     # modifying import statements.
+    project_dir = f'/workdir/{directory}'
     workdir_setup_prefix = [
-        'RUN mkdir /workdir',
+        'RUN mkdir -p -m 775 /workdir && chown 1000:root /workdir',
         'WORKDIR /workdir',
     ]
-    project_dir = f'/workdir/{directory}'
   else:
+    project_dir = f'/{directory}'
     workdir_setup_suffix = [
         f'WORKDIR {directory}',
     ]
@@ -230,17 +229,20 @@ def default_steps(directory: str, use_deep_module: bool) -> List[str]:
               ' -y git netcat'
           ),
           'RUN python -m pip install --upgrade pip',
-          f'COPY {directory}/requirements.txt {project_dir}/requirements.txt',
+          f'RUN mkdir -p -m 775 {project_dir} && chown 1000:root {project_dir}',
+          (
+              f'COPY --chown=1000:root {directory}/requirements.txt'
+              f' {project_dir}/requirements.txt'
+          ),
           f'RUN python -m pip install -r {directory}/requirements.txt',
           # It is best practice to copy the project directory as late as
           # possible, rather than at the beginning. This allows Docker to reuse
           # cached layers. If copying the project files were the first step, a
           # tiny modification to the source code will invalidate the cache.
           # https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#add-or-copy
-          f'COPY {directory}/ {project_dir}',
-          # Changing ownwership of project_dir, so that both users: UID 1000
-          # and root are the co-owner of it.
-          f'RUN chown -R 1000:root {project_dir} && chmod -R 775 {project_dir}',
+          # Ownership of project_dir is set via --chown=1000:root so that both
+          # UID 1000 and root are co-owners without an extra RUN chown layer.
+          f'COPY --chown=1000:root {directory}/ {project_dir}',
       ]
       + workdir_setup_suffix
   )
@@ -292,6 +294,7 @@ def _create_entrypoint(py_executable: xm.PythonContainer) -> str:
   t = tempfile.NamedTemporaryFile(delete=False)
   with open(t.name, 'w') as f:
     f.write(contents)
+  os.chmod(t.name, 0o775)
   return t.name
 
 
