@@ -871,23 +871,14 @@ class CreateStubTest(unittest.TestCase):
         mock.patch('builtins.print') as mock_print,
         mock.patch('logging.warning') as mock_warning,
         mock.patch.object(
-            google.auth, 'default', return_value=(mock.MagicMock(), None)
-        ),
-        mock.patch(
-            'google.auth.transport.requests.AuthorizedSession'
-        ) as mock_auth_session,
-        mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
+            experiment_state_api, 'IamIdTokenProvider'
+        ) as mock_provider,
+        mock.patch.object(grpc, 'secure_channel'),
         mock.patch.object(grpc, 'metadata_call_credentials'),
         mock.patch.object(grpc, 'ssl_channel_credentials'),
         mock.patch.object(grpc, 'composite_channel_credentials'),
         mock.patch.object(grpc, 'intercept_channel'),
     ):
-      mock_session = mock_auth_session.return_value
-      mock_response = mock.MagicMock()
-      mock_response.status_code = 200
-      mock_response.json.return_value = {'token': 'mock_oidc_token'}
-      mock_session.post.return_value = mock_response
-
       experiment_state_api._create_experiment_state_server_stub(
           'dns:///api.example.com'
       )
@@ -899,6 +890,9 @@ class CreateStubTest(unittest.TestCase):
       )
       self.assertIn(
           'XMC_CLIENT_SA not set', mock_warning.call_args_list[1][0][0]
+      )
+      mock_provider.assert_called_once_with(
+          client_sa='sa@example.com', audience='test_iap_id'
       )
 
   def test_create_stub_default_iam_auth_dynamic_token_refresh(self):
