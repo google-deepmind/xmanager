@@ -28,6 +28,9 @@ class DashboardTest(absltest.TestCase):
     super().setUp()
     self.mock_stub = mock.MagicMock()
     self.enter_context(
+        mock.patch.object(dashboard, 'api_pb2', dashboard._DummyProto())
+    )
+    self.enter_context(
         mock.patch.object(
             dashboard,
             'get_dashboard_service_stub',
