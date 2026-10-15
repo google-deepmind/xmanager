@@ -43,7 +43,7 @@ $PYTHON_CMD -m venv "${VENV_DIR}"
 source "${VENV_DIR}/bin/activate"
 
 echo "Installing packaging and proto compilation dependencies..."
-pip install --upgrade pip build twine grpcio "grpcio-tools" "protobuf<7" google-auth googleapis-common-protos requests
+pip install --upgrade pip build twine grpcio "grpcio-tools<1.80" "protobuf<7" google-auth googleapis-common-protos requests
 
 # Clone xmc repository to include proto files and python client logic.
 # By default, this fetches the latest tag, or you can specify a tag (e.g. RELEASE_TAG=0.1.0).

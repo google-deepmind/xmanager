@@ -215,7 +215,7 @@ echo "Updating pip and installing dependencies..."
 pip install --index-url https://pypi.org/simple --upgrade pip
 pip install --index-url https://pypi.org/simple \
   grpcio \
-  "grpcio-tools" \
+  "grpcio-tools<1.80" \
   "protobuf<7" \
   google-auth \
   googleapis-common-protos \
