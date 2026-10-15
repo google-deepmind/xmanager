@@ -175,6 +175,12 @@ def _package_bazel_container(
   client = instance.get_client()
 
   push_image_tag = _get_push_image_tag(packageable.executor_spec)
+  if not push_image_tag:
+    # Default to a freshly tagged image inside the project's GCR, matching the
+    # behavior of the Dockerfile and PythonContainer packaging paths.
+    gcr_project_prefix = 'gcr.io/' + auth.get_project_name()  # pyrefly: ignore[unsupported-operation]
+    tag = docker_lib.create_tag()
+    push_image_tag = f'{gcr_project_prefix}/{bazel_container.name}:{tag}'
   print(f'Loading {bazel_container.label}...')
   loaded_image_id = instance.load_image(paths[0])
 
@@ -185,7 +191,7 @@ def _package_bazel_container(
 
   return local_executables.GoogleContainerRegistryImage(
       name=packageable.executable_spec.name,
-      image_path=push_image_tag,  # pyrefly: ignore[bad-argument-type]
+      image_path=push_image_tag,
   )
 
 
