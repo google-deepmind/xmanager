@@ -9,6 +9,7 @@ import os
 import attr
 import docker
 from docker.models import containers
+import requests.exceptions
 from xmanager.xm_local import status
 
 
@@ -69,20 +70,35 @@ class ContainerHandle(LocalExecutionHandle):
   stream_output: bool
   futures_executor: futures.Executor = attr.Factory(futures.ThreadPoolExecutor)
 
+  _wait_future: futures.Future[None] | None = attr.ib(default=None, init=False)
+
   async def wait(self) -> None:
     if self.model is None:
       return
 
     def _wait() -> None:
+      result = self.model.wait()
       try:
-        self.model.wait()
+        self.model.remove()
       except docker.errors.NotFound:
-        logging.info(
-            'Container %s not found (it may have already been removed).',
-            self.model.name,
+        pass
+      except (
+          docker.errors.DockerException,
+          requests.exceptions.RequestException,
+      ):
+        logging.warning(
+            'Failed to remove container %s after observing its exit status.',
+            self.name,
+            exc_info=True,
+        )
+      if result['StatusCode'] != 0:
+        raise RuntimeError(
+            f"Container `{self.name}` exited with status `{result['StatusCode']}`."
         )
 
-    await asyncio.wrap_future(self.futures_executor.submit(_wait))
+    if self._wait_future is None:
+      self._wait_future = self.futures_executor.submit(_wait)
+    await asyncio.shield(asyncio.wrap_future(self._wait_future))
 
   def get_status(self) -> status.LocalWorkUnitStatus:
     raise NotImplementedError
@@ -91,8 +107,15 @@ class ContainerHandle(LocalExecutionHandle):
     if self.model is None:
       return
 
-    self.model.stop()
+    try:
+      self.model.stop()
+    except docker.errors.NotFound:
+      pass
     self.futures_executor.shutdown(wait=True)
+    try:
+      self.model.remove()
+    except docker.errors.NotFound:
+      pass
 
   async def monitor(self) -> None:
     if self.model is None:

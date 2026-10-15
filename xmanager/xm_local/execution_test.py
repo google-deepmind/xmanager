@@ -166,7 +166,7 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
         hostname='test-job',
         network='xmanager',
         detach=True,
-        remove=True,
+        remove=False,
         command=['--a=with space'],
         environment={'c': '0'},
         ports={8080: 8080},
@@ -220,7 +220,9 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
     ), mock.patch.object(
         subprocess, 'check_output', return_value=True
     ):
-      await execution.launch(lambda x: x, job_group=xm.JobGroup(test_job=job))
+      launched_handles = await execution.launch(
+          lambda x: x, job_group=xm.JobGroup(test_job=job)
+      )
 
     expected_gcs_path_args = []
     if mount_gcs_path and gcs_dir_exists:
@@ -250,6 +252,8 @@ class ExecutionTest(unittest.IsolatedAsyncioTestCase, parameterized.TestCase):
         + ['-it', '--entrypoint', 'bash', 'test-image'],
         check=True,
     )
+    self.assertLen(launched_handles, 1)
+    await launched_handles[0].wait()
 
   @parameterized.product(interactive=[True, False], gpu_count=[0, 1, 4])
   @mock.patch.object(

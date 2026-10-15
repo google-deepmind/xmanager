@@ -128,7 +128,7 @@ class DockerAdapter(object):
         hostname=name,
         network=network,
         detach=True,
-        remove=True,
+        remove=False,
         command=args,
         environment=env_vars,
         ports=ports,
