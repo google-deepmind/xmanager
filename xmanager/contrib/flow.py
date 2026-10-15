@@ -89,7 +89,7 @@ def executable_graph(
   for job_name in jobs:
     jobs_deps.setdefault(job_name, [])
 
-  _assert_valid_graph(jobs_deps=jobs_deps, jobs=jobs)
+  _assert_valid_graph(jobs_deps=jobs_deps, jobs=jobs)  # pyrefly: ignore[bad-argument-type]
 
   log(f'jobs: {list(jobs)}')
   log(f'jobs_deps: {jobs_deps}')
