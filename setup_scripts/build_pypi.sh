@@ -29,7 +29,11 @@ cleanup() {
   echo "Cleaning up temporary build artifacts..."
   rm -rf "${SOURCE_ROOT_DIR}/xmc_repo" \
          "${SOURCE_ROOT_DIR}/third_party" \
-         "${SOURCE_ROOT_DIR}/xmanager_cloud" \
+         "${SOURCE_ROOT_DIR}/xmanager_cloud/__init__.py" \
+         "${SOURCE_ROOT_DIR}/xmanager_cloud/xid_service" \
+         "${SOURCE_ROOT_DIR}/xmanager_cloud/dashboard_service" \
+         "${SOURCE_ROOT_DIR}/xmanager_cloud/experiment_state_server/__init__.py" \
+         "${SOURCE_ROOT_DIR}/xmanager_cloud/experiment_state_server/proto" \
          "${SOURCE_ROOT_DIR}/xdash" \
          "${SOURCE_ROOT_DIR}/build" \
          "${SOURCE_ROOT_DIR}/xmanager.egg-info" \

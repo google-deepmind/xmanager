@@ -36,24 +36,24 @@ copy_service_to_package() {
 
   # Recreate service directory
   mkdir -p "${dest_dir}"
-  touch "${dest_dir}/__init__.py"
 
-  # Copy Python files from XMC cmd or service directory (if they exist)
-  local cmd_dir="${XMC_DIR}/cmd/${service_name}"
-  if [ ! -d "${cmd_dir}" ] && [ -d "${XMC_DIR}/${service_name}" ]; then
-    cmd_dir="${XMC_DIR}/${service_name}"
-  fi
-  if [ -d "${cmd_dir}" ] && compgen -G "${cmd_dir}/*.py" > /dev/null; then
-    echo "Copying python files from ${cmd_dir}..."
-    cp "${cmd_dir}"/*.py "${dest_dir}/"
-    rm -f "${dest_dir}"/*_test.py
-  elif [ "${service_name}" = "experiment_state_server" ]; then
-    echo "Fetching experiment_state_api.py from xmc 0.9.0 tag via git..."
-    if ! git -C "${XMC_DIR}" cat-file -e 0.9.0:cmd/experiment_state_server/experiment_state_api.py 2>/dev/null; then
-      git -C "${XMC_DIR}" fetch --depth 1 origin refs/tags/0.9.0:refs/tags/0.9.0
+  # Copy Python files only if not already present in dest_dir.
+  if ! compgen -G "${dest_dir}/*.py" > /dev/null; then
+    local g3_service_dir="${XMANAGER_DIR}/../../xmanager_cloud/${service_name}"
+    local cmd_dir="${XMC_DIR}/cmd/${service_name}"
+    if [ -d "${g3_service_dir}" ] && compgen -G "${g3_service_dir}/*.py" > /dev/null; then
+      cmd_dir="${g3_service_dir}"
+    elif [ ! -d "${cmd_dir}" ] && [ -d "${XMC_DIR}/${service_name}" ]; then
+      cmd_dir="${XMC_DIR}/${service_name}"
     fi
-    git -C "${XMC_DIR}" show 0.9.0:cmd/experiment_state_server/experiment_state_api.py > "${dest_dir}/experiment_state_api.py"
+    if [ -d "${cmd_dir}" ] && compgen -G "${cmd_dir}/*.py" > /dev/null; then
+      echo "Copying python files from ${cmd_dir}..."
+      cp "${cmd_dir}"/*.py "${dest_dir}/"
+      rm -f "${dest_dir}"/*_test.py
+    fi
   fi
+  chmod -R u+w "${dest_dir}"
+  touch "${dest_dir}/__init__.py"
 
   # Clean and recreate proto destination
   local dest_proto_dir="${dest_dir}/proto"
@@ -349,6 +349,9 @@ echo "Running experiment unit tests inside venv..."
 (
   cd /tmp
   python3 -m unittest discover -s "${XMANAGER_SRC_DIR}/${XM_CLOUD_REL_PATH}" -p "*_test.py"
+  if [ -d "${XMANAGER_SRC_DIR}/xmanager_cloud/experiment_state_server" ]; then
+    python3 -m unittest discover -s "${XMANAGER_SRC_DIR}/xmanager_cloud/experiment_state_server" -p "*_test.py"
+  fi
 )
 
 echo "=================================================="
