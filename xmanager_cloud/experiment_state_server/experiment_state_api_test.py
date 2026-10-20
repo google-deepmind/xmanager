@@ -16,6 +16,7 @@
 import base64
 import json
 import os
+import time
 from typing import Any
 import unittest
 from unittest import mock
@@ -513,6 +514,140 @@ class InterceptorsTest(unittest.TestCase):
     )
     mock_continuation.assert_called_once_with('replaced_details', 'request')
 
+  def test_bearer_auth_interceptor_with_token_provider(self):
+    mock_provider = mock.MagicMock(side_effect=['token-1', 'token-2'])
+    interceptor = experiment_state_api.BearerAuthInterceptor(
+        token=mock_provider, user_email='test@example.com'
+    )
+    mock_call_details = mock.MagicMock()
+    mock_call_details.metadata = []
+    mock_call_details._replace = mock.MagicMock(return_value='replaced_details')
+    mock_continuation = mock.MagicMock(return_value='response')
+
+    interceptor.intercept_unary_unary(
+        mock_continuation, mock_call_details, 'request'
+    )
+    mock_call_details._replace.assert_called_with(
+        metadata=[
+            ('authorization', 'Bearer token-1'),
+            ('x-goog-user-email', 'test@example.com'),
+        ]
+    )
+
+    interceptor.intercept_unary_unary(
+        mock_continuation, mock_call_details, 'request'
+    )
+    mock_call_details._replace.assert_called_with(
+        metadata=[
+            ('authorization', 'Bearer token-2'),
+            ('x-goog-user-email', 'test@example.com'),
+        ]
+    )
+
+
+class IamIdTokenProviderTest(unittest.TestCase):
+
+  def setUp(self):
+    super().setUp()
+    self.mock_default = self.enterContext(
+        mock.patch.object(google.auth, 'default', autospec=True)
+    )
+    self.mock_default.return_value = (mock.MagicMock(), None)
+    self.mock_authed_session = self.enterContext(
+        mock.patch(
+            'google.auth.transport.requests.AuthorizedSession', autospec=True
+        )
+    )
+    self.mock_session = self.mock_authed_session.return_value
+
+  def test_initial_fetch_and_cache_reuse(self):
+    mock_response = mock.MagicMock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {'token': 'iam-token-1'}
+    self.mock_session.post.return_value = mock_response
+
+    provider = experiment_state_api.IamIdTokenProvider(
+        client_sa='sa@project.iam.gserviceaccount.com',
+        audience='fake-iap-client-id',
+    )
+    with mock.patch.object(time, 'time', return_value=1000.0):
+      self.assertEqual(provider(), 'iam-token-1')
+    self.mock_session.post.assert_called_once_with(
+        'https://iamcredentials.googleapis.com/v1/projects/-/'
+        'serviceAccounts/sa@project.iam.gserviceaccount.com:generateIdToken',
+        json={'audience': 'fake-iap-client-id', 'includeEmail': True},
+    )
+
+    # Within 55-minute TTL (1000 + 3300 = 4300) -> cached token reused
+    with mock.patch.object(time, 'time', return_value=2800.0):
+      self.assertEqual(provider(), 'iam-token-1')
+    self.mock_session.post.assert_called_once()
+
+  def test_refresh_token_after_ttl(self):
+    mock_response1 = mock.MagicMock()
+    mock_response1.status_code = 200
+    mock_response1.json.return_value = {'token': 'iam-token-1'}
+
+    mock_response2 = mock.MagicMock()
+    mock_response2.status_code = 200
+    mock_response2.json.return_value = {'token': 'iam-token-2'}
+    self.mock_session.post.side_effect = [mock_response1, mock_response2]
+
+    provider = experiment_state_api.IamIdTokenProvider(
+        client_sa='sa@project.iam.gserviceaccount.com',
+        audience='fake-iap-client-id',
+    )
+    with mock.patch.object(time, 'time', return_value=1000.0):
+      self.assertEqual(provider(), 'iam-token-1')
+    self.assertEqual(self.mock_session.post.call_count, 1)
+
+    # Past 55-minute TTL (1000 + 3300 = 4300) -> refreshes token
+    with mock.patch.object(time, 'time', return_value=4301.0):
+      self.assertEqual(provider(), 'iam-token-2')
+    self.assertEqual(self.mock_session.post.call_count, 2)
+
+  def test_fetch_token_error_raises_runtime_error(self):
+    self.mock_session.post.side_effect = Exception('Network error')
+    provider = experiment_state_api.IamIdTokenProvider(
+        client_sa='sa@project.iam.gserviceaccount.com',
+        audience='fake-iap-client-id',
+    )
+    with self.assertRaisesRegex(
+        RuntimeError, 'Failed to get identity token via google-auth'
+    ):
+      provider()
+
+
+class AuthMetadataPluginTest(unittest.TestCase):
+
+  def test_plugin_attaches_authorization_header(self):
+    token_provider = mock.MagicMock(return_value='test-refreshed-token')
+    plugin = experiment_state_api.AuthMetadataPlugin(
+        token_provider=token_provider
+    )
+    mock_context = mock.MagicMock()
+    mock_callback = mock.MagicMock()
+
+    plugin(mock_context, mock_callback)
+
+    token_provider.assert_called_once()
+    mock_callback.assert_called_once_with(
+        [('authorization', 'Bearer test-refreshed-token')], None
+    )
+
+  def test_plugin_handles_token_provider_exception(self):
+    error = RuntimeError('Auth failure')
+    token_provider = mock.MagicMock(side_effect=error)
+    plugin = experiment_state_api.AuthMetadataPlugin(
+        token_provider=token_provider
+    )
+    mock_context = mock.MagicMock()
+    mock_callback = mock.MagicMock()
+
+    plugin(mock_context, mock_callback)
+
+    mock_callback.assert_called_once_with(None, error)
+
 
 class CreateStubTest(unittest.TestCase):
 
@@ -538,8 +673,8 @@ class CreateStubTest(unittest.TestCase):
         mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
         mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
         mock.patch.object(
-            grpc, 'access_token_call_credentials'
-        ) as mock_access_token_creds,
+            grpc, 'metadata_call_credentials'
+        ) as mock_metadata_creds,
         mock.patch.object(grpc, 'ssl_channel_credentials'),
         mock.patch.object(grpc, 'composite_channel_credentials'),
         mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
@@ -551,7 +686,16 @@ class CreateStubTest(unittest.TestCase):
       _ = experiment_state_api._create_experiment_state_server_stub(
           'dns:///api.example.com'
       )
-      mock_access_token_creds.assert_called_once_with('token_abc')
+      mock_metadata_creds.assert_called_once()
+      auth_plugin = mock_metadata_creds.call_args[0][0]
+      self.assertIsInstance(
+          auth_plugin, experiment_state_api.AuthMetadataPlugin
+      )
+      mock_callback = mock.MagicMock()
+      auth_plugin(mock.MagicMock(), mock_callback)
+      mock_callback.assert_called_once_with(
+          [('authorization', 'Bearer token_abc')], None
+      )
       mock_secure_channel.assert_called_once()
       mock_insecure_channel.assert_not_called()
       interceptor = mock_intercept_channel.call_args[0][1]
@@ -577,7 +721,7 @@ class CreateStubTest(unittest.TestCase):
         ),
         mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
         mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
-        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'metadata_call_credentials'),
         mock.patch.object(grpc, 'ssl_channel_credentials'),
         mock.patch.object(grpc, 'composite_channel_credentials'),
         mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
@@ -607,7 +751,7 @@ class CreateStubTest(unittest.TestCase):
         ),
         mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
         mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
-        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'metadata_call_credentials'),
         mock.patch.object(grpc, 'ssl_channel_credentials'),
         mock.patch.object(grpc, 'composite_channel_credentials'),
         mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
@@ -649,7 +793,7 @@ class CreateStubTest(unittest.TestCase):
         ),
         mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
         mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
-        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'metadata_call_credentials'),
         mock.patch.object(grpc, 'ssl_channel_credentials'),
         mock.patch.object(grpc, 'composite_channel_credentials'),
         mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
@@ -696,7 +840,7 @@ class CreateStubTest(unittest.TestCase):
         ),
         mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
         mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
-        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'metadata_call_credentials'),
         mock.patch.object(grpc, 'ssl_channel_credentials'),
         mock.patch.object(grpc, 'composite_channel_credentials'),
         mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
@@ -730,23 +874,14 @@ class CreateStubTest(unittest.TestCase):
         mock.patch('builtins.print') as mock_print,
         mock.patch('logging.warning') as mock_warning,
         mock.patch.object(
-            google.auth, 'default', return_value=(mock.MagicMock(), None)
-        ),
-        mock.patch(
-            'google.auth.transport.requests.AuthorizedSession'
-        ) as mock_auth_session,
+            experiment_state_api, 'IamIdTokenProvider'
+        ) as mock_provider,
         mock.patch.object(grpc, 'secure_channel'),
-        mock.patch.object(grpc, 'access_token_call_credentials'),
+        mock.patch.object(grpc, 'metadata_call_credentials'),
         mock.patch.object(grpc, 'ssl_channel_credentials'),
         mock.patch.object(grpc, 'composite_channel_credentials'),
         mock.patch.object(grpc, 'intercept_channel'),
     ):
-      mock_session = mock_auth_session.return_value
-      mock_response = mock.MagicMock()
-      mock_response.status_code = 200
-      mock_response.json.return_value = {'token': 'mock_oidc_token'}
-      mock_session.post.return_value = mock_response
-
       experiment_state_api._create_experiment_state_server_stub(
           'dns:///api.example.com'
       )
@@ -759,6 +894,91 @@ class CreateStubTest(unittest.TestCase):
       self.assertIn(
           'XMC_CLIENT_SA not set', mock_warning.call_args_list[1][0][0]
       )
+      mock_provider.assert_called_once_with(
+          client_sa='sa@example.com', audience='test_iap_id'
+      )
+
+  def test_create_stub_default_iam_auth_dynamic_token_refresh(self):
+    with mock.patch.dict(
+        os.environ,
+        {
+            'IAP_CLIENT_ID': 'fake-iap-client-id',
+            'XMC_CLIENT_SA': 'fake-sa@project.iam.gserviceaccount.com',
+        },
+        clear=True,
+    ):
+      mock_default = self.enterContext(
+          mock.patch.object(google.auth, 'default', autospec=True)
+      )
+      mock_default.return_value = (mock.MagicMock(), None)
+      mock_authed_session = self.enterContext(
+          mock.patch(
+              'google.auth.transport.requests.AuthorizedSession', autospec=True
+          )
+      )
+      mock_session = mock_authed_session.return_value
+      mock_response1 = mock.MagicMock()
+      mock_response1.status_code = 200
+      mock_response1.json.return_value = {'token': 'iam-id-token-1'}
+      mock_response2 = mock.MagicMock()
+      mock_response2.status_code = 200
+      mock_response2.json.return_value = {'token': 'iam-id-token-2'}
+      mock_session.post.side_effect = [mock_response1, mock_response2]
+
+      _ = self.enterContext(
+          mock.patch.object(
+              experiment_state_api,
+              'get_current_user_email',
+              return_value='user@example.com',
+          )
+      )
+
+      mock_call_creds = self.enterContext(
+          mock.patch.object(grpc, 'metadata_call_credentials', autospec=True)
+      )
+      mock_secure_channel = self.enterContext(
+          mock.patch.object(grpc, 'secure_channel', autospec=True)
+      )
+      mock_intercept_channel = self.enterContext(
+          mock.patch.object(grpc, 'intercept_channel', autospec=True)
+      )
+      mock_channel = mock.MagicMock()
+      mock_secure_channel.return_value = mock_channel
+      mock_intercept_channel.return_value = mock_channel
+
+      _ = experiment_state_api._create_experiment_state_server_stub(
+          'grpc.api.example.com'
+      )
+
+      # Verify metadata call credentials created with AuthMetadataPlugin
+      mock_call_creds.assert_called_once()
+      plugin = mock_call_creds.call_args[0][0]
+      self.assertIsInstance(plugin, experiment_state_api.AuthMetadataPlugin)
+
+      # Initial gRPC call invokes plugin -> obtains token via IAM
+      mock_callback = mock.MagicMock()
+      plugin(mock.MagicMock(), mock_callback)
+      mock_callback.assert_called_once_with(
+          [('authorization', 'Bearer iam-id-token-1')], None
+      )
+      mock_session.post.assert_called_once()
+
+      # Subsequent gRPC call within expiration window reuses cached token
+      mock_callback.reset_mock()
+      plugin(mock.MagicMock(), mock_callback)
+      mock_callback.assert_called_once_with(
+          [('authorization', 'Bearer iam-id-token-1')], None
+      )
+      self.assertEqual(mock_session.post.call_count, 1)
+
+      # Advance time past expiration window -> refresh triggers
+      with mock.patch.object(time, 'time', return_value=time.time() + 3500):
+        mock_callback.reset_mock()
+        plugin(mock.MagicMock(), mock_callback)
+        mock_callback.assert_called_once_with(
+            [('authorization', 'Bearer iam-id-token-2')], None
+        )
+        self.assertEqual(mock_session.post.call_count, 2)
 
 
 if __name__ == '__main__':
