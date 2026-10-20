@@ -69,7 +69,7 @@ def collect_jobs_by_filter(
       case job_blocks.JobGroup() as job_group:
         return list(
             itertools.chain.from_iterable(
-                [job_collector(job) for job in job_group.jobs.values()]
+                [job_collector(job) for job in job_group.jobs.values()]  # pyrefly: ignore[bad-specialization]
             )
         )
       case _:
@@ -134,7 +134,7 @@ def aggregate_constraint_cliques(
         group_name = construct_group_name()
         size = len(job_group.jobs)
         for job in job_group.jobs.values():
-          subcliques, subjobs = matcher(
+          subcliques, subjobs = matcher(  # pyrefly: ignore[bad-specialization]
               job, group_name if job_group.constraints else None
           )
           cliques += subcliques
