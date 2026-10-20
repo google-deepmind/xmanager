@@ -14,11 +14,16 @@
 """Python wrapper for the Experiment State Server API."""
 
 import functools
+import json
 import logging
+import math
 import os
+import pathlib
+import stat
 import threading
 import time
 from typing import Any, Callable
+import urllib.parse
 
 import google.auth
 from google.auth import jwt as google_jwt
@@ -42,12 +47,100 @@ _CHANNEL_READY_TIMEOUT_SEC = 5.0
 # 5-minute safety buffer against network latency, clock skew, and in-flight RPCs
 # before the server or Cloud IAP rejects the token as expired.
 _TOKEN_TTL_SEC = 3300.0
+_CLI_TOKEN_EXPIRY_BUFFER_SEC = 60.0
 
 
 def _get_xmanager_endpoint() -> str:
   if env_var := os.environ.get('XMANAGER_ENDPOINT'):
     return env_var
   return _XMANAGER_ENDPOINT
+
+
+def _get_credentials_file_path() -> pathlib.Path:
+  """Returns the path to the CLI credentials cache file."""
+  if xdg := os.environ.get('XDG_CONFIG_HOME', '').strip():
+    if os.path.isabs(xdg):
+      return pathlib.Path(xdg) / 'xmc' / 'credentials.json'
+  return pathlib.Path.home() / '.config' / 'xmc' / 'credentials.json'
+
+
+def _extract_grpc_host(endpoint: str) -> str:
+  """Extracts the lowercased hostname from a gRPC target string."""
+  target = endpoint.strip().lower().removeprefix('dns:///')
+  try:
+    return urllib.parse.urlsplit(f'//{target}').hostname or ''
+  except ValueError:
+    return ''
+
+
+def _resolve_xmc_origin(endpoint: str) -> str | None:
+  """Resolves the XMC deployment origin URL for `endpoint`."""
+  grpc_host = _extract_grpc_host(endpoint)
+  if grpc_host in ('localhost', '127.0.0.1', '::1'):
+    raw_url = os.environ.get('XMC_API_URL') or os.environ.get('XMANAGER_UI_URL')
+    parts = urllib.parse.urlsplit((raw_url or '').strip())
+    if parts.scheme.lower() not in ('http', 'https') or not parts.hostname:
+      return None
+    return f'{parts.scheme.lower()}://{parts.netloc.lower()}'
+  if grpc_host.startswith('grpc.') and endpoint != _XMANAGER_ENDPOINT:
+    domain = grpc_host.removeprefix('grpc.')
+    return f'https://{domain}' if domain else None
+  return None
+
+
+def _read_credentials_deployments(path: pathlib.Path) -> dict[str, Any]:
+  """Reads the `deployments` map from a `0600` credentials file."""
+  try:
+    fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0))
+  except OSError:
+    return {}
+  with os.fdopen(fd, 'rb') as f:
+    st = os.fstat(f.fileno())
+    if not stat.S_ISREG(st.st_mode) or (st.st_mode & 0o077) != 0:
+      logging.warning(
+          'Ignoring %s: unsafe file mode %s (expected 0600).',
+          path,
+          oct(stat.S_IMODE(st.st_mode)),
+      )
+      return {}
+    try:
+      data = json.load(f)
+    except ValueError:
+      return {}
+  if not isinstance(data, dict) or data.get('version') != 1:
+    return {}
+  deployments = data.get('deployments')
+  return deployments if isinstance(deployments, dict) else {}
+
+
+def _load_cached_cli_token(endpoint: str | None = None) -> str | None:
+  """Returns a valid cached CLI bearer token for `endpoint`, if available."""
+  origin = _resolve_xmc_origin(endpoint or _get_xmanager_endpoint())
+  if not origin:
+    return None
+  entry = _read_credentials_deployments(_get_credentials_file_path()).get(
+      origin
+  )
+  if not isinstance(entry, dict):
+    return None
+  token = entry.get('access_token')
+  expires_at = entry.get('expires_at')
+  if not isinstance(token, str) or not token.strip():
+    return None
+  if (
+      isinstance(expires_at, bool)
+      or not isinstance(expires_at, (int, float))
+      or not math.isfinite(expires_at)
+  ):
+    return None
+  if expires_at <= time.time() + _CLI_TOKEN_EXPIRY_BUFFER_SEC:
+    logging.warning(
+        'Ignoring expired XMC CLI token for %s. Run `xmc login --server %s`.',
+        origin,
+        origin,
+    )
+    return None
+  return token.strip()
 
 
 def _extract_email_from_jwt(token: str) -> str | None:
@@ -88,6 +181,9 @@ def get_current_user_email() -> str:
         'XMC_AUTH_TOKEN is set but no identity claim could be extracted from'
         ' it.'
     )
+  elif cached_token := _load_cached_cli_token():
+    if extracted_email := _extract_email_from_jwt(cached_token):
+      return extracted_email
 
   try:
     scopes = [
@@ -297,8 +393,14 @@ def _create_experiment_state_server_stub(
           'yes',
       )
   )
-  auth_token = os.environ.get('XMC_AUTH_TOKEN')
-  user_email = get_current_user_email()
+  auth_token = os.environ.get('XMC_AUTH_TOKEN') or _load_cached_cli_token(
+      endpoint
+  )
+  user_email = (
+      os.environ.get('XMC_USER_EMAIL')
+      or (auth_token and _extract_email_from_jwt(auth_token))
+      or get_current_user_email()
+  )
 
   token_provider: Callable[[], str]
   if auth_token:
