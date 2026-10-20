@@ -980,6 +980,35 @@ class CreateStubTest(unittest.TestCase):
         )
         self.assertEqual(mock_session.post.call_count, 2)
 
+  def test_http_endpoint_uses_insecure_channel(self):
+    with (
+        mock.patch.dict(os.environ, {}, clear=True),
+        mock.patch.object(
+            experiment_state_api,
+            'get_current_user_email',
+            return_value='user@example.com',
+        ),
+        mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
+        mock.patch.object(grpc, 'insecure_channel') as mock_insecure_channel,
+        mock.patch.object(grpc, 'intercept_channel') as mock_intercept_channel,
+    ):
+      mock_insec_channel = mock.MagicMock()
+      mock_insecure_channel.return_value = mock_insec_channel
+      mock_intercept_channel.return_value = mock_insec_channel
+
+      _, channel = experiment_state_api._create_experiment_state_server_stub(
+          'http://10.180.0.2:50051'
+      )
+      mock_insecure_channel.assert_called_once_with('10.180.0.2:50051')
+      mock_secure_channel.assert_not_called()
+      interceptor = mock_intercept_channel.call_args[0][1]
+      self.assertIsInstance(
+          interceptor, experiment_state_api.BearerAuthInterceptor
+      )
+      self.assertEqual(interceptor._user_email, 'user@example.com')
+      self.assertEqual(interceptor._token_provider(), '')
+      self.assertEqual(channel, mock_insec_channel)
+
 
 if __name__ == '__main__':
   unittest.main()

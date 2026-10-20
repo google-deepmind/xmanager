@@ -279,14 +279,23 @@ def _create_experiment_state_server_stub(
     grpc.Channel,
 ]:
   """Create a gRPC stub and channel for the Experiment State Server."""
-  insecure_allowed = os.environ.get(
-      'XMANAGER_INSECURE_GRPC', ''
-  ).lower() in ('true', '1', 'yes') or os.environ.get(
-      'XMC_INSECURE_GRPC', ''
-  ).lower() in (
-      'true',
-      '1',
-      'yes',
+  use_http = False
+  if endpoint.startswith('http://'):
+    endpoint = endpoint[len('http://') :]
+    use_http = True
+  elif endpoint.startswith('https://'):
+    endpoint = endpoint[len('https://') :]
+
+  insecure_allowed = (
+      use_http
+      or os.environ.get('XMANAGER_INSECURE_GRPC', '').lower()
+      in ('true', '1', 'yes')
+      or os.environ.get('XMC_INSECURE_GRPC', '').lower()
+      in (
+          'true',
+          '1',
+          'yes',
+      )
   )
   auth_token = os.environ.get('XMC_AUTH_TOKEN')
   user_email = get_current_user_email()
@@ -294,6 +303,8 @@ def _create_experiment_state_server_stub(
   token_provider: Callable[[], str]
   if auth_token:
     token_provider = lambda: auth_token
+  elif use_http:
+    token_provider = lambda: ''
   else:
     iap_client_id = os.environ.get('IAP_CLIENT_ID')
     if not iap_client_id:
@@ -316,26 +327,7 @@ def _create_experiment_state_server_stub(
         audience=iap_client_id,
     )
 
-  try:
-    intercepted_channel = _build_secure_channel(
-        endpoint=endpoint,
-        token_provider=token_provider,
-        user_email=user_email,
-    )
-    grpc.channel_ready_future(intercepted_channel).result(
-        _CHANNEL_READY_TIMEOUT_SEC
-    )
-  except Exception as e:  # pylint: disable=broad-exception-caught
-    if not insecure_allowed:
-      raise RuntimeError(
-          f'Failed to establish secure gRPC connection to {endpoint}'
-      ) from e
-    logging.warning(
-        'Secure gRPC connection to %s failed (%s). Falling back to insecure'
-        ' channel as requested by configuration.',
-        endpoint,
-        e,
-    )
+  if use_http:
     intercepted_channel = _build_insecure_channel(
         endpoint=endpoint,
         token_provider=token_provider,
@@ -344,6 +336,35 @@ def _create_experiment_state_server_stub(
     grpc.channel_ready_future(intercepted_channel).result(
         _CHANNEL_READY_TIMEOUT_SEC
     )
+  else:
+    try:
+      intercepted_channel = _build_secure_channel(
+          endpoint=endpoint,
+          token_provider=token_provider,
+          user_email=user_email,
+      )
+      grpc.channel_ready_future(intercepted_channel).result(
+          _CHANNEL_READY_TIMEOUT_SEC
+      )
+    except Exception as e:  # pylint: disable=broad-exception-caught
+      if not insecure_allowed:
+        raise RuntimeError(
+            f'Failed to establish secure gRPC connection to {endpoint}'
+        ) from e
+      logging.warning(
+          'Secure gRPC connection to %s failed (%s). Falling back to insecure'
+          ' channel as requested by configuration.',
+          endpoint,
+          e,
+      )
+      intercepted_channel = _build_insecure_channel(
+          endpoint=endpoint,
+          token_provider=token_provider,
+          user_email=user_email,
+      )
+      grpc.channel_ready_future(intercepted_channel).result(
+          _CHANNEL_READY_TIMEOUT_SEC
+      )
 
   return (
       experiment_state_service_pb2_grpc.ExperimentStateServiceStub(
