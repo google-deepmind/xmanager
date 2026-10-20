@@ -17,6 +17,8 @@ import base64
 import json
 import logging
 import os
+import pathlib
+import tempfile
 import time
 from typing import Any
 import unittest
@@ -976,6 +978,184 @@ class CreateStubTest(unittest.TestCase):
             [('authorization', 'Bearer iam-id-token-2')], None
         )
         self.assertEqual(mock_session.post.call_count, 2)
+
+
+def _make_jwt(email: str = 'cli_user@example.com') -> str:
+  header = base64.urlsafe_b64encode(b'{"alg":"none"}').decode('utf-8')
+  payload = base64.urlsafe_b64encode(
+      json.dumps({'email': email}).encode('utf-8')
+  ).decode('utf-8')
+  return f'{header}.{payload}.sig'
+
+
+class CachedCliCredentialsTest(unittest.TestCase):
+
+  def setUp(self):
+    super().setUp()
+    self._tmpdir = self.enterContext(tempfile.TemporaryDirectory())
+    self._creds_dir = pathlib.Path(self._tmpdir) / 'xmc'
+    self._creds_dir.mkdir(mode=0o700)
+    self._creds_path = self._creds_dir / 'credentials.json'
+
+  def _write_creds(
+      self,
+      origin: str = 'https://xmc.example.com',
+      token: str | None = None,
+      expires_at: float | None = None,
+      mode: int = 0o600,
+  ) -> str:
+    jwt_token = _make_jwt() if token is None else token
+    exp = time.time() + 3600.0 if expires_at is None else expires_at
+    data = {
+        'version': 1,
+        'deployments': {
+            origin: {'access_token': jwt_token, 'expires_at': exp},
+        },
+    }
+    self._creds_path.write_text(json.dumps(data), encoding='utf-8')
+    os.chmod(self._creds_path, mode)
+    return jwt_token
+
+  def test_stub_uses_cached_cli_token_and_jwt_email(self):
+    token = self._write_creds('https://xmc.example.com')
+    with (
+        mock.patch.dict(
+            os.environ,
+            {
+                'XDG_CONFIG_HOME': self._tmpdir,
+                'XMANAGER_ENDPOINT': 'dns:///grpc.xmc.example.com:443',
+            },
+            clear=True,
+        ),
+        mock.patch.object(grpc, 'secure_channel') as mock_secure_channel,
+        mock.patch.object(grpc, 'metadata_call_credentials') as mock_call_creds,
+        mock.patch.object(grpc, 'ssl_channel_credentials'),
+        mock.patch.object(grpc, 'composite_channel_credentials'),
+        mock.patch.object(grpc, 'intercept_channel') as mock_intercept,
+        mock.patch.object(grpc, 'channel_ready_future'),
+    ):
+      mock_secure_channel.return_value = mock.MagicMock()
+      mock_intercept.return_value = mock.MagicMock()
+
+      self.assertEqual(
+          experiment_state_api.get_current_user_email(), 'cli_user@example.com'
+      )
+      experiment_state_api._create_experiment_state_server_stub(
+          'dns:///grpc.xmc.example.com:443'
+      )
+
+      plugin = mock_call_creds.call_args[0][0]
+      cb = mock.MagicMock()
+      plugin(mock.MagicMock(), cb)
+      cb.assert_called_once_with([('authorization', f'Bearer {token}')], None)
+      interceptor = mock_intercept.call_args[0][1]
+      self.assertEqual(interceptor._user_email, 'cli_user@example.com')
+
+  def test_loopback_endpoint_resolves_origin_from_env_and_env_overrides(self):
+    cli_token = self._write_creds('https://xmc.example.com')
+    env_token = _make_jwt('env_user@example.com')
+    with mock.patch.dict(
+        os.environ,
+        {
+            'XDG_CONFIG_HOME': self._tmpdir,
+            'XMANAGER_ENDPOINT': 'localhost:50051',
+            'XMC_API_URL': 'https://xmc.example.com/',
+        },
+        clear=True,
+    ):
+      self.assertEqual(
+          experiment_state_api._load_cached_cli_token('localhost:50051'),
+          cli_token,
+      )
+      with mock.patch.dict(os.environ, {'XMC_AUTH_TOKEN': env_token}):
+        self.assertEqual(
+            experiment_state_api.get_current_user_email(),
+            'env_user@example.com',
+        )
+
+  def test_mismatched_endpoint_ignores_cached_token(self):
+    self._write_creds('https://xmc.example.com')
+    with mock.patch.dict(
+        os.environ, {'XDG_CONFIG_HOME': self._tmpdir}, clear=True
+    ):
+      self.assertIsNone(
+          experiment_state_api._load_cached_cli_token(
+              'dns:///grpc.other.example.com:443'
+          )
+      )
+
+  def test_expired_or_unsafe_credentials_ignored(self):
+    self._write_creds('https://xmc.example.com', expires_at=time.time() - 10)
+    with (
+        mock.patch.dict(
+            os.environ,
+            {
+                'XDG_CONFIG_HOME': self._tmpdir,
+                'XMANAGER_ENDPOINT': 'dns:///grpc.xmc.example.com:443',
+            },
+            clear=True,
+        ),
+        mock.patch('logging.warning') as mock_warning,
+    ):
+      self.assertIsNone(experiment_state_api._load_cached_cli_token())
+      mock_warning.assert_called_once()
+
+    self._write_creds('https://xmc.example.com', mode=0o644)
+    with (
+        mock.patch.dict(
+            os.environ,
+            {
+                'XDG_CONFIG_HOME': self._tmpdir,
+                'XMANAGER_ENDPOINT': 'dns:///grpc.xmc.example.com:443',
+            },
+            clear=True,
+        ),
+        mock.patch('logging.warning') as mock_warning,
+    ):
+      self.assertIsNone(experiment_state_api._load_cached_cli_token())
+      mock_warning.assert_called_once()
+
+  def test_malformed_inputs_and_files_return_none(self):
+    self.assertEqual(
+        experiment_state_api._read_credentials_deployments(self._creds_path), {}
+    )
+    self.assertEqual(experiment_state_api._extract_grpc_host('[invalid'), '')
+    with mock.patch.dict(os.environ, {}, clear=True):
+      self.assertIsNone(
+          experiment_state_api._resolve_xmc_origin('localhost:50051')
+      )
+      self.assertIsNone(
+          experiment_state_api._resolve_xmc_origin('api.example.com:443')
+      )
+    self._creds_path.write_text('{bad json', encoding='utf-8')
+    os.chmod(self._creds_path, 0o600)
+    self.assertEqual(
+        experiment_state_api._read_credentials_deployments(self._creds_path), {}
+    )
+    self._creds_path.write_text('{"version": 2}', encoding='utf-8')
+    self.assertEqual(
+        experiment_state_api._read_credentials_deployments(self._creds_path), {}
+    )
+    self._write_creds('https://xmc.example.com', token='   ')
+    with mock.patch.dict(
+        os.environ,
+        {
+            'XDG_CONFIG_HOME': self._tmpdir,
+            'XMANAGER_ENDPOINT': 'dns:///grpc.xmc.example.com:443',
+        },
+        clear=True,
+    ):
+      self.assertIsNone(experiment_state_api._load_cached_cli_token())
+    self._write_creds('https://xmc.example.com', expires_at=True)  # pytype: disable=wrong-arg-types
+    with mock.patch.dict(
+        os.environ,
+        {
+            'XDG_CONFIG_HOME': self._tmpdir,
+            'XMANAGER_ENDPOINT': 'dns:///grpc.xmc.example.com:443',
+        },
+        clear=True,
+    ):
+      self.assertIsNone(experiment_state_api._load_cached_cli_token())
 
 
 if __name__ == '__main__':
