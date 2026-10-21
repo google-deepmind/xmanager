@@ -477,7 +477,13 @@ def _create_experiment_state_server_stub(
 
 
 class ExperimentStateGRpcApi:
-  """Convenience wrapper for the Experiment State Server gRPC API."""
+  """Convenience wrapper for the Experiment State Server gRPC API.
+
+  The definition of the underlying gRPC API can be found here:
+  TODO: - Replace with a link to github once we open source
+  the backend.
+  (internal link)
+  """
 
   def __init__(self):
     self._stub, self._channel = _create_experiment_state_server_stub(
