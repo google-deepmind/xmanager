@@ -39,12 +39,20 @@ def _help_command(argv):
     width = shutil.get_terminal_size().columns
   except OSError:
     width = 80
-  print('usage: xmanager {launch,cluster} ...')
+  print('usage: xmanager {launch,cluster,login,logout} ...')
   print()
   opts = {
       'launch': 'Launches an experiment on XManager.',
       'cluster': (
          'Creates or deletes a GKE cluster for use with xm_local.'
+      ),
+      'login': (
+          'Authenticates with an XManager on Cloud (xm_cloud) deployment. Not'
+          ' needed for xm_local.'
+      ),
+      'logout': (
+          'Clears cached XManager on Cloud (xm_cloud) credentials. Not needed'
+          ' for xm_local.'
       ),
   }
   for k, v in opts.items():
@@ -162,6 +170,16 @@ def main(argv):
       _launch_command(argv)
     case 'cluster':
       _cluster_command(argv)
+    case 'login':
+      # Lazy-import (like `_cluster_command`) so `login`/`logout` remain outside
+      # the `xmc` strip block without eager startup imports.
+      importlib.import_module(
+          'xmanager.xm_cloud.cli.login_command'
+      ).login_command(argv)
+    case 'logout':
+      importlib.import_module(
+          'xmanager.xm_cloud.cli.login_command'
+      ).logout_command(argv)
     case _:
       raise app.UsageError(f'Command `{argv[1]}` is not a supported command')
 

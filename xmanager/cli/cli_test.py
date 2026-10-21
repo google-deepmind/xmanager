@@ -130,6 +130,37 @@ class CliLaunchTest(parameterized.TestCase):
         ],
     )
 
+  def test_login_command_dispatches_with_preserved_flags(self) -> None:
+    raw_argv = [
+        'xmanager',
+        'login',
+        '--no-browser',
+        '--timeout',
+        '30',
+        '--status',
+    ]
+    mock_module = mock.MagicMock()
+    with mock.patch.object(
+        cli.importlib, 'import_module', return_value=mock_module
+    ) as mock_import:
+      parsed_argv = cli._parse_flags(raw_argv)
+      cli.main(parsed_argv)
+
+    mock_import.assert_called_once_with('xmanager.xm_cloud.cli.login_command')
+    mock_module.login_command.assert_called_once_with(raw_argv)
+
+  def test_logout_command_dispatches_with_preserved_flags(self) -> None:
+    raw_argv = ['xmanager', 'logout', '--all']
+    mock_module = mock.MagicMock()
+    with mock.patch.object(
+        cli.importlib, 'import_module', return_value=mock_module
+    ) as mock_import:
+      parsed_argv = cli._parse_flags(raw_argv)
+      cli.main(parsed_argv)
+
+    mock_import.assert_called_once_with('xmanager.xm_cloud.cli.login_command')
+    mock_module.logout_command.assert_called_once_with(raw_argv)
+
 
 if __name__ == '__main__':
   absltest.main()

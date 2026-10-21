@@ -1120,6 +1120,39 @@ class CachedCliCredentialsTest(unittest.TestCase):
           experiment_state_api._resolve_xmc_origin('127.0.0.1:50051'),
           'http://xmc.example.com:8080',
       )
+    with mock.patch.dict(
+        os.environ,
+        {'XMC_DOMAIN': '  xmc.example.com  '},
+        clear=True,
+    ):
+      self.assertEqual(
+          experiment_state_api._resolve_xmc_origin('localhost:50051'),
+          'https://xmc.example.com',
+      )
+    for env, expected in (
+        ({'XMANAGER_UI_URL': 'https://x.dev/ui'}, 'https://x.dev'),
+        (
+            {
+                'XMC_API_URL': 'https://a.io/v1',
+                'XMANAGER_UI_URL': 'https://b.io',
+            },
+            'https://a.io',
+        ),
+        (
+            {
+                'XMANAGER_ENDPOINT': 'dns:///grpc.a.dev:443',
+                'XMC_API_URL': 'https://b.dev',
+            },
+            'https://a.dev',
+        ),
+    ):
+      with mock.patch.dict(os.environ, env, clear=True):
+        self.assertEqual(
+            experiment_state_api._resolve_xmc_origin(
+                experiment_state_api._get_xmanager_endpoint()
+            ),
+            expected,
+        )
 
   def test_mismatched_endpoint_ignores_cached_token(self):
     cli_token = self._write_creds('https://xmc.example.com')
@@ -1176,6 +1209,13 @@ class CachedCliCredentialsTest(unittest.TestCase):
     )
     self.assertEqual(experiment_state_api._extract_grpc_host(''), '')
     self.assertEqual(experiment_state_api._extract_grpc_host('[invalid'), '')
+    with mock.patch.dict(
+        os.environ, {'XMC_CREDENTIALS_FILE': '/tmp/custom.json'}, clear=True
+    ):
+      self.assertEqual(
+          experiment_state_api._get_credentials_file_path(),
+          pathlib.Path('/tmp/custom.json'),
+      )
     with mock.patch.dict(
         os.environ, {'XDG_CONFIG_HOME': 'relative'}, clear=True
     ):

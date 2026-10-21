@@ -58,9 +58,14 @@ def _get_xmanager_endpoint() -> str:
 
 def _get_credentials_file_path() -> pathlib.Path:
   """Returns the path to the CLI credentials cache file."""
-  if xdg := os.environ.get('XDG_CONFIG_HOME', '').strip():
-    if os.path.isabs(xdg):
-      return pathlib.Path(xdg) / 'xmc' / 'credentials.json'
+  custom = os.path.expanduser(
+      os.environ.get('XMC_CREDENTIALS_FILE', '').strip()
+  )
+  if os.path.isabs(custom):
+    return pathlib.Path(custom)
+  xdg = os.environ.get('XDG_CONFIG_HOME', '').strip()
+  if os.path.isabs(xdg):
+    return pathlib.Path(xdg) / 'xmc' / 'credentials.json'
   return pathlib.Path.home() / '.config' / 'xmc' / 'credentials.json'
 
 
@@ -75,17 +80,32 @@ def _extract_grpc_host(endpoint: str) -> str:
 
 def _resolve_xmc_origin(endpoint: str) -> str | None:
   """Resolves the XMC deployment origin URL for `endpoint`."""
-  grpc_host = _extract_grpc_host(endpoint)
-  if grpc_host in ('localhost', '127.0.0.1', '::1'):
-    raw_url = os.environ.get('XMC_API_URL') or os.environ.get('XMANAGER_UI_URL')
-    parts = urllib.parse.urlsplit((raw_url or '').strip())
-    if parts.scheme.lower() not in ('http', 'https') or not parts.hostname:
-      return None
-    return f'{parts.scheme.lower()}://{parts.netloc.lower()}'
-  if grpc_host.startswith('grpc.') and endpoint != _XMANAGER_ENDPOINT:
+  ep = endpoint.strip()
+  grpc_host = _extract_grpc_host(ep)
+  if grpc_host.startswith('grpc.') and ep != _XMANAGER_ENDPOINT:
     domain = grpc_host.removeprefix('grpc.')
     return f'https://{domain}' if domain else None
-  return None
+  if ep != _XMANAGER_ENDPOINT and grpc_host not in (
+      'localhost',
+      '127.0.0.1',
+      '::1',
+  ):
+    return None
+  raw = (
+      os.environ.get('XMC_API_URL', '').strip()
+      or os.environ.get('XMANAGER_UI_URL', '').strip()
+      or os.environ.get('XMC_DOMAIN', '').strip()
+  )
+  if not raw:
+    return None
+  parts = urllib.parse.urlsplit(raw if '://' in raw else f'https://{raw}')
+  if (
+      parts.scheme.lower() not in ('http', 'https')
+      or not parts.hostname
+      or any((parts.username, parts.password, parts.query, parts.fragment))
+  ):
+    return None
+  return f'{parts.scheme.lower()}://{parts.netloc.lower()}'
 
 
 def _read_credentials_deployments(path: pathlib.Path) -> dict[str, Any]:
@@ -135,8 +155,7 @@ def _load_cached_cli_token(endpoint: str | None = None) -> str | None:
     return None
   if expires_at <= time.time() + _CLI_TOKEN_EXPIRY_BUFFER_SEC:
     logging.warning(
-        'Ignoring expired XMC CLI token for %s. Run `xmc login --server %s`.',
-        origin,
+        'Ignoring expired XMC CLI token for %s. Run `xmanager login`.',
         origin,
     )
     return None
