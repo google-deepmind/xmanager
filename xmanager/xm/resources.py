@@ -82,6 +82,7 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
   B300 = 112
   GB200 = 89
   GB300 = 100
+  VR200 = 110
   B40_48TH = 93
 
   # TPUs
@@ -118,6 +119,7 @@ class ResourceType(enum.Enum, metaclass=_CaseInsensitiveResourceTypeMeta):
       B200: Architecture.HASWELL,
       GB200: Architecture.ARM,
       GB300: Architecture.ARM,
+      VR200: Architecture.ARM,
       B40_48TH: Architecture.HASWELL,
       B300: Architecture.HASWELL,
   }
@@ -257,6 +259,7 @@ GpuType = _enum_subset(
         ResourceType.B300,
         ResourceType.GB200,
         ResourceType.GB300,
+        ResourceType.VR200,
         ResourceType.B40_48TH,
     ],
 )
