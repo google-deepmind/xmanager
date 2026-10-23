@@ -28,7 +28,7 @@ if os.path.isdir(os.path.join(os.path.dirname(__file__) or '.', 'xdash')):
 
 setup(
     name='xmanager',
-    version='0.8.5',
+    version='0.8.5.post1',
     description='A framework for managing machine learning experiments',
     long_description=long_description,
     long_description_content_type='text/markdown',
